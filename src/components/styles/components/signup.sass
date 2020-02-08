@@ -1,0 +1,138 @@
+@import vars
+
+#login-signup
+  +flexcenter
+
+  height: 100vh
+  width: 100vw
+  position: absolute
+  animation: fadein 0.5s ease-out forwards
+  isolation: isolate
+  overflow: hidden
+
+  &.fadeout
+    animation: fadeout 0.5s ease-out forwards
+
+  .spinning-squares
+    +flexcenter
+
+    position: absolute
+    height: 100%
+    width: 100%
+    z-index: 1
+
+    div
+      $size: 12rem
+
+      position: absolute
+      border: 1px dashed $white
+
+      @for $i from 1 through 4
+        &:nth-child(#{$i})
+          height: calc(#{$i} * #{$size})
+          width: calc(#{$i} * #{$size})
+          animation: spinfade 100s linear infinite forwards
+
+          @if $i % 2 == 0
+            animation: spinfade 100s linear infinite reverse
+
+  #form-container
+    +flexcenter
+
+    z-index: 2
+    flex-direction: column
+    background-color: transparentize($black, 0.15)
+    width: 100%
+    height: 100%
+
+    .login-link
+      margin-top: 1rem
+
+      a
+        color: $white
+        font-family: $pixel
+
+        &:active
+          color: $pink
+
+    form
+      input, button
+        padding: 0.75rem 1.25rem
+        font-size: 1.25rem
+
+        &:focus
+          outline: 1px solid $pink
+          transition: outline 0.5s ease
+
+      input::placeholder, input, button
+        font-family: $pixel
+
+      input
+        transition: border-color 0.5s ease
+        background-color: transparent
+        border: 1px solid $white
+        color: $white
+
+      button
+        width: 100%
+
+        // background-color: $white
+        border: none
+        cursor: pointer
+        position: relative
+        isolation: isolate
+
+        span
+          z-index: 1
+          display: block
+          position: relative
+          color: $black
+
+        b
+          z-index: 0
+          top: 0
+          right: 0
+          height: 0
+          transition: height 0.5s ease
+          background-color: $success
+          display: block
+          position: absolute
+          width: 100%
+
+        &.valid b
+          height: 100%
+          transition: height 0.5s ease 0.5s
+
+      b
+        // transition: background-color 0.5s ease
+        display: block
+        height: 1rem
+        background-color: $white
+        margin-left: 1rem
+        width: 0.5rem
+        position: relative
+
+        b
+          position: absolute
+          top: 0
+          right: 0
+          height: 0
+          transition: height 0.5s ease
+          background-color: $success
+
+          &:last-of-type
+            transition-delay: 0.5s
+
+      div.valid
+        & input:focus
+          transition: outline 0.5s ease
+          outline: 1px solid $success
+
+      div.valid > input
+        transition: border-color 0.5s ease
+        border: 1px solid $success
+
+      div.valid + b > b
+        // transition: background-color 0.5s ease
+        height: 100%
+        transition: height 0.5s ease
