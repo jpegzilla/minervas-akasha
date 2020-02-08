@@ -1,0 +1,31 @@
+@import vars
+
+#status-message
+  position: absolute
+  z-index: 10
+  width: 100vw
+  opacity: 0
+  transition: background-color 0.3s ease, opacity 0.3s ease
+  pointer-events: none
+  user-select: none
+
+  &.success, &.fail, &.warning
+    opacity: 1
+    transition: background-color 0.3s ease, opacity 0.3s ease 0.3s
+
+  &.success
+    color: $white
+    background-color: $success
+
+  &.fail
+    color: $white
+    background-color: $fail
+
+  &.warning
+    color: $black
+    background-color: $warning
+
+  div
+    color: currentcolor
+    font-family: $pixel
+    padding: 1.5rem
