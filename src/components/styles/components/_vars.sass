@@ -1,0 +1,121 @@
+$black: #111111
+$white: #fefefe
+$pink: #df0971
+$blue: #10116b
+
+$success: #53b97f
+$fail: #d76864
+$warning: #f4bb5b
+
+// fonts
+
+$pixel: "pixel-font", monospace
+$main: "IBM Plex Serif", serif
+
+// $plex: "IBM Plex Mono", monospace
+// $ibarra: "Ibarra Real Nova", serif
+
+// mixins
+
+=theme($theme: "dark")
+  --text-highlight: #{$pink}
+
+  @if $theme == "light"
+    --bg-main: #{$white}
+    --bg-main-halfop: #{transparentize($white, 0.5)}
+    --text-main: #{$black}
+  @else if $theme == "dark"
+    --bg-main: #{$black}
+    --bg-main-halfop: #{transparentize($black, 0.5)}
+    --text-main: #{$white}
+
+=flexcenter($left: false)
+  display: flex
+  align-items: center
+  justify-content: center
+
+  @if $left
+    justify-content: flex-start
+
+// anims
+
+@keyframes pulse
+  from
+    opacity: 0
+
+  50%
+    opacity: 1
+
+  to
+    opacity: 1
+
+@keyframes fadein
+  from
+    opacity: 0
+
+  to
+    opacity: 1
+
+@keyframes fadeout
+  to
+    opacity: 0
+
+@keyframes flickerout
+  from
+    opacity: 1
+
+  50%
+    opacity: 0
+
+  55%
+    opacity: 1
+
+  60%
+    opacity: 0
+
+  65%
+    opacity: 1
+
+  70%
+    opacity: 0
+
+  75%
+    opacity: 1
+
+  to
+    opacity: 0
+
+@keyframes loadingspin
+  from
+    transform: rotateZ(0deg)
+
+  15%
+    transform: rotateZ(-45deg)
+
+  75%
+    transform: rotateZ(360deg)
+
+  to
+    transform: rotateZ(360deg)
+
+@keyframes spin
+  to
+    transform: rotateZ(360deg)
+
+@keyframes spinfade
+  from
+    opacity: 1
+    transform: rotateZ(0)
+
+  25%
+    opacity: 0
+
+  50%
+    opacity: 1
+
+  75%
+    opacity: 0
+
+  to
+    opacity: 1
+    transform: rotateZ(360deg)
