@@ -1,0 +1,22 @@
+// compile main
+
+@import ./components/fontImports
+@import ./components/defaults
+@import ./components/vars
+@import ./components/colorcodes
+
+// components
+@import ./components/preloader
+@import ./components/signup
+@import ./components/statusmessage
+
+\:root
+  +theme("dark")
+
+\:root.light
+  +theme("light")
+
+body
+  background-color: var(--bg-main)
+  color: var(--text-main)
+  isolation: isolate
