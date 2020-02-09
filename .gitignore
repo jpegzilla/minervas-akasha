@@ -27,3 +27,5 @@ yarn-error.log*
 # lockfiles
 **/*.lock
 *-lock.json
+
+.env
