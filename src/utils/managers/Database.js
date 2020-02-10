@@ -1,19 +1,73 @@
-export default class Database {
-  constructor(path) {}
-
-  create(item, type) {}
-
-  find(item, type) {
-    // find in table according to type using item.id
+export default class DatabaseInterface {
+  constructor(path) {
+    this.path = path;
   }
 
-  update() {}
+  insert(items, type) {
+    if (!items || !type) throw new SyntaxError("missing arguments to insert.");
 
-  delete() {}
+    if (!["user", "data"].includes(type))
+      throw new SyntaxError("incorrect type passed to insert.");
+    else if (!items instanceof Object)
+      throw new SyntaxError("incorrect format of items passed to insert.");
 
-  connect() {}
+    const url = `${this.path}/insert/${type}`;
 
-  disconnect() {}
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        method: "post",
+        body: items
+      })
+        .then(_res => _res.json())
+        .then(json => resolve(json))
+        .catch(err => reject(err));
+    });
+  }
 
-  empty() {}
+  find(type, item) {
+    if (!item || !type) throw new SyntaxError("missing arguments to find.");
+
+    if (!["user", "data"].includes(type))
+      throw new SyntaxError("incorrect type passed to find.");
+    else if (!item instanceof Object)
+      throw new SyntaxError("incorrect format of items passed to find.");
+
+    const url = `${this.path}/find/${type}`;
+
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        method: "post",
+        body: item
+      })
+        .then(_res => _res.json())
+        .then(json => resolve(json))
+        .catch(err => reject(err));
+    });
+  }
+
+  update(type, item, prop, newVal) {
+    if (!item || !type || !prop || !newVal)
+      throw new SyntaxError("missing arguments to find.");
+
+    if (!["user", "data"].includes(type))
+      throw new SyntaxError("incorrect type passed to find.");
+    else if (!item instanceof Object)
+      throw new SyntaxError("incorrect format of items passed to find.");
+  }
+
+  delete(type, item) {
+    if (!item || !type) throw new SyntaxError("missing arguments to find.");
+
+    if (!["user", "data"].includes(type))
+      throw new SyntaxError("incorrect type passed to find.");
+    else if (!item instanceof Object)
+      throw new SyntaxError("incorrect format of items passed to find.");
+  }
+
+  empty(type) {
+    if (!type) throw new SyntaxError("missing arguments to find.");
+
+    if (!["user", "data"].includes(type))
+      throw new SyntaxError("incorrect type passed to find.");
+  }
 }
