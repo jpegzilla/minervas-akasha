@@ -5,13 +5,21 @@ import { uuidv4 } from "./../utils/misc";
 import bcrypt from "bcryptjs";
 
 export const Signup = props => {
-  const { statusMessage, setStatusMessage, minerva } = props;
+  const { statusMessage, setStatusMessage, minerva, setLoggedIn } = props;
 
   const [finished, setFinished] = useState(false);
   const [userValid, setUserValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
   const [confirmValid, setConfirmValid] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+
+  const [shake, setShake] = useState(false);
+
+  const shakeAnim = () => {
+    setShake(true);
+
+    setTimeout(() => setShake(false), 500);
+  };
 
   const [allValid, setAllValid] = useState(false);
 
@@ -26,10 +34,10 @@ export const Signup = props => {
   const passwordInput = useRef(null);
   const usernameInput = useRef(null);
 
+  const t = () => setStatusMessage({ ...statusMessage, type: null });
+
   const onSubmitForm = e => {
     e.preventDefault();
-
-    const t = () => setStatusMessage({ ...statusMessage, type: null });
 
     const shouldSubmit = userValid && passwordValid && confirmValid;
 
@@ -61,7 +69,7 @@ export const Signup = props => {
             dateCreated: new Date().toISOString(),
             password: hash,
             records: {},
-            userId: uuidv4(),
+            id: uuidv4(),
             username: usernameInput.current.value
           };
 
@@ -85,6 +93,7 @@ export const Signup = props => {
               setTimeout(t, 3000);
 
               setFadeOut(true);
+              setLoggedIn(true);
 
               setTimeout(() => setFinished(true), 500);
             } else {
@@ -96,12 +105,16 @@ export const Signup = props => {
                 type: "warning"
               });
 
+              shakeAnim();
+
               setTimeout(t, 3000);
             }
           });
         });
       });
     } else {
+      shakeAnim();
+
       // popup message
       setStatusMessage({ display: true, text: "invalid form", type: "fail" });
 
@@ -110,31 +123,52 @@ export const Signup = props => {
   };
 
   const manageInput = e => {
-    const { name } = e.target;
+    const { name, value } = e.target;
+    const { value: confirm } = passwordInput.current;
 
     switch (name) {
       case "username":
-        if (e.target.value.length >= 3) setUserValid(true);
-        if (e.target.value.length < 3) setUserValid(false);
+        if (value.length >= 3 && !/\s/gi.test(value)) setUserValid(true);
+        if (/\s/gi.test(value)) {
+          shakeAnim();
+
+          // popup message
+          setStatusMessage({
+            display: true,
+            text: "username cannot contain spaces",
+            type: "warning"
+          });
+
+          setTimeout(t, 3000);
+        } else if (value.length < 3) setUserValid(false);
 
         break;
       case "password":
-        if (e.target.value.length >= 8) setPasswordValid(true);
-        if (e.target.value.length < 8) setPasswordValid(false);
+        if (value.length >= 8 && !/\s/gi.test(value)) setPasswordValid(true);
+        if (/\s/gi.test(value)) {
+          shakeAnim();
+
+          // popup message
+          setStatusMessage({
+            display: true,
+            text: "password cannot contain spaces",
+            type: "warning"
+          });
+
+          setTimeout(t, 3000);
+        } else if (value.length < 8) setPasswordValid(false);
 
         break;
       case "confirm":
-        if (e.target.value === passwordInput.current.value)
-          setConfirmValid(true);
-        if (e.target.value !== passwordInput.current.value)
-          setConfirmValid(false);
+        if (value === confirm) setConfirmValid(true);
+        if (value !== confirm) setConfirmValid(false);
 
         break;
     }
   };
 
   return finished ? (
-    <Redirect to="/home" />
+    <Redirect to="/" />
   ) : (
     <section className={fadeOut ? "fadeout" : ""} id="login-signup">
       <section className="spinning-squares">
@@ -144,7 +178,7 @@ export const Signup = props => {
         <div />
       </section>
 
-      <section id="form-container">
+      <section className={shake ? "shake" : ""} id="form-container">
         <form onSubmit={onSubmitForm}>
           <div className={userValid ? "valid" : ""}>
             <input

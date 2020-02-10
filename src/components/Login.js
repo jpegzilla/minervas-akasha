@@ -3,12 +3,20 @@ import { BrowserRouter as Router, Redirect, Link } from "react-router-dom";
 import bcrypt from "bcryptjs";
 
 export const Login = props => {
-  const { statusMessage, setStatusMessage, minerva } = props;
+  const { statusMessage, setStatusMessage, minerva, setLoggedIn } = props;
 
   const [finished, setFinished] = useState(false);
   const [userValid, setUserValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+
+  const [shake, setShake] = useState(false);
+
+  const shakeAnim = () => {
+    setShake(true);
+
+    setTimeout(() => setShake(false), 500);
+  };
 
   const [allValid, setAllValid] = useState(false);
 
@@ -48,6 +56,8 @@ export const Login = props => {
             type: "fail"
           });
 
+          shakeAnim();
+
           setTimeout(t, 3000);
         } else {
           bcrypt.compare(user.password, u.password, (err, res) => {
@@ -67,6 +77,8 @@ export const Login = props => {
 
               setFadeOut(true);
 
+              setLoggedIn(true);
+
               setTimeout(() => setFinished(true), 500);
             } else {
               setStatusMessage({
@@ -74,6 +86,8 @@ export const Login = props => {
                 text: "incorrect credentials.",
                 type: "fail"
               });
+
+              shakeAnim();
 
               setTimeout(t, 3000);
             }
@@ -88,29 +102,53 @@ export const Login = props => {
         type: "fail"
       });
 
+      shakeAnim();
+
       setTimeout(t, 3000);
     }
   };
 
   const manageInput = e => {
-    const { name } = e.target;
+    const { name, value } = e.target;
 
     switch (name) {
       case "username":
-        if (e.target.value.length >= 3) setUserValid(true);
-        if (e.target.value.length < 3) setUserValid(false);
+        if (value.length >= 3 && !/\s/gi.test(value)) setUserValid(true);
+        if (/\s/gi.test(value)) {
+          shakeAnim();
+
+          // popup message
+          setStatusMessage({
+            display: true,
+            text: "username cannot contain spaces",
+            type: "warning"
+          });
+
+          setTimeout(t, 3000);
+        } else if (value.length < 3) setUserValid(false);
 
         break;
       case "password":
-        if (e.target.value.length >= 8) setPasswordValid(true);
-        if (e.target.value.length < 8) setPasswordValid(false);
+        if (value.length >= 8 && !/\s/gi.test(value)) setPasswordValid(true);
+        if (/\s/gi.test(value)) {
+          shakeAnim();
+
+          // popup message
+          setStatusMessage({
+            display: true,
+            text: "password cannot contain spaces",
+            type: "warning"
+          });
+
+          setTimeout(t, 3000);
+        } else if (value.length < 8) setPasswordValid(false);
 
         break;
     }
   };
 
   return finished ? (
-    <Redirect to="/home" />
+    <Redirect to="/" />
   ) : (
     <section className={fadeOut ? "fadeout" : ""} id="login-signup">
       <section className="spinning-squares">
@@ -120,7 +158,7 @@ export const Login = props => {
         <div />
       </section>
 
-      <section id="form-container">
+      <section className={shake ? "shake" : ""} id="form-container">
         <form onSubmit={onSubmitForm}>
           <div className={userValid ? "valid" : ""}>
             <input
@@ -159,7 +197,7 @@ export const Login = props => {
         </form>
 
         <div className="login-link">
-          <Link to="/">or sign up here</Link>
+          <Link to="/signup">or sign up here</Link>
         </div>
       </section>
     </section>
