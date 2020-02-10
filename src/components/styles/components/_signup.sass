@@ -1,5 +1,7 @@
 @import vars
 
+$font: $proggy
+
 #login-signup
   +flexcenter
 
@@ -50,7 +52,7 @@
 
       a
         color: $white
-        font-family: $pixel
+        font-family: $font
 
         &:active
           color: $pink
@@ -65,7 +67,7 @@
           transition: outline 0.5s ease
 
       input::placeholder, input, button
-        font-family: $pixel
+        font-family: $font
 
       input
         transition: border-color 0.5s ease
@@ -105,11 +107,12 @@
 
       b
         // transition: background-color 0.5s ease
+        // make these bars thinner and longer?
         display: block
-        height: 1rem
+        height: 2rem
         background-color: $white
         margin-left: 1rem
-        width: 0.5rem
+        width: 0.15rem
         position: relative
 
         b
