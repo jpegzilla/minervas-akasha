@@ -19,14 +19,14 @@ export class Minerva {
   login(user, newUser = false) {
     this.user = user;
 
-    this.set(`user:${user.userId}:token`, {
+    this.set(`user:${user.id}:token`, {
       user: user,
       expires: new Date().toISOString()
     });
 
     if (newUser) {
       this.record = new AkashicRecord(
-        user.userId,
+        user.id,
         user.dateCreated,
         uuidv4(),
         user.username,
@@ -106,13 +106,13 @@ export class Minerva {
     return JSON.parse(Minerva._session.getItem(key));
   }
 
-  clearSession() {
+  static clearSessionStorage() {
     Minerva._session.clear();
   }
 
-  remove(key, item, database = false) {
+  remove(key, item, database = false, type) {
     if (database) {
-      this.database.delete(item.id);
+      this.database.delete(this.database.collections[type], item.id);
     }
 
     Minerva._store.removeItem(key);
