@@ -16,9 +16,11 @@ export const Signup = props => {
   const [shake, setShake] = useState(false);
 
   const shakeAnim = () => {
+    if (shake) setShake(false);
+
     setShake(true);
 
-    setTimeout(() => setShake(false), 500);
+    setTimeout(() => setShake(false), 250);
   };
 
   const [allValid, setAllValid] = useState(false);

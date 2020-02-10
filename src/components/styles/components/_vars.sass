@@ -103,6 +103,24 @@ $main: "IBM Plex Serif", serif
   to
     transform: rotateZ(360deg)
 
+$shake: 5px
+
+@keyframes shake
+  from
+    transform: translateX(0)
+
+  25%
+    transform: translateX(-$shake)
+
+  50%
+    transform: translateX($shake)
+
+  75%
+    transform: translateX(-$shake)
+
+  to
+    transform: translateX(0)
+
 @keyframes spinfade
   from
     opacity: 1

@@ -13,9 +13,11 @@ export const Login = props => {
   const [shake, setShake] = useState(false);
 
   const shakeAnim = () => {
+    if (shake) setShake(false);
+
     setShake(true);
 
-    setTimeout(() => setShake(false), 500);
+    setTimeout(() => setShake(false), 250);
   };
 
   const [allValid, setAllValid] = useState(false);
@@ -31,10 +33,10 @@ export const Login = props => {
   const passwordInput = useRef(null);
   const usernameInput = useRef(null);
 
+  const t = () => setStatusMessage({ ...statusMessage, type: null });
+
   const onSubmitForm = e => {
     e.preventDefault();
-
-    const t = () => setStatusMessage({ ...statusMessage, type: null });
 
     const shouldSubmit = userValid && passwordValid;
 

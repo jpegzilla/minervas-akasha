@@ -4,6 +4,11 @@
   src: url("./fonts/PxPlus_IBM_EGA9.ttf");
 }
 
+@font-face {
+  font-family: "liga-proggy-font";
+  src: url("./fonts/LigaProggyCleanTTSZ.ttf");
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -90,6 +95,24 @@
   }
 }
 
+@keyframes shake {
+  from {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @keyframes spinfade {
   from {
     opacity: 1;
@@ -185,6 +208,24 @@
   }
 }
 
+@keyframes shake {
+  from {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @keyframes spinfade {
   from {
     opacity: 1;
@@ -256,43 +297,43 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.35s forwards;
+  animation: flickerout 0.3s ease 2.28s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 2.56s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 2.42s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 3.4s forwards;
+  animation: flickerout 0.3s ease 2.56s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 2.35s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(6) {
   transition: background-color 0.3s ease 0.3s;
-  animation: flickerout 0.3s ease 3.68s forwards;
+  animation: flickerout 0.3s ease 3.26s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 4.45s forwards;
+  animation: flickerout 0.3s ease 3.47s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 4.24s forwards;
+  animation: flickerout 0.3s ease 2.56s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
@@ -444,6 +485,24 @@
   }
 }
 
+@keyframes shake {
+  from {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @keyframes spinfade {
   from {
     opacity: 1;
@@ -532,13 +591,17 @@
   height: 100%;
 }
 
+#login-signup #form-container.shake {
+  animation: shake 0.25s linear forwards;
+}
+
 #login-signup #form-container .login-link {
   margin-top: 1rem;
 }
 
 #login-signup #form-container .login-link a {
   color: #fefefe;
-  font-family: "pixel-font", monospace;
+  font-family: "liga-proggy-font", monospace;
 }
 
 #login-signup #form-container .login-link a:active {
@@ -556,7 +619,7 @@
 }
 
 #login-signup #form-container form input::placeholder, #login-signup #form-container form input, #login-signup #form-container form button {
-  font-family: "pixel-font", monospace;
+  font-family: "liga-proggy-font", monospace;
 }
 
 #login-signup #form-container form input {
@@ -600,10 +663,10 @@
 
 #login-signup #form-container form b {
   display: block;
-  height: 1rem;
+  height: 2rem;
   background-color: #fefefe;
   margin-left: 1rem;
-  width: 0.5rem;
+  width: 0.15rem;
   position: relative;
 }
 
@@ -707,6 +770,24 @@
 @keyframes spin {
   to {
     transform: rotateZ(360deg);
+  }
+}
+
+@keyframes shake {
+  from {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(0);
   }
 }
 
