@@ -28,4 +28,8 @@ yarn-error.log*
 **/*.lock
 *-lock.json
 
-.env
+# local environment
+.env.local
+
+# templates
+**.template.**
