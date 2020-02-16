@@ -47,27 +47,27 @@ export default class DatabaseInterface {
 
   update(type, item, prop, newVal) {
     if (!item || !type || !prop || !newVal)
-      throw new SyntaxError("missing arguments to find.");
+      throw new SyntaxError("missing arguments to update.");
 
     if (!["user", "data"].includes(type))
-      throw new SyntaxError("incorrect type passed to find.");
+      throw new SyntaxError("incorrect type passed to update.");
     else if (!item instanceof Object)
-      throw new SyntaxError("incorrect format of items passed to find.");
+      throw new SyntaxError("incorrect format of items passed to update.");
   }
 
   delete(type, item) {
-    if (!item || !type) throw new SyntaxError("missing arguments to find.");
+    if (!item || !type) throw new SyntaxError("missing arguments to delete.");
 
     if (!["user", "data"].includes(type))
-      throw new SyntaxError("incorrect type passed to find.");
+      throw new SyntaxError("incorrect type passed to delete.");
     else if (!item instanceof Object)
-      throw new SyntaxError("incorrect format of items passed to find.");
+      throw new SyntaxError("incorrect format of items passed to delete.");
   }
 
   empty(type) {
-    if (!type) throw new SyntaxError("missing arguments to find.");
+    if (!type) throw new SyntaxError("missing arguments to empty.");
 
     if (!["user", "data"].includes(type))
-      throw new SyntaxError("incorrect type passed to find.");
+      throw new SyntaxError("incorrect type passed to empty.");
   }
 }
