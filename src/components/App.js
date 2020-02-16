@@ -14,7 +14,6 @@ import {
 
 // components
 import { Preloader } from "./Preloader";
-import { Onboarding } from "./Onboarding";
 import { NoMobile } from "./NoMobile";
 import { Home } from "./Home";
 import { Signup } from "./Signup";
@@ -168,10 +167,7 @@ export const App = () => {
               <Route exact path="/">
                 <Home />
               </Route>
-              {/* onboarding screen */}
-              <Route exact path="/onboard">
-                <Onboarding />
-              </Route>
+
               {/* signup screen */}
               <Route exact path="/signup">
                 <Signup
