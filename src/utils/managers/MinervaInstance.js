@@ -10,14 +10,18 @@ import { uuidv4 } from "./../misc";
 export class Minerva {
   constructor(settings, database) {
     this.user = null;
+    this.record = null;
 
     this.settings = settings;
 
     this.database = database;
+
+    this.userId = null;
   }
 
-  login(user, newUser = false) {
+  login(user, newUser = false, database = false) {
     this.user = user;
+    this.userId = user.id;
 
     this.set(`user:${user.id}:token`, {
       user: user,
@@ -29,18 +33,26 @@ export class Minerva {
         user.id,
         user.dateCreated,
         uuidv4(),
-        user.username,
-        user.records
+        user.name,
+        user.records,
+        this.database
       );
     } else {
       this.record = AkashicRecord.retrieveAkashicRecord(
-        user.userId,
-        user.username
+        user.id,
+        user.name,
+        database
       );
     }
+
+    this.save();
   }
 
-  logout() {}
+  logout(user) {
+    MinervaArchive.remove("minervas_akasha");
+    MinervaArchive.remove(user.name);
+    Minerva.removeSession("loggedIn");
+  }
 
   search(user, database = false) {
     if (database) {
@@ -58,7 +70,7 @@ export class Minerva {
     if (database) {
       return new Promise((resolve, reject) => {
         this.database.find(item, type).then(res => {
-          if (!res) reject("user creation failed");
+          if (!res) reject("nothing found");
           else resolve(res);
         });
       });
@@ -76,8 +88,8 @@ export class Minerva {
           return new Promise((resolve, reject) => {
             this.database.find(item, type).then(u => {
               if (!u) {
-                this.database.create(item, type).then(res => {
-                  if (!res) reject("user creation failed");
+                this.database.insert(item, type).then(res => {
+                  if (!res) reject("setting item failed");
                   else resolve(res);
                 });
               }
@@ -94,11 +106,25 @@ export class Minerva {
     }
   }
 
+  save() {
+    const store = {
+      user: this.user,
+      settings: this.settings,
+      storage: this.storage
+    };
+
+    MinervaArchive.set("minervaStore", store);
+  }
+
+  load() {
+    return JSON.parse(MinervaArchive.get("minervaStore"));
+  }
+
   setSession(key, item) {
     Minerva._session.setItem(key, JSON.stringify(item));
   }
 
-  removeSession(key) {
+  static removeSession(key) {
     Minerva._session.removeItem(key);
   }
 
@@ -126,4 +152,22 @@ export class Minerva {
 
   static _store = window.localStorage;
   static _session = window.sessionStorage;
+}
+
+// storage interaction utility methods
+
+export class MinervaArchive extends Minerva {
+  static get(key) {
+    return JSON.parse(Minerva._store.getItem(key));
+  }
+
+  static remove(key) {
+    return Minerva._store.removeItem(key);
+  }
+
+  static set(key, item) {
+    Minerva._store.setItem(key, JSON.stringify(item));
+
+    return Minerva._store;
+  }
 }
