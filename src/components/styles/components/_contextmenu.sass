@@ -1,0 +1,54 @@
+import vars
+
+$font: $proggy
+$background: $black
+$color: $white
+
+#context-menu-container
+  position: absolute
+  display: flex
+  font-family: $font
+  background-color: $background
+  color: $color
+  border: 1px solid $color
+  z-index: 9
+  flex-direction: column
+  font-size: 1em
+
+  & > *
+    padding: 0.25rem 0.5rem
+
+  header
+    width: 100%
+
+  * + *
+    border-top: 1px solid $color
+
+  .context-menu-item
+    display: block
+    background-color: $background
+    transition: background-color 0.3s ease
+    cursor: pointer
+    position: relative
+
+    &:hover
+      transition: background-color 0.3s ease
+      background-color: transparentize($white, 0.6)
+
+    .context-menu-subitem
+      display: none
+
+      &.active
+        display: block
+        position: absolute
+        top: 0
+        left: 100%
+        background-color: $background
+        transition: background-color 0.3s ease
+        cursor: pointer
+        border: 1px solid $color
+        padding: 0.25rem 0.5rem
+
+        &:hover
+          transition: background-color 0.3s ease
+          background-color: transparentize($white, 0.6)
