@@ -1,0 +1,91 @@
+@import "./vars.sass";
+
+$background: $white;
+$thumb: $black;
+$border: $pink;
+$border-size: 1px;
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 0px 0;
+}
+input[type="range"]:focus {
+  outline: 1px dotted $pink;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 16px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+  background: $background;
+  border-radius: 0px;
+  border: $border-size solid $border;
+}
+input[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+  border: none;
+  height: 16px;
+  width: 10px;
+  border-radius: 0px;
+  background: $thumb;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -0.3px;
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: transparentize($background, 0.5);
+}
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 16px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+  background: $background;
+  border-radius: 0px;
+  border: $border-size solid $border;
+}
+input[type="range"]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+  border: none;
+  height: 16px;
+  width: 10px;
+  border-radius: 0px;
+  background: $thumb;
+  cursor: pointer;
+}
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: $border-size solid $border;
+  color: transparent;
+}
+input[type="range"]::-ms-fill-lower {
+  background: $background;
+  border: 0.3px solid #010001;
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+}
+input[type="range"]::-ms-fill-upper {
+  background: $background;
+  border: 0.3px solid #010001;
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+}
+input[type="range"]::-ms-thumb {
+  box-shadow: 0px 0px 0px $background, 0px 0px 0px #0d0d0d;
+  border: 0px solid $border;
+  width: 10px;
+  border-radius: 0px;
+  background: $thumb;
+  cursor: pointer;
+  height: 16px;
+}
+input[type="range"]:focus::-ms-fill-lower {
+  background: $background;
+}
+input[type="range"]:focus::-ms-fill-upper {
+  background: $background;
+}
