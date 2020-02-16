@@ -311,8 +311,6 @@ export const Signup = props => {
     }
   };
 
-  if (finished && shouldOnboard) return <Redirect to="/onboard" />;
-
   return finished ? (
     <Redirect to="/" />
   ) : (
