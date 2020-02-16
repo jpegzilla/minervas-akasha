@@ -2,30 +2,42 @@
 
 #status-message
   position: absolute
+  bottom: 10vh
   z-index: 10
   width: 100vw
-  opacity: 0
-  transition: background-color 0.3s ease, opacity 0.3s ease
+  display: flex
+  justify-content: center
   pointer-events: none
-  user-select: none
 
-  &.success, &.fail, &.warning
-    opacity: 1
-    transition: background-color 0.3s ease, opacity 0.3s ease 0.3s
+  & > div
+    width: 40%
+    max-width: 50%
+    padding: 0.5rem 1.5rem
+    opacity: 0
+    transition: border-color 0.2s ease, opacity 0.3s ease
+    pointer-events: none
+    user-select: none
+    background-color: $black
+    border: 1px solid $white
+    font-size: 1rem
 
-  &.success
-    color: $white
-    background-color: $success
+    &.success, &.fail, &.warning
+      opacity: 1
+      transition: border-color 0.3s ease, opacity 0.3s ease 0.3s
+      color: $white
 
-  &.fail
-    color: $white
-    background-color: $fail
+    &.success
+      border-color: $success
 
-  &.warning
-    color: $black
-    background-color: $warning
+    &.fail
+      border-color: $fail
 
-  div
-    color: currentcolor
-    font-family: $pixel
-    padding: 1.5rem
+    &.warning
+      border-color: $warning
+
+    div
+      color: currentcolor
+      font-family: $pixel
+
+      &::before
+        content: "> "
