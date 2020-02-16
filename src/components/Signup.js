@@ -1,19 +1,56 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
+import { globalContext } from "./App";
+import { MinervaArchive } from "./../utils/managers/MinervaInstance";
 
-import { uuidv4 } from "./../utils/misc";
+import { uuidv4, Typist } from "./../utils/misc";
 import bcrypt from "bcryptjs";
 
+const text = {
+  pre: "incomplete...",
+  post: "enter"
+};
+
+let timeouts = [];
+
 export const Signup = props => {
-  const { statusMessage, setStatusMessage, minerva, setLoggedIn } = props;
+  const {
+    setStatusText,
+    statusMessage,
+    setStatusMessage,
+    setLoggedIn,
+    loginScreenInstead
+  } = props;
+
+  const clearAll = () => {
+    for (let i = 0; i < timeouts.length; i++) {
+      clearTimeout(timeouts[i]);
+    }
+  };
 
   const [finished, setFinished] = useState(false);
   const [userValid, setUserValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
   const [confirmValid, setConfirmValid] = useState(false);
+  const [shouldOnboard, setShouldOnboard] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [allValid, setAllValid] = useState(false);
 
   const [shake, setShake] = useState(false);
+  const [enterText, setEnterText] = useState("");
+
+  useEffect(
+    () => {
+      if (!allValid) {
+        new Typist(setEnterText, text.pre).scramble();
+      } else {
+        new Typist(setEnterText, text.post).scramble();
+      }
+    },
+    [allValid]
+  );
+
+  const { minerva } = useContext(globalContext);
 
   const shakeAnim = () => {
     if (shake) setShake(false);
@@ -23,11 +60,11 @@ export const Signup = props => {
     setTimeout(() => setShake(false), 250);
   };
 
-  const [allValid, setAllValid] = useState(false);
-
   useEffect(
     () => {
       if (userValid && passwordValid && confirmValid) setAllValid(true);
+      else if (userValid && passwordValid && loginScreenInstead)
+        setAllValid(true);
       else setAllValid(false);
     },
     [userValid, passwordValid, confirmValid]
@@ -36,91 +73,193 @@ export const Signup = props => {
   const passwordInput = useRef(null);
   const usernameInput = useRef(null);
 
-  const t = () => setStatusMessage({ ...statusMessage, type: null });
+  const t = () => {
+    setStatusText("");
+    setStatusMessage({ display: false, text: "", type: null });
+  };
 
   const onSubmitForm = e => {
+    console.log("submit handler fired");
     e.preventDefault();
 
-    const shouldSubmit = userValid && passwordValid && confirmValid;
+    let shouldSubmit;
 
-    if (shouldSubmit) {
-      // submit form
-      // create new user
-      bcrypt.genSalt(10, (err, salt) => {
-        if (err) {
-          console.log(err);
+    if (loginScreenInstead) shouldSubmit = userValid && passwordValid;
+    else shouldSubmit = userValid && passwordValid && confirmValid;
+    if (loginScreenInstead) {
+      if (shouldSubmit) {
+        // submit form
+        // login user
+        const user = {
+          username: usernameInput.current.value,
+          password: passwordInput.current.value
+        };
 
-          setStatusMessage({
-            display: true,
-            text: err,
-            type: "fail"
-          });
+        minerva.search(user).then(u => {
+          console.log(u, user);
 
-          return setTimeout(t, 3000);
-        }
+          if (!u) {
+            setStatusMessage({
+              display: true,
+              text: "user does not exist.",
+              type: "fail"
+            });
 
-        bcrypt.hash(passwordInput.current.value, salt, (err, hash) => {
-          if (err)
-            return setStatusMessage({
+            shakeAnim();
+            clearAll();
+            timeouts.push(setTimeout(t, 3000));
+          } else {
+            bcrypt.compare(user.password, u.password, (err, res) => {
+              console.log({ err, res });
+
+              if (res) {
+                setStatusMessage({
+                  display: true,
+                  text: "login complete.",
+                  type: "success"
+                });
+
+                clearAll();
+                timeouts.push(setTimeout(t, 3000));
+
+                // create user's minerva instance
+                minerva.login(u);
+
+                console.log("user during login", u);
+
+                console.log("after login", minerva);
+
+                MinervaArchive.set("minervas_akasha", {
+                  user: minerva.user,
+                  id: minerva.userId
+                });
+
+                setFadeOut(true);
+
+                setLoggedIn(true);
+
+                setTimeout(() => setFinished(true), 500);
+              } else {
+                setStatusMessage({
+                  display: true,
+                  text: "incorrect credentials.",
+                  type: "fail"
+                });
+
+                shakeAnim();
+
+                clearAll();
+                timeouts.push(setTimeout(t, 3000));
+              }
+            });
+          }
+        });
+      } else {
+        // popup message
+        setStatusMessage({
+          display: true,
+          text: "please enter a valid username and password.",
+          type: "fail"
+        });
+
+        shakeAnim();
+
+        clearAll();
+        timeouts.push(setTimeout(t, 3000));
+      }
+    } else {
+      if (shouldSubmit) {
+        // submit form
+        // create new user
+        bcrypt.genSalt(10, (err, salt) => {
+          if (err) {
+            console.log(err);
+
+            setStatusMessage({
               display: true,
               text: err,
               type: "fail"
             });
 
-          const newUser = {
-            dateCreated: new Date().toISOString(),
-            password: hash,
-            records: {},
-            id: uuidv4(),
-            username: usernameInput.current.value
-          };
+            return setTimeout(t, 3000);
+          }
 
-          minerva.search(newUser).then(user => {
-            // do new user things
-
-            if (!user) {
-              minerva.set(newUser.username, newUser, "user");
-
-              // create user's minerva instance
-              minerva.login(newUser, true);
-
-              console.log(minerva);
-
-              setStatusMessage({
+          bcrypt.hash(passwordInput.current.value, salt, (err, hash) => {
+            if (err)
+              return setStatusMessage({
                 display: true,
-                text: "signup successful.",
-                type: "success"
+                text: err,
+                type: "fail"
               });
 
-              setTimeout(t, 3000);
+            const newUser = {
+              dateCreated: new Date().toISOString(),
+              password: hash,
+              id: uuidv4(),
+              name: usernameInput.current.value
+            };
 
-              setFadeOut(true);
-              setLoggedIn(true);
+            minerva.search(newUser).then(user => {
+              // do new user things
 
-              setTimeout(() => setFinished(true), 500);
-            } else {
-              console.log(newUser);
+              if (!user) {
+                minerva.set(newUser.name, newUser, "user");
 
-              setStatusMessage({
-                display: true,
-                text: "user already exists! please log in.",
-                type: "warning"
-              });
+                // create user's minerva instance
+                minerva.login(newUser, true);
 
-              shakeAnim();
+                console.log(minerva);
 
-              setTimeout(t, 3000);
-            }
+                setStatusMessage({
+                  display: true,
+                  text: "status: signup successful.",
+                  type: "success"
+                });
+
+                setTimeout(t, 3000);
+
+                MinervaArchive.set("minervas_akasha", {
+                  user: minerva.user,
+                  id: minerva.userId
+                });
+
+                setShouldOnboard(true);
+                setFadeOut(true);
+
+                setTimeout(() => {
+                  setFinished(true);
+                  setLoggedIn(true);
+                }, 500);
+              } else {
+                console.log(newUser);
+
+                setStatusMessage({
+                  display: true,
+                  text: "error: user already exists! please log in.",
+                  type: "warning"
+                });
+
+                shakeAnim();
+
+                clearAll();
+                timeouts.push(setTimeout(t, 3000));
+              }
+            });
           });
         });
-      });
-    } else {
-      shakeAnim();
+      } else {
+        shakeAnim();
 
-      // popup message
-      setStatusMessage({ display: true, text: "invalid form", type: "fail" });
+        // popup message
+        setStatusMessage({
+          display: true,
+          text: "error: invalid form",
+          type: "fail"
+        });
 
-      setTimeout(t, 3000);
+        clearAll();
+        timeouts.push(setTimeout(t, 3000));
+      }
     }
   };
 
@@ -137,11 +276,12 @@ export const Signup = props => {
           // popup message
           setStatusMessage({
             display: true,
-            text: "username cannot contain spaces",
+            text: "warning: username cannot contain spaces",
             type: "warning"
           });
 
-          setTimeout(t, 3000);
+          clearAll();
+          timeouts.push(setTimeout(t, 3000));
         } else if (value.length < 3) setUserValid(false);
 
         break;
@@ -153,21 +293,25 @@ export const Signup = props => {
           // popup message
           setStatusMessage({
             display: true,
-            text: "password cannot contain spaces",
+            text: "warning: password cannot contain spaces",
             type: "warning"
           });
 
-          setTimeout(t, 3000);
+          clearAll();
+          timeouts.push(setTimeout(t, 3000));
         } else if (value.length < 8) setPasswordValid(false);
 
         break;
       case "confirm":
-        if (value === confirm) setConfirmValid(true);
-        if (value !== confirm) setConfirmValid(false);
+        if (value === confirm && confirm.length > 0 && passwordValid)
+          setConfirmValid(true);
+        else setConfirmValid(false);
 
         break;
     }
   };
+
+  if (finished && shouldOnboard) return <Redirect to="/onboard" />;
 
   return finished ? (
     <Redirect to="/" />
@@ -181,58 +325,107 @@ export const Signup = props => {
       </section>
 
       <section className={shake ? "shake" : ""} id="form-container">
-        <form onSubmit={onSubmitForm}>
-          <div className={userValid ? "valid" : ""}>
-            <input
-              ref={usernameInput}
-              autoComplete="off"
-              onInput={manageInput}
-              type="text"
-              name="username"
-              placeholder="name"
-              id="username"
-            />
-          </div>
-          <b>
-            <b />
-          </b>
-          <div className={passwordValid ? "valid" : ""}>
-            <input
-              ref={passwordInput}
-              autoComplete="current-password"
-              onInput={manageInput}
-              type="password"
-              name="password"
-              placeholder="password"
-              id="password"
-            />
-          </div>
-          <b>
-            <b />
-          </b>
-          <div className={confirmValid ? "valid" : ""}>
-            <input
-              onInput={manageInput}
-              autoComplete="current-password"
-              type="password"
-              name="confirm"
-              placeholder="confirm password"
-              id="confirm-pass"
-            />
-          </div>
-          <b>
-            <b />
-          </b>
-          <div>
-            <button className={allValid ? "valid" : ""} type="submit">
-              <span>enter</span>
+        {loginScreenInstead ? (
+          <form>
+            <div className={userValid ? "valid" : ""}>
+              <input
+                ref={usernameInput}
+                autoComplete="username"
+                onInput={manageInput}
+                type="text"
+                name="username"
+                placeholder="name"
+                id="username"
+              />
+            </div>
+            <b>
               <b />
-            </button>
-          </div>
-        </form>
+            </b>
+            <div className={passwordValid ? "valid" : ""}>
+              <input
+                ref={passwordInput}
+                autoComplete="current-password"
+                onInput={manageInput}
+                type="password"
+                name="password"
+                placeholder="password"
+                id="password"
+              />
+            </div>
+            <b>
+              <b />
+            </b>
+            <div>
+              <button
+                onClick={onSubmitForm}
+                className={allValid ? "valid" : ""}
+                type="submit"
+              >
+                <span>{enterText}</span>
+                <b />
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form>
+            <div className={userValid ? "valid" : ""}>
+              <input
+                ref={usernameInput}
+                autoComplete="off"
+                onInput={manageInput}
+                type="text"
+                name="username"
+                placeholder="name"
+                id="username"
+              />
+            </div>
+            <b>
+              <b />
+            </b>
+            <div className={passwordValid ? "valid" : ""}>
+              <input
+                ref={passwordInput}
+                autoComplete="current-password"
+                onInput={manageInput}
+                type="password"
+                name="password"
+                placeholder="password"
+                id="password"
+              />
+            </div>
+            <b>
+              <b />
+            </b>
+            <div className={confirmValid ? "valid" : ""}>
+              <input
+                onInput={manageInput}
+                autoComplete="current-password"
+                type="password"
+                name="confirm"
+                placeholder="confirm password"
+                id="confirm-pass"
+              />
+            </div>
+            <b>
+              <b />
+            </b>
+            <div>
+              <button
+                onClick={onSubmitForm}
+                className={allValid ? "valid" : ""}
+                type="submit"
+              >
+                <span>{enterText}</span>
+                <b />
+              </button>
+            </div>
+          </form>
+        )}
 
         <div className="login-link">
-          <Link to="/login">or log in here</Link>
+          <Link to={loginScreenInstead ? "/signup" : "/login"}>
+            or {loginScreenInstead ? "sign up" : "log in"} here
+          </Link>
         </div>
       </section>
     </section>
