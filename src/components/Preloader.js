@@ -31,6 +31,10 @@ export const Preloader = props => {
       id="preloader-container"
       className={panelsActive ? "active" : "inactive"}
     >
+    <section id="filters">
+      <div id="crt-overlay" />
+    </section>
+
       <section
         className={
           panelsActive ? "preloader-background active" : "preloader-background"
