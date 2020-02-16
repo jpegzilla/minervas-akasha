@@ -1,14 +1,21 @@
 // compile main
 
+// utils
 @import ./components/fontImports
 @import ./components/defaults
 @import ./components/vars
 @import ./components/colorcodes
+@import ./components/filters
+@import ./components/fx
 
 // components
 @import ./components/preloader
 @import ./components/signup
+@import ./components/taskbar
+@import ./components/sidebar
 @import ./components/statusmessage
+@import ./components/home
+@import ./components/contextmenu
 
 \:root
   +theme("dark")
@@ -16,7 +23,17 @@
 \:root.light
   +theme("light")
 
+\::selection
+  background-color: $pink
+
 body
+  main
+    width: 100vw
+    height: 100vh
+    position: relative
+    isolation: isolate
+    overflow: hidden
+
   background-color: var(--bg-main)
   color: var(--text-main)
   isolation: isolate
