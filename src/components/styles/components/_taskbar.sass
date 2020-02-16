@@ -1,0 +1,38 @@
+@import vars
+
+$size: 3rem
+$hl-color: $pink
+
+#application-taskbar
+  height: $size
+  width: 100vw
+  display: flex
+  z-index: 1
+
+  .application-square-buttons
+    +flexcenter
+
+    font-size: 1.5rem
+    background-color: $pink
+    transition: background-color 0.4s ease
+    cursor: pointer
+    user-select: none
+
+    &:hover
+      transition: background-color 0.4s ease
+      background-color: transparentize($pink, 0.5)
+
+  #application-menu-button, #application-settings-button
+    height: $size
+    width: $size
+    border-top: 1px solid $hl-color
+    border-left: 1px solid $hl-color
+    border-bottom: 1px solid $hl-color
+
+  #application-settings-button
+    border-right: 1px solid $hl-color
+
+  #application-windows-list
+    flex: 1
+    background-color: $black
+    border-top: 1px solid $hl-color
