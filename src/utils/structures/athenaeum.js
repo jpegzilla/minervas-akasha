@@ -1,4 +1,7 @@
+import { Shard } from "./shard";
 import { Structure } from "./structure";
+import { Grimoire } from "./grimoire";
+import { Node } from "./node";
 
 // an athenaeum is meant to hold large amounts of grimoires, similar to an actual
 // athenaeum.
@@ -11,6 +14,6 @@ export class Athenaeum extends Structure {
     this.type = "athenaeum";
 
     // a list of structures that this type of structure can connect to.
-    this.connectableTo = ["grimoire", "node", "shard"];
+    this.accepts = [Grimoire, Node, Shard];
   }
 }

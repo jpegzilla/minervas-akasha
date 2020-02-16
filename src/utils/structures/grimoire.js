@@ -1,4 +1,6 @@
+import { Node } from "./node";
 import { Structure } from "./structure";
+import { Shard } from "./shard";
 
 export class Grimoire extends Structure {
   constructor(name) {
@@ -9,6 +11,6 @@ export class Grimoire extends Structure {
     this.type = "grimoire";
 
     // a list of structures that this type of structure can connect to.
-    this.connectableTo = ["node", "shard"];
+    this.accepts = [Shard, Node];
   }
 }
