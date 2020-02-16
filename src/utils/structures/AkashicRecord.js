@@ -1,20 +1,28 @@
 import { uuidv4 } from "./../misc";
-import { Structure } from "./structure";
+import {
+  Structure,
+  Hypostasis,
+  Shard,
+  Node,
+  Grimoire,
+  Athenaeum
+} from "./structure";
 import { Minerva } from "./../managers/MinervaInstance";
 
 // the master structure, meant to represent a user's entire environment when working
 // within the tool. bound to user id and is created for every new user.
 export default class AkashicRecord {
-  constructor(userId, dateCreated, id, name, records) {
+  constructor(userId, dateCreated, id, name, records, database) {
     this.boundTo = userId;
     this.dateCreated = dateCreated || new Date().toISOString();
     this.id = id || uuidv4();
     this.name = name;
+    this.database = database;
 
     // contains all of the data structures in an akashic record.
     this.records = records || {
       hypostasis: [],
-      atheneum: [],
+      athenaeum: [],
       grimoire: [],
       node: [],
       shard: []
@@ -40,14 +48,43 @@ export default class AkashicRecord {
     return this;
   }
 
-  removeFromRecord(id) {}
+  editRecord(structure) {
+    if (!structure instanceof Structure)
+      throw new TypeError(`${structure} is not a proper structure.`);
 
-  static retrieveAkashicRecord(userId, name, database = false) {
+    this.records[structure.type].map(
+      item => (item.id === structure.id ? structure : item)
+    );
+  }
+
+  removeFromRecord(structure) {
+    if (!structure.id || !structure.type)
+      throw new TypeError(`${structure} does not have the correct format`);
+
+    this.records[structure.type].filter(e => structure.id === e.id);
+  }
+
+  exportRecord(db = false) {
+    return db ? this : JSON.stringify(this);
+  }
+
+  static retrieveAkashicRecord(userId, name, dbObject, database = false) {
     if (database) {
       // retreive record for user with name from database
     } else {
       // retrieve from localStorage
-      return JSON.parse(Minerva._store[name]);
+      const record = Minerva._store[name];
+
+      const { dateCreated, records } = record;
+
+      return new AkashicRecord(
+        userId,
+        dateCreated,
+        userId,
+        name,
+        records,
+        database
+      );
     }
   }
 
