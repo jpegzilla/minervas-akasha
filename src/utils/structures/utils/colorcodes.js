@@ -3,5 +3,10 @@
 // each value in this structure corresponds to a certain css class defined in
 // _colorcodes.sass.
 export const colorcodes = {
-  pink: "colorcode-pink"
+  pink: "colorcode-pink",
+  white: "colorcode-white",
+  black: "colorcode-black",
+  blue: "colorcode-blue",
+  purple: "colorcode-purple",
+  yellow: "colorcode-yellow"
 };
