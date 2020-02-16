@@ -1,31 +1,96 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useRef,
+  Fragment
+} from "react";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect
 } from "react-router-dom";
 
+// components
 import { Preloader } from "./Preloader";
+import { Onboarding } from "./Onboarding";
 import { NoMobile } from "./NoMobile";
 import { Home } from "./Home";
 import { Signup } from "./Signup";
-import { Login } from "./Login";
+import { ContextMenu } from "./ContextMenu";
 
-import { Minerva } from "./../utils/managers/MinervaInstance";
-import Database from "../utils/managers/Database";
+// managers
+import { Minerva, MinervaArchive } from "./../utils/managers/MinervaInstance";
+import { Typist } from "./../utils/misc";
+import DatabaseInterface from "../utils/managers/Database";
+import AkashicRecord from "./../utils/structures/AkashicRecord";
+
+// tasks
+import setupHotkeys from "./tasks/setupHotkeys";
+
+const dbPath =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8080"
+    : "production";
 
 // when to instantiate this?
-const db = new Database("path here"); // .connect()
+const db = new DatabaseInterface(dbPath);
 
-const minerva = new Minerva({}, db);
+const minerva = new Minerva(MinervaArchive.get("minervaStore") || {}, db);
 
-// Minerva.clearStorage();
+Minerva.clearStorage();
+Minerva.clearSessionStorage();
+
+export const globalContext = createContext(null);
+
+const initialContext = { minerva, db, AkashicRecord };
+
+const { Provider } = globalContext;
 
 export const App = () => {
   const [windowLoaded, setWindowLoaded] = useState(false);
+  const { ctx, setCtx } = useState(initialContext);
+  const [contextMenu, setContextMenu] = useState({
+    position: { x: 0, y: 0 },
+    display: false
+  });
+
+  const [firstLoad, setFirstLoad] = useState(
+    (MinervaArchive.get("minervas_akasha") && false) || true
+  );
+
   const [tooSmall, setTooSmall] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(minerva.get("loggedIn") || false);
+
+  const contextMenuElem = useRef(null);
+
+  const handleContextMenu = (e, hideMenu) => {
+    e.preventDefault();
+
+    return setContextMenu({
+      position: { x: e.clientX, y: e.clientY },
+      display: hideMenu
+    });
+  };
+
+  // set up hotkey listeners on initial load
+  useEffect(() => {
+    setupHotkeys();
+  }, []);
+
+  useEffect(
+    () => {
+      if (loggedIn) {
+        minerva.set("loggedIn", true, "user");
+
+        setFirstLoad(false);
+      } else if (!loggedIn) {
+        minerva.set("loggedIn", false, "user");
+      }
+    },
+    [loggedIn]
+  );
 
   const [godMessage, setGodMessage] = useState({
     display: false,
@@ -34,9 +99,22 @@ export const App = () => {
 
   const [statusMessage, setStatusMessage] = useState({
     display: false,
-    text: " ",
+    text: "",
     type: null
   });
+
+  useEffect(
+    () => {
+      new Typist(setStatusText, statusMessage.text).scramble();
+    },
+    [statusMessage.text]
+  );
+
+  const [statusText, setStatusText] = useState(statusMessage.text);
+
+  useEffect(() => {
+    new Typist(setStatusText, statusMessage.text).scramble();
+  }, []);
 
   // test for screen getting too small
   const smallScreen = window.matchMedia("(max-width: 1200px)");
@@ -45,41 +123,81 @@ export const App = () => {
 
   smallScreen.addListener(smallScreenTest);
 
-  // make a setwindowloaded function that can be passed to the preloader
-  // component so the preloader itself can dictate when it should be
-  // removed
-
-  // if (windowLoaded) {
-  if (true) {
+  if (windowLoaded) {
+    // if (true) {
+    // effects canvases / other graphical elements here / crt filter
+    // brightness / color filters / cursor click effects outside switch
     return (
-      <Router>
-        <section className={statusMessage.type} id="status-message">
-          <div>{statusMessage.text}</div>
-        </section>
+      <Provider value={initialContext}>
+        <Router>
+          <section
+            onContextMenu={e => {
+              handleContextMenu(e, true);
+            }}
+            onClick={e => {
+              handleContextMenu(e, false);
+            }}
+          >
+            <section id="status-message">
+              <div className={statusMessage.type}>
+                <div>{statusText}</div>
+              </div>
+            </section>
+            {contextMenu.display && (
+              <ContextMenu
+                contextMenuElem={contextMenuElem}
+                contextMenu={contextMenu}
+              />
+            )}
 
-        <Switch>
-          // main screen
-          <Route exact path="/home">
-            <Home minerva={minerva} />
-          </Route>
-          // signup screen
-          <Route exact path="/">
-            <Signup
-              minerva={minerva}
-              statusMessage={statusMessage}
-              setStatusMessage={setStatusMessage}
-            />
-          </Route>
-          // login component
-          <Route exact path="/login">
-            <Login
-              minerva={minerva}
-              statusMessage={statusMessage}
-              setStatusMessage={setStatusMessage}
-            />
-          </Route>
-        </Switch>
-      </Router>
+            <section id="filters">
+              <div id="crt-overlay" />
+            </section>
+
+            {/* godmessage */}
+            <section />
+
+            {!loggedIn && firstLoad && <Redirect to="/signup" />}
+
+            {!firstLoad && !loggedIn && <Redirect to="/login" />}
+
+            {!firstLoad && loggedIn && <Redirect to="/" />}
+
+            <Switch>
+              {/* main screen */}
+              <Route exact path="/">
+                <Home />
+              </Route>
+              {/* onboarding screen */}
+              <Route exact path="/onboard">
+                <Onboarding />
+              </Route>
+              {/* signup screen */}
+              <Route exact path="/signup">
+                <Signup
+                  loginScreenInstead={false}
+                  statusMessage={statusMessage}
+                  setStatusMessage={setStatusMessage}
+                  setStatusText={setStatusText}
+                  setLoggedIn={setLoggedIn}
+                />
+              </Route>
+              {/* login component */}
+              <Route exact path="/login">
+                <Signup
+                  loginScreenInstead={true}
+                  statusMessage={statusMessage}
+                  setStatusMessage={setStatusMessage}
+                  setStatusText={setStatusText}
+                  setLoggedIn={setLoggedIn}
+                />
+              </Route>
+            </Switch>
+
+            <section id="effects-canvas">{/* effects canvas */}</section>
+          </section>
+        </Router>
+      </Provider>
     );
   }
 
@@ -87,5 +205,5 @@ export const App = () => {
   // the user to use a larger device
   if (tooSmall) return <NoMobile />;
 
-  // return <Preloader setWindowLoaded={setWindowLoaded} />;
+  return <Preloader setWindowLoaded={setWindowLoaded} />;
 };
