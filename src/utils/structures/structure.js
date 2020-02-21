@@ -24,6 +24,9 @@ export class Structure {
     // structures to smaller types.
     this.connectedTo = (options && options.connectedTo) || [];
 
+    // shows the data within the structure in object format, for storage
+    this.data = {};
+
     // these color codes are applied to data structures' html representations as css
     // classes, which are used to apply colors to the elements.
     this.colorCode = (options && options.colorCode) || colorcodes.white;
@@ -70,6 +73,8 @@ export class Structure {
       throw new SyntaxError("invalid argument to connect.");
 
     this.connectedTo.push(node);
+
+    this.data[node.constructor.name] = node.data;
   }
 
   disconnect(node) {
