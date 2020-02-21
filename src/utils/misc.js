@@ -1,4 +1,11 @@
 /* eslint no-useless-escape: 0 */
+// import keySound from "./../assets/audio/computer/sine-small-quiet.wav";
+import keySound from "./../assets/audio/computer/sine-short.wav";
+import audiomanager from "./audiomanager";
+
+const m = new audiomanager();
+
+m.load([{ file: keySound, name: "key" }]);
 
 export const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -15,8 +22,6 @@ export class Typist {
     this.setter = setter;
     this.string = string;
     this.complete = false;
-
-    console.log(this.string);
   }
 
   type() {
@@ -32,7 +37,7 @@ export class Typist {
     }, this.delay);
   }
 
-  scramble() {
+  scramble(sound = true) {
     const chars = "abcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*";
 
     // random char from a string or array of strings
@@ -48,6 +53,8 @@ export class Typist {
       if (i < this.string.length) {
         // this is true if we are at the end of the string.
         const c = this.string.length - 1 === i;
+
+        if (sound) m.play("key");
 
         // if we are at the end of the string as determined above,
         // return an empty string to avoid adding a random char at
