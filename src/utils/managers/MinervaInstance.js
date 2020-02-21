@@ -8,15 +8,26 @@ import { uuidv4 } from "./../misc";
 // it's also responsible for storing the overall state of the application, including
 // volume, graphical settings, preferences, etc.
 export class Minerva {
-  constructor(settings, database) {
-    this.user = null;
+  constructor(options, database) {
+    this.user = options.user || null;
     this.record = null;
 
-    this.settings = settings;
+    this.settings = {};
 
     this.database = database;
 
-    this.userId = null;
+    // maybe don't do this?
+    this.userId = options.user?.id || null;
+  }
+
+  changeSetting(setting, value) {
+    switch (setting) {
+      case "volume":
+        this.settings[setting] = value;
+        return;
+      default:
+        return;
+    }
   }
 
   login(user, newUser = false, database = false) {
@@ -49,24 +60,34 @@ export class Minerva {
   }
 
   logout(user) {
-    MinervaArchive.remove("minervas_akasha");
-    MinervaArchive.remove(user.name);
-    Minerva.removeSession("loggedIn");
+    // MinervaArchive.remove("minervas_akasha");
+    // MinervaArchive.remove(user.name);
+
+    MinervaArchive.set("logged_in", false);
+
+    this.user = null;
+    this.record = null;
+    this.userId = null;
+
+    this.settings = {};
   }
 
   search(user, database = false) {
+    console.trace("trace user from search,", user);
+
     if (database) {
       // search in database
     }
 
     return new Promise((resolve, _reject) => {
-      if (this.get(user.username)) {
-        resolve(this.get(user.username));
+      if (this.get(user.name)) {
+        resolve(this.get(user.name));
       } else resolve(false);
     });
   }
 
   get(item, type, database = false) {
+    // type is only for searching in the database
     if (database) {
       return new Promise((resolve, reject) => {
         this.database.find(item, type).then(res => {
@@ -110,14 +131,15 @@ export class Minerva {
     const store = {
       user: this.user,
       settings: this.settings,
-      storage: this.storage
+      storage: this.storage,
+      records: this.record
     };
 
-    MinervaArchive.set("minervaStore", store);
+    MinervaArchive.set("minerva_store", store);
   }
 
   load() {
-    return JSON.parse(MinervaArchive.get("minervaStore"));
+    return JSON.parse(MinervaArchive.get("minerva_store"));
   }
 
   setSession(key, item) {
