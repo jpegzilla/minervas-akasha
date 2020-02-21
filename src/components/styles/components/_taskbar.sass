@@ -1,38 +1,100 @@
 @import vars
 
-$size: 3rem
-$hl-color: $pink
+$font: $proggy
 
 #application-taskbar
-  height: $size
-  width: 100vw
+  box-sizing: default
+  width: 100%
+  height: auto
   display: flex
-  z-index: 1
+  border-top: 1px solid $white
 
-  .application-square-buttons
-    +flexcenter
+  #add-item
+    border: 1px solid $white
+    border-left: none
+    border-top: none
+    padding: 0.25rem 0.5rem
+    font-family: $font
 
-    font-size: 1.5rem
-    background-color: $pink
-    transition: background-color 0.4s ease
-    cursor: pointer
-    user-select: none
+  #menu
+    border: 1px solid $white
+    border-top: none
+    padding: 0.25rem 0.5rem
+    font-family: $font
+    position: relative
 
-    &:hover
-      transition: background-color 0.4s ease
-      background-color: transparentize($pink, 0.5)
+    .application-menu
+      display: none
+      color: $white
 
-  #application-menu-button, #application-settings-button
-    height: $size
-    width: $size
-    border-top: 1px solid $hl-color
-    border-left: 1px solid $hl-color
-    border-bottom: 1px solid $hl-color
+      .menu-container
+        display: flex
 
-  #application-settings-button
-    border-right: 1px solid $hl-color
+        b
+          height: 100%
+          width: 1px
+          background-color: $white
+          margin: 0 0.5rem
 
-  #application-windows-list
-    flex: 1
-    background-color: $black
-    border-top: 1px solid $hl-color
+        .menu-container-sidebar
+          span
+            writing-mode: vertical-lr
+            padding: 0.25rem
+
+        .menu-container-items
+          flex-grow: 1
+
+          ul
+            list-style-type: none
+
+            li
+              padding: 0.25rem 0.5rem
+              border: 1px solid $white
+              background-color: $black
+              color: $white
+              position: relative
+
+              &:hover
+                background-color: $white
+                color: $black
+
+            li + li
+              margin-top: 0.5rem
+
+    &.menu-open
+      background-color: $white
+      color: $black
+
+      .application-menu
+        z-index: 2
+        display: flex
+        left: -1px
+        width: max-content
+        background-color: $black
+        position: absolute
+        bottom: calc(100% + 1px)
+        padding: 0.25rem 0.5rem
+        border: 1px solid $white
+        border-bottom: none
+
+  #taskbar-tabs
+    flex-grow: 1
+    list-style-type: none
+    display: flex
+
+    li
+      width: auto
+      display: inline-blocks
+      font-family: $font
+      padding: 0.25rem 0.5rem
+      border: 1px solid $white
+      border-top: none
+      border-left: none
+
+.taskbar-button
+  user-select: none
+  cursor: pointer
+
+  &:hover
+    background-color: $white
+    color: $black
