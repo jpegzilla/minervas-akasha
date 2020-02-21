@@ -19,8 +19,11 @@ export const Signup = props => {
     statusMessage,
     setStatusMessage,
     setLoggedIn,
-    loginScreenInstead
+    loginScreenInstead,
+    routeProps
   } = props;
+
+  const { location } = routeProps;
 
   const clearAll = () => {
     for (let i = 0; i < timeouts.length; i++) {
@@ -50,15 +53,24 @@ export const Signup = props => {
     [allValid]
   );
 
-  const { minerva } = useContext(globalContext);
+  const { minerva, audiomanager } = useContext(globalContext);
 
-  const shakeAnim = () => {
+  const shakeAnim = (type = "error") => {
     if (shake) setShake(false);
+
+    if (type === "warn") audiomanager.play("w_one");
+    if (type === "error") audiomanager.play("e_one");
 
     setShake(true);
 
     setTimeout(() => setShake(false), 250);
   };
+
+  useEffect(() => {
+    if (location.state) if (!location.state.playaudio) return;
+
+    audiomanager.play("i_one");
+  }, []);
 
   useEffect(
     () => {
@@ -79,19 +91,21 @@ export const Signup = props => {
   };
 
   const onSubmitForm = e => {
-    console.log("submit handler fired");
     e.preventDefault();
+
+    if (e.repeat) return;
 
     let shouldSubmit;
 
     if (loginScreenInstead) shouldSubmit = userValid && passwordValid;
     else shouldSubmit = userValid && passwordValid && confirmValid;
+
     if (loginScreenInstead) {
       if (shouldSubmit) {
         // submit form
         // login user
         const user = {
-          username: usernameInput.current.value,
+          name: usernameInput.current.value,
           password: passwordInput.current.value
         };
 
@@ -113,6 +127,8 @@ export const Signup = props => {
               console.log({ err, res });
 
               if (res) {
+                audiomanager.play("s_two");
+
                 setStatusMessage({
                   display: true,
                   text: "login complete.",
@@ -210,6 +226,8 @@ export const Signup = props => {
 
                 console.log(minerva);
 
+                audiomanager.play("s_two");
+
                 setStatusMessage({
                   display: true,
                   text: "status: signup successful.",
@@ -218,10 +236,10 @@ export const Signup = props => {
 
                 setTimeout(t, 3000);
 
-                MinervaArchive.set("minervas_akasha", {
-                  user: minerva.user,
-                  id: minerva.userId
-                });
+                // MinervaArchive.set("minervas_akasha", {
+                //   user: minerva.user,
+                //   id: minerva.userId
+                // });
 
                 setShouldOnboard(true);
                 setFadeOut(true);
@@ -231,6 +249,7 @@ export const Signup = props => {
                   setLoggedIn(true);
                 }, 500);
               } else {
+                // if user exists in localstorage
                 console.log(newUser);
 
                 setStatusMessage({
@@ -239,7 +258,7 @@ export const Signup = props => {
                   type: "warning"
                 });
 
-                shakeAnim();
+                shakeAnim("warn");
 
                 clearAll();
                 timeouts.push(setTimeout(t, 3000));
@@ -271,7 +290,7 @@ export const Signup = props => {
       case "username":
         if (value.length >= 3 && !/\s/gi.test(value)) setUserValid(true);
         if (/\s/gi.test(value)) {
-          shakeAnim();
+          shakeAnim("warn");
 
           // popup message
           setStatusMessage({
@@ -288,7 +307,7 @@ export const Signup = props => {
       case "password":
         if (value.length >= 8 && !/\s/gi.test(value)) setPasswordValid(true);
         if (/\s/gi.test(value)) {
-          shakeAnim();
+          shakeAnim("warn");
 
           // popup message
           setStatusMessage({
