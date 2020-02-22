@@ -8,6 +8,8 @@ $font: $proggy
   height: auto
   display: flex
   border-top: 1px solid $white
+  background-color: $black
+  z-index: 2
 
   #add-item
     border: 1px solid $white
@@ -95,6 +97,9 @@ $font: $proggy
   user-select: none
   cursor: pointer
 
-  &:hover
+  &.active
+    border: 1px solid $pink
+
+  &:hover, &.active
     background-color: $white
     color: $black
