@@ -4,26 +4,25 @@ import { uuidv4 } from "./../utils/misc";
 import { globalContext } from "./App";
 
 export const Taskbar = props => {
-  const { minerva } = props;
+  const {
+    minerva,
+    setWindows,
+    windows,
+    activeWindow,
+    activeWindowId,
+    setActiveWindowId,
+    setActiveWindow
+  } = props;
 
   const { audiomanager } = useContext(globalContext);
 
-  const [activeWindow, setActiveWindow] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [logout, setLogout] = useState(false);
 
-  const [windows, setWindows] = useState([
-    {
-      title: "default tab",
-      type: "window",
-      id: uuidv4(),
-      active: false,
-      size: "restored"
-    }
-  ]);
-
-  const handleClickItem = (event, item) => {};
+  const handleClickItem = (event, item) => {
+    console.log(item);
+  };
 
   const addItem = () => {
     console.log("adding item");
@@ -59,6 +58,13 @@ export const Taskbar = props => {
         console.log("adding new structure.");
       },
       tooltip: "add a new structure."
+    },
+    {
+      title: "open console",
+      onClick: (e, item) => {
+        console.log("clicked", item.title);
+      },
+      tooltip: "open a command console."
     }
   ]);
 
@@ -121,7 +127,11 @@ export const Taskbar = props => {
         {windows.map(w => {
           return (
             <li
-              className="taskbar-button"
+              className={
+                w.id === activeWindowId
+                  ? "taskbar-button active"
+                  : "taskbar-button"
+              }
               onClick={e => {
                 handleClickItem(e, w);
               }}
