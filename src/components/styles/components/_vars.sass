@@ -2,6 +2,7 @@ $black: #111111
 $white: #fefefe
 $pink: #df0971
 $blue: #10116b
+$darkblue: #1c1728
 
 $success: #53b97f
 $fail: #d76864
@@ -28,6 +29,23 @@ $main: "IBM Plex Serif", serif
     --bg-main: #{$black}
     --bg-main-halfop: #{transparentize($black, 0.5)}
     --text-main: #{$white}
+
+=input($display: block, $font: $proggy)
+  transition: border-color 0.5s ease
+  background-color: transparent
+  border: 1px solid $white
+  color: $white
+  font-family: $font
+  padding: 0.75rem 1.25rem
+  font-size: 1rem
+  border-radius: 1px
+
+  &::placeholder
+    font-family: $font
+
+  &:focus
+    outline: 1px solid $pink
+    transition: outline 0.5s ease
 
 =flexcenter($left: false)
   display: flex
