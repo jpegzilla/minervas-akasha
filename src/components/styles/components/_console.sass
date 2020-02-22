@@ -1,0 +1,74 @@
+@import vars
+
+$font: $proggy
+$background: $black
+$color: $white
+$consolebackground: $darkblue
+
+#console-window
+  display: flex
+  font-family: $font
+  border: 1px solid $color
+  border-radius: 2px
+  background-color: $consolebackground
+  min-width: 500px
+  max-width: 500px
+  width: auto
+  height: 400px
+  flex-direction: column
+  will-change: transform
+
+  .console-text
+    flex-grow: 1
+    color: $color
+    padding: 1rem
+    display: flex
+    flex-direction: column
+    overflow-y: auto
+    position: relative
+    scrollbar-width: none
+    overflow: -moz-scrollbars-none
+    -ms-overflow-style: none
+
+    div
+      text-overflow: ellipsis
+
+    &::-webkit-scrollbar
+      display: none
+
+  header
+    padding: 0.25rem 0.5rem
+    border-bottom: 1px solid $white
+    background-color: $background
+    margin-bottom: 1rem
+
+  .console-input
+    +flexcenter(true)
+
+    padding: 0 1rem
+    margin-bottom: 0.5rem
+
+  .console-tag
+    color: $success
+
+  .command-prefix
+    color: $pink
+
+  .console-type
+    color: $fail
+
+  .console-error
+    color: $fail
+
+  .console-command
+    color: $success
+
+  input
+    +input
+
+    padding-left: 0.5rem
+    flex-grow: 1
+
+    &, &:focus, &:active
+      border: none
+      outline: none
