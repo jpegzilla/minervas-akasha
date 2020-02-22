@@ -14,10 +14,12 @@ export class Minerva {
 
     this.settings = {};
 
+    this.windows = [];
+
     this.database = database;
 
     // maybe don't do this?
-    this.userId = options.user?.id || null;
+    this.userId = options.user ? options.user.id : null;
   }
 
   changeSetting(setting, value) {
