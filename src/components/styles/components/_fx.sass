@@ -1,3 +1,10 @@
+*:not(input)
+  will-change: text-shadow
+  animation: textshadow 1.6s infinite
+
+#crt-overlay
+  will-change: background, opacity
+
 #crt-overlay::after
   content: " "
   display: block
