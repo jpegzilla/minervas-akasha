@@ -347,7 +347,7 @@ export const Signup = props => {
             <div className={userValid ? "valid" : ""}>
               <input
                 ref={usernameInput}
-                autoComplete="username"
+                autoComplete="off"
                 onInput={manageInput}
                 type="text"
                 name="username"
