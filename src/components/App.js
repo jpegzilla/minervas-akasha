@@ -144,7 +144,15 @@ export const App = () => {
     // brightness / color filters / cursor click effects outside switch
     return (
       <ErrorBoundary>
-        <Provider value={initialContext}>
+        <Provider
+          value={{
+            ...initialContext,
+            statusMessage,
+            setStatusMessage,
+            statusText,
+            setStatusText
+          }}
+        >
           <Router>
             <section
               onContextMenu={e => {
