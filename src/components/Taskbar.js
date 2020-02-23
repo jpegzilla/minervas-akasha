@@ -3,9 +3,18 @@ import { Redirect } from "react-router-dom";
 import { uuidv4 } from "./../utils/misc";
 import { globalContext } from "./App";
 
+import { Console } from "./windows/Console";
+
+let timeouts = [];
+
+const clearAll = () => {
+  for (let i = 0; i < timeouts.length; i++) {
+    clearTimeout(timeouts[i]);
+  }
+};
+
 export const Taskbar = props => {
   const {
-    minerva,
     setWindows,
     windows,
     activeWindow,
@@ -14,14 +23,23 @@ export const Taskbar = props => {
     setActiveWindow
   } = props;
 
-  const { audiomanager } = useContext(globalContext);
+  const t = () => {
+    setStatusText("");
+    setStatusMessage({ display: false, text: "", type: null });
+  };
+
+  const { audiomanager, setStatusMessage, setStatusText, minerva } = useContext(
+    globalContext
+  );
 
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [logout, setLogout] = useState(false);
 
   const handleClickItem = (event, item) => {
-    console.log(item);
+    console.log("clicked on", item);
+
+    setActiveWindowId(item.id);
   };
 
   const addItem = () => {
@@ -63,10 +81,30 @@ export const Taskbar = props => {
       title: "open console",
       onClick: (e, item) => {
         console.log("clicked", item.title);
+
+        const newConsole = {
+          title: "console",
+          state: "restored",
+          stringType: "Console",
+          belongsTo: minerva.user.id,
+          id: uuidv4(),
+          position: {
+            x: 100,
+            y: 100
+          }
+        };
+
+        minerva.setWindows([...minerva.windows, newConsole]);
+
+        setWindows([...minerva.windows]);
       },
       tooltip: "open a command console."
     }
   ]);
+
+  useEffect(() => {
+    console.log("useEffect minerva.windows", minerva.windows);
+  }, []);
 
   const applicationMenu = useRef(null);
 
@@ -107,7 +145,11 @@ export const Taskbar = props => {
                 {menuItems.map(i => {
                   return (
                     <li
-                      onClick={i.onClick ? e => i.onClick(e, i) : undefined}
+                      onClick={
+                        i.onClick
+                          ? e => i.onClick(e, i)
+                          : () => console.log("clicked on", i)
+                      }
                       key={uuidv4()}
                       title={i.tooltip || undefined}
                     >
@@ -125,6 +167,8 @@ export const Taskbar = props => {
       </div>
       <ul id="taskbar-tabs">
         {windows.map(w => {
+          if (w.belongsTo !== minerva.user.id) return;
+
           return (
             <li
               className={

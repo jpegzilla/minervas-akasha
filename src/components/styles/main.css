@@ -939,48 +939,48 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.14s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.42s forwards;
+  animation: flickerout 0.3s ease 2.28s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 2.63s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 2.56s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 2.35s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(6) {
   transition: background-color 0.3s ease 0.3s;
-  animation: flickerout 0.3s ease 2.84s forwards;
+  animation: flickerout 0.3s ease 4.1s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 2.98s forwards;
+  animation: flickerout 0.3s ease 2.49s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 4.24s forwards;
+  animation: flickerout 0.3s ease 3.12s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 3.26s forwards;
+  animation: flickerout 0.3s ease 2.63s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -2425,6 +2425,8 @@ input[type="range"]:focus::-ms-fill-upper {
   flex-direction: column;
   position: absolute;
   height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   width: 100vw;
   isolation: isolate;
 }
@@ -3689,12 +3691,12 @@ input[type="range"]:focus::-ms-fill-upper {
   }
 }
 
-#console-window {
+.console-window {
   display: flex;
   font-family: "liga-proggy-font", monospace;
   border: 1px solid #fefefe;
   border-radius: 2px;
-  background-color: #1c1728;
+  background-color: rgba(28, 23, 40, 0.8);
   min-width: 500px;
   max-width: 500px;
   width: auto;
@@ -3703,7 +3705,15 @@ input[type="range"]:focus::-ms-fill-upper {
   will-change: transform;
 }
 
-#console-window .console-text {
+.console-window.active {
+  z-index: 10;
+}
+
+.console-window:not(.active) {
+  z-index: 1;
+}
+
+.console-window .console-text {
   flex-grow: 1;
   color: #fefefe;
   padding: 1rem;
@@ -3716,22 +3726,22 @@ input[type="range"]:focus::-ms-fill-upper {
   -ms-overflow-style: none;
 }
 
-#console-window .console-text div {
+.console-window .console-text div {
   text-overflow: ellipsis;
 }
 
-#console-window .console-text::-webkit-scrollbar {
+.console-window .console-text::-webkit-scrollbar {
   display: none;
 }
 
-#console-window header {
+.console-window header {
   padding: 0.25rem 0.5rem;
   border-bottom: 1px solid #fefefe;
   background-color: #111111;
   margin-bottom: 1rem;
 }
 
-#console-window .console-input {
+.console-window .console-input {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3740,27 +3750,27 @@ input[type="range"]:focus::-ms-fill-upper {
   margin-bottom: 0.5rem;
 }
 
-#console-window .console-tag {
+.console-window .console-tag {
   color: #53b97f;
 }
 
-#console-window .command-prefix {
+.console-window .command-prefix {
   color: #df0971;
 }
 
-#console-window .console-type {
+.console-window .console-type {
   color: #d76864;
 }
 
-#console-window .console-error {
+.console-window .console-error {
   color: #d76864;
 }
 
-#console-window .console-command {
+.console-window .console-command {
   color: #53b97f;
 }
 
-#console-window input {
+.console-window input {
   transition: border-color 0.5s ease;
   background-color: transparent;
   border: 1px solid #fefefe;
@@ -3773,16 +3783,16 @@ input[type="range"]:focus::-ms-fill-upper {
   flex-grow: 1;
 }
 
-#console-window input::placeholder {
+.console-window input::placeholder {
   font-family: "liga-proggy-font", monospace;
 }
 
-#console-window input:focus {
+.console-window input:focus {
   outline: 1px solid #df0971;
   transition: outline 0.5s ease;
 }
 
-#console-window input, #console-window input:focus, #console-window input:active {
+.console-window input, .console-window input:focus, .console-window input:active {
   border: none;
   outline: none;
 }

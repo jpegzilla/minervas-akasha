@@ -14,7 +14,9 @@ export const Console = props => {
     title,
     id,
     position,
-    setMouseOffset
+    setMouseOffset,
+    activeWindowId,
+    className
   } = props;
   const { x, y } = position;
   const { minerva, audiomanager } = useContext(globalContext);
@@ -25,6 +27,10 @@ export const Console = props => {
 
   const input = useRef(null);
   const cmdLog = useRef(null);
+
+  if (className === "active") {
+    document.getElementById(`${title}-window-${id}`).focus();
+  }
 
   useEffect(() => {
     input.current.focus();
@@ -65,7 +71,7 @@ export const Console = props => {
   };
 
   const handleMouseDown = (e, bool) => {
-    // setActiveWindowId(id);
+    setActiveWindowId(id);
     if (bool) {
       const rect = e.target.getBoundingClientRect();
       const o = {
@@ -81,9 +87,13 @@ export const Console = props => {
   return (
     <div
       // style={{ transform: `translate(${x}px, ${y}px)` }}
-      style={{ top: y, left: x }}
-      id={`${title}-window`}
-      className={`${title}-window system-window`}
+      style={
+        activeWindowId === id
+          ? { top: y, left: x }
+          : { top: position.y, left: position.x }
+      }
+      id={`${title}-window-${id}`}
+      className={`${title}-window system-window ${className}`}
       onClick={() => {
         setActiveWindowId(id);
         input.current.focus();
