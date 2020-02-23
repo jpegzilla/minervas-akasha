@@ -14,12 +14,20 @@ export class Minerva {
 
     this.settings = {};
 
-    this.windows = [];
+    this.windows = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").windows
+      : [];
 
+    console.log(this.windows);
     this.database = database;
 
     // maybe don't do this?
     this.userId = options.user ? options.user.id : null;
+  }
+
+  setWindows(array) {
+    this.windows = array;
+    this.save();
   }
 
   changeSetting(setting, value) {
@@ -134,7 +142,8 @@ export class Minerva {
       user: this.user,
       settings: this.settings,
       storage: this.storage,
-      records: this.record
+      records: this.record,
+      windows: this.windows
     };
 
     MinervaArchive.set("minerva_store", store);
