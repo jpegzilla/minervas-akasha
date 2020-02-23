@@ -14,40 +14,24 @@ export const Home = () => {
   const [activeWindowId, setActiveWindowId] = useState("");
 
   // windows have three states: minimized, maximized, and restored
-  const [windows, setWindows] = useState([
-    {
-      title: "console",
-      state: "restored",
-      type: Console,
-      id: uuidv4(),
-      position: {
-        x: 100,
-        y: 100
-      }
-    }
-    // {
-    //   title: "default tab",
-    //   type: Window,
-    //   id: uuidv4(),
-    //   active: false,
-    //   size: "restored"
-    // }
-  ]);
+  const [windows, setWindows] = useState(minerva.windows);
 
-  const setPosition = (windowTitle, newPosition) => {
+  const setPosition = (windowId, newPosition) => {
     if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
       throw "invalid parameters to setPosition";
 
-    setWindows(
-      windows.map(item => {
-        return item.title === windowTitle
-          ? {
-              ...item,
-              position: newPosition
-            }
-          : item;
-      })
-    );
+    const newWindows = windows.map(item => {
+      return item.id === windowId
+        ? {
+            ...item,
+            position: newPosition
+          }
+        : item;
+    });
+
+    minerva.setWindows(newWindows);
+
+    setWindows([...newWindows]);
   };
 
   const [mouseOffset, setMouseOffset] = useState([0, 0]);
@@ -57,7 +41,7 @@ export const Home = () => {
       const { clientX, clientY } = e;
 
       requestAnimationFrame(() =>
-        setPosition(activeWindow, {
+        setPosition(activeWindowId, {
           x: clientX - mouseOffset[0],
           y: clientY - mouseOffset[1]
         })
@@ -77,15 +61,27 @@ export const Home = () => {
       <Topbar minerva={minerva} />
       <section id="main-container">
         {windows.map((item, i) => {
-          const Component = item.type;
+          if (item.belongsTo !== minerva.user.id) return;
+
+          const typeMap = {
+            Console: Console
+          };
+
+          const Component = typeMap[item.stringType];
+
+          let isActive = "";
+
+          if (item.id === activeWindowId) isActive = "active";
 
           return (
             <Component
+              className={isActive}
               key={`${item.title}-window-${i}`}
               position={item.position}
               title={item.title}
               setPosition={setPosition}
               setActiveWindowId={setActiveWindowId}
+              activeWindowId={activeWindowId}
               setActiveWindow={setActiveWindow}
               setMouseOffset={setMouseOffset}
               id={item.id}
@@ -98,7 +94,6 @@ export const Home = () => {
         setActiveWindow={setActiveWindow}
         activeWindowId={activeWindowId}
         setActiveWindowId={setActiveWindowId}
-        minerva={minerva}
         windows={windows}
         setWindows={setWindows}
       />
