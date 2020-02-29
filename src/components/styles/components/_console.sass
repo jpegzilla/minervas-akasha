@@ -1,8 +1,8 @@
 @import vars
 
 $font: $proggy
-$background: $black
-$color: $white
+$background: var(--bg-main)
+$color: var(--text-main)
 $consolebackground: $darkblue
 
 .console-window
@@ -11,18 +11,16 @@ $consolebackground: $darkblue
   border: 1px solid $color
   border-radius: 2px
   background-color: transparentize($consolebackground, 0.2)
-  min-width: 500px
-  max-width: 500px
+
+  $w: 40vw
+  $h: 40vh
+
+  min-width: $w
+
+  // max-width: $w
   width: auto
-  height: 400px
+  height: $h
   flex-direction: column
-  will-change: transform
-
-  &.active
-    z-index: 10
-
-  &:not(.active)
-    z-index: 1
 
   .console-text
     flex-grow: 1
@@ -41,12 +39,6 @@ $consolebackground: $darkblue
 
     &::-webkit-scrollbar
       display: none
-
-  header
-    padding: 0.25rem 0.5rem
-    border-bottom: 1px solid $white
-    background-color: $background
-    margin-bottom: 1rem
 
   .console-input
     +flexcenter(true)
