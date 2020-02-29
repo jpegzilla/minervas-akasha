@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { uuidv4 } from "./../utils/misc";
 
+import PropTypes from "prop-types";
+
 export const ContextMenu = props => {
   const { contextMenu, contextMenuElem } = props;
   const { x, y } = contextMenu.position;
   const [subItems, setSubItems] = useState({ display: false, id: null });
 
+  // hook with initial context menu items / subitems.
+  // setctxmenuitems may be used in the future if context
+  // menu needs to change depending on where it triggers.
+  // every item must have an onclick function.
   const [ctxMenuItems, setCtxMenuItems] = useState([
     {
       title: "example",
@@ -36,6 +42,7 @@ export const ContextMenu = props => {
   const top = y + "px";
 
   // maybe use index for something?
+  // handle item click by triggering item's onclick function
   const handleItemClicked = (e, item, idx) => {
     e.stopPropagation();
 
@@ -85,4 +92,9 @@ export const ContextMenu = props => {
       ))}
     </div>
   );
+};
+
+ContextMenu.propTypes = {
+  contextMenu: PropTypes.object,
+  contextMenuElem: PropTypes.object
 };
