@@ -10,9 +10,6 @@ export class Structure {
     // determines state of display
     this.display = (options && options.display) || "visible";
 
-    // determines screen position
-    this.position = (options && options.position) || { x: 0, y: 0 };
-
     // used to search for the structure and display a name.
     this.name = name;
 
