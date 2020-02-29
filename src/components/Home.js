@@ -121,6 +121,8 @@ export const Home = () => {
   // #########################################################
   // DEBUG: this hook is ONLY to watch for minerva's record becoming
   // empty during normal operation. if that happens, this hook will throw.
+  // this should no longer exist in later versions, because minerva's record
+  // will be more robust.
   useEffect(
     () => {
       if (Object.keys(minerva.record).length < 1) {
@@ -137,6 +139,7 @@ export const Home = () => {
   );
   // #########################################################
 
+  // this is the function that moves the windows around.
   const setPosition = (windowId, newPosition) => {
     if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
       throw new TypeError("invalid parameters to setPosition");
@@ -161,6 +164,8 @@ export const Home = () => {
   const [mouseOffset, setMouseOffset] = useState([0, 0]);
   const taskBarMenuRef = useRef(null);
 
+  // function that determines the amount to move windows based on mouse position and offset.
+  // currently, the mouse offset is a little broken.
   const handleMouseMove = e => {
     if (activeWindow) {
       const { clientX, clientY } = e;
@@ -176,6 +181,10 @@ export const Home = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // object to track how many components there are of a certain type.
+  // this is to help react correctly identify components by providing
+  // a robust and accurate / change-resistant key to each component
+  // in the list.
   const componentCounts = {};
 
   return (
@@ -201,7 +210,8 @@ export const Home = () => {
       >
         {windows.map((item, i) => {
           if (item.belongsTo === minerva.user.id) {
-            // if item is offscreen, reset
+            // if item is offscreen, reset.
+            // this should maybe change to use the iselementinviewport utility.
             if (
               item.position.x < 0 ||
               item.position.y < 0 ||
@@ -213,6 +223,10 @@ export const Home = () => {
                 y: 100
               };
 
+            // this needs to exist so that the correct component is rendered.
+            // this object must contain every type of component that the home
+            // screen needs to render, becuase it uses a dynamic component
+            // jsx name or whatever it's called. lol
             const typeMap = {
               Console: Console,
               Window: Window,
@@ -222,6 +236,7 @@ export const Home = () => {
 
             const Component = typeMap[item.stringType];
 
+            // flag for active class
             let isActive = "";
 
             if (item.id === activeWindowId) isActive = "active";
