@@ -11,13 +11,37 @@ $font: $proggy
   max-height: 100vh
   overflow: hidden
   width: 100vw
+  top: 0
+  left: 0
   isolation: isolate
 
   #main-container
-    flex: 1
-    width: 100vw
+    border: 2px solid transparent
     display: flex
+    flex-grow: 1
+    height: 100%
+    overflow: hidden
+    position: relative
+    top: 0
+    width: 100vw
     z-index: 1
+
+    &.active
+      border: 2px dotted $pink
+      position: relative
+
+      &::after
+        display: flex
+        padding: 2rem
+        content: "+ drop to add file"
+        height: 100%
+        width: 100%
+        font-family: $proggy
+        font-size: 2rem
+        color: var(--text-main)
+        background-color: var(--bg-main)
+        position: absolute
+        opacity: 0.2
 
     #desktop
       flex: 1
