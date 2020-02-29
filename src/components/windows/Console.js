@@ -4,20 +4,23 @@ import { uuidv4 } from "./../../utils/misc";
 import { parseCommand } from "./../../utils/commandParser";
 
 import { globalContext } from "./../App";
-
-let mouseDown = false;
+import PropTypes from "prop-types";
 
 export const Console = props => {
   const {
+    windows,
     setActiveWindow,
     setActiveWindowId,
-    title,
-    id,
-    position,
+    item,
     setMouseOffset,
     activeWindowId,
-    className
+    setWindows,
+    className,
+    num
   } = props;
+
+  const { title, id, state, position } = item;
+
   const { x, y } = position;
   const { minerva, audiomanager } = useContext(globalContext);
   const [command, setCommand] = useState("");
@@ -74,26 +77,68 @@ export const Console = props => {
     setActiveWindowId(id);
     if (bool) {
       const rect = e.target.getBoundingClientRect();
+
+      // this is to get the position of the cursor
+      // relative to the element in the window
       const o = {
         top: rect.top + document.body.scrollTop,
         left: rect.left + document.body.scrollLeft
       };
 
-      setMouseOffset([e.clientX - o.left, e.clientY - o.top]);
+      // TODO: come back and un hardcode this
+      setMouseOffset([e.clientX - o.left, e.clientY - o.top + 30]);
+
+      // reset offset if mouse is not clicked
     } else setMouseOffset([0, 0]);
+
+    // set active window title
     setActiveWindow(bool ? title : "");
+  };
+
+  // handle commands such as minimize, maximize, close
+  const handleWindowCommand = (e, command) => {
+    e.stopPropagation();
+
+    const { state } = command;
+
+    if (state) {
+      switch (state) {
+        case "minimized":
+          setWindows([
+            ...windows.map(w => {
+              // set state to minimized, or return the existing window object
+              return w.id === id
+                ? {
+                    ...w,
+                    state
+                  }
+                : w;
+            })
+          ]);
+          return;
+        default:
+          throw new Error("something went very wrong");
+      }
+    } else {
+      switch (command) {
+        case "close":
+          setWindows([...windows.filter(w => (w.id === id ? false : true))]);
+          return;
+        default:
+          return;
+      }
+    }
   };
 
   return (
     <div
-      // style={{ transform: `translate(${x}px, ${y}px)` }}
       style={
         activeWindowId === id
-          ? { top: y, left: x }
-          : { top: position.y, left: position.x }
+          ? { transform: `translate3d(${x}px, ${y}px, 0)` }
+          : { transform: `translate3d(${position.x}px, ${position.y}px, 0)` }
       }
       id={`${title}-window-${id}`}
-      className={`${title}-window system-window ${className}`}
+      className={`${title}-window system-window ${className} window-${state}`}
       onClick={() => {
         setActiveWindowId(id);
         input.current.focus();
@@ -105,34 +150,64 @@ export const Console = props => {
         onMouseDown={e => handleMouseDown(e, true)}
         onMouseUp={e => handleMouseDown(e, false)}
       >
-        {title}
+        <span>{`${title} (${num})`}</span>
+        <b />
+        <span className="window-controls">
+          <div
+            className="window-controls-min"
+            onClick={e => handleWindowCommand(e, { state: "minimized" })}
+          >
+            -
+          </div>
+          <div
+            className="window-controls-close"
+            onClick={e => handleWindowCommand(e, "close")}
+          >
+            x
+          </div>
+        </span>
       </header>
 
-      {/* command log */}
-      <section ref={cmdLog} className="console-text">
-        {log.map(e => (
-          <div className={`console-${e.type}`} key={uuidv4()}>
-            {e.text}
-          </div>
-        ))}
-      </section>
+      <section className="window-content">
+        {/* command log */}
+        <section ref={cmdLog} className="console-text">
+          {log.map(e => (
+            <div className={`console-${e.type}`} key={uuidv4()}>
+              {e.text}
+            </div>
+          ))}
+        </section>
 
-      {/* input */}
-      <div className="console-input">
-        <span className="command-prefix">
-          {minerva.user.name}
-          @minerva.akasha <span className="console-tag">MNRV</span>
-          &nbsp;
-          <span className="console-type">~!</span>
-        </span>
-        <input
-          onKeyPress={handleCommand}
-          onChange={e => setCommand(e.target.value)}
-          type="text"
-          ref={input}
-          value={command}
-        />
-      </div>
+        {/* input */}
+        <div className="console-input">
+          <span className="command-prefix">
+            {minerva.user.name}
+            @minerva.akasha <span className="console-tag">MNRV</span>
+            &nbsp;
+            <span className="console-type">~!</span>
+          </span>
+          <input
+            autoComplete="new-password"
+            onKeyPress={handleCommand}
+            onChange={e => setCommand(e.target.value)}
+            type="text"
+            ref={input}
+            value={command}
+          />
+        </div>
+      </section>
     </div>
   );
+};
+
+Console.propTypes = {
+  windows: PropTypes.array,
+  setActiveWindow: PropTypes.func,
+  setActiveWindowId: PropTypes.func,
+  item: PropTypes.object,
+  setMouseOffset: PropTypes.func,
+  activeWindowId: PropTypes.string,
+  setWindows: PropTypes.func,
+  className: PropTypes.string,
+  num: PropTypes.number
 };
