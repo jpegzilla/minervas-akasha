@@ -12,6 +12,8 @@ const text = {
   post: "enter"
 };
 
+// container for all timeouts. this way, if all timeouts need to be cleared,
+// I can loop through this array to clear them all.
 let timeouts = [];
 
 export const Signup = props => {
@@ -27,11 +29,7 @@ export const Signup = props => {
 
   const { location } = routeProps;
 
-  const clearAll = () => {
-    for (let i = 0; i < timeouts.length; i++) {
-      clearTimeout(timeouts[i]);
-    }
-  };
+  const clearAll = () => timeouts.forEach(t => clearTimeout(t));
 
   const [finished, setFinished] = useState(false);
   const [userValid, setUserValid] = useState(false);
