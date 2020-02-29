@@ -4,15 +4,30 @@ import keySound from "./../assets/audio/computer/sine-short.wav";
 import audiomanager from "./audiomanager";
 
 const m = new audiomanager();
-
+// load key sound into audio manager for typing sound
 m.load([{ file: keySound, name: "key" }]);
 
+/**
+ * getRandomInt - get a random number from within a range
+ *
+ * @param {number} min minimum number that can be generated
+ * @param {number} max maximum number that can be generated
+ *
+ * @returns {number} a random number within the provided range
+ */
 export const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 };
 
+/**
+ * isElementInViewport - determines whether an element is in the viewport
+ *
+ * @param {HTMLElement} el the element to find in the viewport
+ *
+ * @returns {boolean} true if element is in view, false if not
+ */
 export const isElementInViewport = el => {
   const rect = el.getBoundingClientRect();
   return (
