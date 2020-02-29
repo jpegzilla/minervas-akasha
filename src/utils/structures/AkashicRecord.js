@@ -1,12 +1,10 @@
 import { uuidv4 } from "./../misc";
-import {
-  Structure,
-  Hypostasis,
-  Shard,
-  Node,
-  Grimoire,
-  Athenaeum
-} from "./structure";
+import { Structure } from "./structure";
+// import { Shard } from "./shard";
+// import { Grimoire } from "./grimoire";
+// import { Node } from "./node";
+// import { Hypostasis } from "./hypostasis";
+// import { Athenaeum } from "./athenaeum";
 import { Minerva } from "./../managers/MinervaInstance";
 
 // the master structure, meant to represent a user's entire environment when working
@@ -27,6 +25,14 @@ export default class AkashicRecord {
       node: [],
       shard: []
     };
+  }
+
+  parseStructures(data) {
+    // parse and reconstruct data by iterating over the json object from localstorage
+
+    for (let [k, v] of Object.entries(data)) {
+      console.log({ key: k, value: v });
+    }
   }
 
   setBoundTo(userId) {
