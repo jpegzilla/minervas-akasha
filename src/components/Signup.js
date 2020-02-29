@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
 import { globalContext } from "./App";
 import { MinervaArchive } from "./../utils/managers/MinervaInstance";
+import PropTypes from "prop-types";
 
 import { uuidv4, Typist } from "./../utils/misc";
 import bcrypt from "bcryptjs";
@@ -16,12 +17,13 @@ let timeouts = [];
 export const Signup = props => {
   const {
     setStatusText,
-    statusMessage,
     setStatusMessage,
     setLoggedIn,
     loginScreenInstead,
     routeProps
   } = props;
+
+  console.log(props);
 
   const { location } = routeProps;
 
@@ -35,7 +37,6 @@ export const Signup = props => {
   const [userValid, setUserValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
   const [confirmValid, setConfirmValid] = useState(false);
-  const [shouldOnboard, setShouldOnboard] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [allValid, setAllValid] = useState(false);
 
@@ -66,11 +67,14 @@ export const Signup = props => {
     setTimeout(() => setShake(false), 250);
   };
 
-  useEffect(() => {
-    if (location.state) if (!location.state.playaudio) return;
+  useEffect(
+    () => {
+      if (location.state) if (!location.state.playaudio) return;
 
-    audiomanager.play("i_one");
-  }, []);
+      audiomanager.play("i_one");
+    },
+    [audiomanager, location.state]
+  );
 
   useEffect(
     () => {
@@ -79,7 +83,7 @@ export const Signup = props => {
         setAllValid(true);
       else setAllValid(false);
     },
-    [userValid, passwordValid, confirmValid]
+    [loginScreenInstead, userValid, passwordValid, confirmValid]
   );
 
   const passwordInput = useRef(null);
@@ -134,6 +138,9 @@ export const Signup = props => {
                   text: "login complete.",
                   type: "success"
                 });
+
+                // set akashic record with stored data here!!
+                // AkashicRecord
 
                 clearAll();
                 timeouts.push(setTimeout(t, 3000));
@@ -236,12 +243,9 @@ export const Signup = props => {
 
                 setTimeout(t, 3000);
 
-                // MinervaArchive.set("minervas_akasha", {
-                //   user: minerva.user,
-                //   id: minerva.userId
-                // });
+                // set akashic record with stored data here!!
+                // AkashicRecord
 
-                setShouldOnboard(true);
                 setFadeOut(true);
 
                 setTimeout(() => {
@@ -250,7 +254,6 @@ export const Signup = props => {
                 }, 500);
               } else {
                 // if user exists in localstorage
-                console.log(newUser);
 
                 setStatusMessage({
                   display: true,
@@ -327,6 +330,11 @@ export const Signup = props => {
         else setConfirmValid(false);
 
         break;
+
+      default:
+        throw new Error(
+          "this error should only show if there were another input on the form that wasn't a username or password input. how did you even get this to happen...?"
+        );
     }
   };
 
@@ -447,4 +455,12 @@ export const Signup = props => {
       </section>
     </section>
   );
+};
+
+Signup.propTypes = {
+  setStatusText: PropTypes.func,
+  setStatusMessage: PropTypes.func,
+  setLoggedIn: PropTypes.func,
+  loginScreenInstead: PropTypes.bool,
+  routeProps: PropTypes.object
 };
