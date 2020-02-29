@@ -1,4 +1,3 @@
-import { minerva } from "./../components/App";
 import { uuidv4 } from "./misc";
 
 export default class AudioManager {
