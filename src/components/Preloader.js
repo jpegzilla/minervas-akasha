@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Typist } from "./../utils/misc";
 import { globalContext } from "./App";
+import PropTypes from "prop-types";
 
 // audio files
 import click from "./../assets/audio/computer/click-short.wav";
 import noise from "./../assets/audio/computer/click-noise.wav";
-import err_one from "./../assets/audio/computer/error-one.wav";
+import e_one from "./../assets/audio/computer/error-one.wav";
 import s_one from "./../assets/audio/computer/success-dist.wav";
 import s_two from "./../assets/audio/computer/success-two.wav";
 import k_one from "./../assets/audio/computer/keypress-one.wav";
@@ -33,31 +34,33 @@ export const Preloader = props => {
   const [finished, setFinished] = useState(false);
 
   // scramble the loading screen text. but only once!
-  useEffect(() => {
-    let loadingTypist = new Typist(setPreloaderText, text);
-    loadingTypist.scramble(false);
+  useEffect(
+    () => {
+      let loadingTypist = new Typist(setPreloaderText, text);
+      loadingTypist.scramble(false);
 
-    // load all audio files
-    const files = [
-      { file: click, name: "click" },
-      { file: noise, name: "noise" },
-      { file: err_one, name: "e_one" },
-      { file: s_one, name: "s_one" },
-      { file: s_two, name: "s_two" },
-      { file: k_one, name: "k_one" },
-      { file: w_one, name: "w_one" },
-      { file: c_one, name: "c_one" },
-      { file: o_one, name: "o_one" },
-      { file: su_two, name: "su_two" },
-      { file: i_one, name: "i_one" }
-    ];
+      // load all audio files
+      const files = [
+        { file: click, name: "click" },
+        { file: noise, name: "noise" },
+        { file: e_one, name: "e_one" },
+        { file: s_one, name: "s_one" },
+        { file: s_two, name: "s_two" },
+        { file: k_one, name: "k_one" },
+        { file: w_one, name: "w_one" },
+        { file: c_one, name: "c_one" },
+        { file: o_one, name: "o_one" },
+        { file: su_two, name: "su_two" },
+        { file: i_one, name: "i_one" }
+      ];
 
-    audiomanager.load(files).then(files => {
-      console.log(files);
-      setAudioLoaded(true);
-    });
-    setup(audiomanager);
-  }, []);
+      audiomanager.load(files).then(files => {
+        setAudioLoaded(true);
+      });
+      setup(audiomanager);
+    },
+    [audiomanager]
+  );
 
   // TODO: remove this timeout hell
   // setTimeout(() => {
@@ -82,7 +85,7 @@ export const Preloader = props => {
     () => {
       if (finished) setWindowLoaded(true);
     },
-    [finished]
+    [setWindowLoaded, finished]
   );
 
   return (
@@ -136,4 +139,8 @@ export const Preloader = props => {
       </section>
     </section>
   );
+};
+
+Preloader.propTypes = {
+  setWindowLoaded: PropTypes.func
 };
