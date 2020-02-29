@@ -13,6 +13,17 @@ export const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 };
 
+export const isElementInViewport = el => {
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};
+
 /**
  * Typist - class for creating typing animations
  */
@@ -24,7 +35,7 @@ export class Typist {
     this.complete = false;
   }
 
-  type() {
+  type(sound = true) {
     let i = 0;
 
     const typer = setInterval(() => {
@@ -33,6 +44,8 @@ export class Typist {
         this.complete = true;
         clearInterval(typer);
       }
+
+      if (sound) m.play("key");
       i++;
     }, this.delay);
   }
