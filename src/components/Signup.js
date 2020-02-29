@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
-import { globalContext } from "./App";
 import { MinervaArchive } from "./../utils/managers/MinervaInstance";
 import PropTypes from "prop-types";
-
 import { uuidv4, Typist } from "./../utils/misc";
+import { globalContext } from "./App";
 import bcrypt from "bcryptjs";
 
+// text for when the form is complete or incomplete
 const text = {
   pre: "incomplete...",
   post: "enter"
@@ -25,8 +25,6 @@ export const Signup = props => {
     routeProps
   } = props;
 
-  console.log(props);
-
   const { location } = routeProps;
 
   const clearAll = () => timeouts.forEach(t => clearTimeout(t));
@@ -41,6 +39,7 @@ export const Signup = props => {
   const [shake, setShake] = useState(false);
   const [enterText, setEnterText] = useState("");
 
+  // if fields are valid, write the confirmation text. if not, write the denial text.
   useEffect(
     () => {
       if (!allValid) {
@@ -54,6 +53,7 @@ export const Signup = props => {
 
   const { minerva, audiomanager } = useContext(globalContext);
 
+  // error function that just shakes the form and plays an error sound
   const shakeAnim = (type = "error") => {
     if (shake) setShake(false);
 
@@ -65,6 +65,8 @@ export const Signup = props => {
     setTimeout(() => setShake(false), 250);
   };
 
+  // if this page has been reached from somewhere where the intro sound should not play,
+  // location.state.playaudio will be false. this prevents the intro sound from playing.
   useEffect(
     () => {
       if (location.state) if (!location.state.playaudio) return;
@@ -74,6 +76,7 @@ export const Signup = props => {
     [audiomanager, location.state]
   );
 
+  // determine whether all fields are valid or not.
   useEffect(
     () => {
       if (userValid && passwordValid && confirmValid) setAllValid(true);
@@ -87,6 +90,7 @@ export const Signup = props => {
   const passwordInput = useRef(null);
   const usernameInput = useRef(null);
 
+  // simple function to clear the status method
   const t = () => {
     setStatusText("");
     setStatusMessage({ display: false, text: "", type: null });
@@ -140,16 +144,15 @@ export const Signup = props => {
                 // set akashic record with stored data here!!
                 // AkashicRecord
 
+                // this code clears all timeouts and then adds the latest one
                 clearAll();
                 timeouts.push(setTimeout(t, 3000));
 
                 // create user's minerva instance
                 minerva.login(u);
 
-                console.log("user during login", u);
-
-                console.log("after login", minerva);
-
+                // set minervas_akasha, a key made in order to determine the current
+                // signed-in user
                 MinervaArchive.set("minervas_akasha", {
                   user: minerva.user,
                   id: minerva.userId
@@ -190,7 +193,7 @@ export const Signup = props => {
       }
     } else {
       if (shouldSubmit) {
-        // submit form
+        // submit form if all necessary inputs are valid
         // create new user
         bcrypt.genSalt(10, (err, salt) => {
           if (err) {
@@ -213,6 +216,8 @@ export const Signup = props => {
                 type: "fail"
               });
 
+            // this object is only created once, on initial signup. it is important that
+            // the id and datecreated never change after initial creation.
             const newUser = {
               dateCreated: new Date().toISOString(),
               password: hash,
@@ -220,9 +225,10 @@ export const Signup = props => {
               name: usernameInput.current.value
             };
 
+            // minerva search in order to make sure the user actually exists
             minerva.search(newUser).then(user => {
-              // do new user things
-
+              // if user doesn't exist after attempting to sign up
+              // (which it should not)
               if (!user) {
                 minerva.set(newUser.name, newUser, "user");
 
@@ -251,8 +257,7 @@ export const Signup = props => {
                   setLoggedIn(true);
                 }, 500);
               } else {
-                // if user exists in localstorage
-
+                // if user exists in localstorage, warn the user to just go ahead and log in
                 setStatusMessage({
                   display: true,
                   text: "error: user already exists! please log in.",
@@ -268,9 +273,9 @@ export const Signup = props => {
           });
         });
       } else {
+        // this block is sort of a catch-all for any mistakes the user made in the form
         shakeAnim();
 
-        // popup message
         setStatusMessage({
           display: true,
           text: "error: invalid form",
@@ -283,6 +288,8 @@ export const Signup = props => {
     }
   };
 
+  // function that fires on input. validates all fields and plays
+  // warnings if input is invalid in some way.
   const manageInput = e => {
     const { name, value } = e.target;
     const { value: confirm } = passwordInput.current;
@@ -290,10 +297,11 @@ export const Signup = props => {
     switch (name) {
       case "username":
         if (value.length >= 3 && !/\s/gi.test(value)) setUserValid(true);
+
+        // detect any spaces in username
         if (/\s/gi.test(value)) {
           shakeAnim("warn");
 
-          // popup message
           setStatusMessage({
             display: true,
             text: "warning: username cannot contain spaces",
@@ -307,10 +315,11 @@ export const Signup = props => {
         break;
       case "password":
         if (value.length >= 8 && !/\s/gi.test(value)) setPasswordValid(true);
+
+        // detect any spaces in password
         if (/\s/gi.test(value)) {
           shakeAnim("warn");
 
-          // popup message
           setStatusMessage({
             display: true,
             text: "warning: password cannot contain spaces",
@@ -336,6 +345,9 @@ export const Signup = props => {
     }
   };
 
+  // if finished, and all is good, redirect to the home screen.
+  // otherwise, render the signup screen or the login screen
+  // depending on the path ('/login' or '/signup').
   return finished ? (
     <Redirect to="/" />
   ) : (
