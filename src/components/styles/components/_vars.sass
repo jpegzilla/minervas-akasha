@@ -25,10 +25,12 @@ $main: "IBM Plex Serif", serif
     --bg-main: #{$white}
     --bg-main-halfop: #{transparentize($white, 0.5)}
     --text-main: #{$black}
+    --hl-main: #{$black}
   @else if $theme == "dark"
     --bg-main: #{$black}
     --bg-main-halfop: #{transparentize($black, 0.5)}
     --text-main: #{$white}
+    --hl-main: #{$white}
 
 =input($display: block, $font: $proggy)
   transition: border-color 0.5s ease
