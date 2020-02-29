@@ -17,9 +17,11 @@
 @import ./components/taskbar
 @import ./components/window
 @import ./components/topbar
+@import ./components/filedrop
 
 // windows
 @import ./components/console
+@import ./components/datastructure
 
 \:root
   +theme("dark")
@@ -29,6 +31,10 @@
 
 \::selection
   background-color: $pink
+
+// most important rule
+*
+  text-transform: lowercase
 
 body
   main
