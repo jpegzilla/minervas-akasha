@@ -26,14 +26,18 @@ import AudioManager from "./../utils/audiomanager";
 // tasks
 import setupHotkeys from "./tasks/setupHotkeys";
 
+// production db address is temporary.
 const dbPath =
   process.env.NODE_ENV === "development"
     ? "http://localhost:8080"
     : "production";
 
-// when to instantiate this?
+// instantiate db interface for global context
 const db = new DatabaseInterface(dbPath);
 
+// exporting an instance of minerva for use across multiple modules,
+// mainly so I can use it in files that are not react components and
+// thus they cannot use the reference to minerva in the global context.
 export const minerva = new Minerva(
   MinervaArchive.get("minerva_store") || {},
   db
@@ -44,6 +48,8 @@ Minerva.clearSessionStorage();
 
 export const globalContext = createContext(null);
 
+// initial context containing minerva, the general-purpose state manager
+// a db interface, an akashic record for storing data, and an audio interface
 const initialContext = {
   minerva,
   db,
@@ -56,16 +62,17 @@ const { Provider } = globalContext;
 export const App = () => {
   const [windowLoaded, setWindowLoaded] = useState(false);
 
-  const [contextMenu, setContextMenu] = useState({
-    position: { x: 0, y: 0 },
-    display: false
-  });
-
+  // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
+  // then this is not the user's first login. maybe change this to check ids in order to
+  // support multiple users and set the flag independently for each one.
   const [firstLoad, setFirstLoad] = useState(
     (MinervaArchive.get("minervas_akasha") && false) || true
   );
 
+  // flag for determining if the screen is too small
   const [tooSmall, setTooSmall] = useState(false);
+
+  // flag that determines whether to take the user straight to the home screen or the main screen
   const [loggedIn, setLoggedIn] = useState(minerva.get("logged_in") || false);
 
   const [statusMessage, setStatusMessage] = useState({
@@ -74,7 +81,13 @@ export const App = () => {
     type: null
   });
 
+  // context menu stuff
   const contextMenuElem = useRef(null);
+
+  const [contextMenu, setContextMenu] = useState({
+    position: { x: 0, y: 0 },
+    display: false
+  });
 
   const handleContextMenu = (e, hideMenu) => {
     e.preventDefault();
@@ -85,7 +98,7 @@ export const App = () => {
     });
   };
 
-  // set up hotkey listeners on initial load
+  // set up hotkey listeners on initial load, as well as type out the status text
   useEffect(
     () => {
       setupHotkeys();
@@ -108,11 +121,13 @@ export const App = () => {
     [loggedIn]
   );
 
+  // message that covers screen and shows in the center. only used for special messages
   // const [godMessage, setGodMessage] = useState({
   //   display: false,
   //   text: null
   // });
 
+  // whenever statusmessage.text changes, type out the new messge using typist.
   useEffect(
     () => {
       new Typist(setStatusText, statusMessage.text).scramble();
@@ -122,15 +137,15 @@ export const App = () => {
 
   const [statusText, setStatusText] = useState(statusMessage.text);
 
-  // test for screen getting too small
+  // test for screen getting too small (< 1200px)
   const smallScreen = window.matchMedia("(max-width: 1200px)");
 
   const smallScreenTest = e => setTooSmall(e.matches);
 
+  // listen for screen resize
   smallScreen.addListener(smallScreenTest);
 
   if (windowLoaded) {
-    // if (true) {
     // effects canvases / other graphical elements here / crt filter
     // brightness / color filters / cursor click effects outside switch
     return (
@@ -170,7 +185,7 @@ export const App = () => {
               </section>
 
               {/* godmessage */}
-              <section />
+              <section id="godmessage" />
 
               {!loggedIn && firstLoad && <Redirect to="/signup" />}
 
@@ -234,6 +249,7 @@ export const App = () => {
   // the user to use a larger device
   if (tooSmall) return <NoMobile />;
 
+  // preloader is returned if the window is not too small, and the windowloaded flag is false.
   return (
     <Provider value={initialContext}>
       <Preloader setWindowLoaded={setWindowLoaded} />
