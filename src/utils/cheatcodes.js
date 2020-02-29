@@ -66,7 +66,7 @@ const utils = {
   arraysEqual: function(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
-    if (a.length != b.length) return false;
+    if (a.length !== b.length) return false;
 
     for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
     return true;
@@ -77,7 +77,7 @@ export default class cheatcode {
   constructor(code, callback, delay = 1000) {
     // format / argument checks
     if (!code) throw new Error("a cheatcode argument is required!");
-    if (typeof code != "object" && typeof code != "string")
+    if (typeof code !== "object" && typeof code !== "string")
       throw new Error("a cheatcode must be an array or a string!");
     if (!callback) throw new Error("a callback argument is required!");
 
@@ -117,6 +117,9 @@ export default class cheatcode {
             });
 
           break;
+
+        default:
+          throw new TypeError("invalid type provided to cheatcode.");
       }
 
       return code;
@@ -128,7 +131,7 @@ export default class cheatcode {
 
     this.progress = [];
 
-    if (typeof callback != "function")
+    if (typeof callback !== "function")
       throw new Error("callback argument must be of type function!");
 
     this.callback = callback;
