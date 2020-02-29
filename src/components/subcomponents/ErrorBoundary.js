@@ -13,7 +13,10 @@ export default class ErrorBoundary extends Component {
   }
 
   render() {
-    if (this.state.error) return <h1>there's an error here! => {this.state.error}</h1>;
+    if (this.state.error)
+      return (
+        <h1>there's an error here! => {this.state.info.componentStack}</h1>
+      );
     return this.props.children;
   }
 }
