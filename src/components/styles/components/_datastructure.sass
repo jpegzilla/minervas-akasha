@@ -1,0 +1,99 @@
+@import vars
+
+.datastructure-window
+  $w: 10vw
+  $h: 40vh
+  $font: $proggy
+  $gap: 0.5rem
+
+  display: flex
+  flex-direction: column
+
+  // todo: refactor this somehow to use css vars
+  background-color: transparentize($black, 0.25)
+  min-width: $w
+  min-height: $h
+
+  .structure-header
+    margin-bottom: 1.5rem
+
+    h2
+      font-weight: normal
+      font-size: 1rem
+      margin-bottom: 0.5rem
+
+  .structure-content
+    height: 100%
+    flex-grow: 1
+    padding: 0.25rem 0.5rem
+    display: flex
+    width: 100%
+    flex-direction: column
+
+  button, input
+    line-height: 1rem
+
+    &:active, &:focus
+      outline: 1px solid $pink
+
+  button
+    background-color: transparent
+    cursor: pointer
+    font-family: $font
+    color: var(--text-main)
+    border: 1px solid var(--text-main)
+    padding: 0.25rem 0.5rem
+
+  input
+    background-color: transparent
+    border: 1px solid var(--text-main)
+    padding: 0.25rem 0.5rem
+    color: var(--text-main)
+    font-family: $font
+    flex-grow: 1
+
+    &::placeholder
+      color: var(--text-main)
+      opacity: 0.5
+      font-family: $font
+
+  .structure-data
+    flex-grow: 1
+    width: 100%
+
+  .structure-controls
+    display: flex
+    flex-direction: column
+
+    div
+      display: flex
+
+    input + button
+      margin-left: $gap
+
+    div + div
+      margin-top: $gap
+
+  .structure-taglist
+    list-style-type: none
+
+    li + li
+      margin-left: 0.25rem
+
+  .structure-tag
+    +flexcenter
+
+    font-size: 0.7rem
+    border-radius: 4pt
+    width: auto
+    display: inline
+    padding: 0.15rem 0.25rem
+
+    &:hover
+      background-color: transparentize($white, 0.2)
+      color: var(--bg-main)
+      cursor: pointer
+      user-select: none
+
+    &.red
+      border: 1px solid red
