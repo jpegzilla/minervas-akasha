@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { Typist, uuidv4 } from "./../utils/misc";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { uuidv4 } from "./../utils/misc";
 
 import { Taskbar } from "./Taskbar";
 import { Topbar } from "./Topbar";
+
+import { Window } from "./windows/Window";
+import { DataStructure } from "./windows/DataStructure";
+import { FileDialog } from "./windows/FileDialog";
 
 import { Console } from "./windows/Console";
 
@@ -11,14 +15,131 @@ import { globalContext } from "./App";
 export const Home = () => {
   const { minerva } = useContext(globalContext);
   const [activeWindow, setActiveWindow] = useState(null);
-  const [activeWindowId, setActiveWindowId] = useState("");
+  const [activeWindowId, setActiveWindowId] = useState("default");
+  const [activeFileData, setActiveFileData] = useState();
 
-  // windows have three states: minimized, maximized, and restored
+  // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows);
+
+  // handle drag / drop events
+  const [droppable, setDroppable] = useState(false);
+
+  const showDropZone = () => setDroppable(true);
+  const hideDropZone = () => setDroppable(false);
+
+  const [droppedFiles, setDroppedFiles] = useState();
+  const allowDrag = e => {
+    e.dataTransfer.dropEffect = "copy";
+    e.preventDefault();
+  };
+
+  const handleDrop = e => {
+    e.stopPropagation();
+    e.preventDefault();
+    setDroppedFiles(e.dataTransfer.files[0]);
+    hideDropZone();
+  };
+
+  const handleDragLeave = e => {
+    hideDropZone();
+  };
+
+  const handleDragOver = e => {
+    e.stopPropagation();
+    e.preventDefault();
+    showDropZone();
+  };
+
+  useEffect(
+    () => {
+      // handle dropped file
+      if (!droppedFiles) return;
+
+      console.log("freshly dropped file:", droppedFiles);
+
+      const f = droppedFiles;
+
+      const fileMime = f.type || "text/plain";
+      const fileExt = f.name.slice(f.name.lastIndexOf("."));
+
+      if (/text/gi.test(fileMime)) {
+        f.text().then(e => {
+          console.log(e);
+          setActiveFileData({
+            text: e,
+            title: f.name,
+            type: f.type,
+            mime: fileMime,
+            size: f.size,
+            ext: fileExt
+          });
+        });
+
+        return;
+      }
+
+      // function for reading images only
+      // const readImg = file => {
+      //   const reader = new FileReader();
+      //
+      //   reader.addEventListener("load", () => {
+      //     const image = new Image();
+      //     // determine what to do with image
+      //   });
+      //
+      //   reader.readAsDataURL(file);
+      // };
+    },
+    [droppedFiles]
+  );
+
+  useEffect(
+    () => {
+      if (!activeFileData) return;
+
+      const dia = {
+        title: "new file",
+        state: "restored",
+        stringType: "Window",
+        component: "FileDialog",
+        componentProps: activeFileData,
+        belongsTo: minerva.user.id,
+        id: uuidv4(),
+        position: {
+          x: 100,
+          y: 100
+        }
+      };
+
+      minerva.setWindows([...minerva.windows, dia]);
+
+      setWindows([...minerva.windows]);
+    },
+    [minerva, activeFileData]
+  );
+
+  // #########################################################
+  // DEBUG: this hook is ONLY to watch for minerva's record becoming
+  // empty during normal operation. if that happens, this hook will throw.
+  useEffect(
+    () => {
+      if (Object.keys(minerva.record).length < 1) {
+        console.warn("minerva has lost her memory!!", minerva);
+        throw new Error(
+          "minerva has no record!! " + JSON.stringify(minerva.record, null, 5)
+        );
+      }
+
+      // if minerva is okay, then say so -
+      console.log("minerva is at peace.", minerva);
+    },
+    [minerva, minerva.record]
+  );
+  // #########################################################
 
   const setPosition = (windowId, newPosition) => {
     if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
-      throw "invalid parameters to setPosition";
+      throw new TypeError("invalid parameters to setPosition");
 
     const newWindows = windows.map(item => {
       return item.id === windowId
@@ -34,7 +155,11 @@ export const Home = () => {
     setWindows([...newWindows]);
   };
 
+  // this is to keep the windows in state synchronized with minerva
+  useEffect(() => minerva.setWindows(windows), [windows, minerva]);
+
   const [mouseOffset, setMouseOffset] = useState([0, 0]);
+  const taskBarMenuRef = useRef(null);
 
   const handleMouseMove = e => {
     if (activeWindow) {
@@ -49,6 +174,10 @@ export const Home = () => {
     }
   };
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const componentCounts = {};
+
   return (
     <section
       id="window-system"
@@ -56,40 +185,74 @@ export const Home = () => {
         setActiveWindow(null);
         setActiveWindowId("");
       }}
+      onClick={e => {
+        if (e.target !== taskBarMenuRef) setMenuOpen(false);
+      }}
       onMouseMove={handleMouseMove}
     >
       <Topbar minerva={minerva} />
-      <section id="main-container">
+      <section
+        className={droppable ? "filedrop active" : "filedrop"}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDragEnter={allowDrag}
+        id="main-container"
+      >
         {windows.map((item, i) => {
-          if (item.belongsTo !== minerva.user.id) return;
+          if (item.belongsTo === minerva.user.id) {
+            // if item is offscreen, reset
+            if (
+              item.position.x < 0 ||
+              item.position.y < 0 ||
+              item.position.x > window.innerWidth - 50 ||
+              item.position.y > window.innerHeight - 50
+            )
+              item.position = {
+                x: 100,
+                y: 100
+              };
 
-          const typeMap = {
-            Console: Console
-          };
+            const typeMap = {
+              Console: Console,
+              Window: Window,
+              DataStructure: DataStructure,
+              FileDialog: FileDialog
+            };
 
-          const Component = typeMap[item.stringType];
+            const Component = typeMap[item.stringType];
 
-          let isActive = "";
+            let isActive = "";
 
-          if (item.id === activeWindowId) isActive = "active";
+            if (item.id === activeWindowId) isActive = "active";
 
-          return (
-            <Component
-              className={isActive}
-              key={`${item.title}-window-${i}`}
-              position={item.position}
-              title={item.title}
-              setPosition={setPosition}
-              setActiveWindowId={setActiveWindowId}
-              activeWindowId={activeWindowId}
-              setActiveWindow={setActiveWindow}
-              setMouseOffset={setMouseOffset}
-              id={item.id}
-            />
-          );
+            componentCounts[item.component || item.stringType] =
+              componentCounts[item.component || item.stringType] + 1 || 1;
+
+            return (
+              <Component
+                item={item}
+                num={componentCounts[item.component || item.stringType]}
+                component={item.component}
+                componentProps={item.componentProps}
+                setWindows={setWindows}
+                windows={windows}
+                className={isActive}
+                key={`${item.title}-window-${item.id}`}
+                setPosition={setPosition}
+                setActiveWindowId={setActiveWindowId}
+                activeWindowId={activeWindowId}
+                setActiveWindow={setActiveWindow}
+                setMouseOffset={setMouseOffset}
+              />
+            );
+          }
         })}
       </section>
       <Taskbar
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        taskBarMenuRef={taskBarMenuRef}
         activeWindow={activeWindow}
         setActiveWindow={setActiveWindow}
         activeWindowId={activeWindowId}
