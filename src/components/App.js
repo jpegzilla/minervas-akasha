@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  createContext,
-  useRef,
-  useContext
-} from "react";
+import React, { useState, useEffect, createContext, useRef } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -31,7 +25,6 @@ import AudioManager from "./../utils/audiomanager";
 
 // tasks
 import setupHotkeys from "./tasks/setupHotkeys";
-import { ParticleGenerator } from "./tasks/setupCanvasFx";
 
 const dbPath =
   process.env.NODE_ENV === "development"
@@ -55,8 +48,7 @@ const initialContext = {
   minerva,
   db,
   AkashicRecord,
-  audiomanager: new AudioManager(),
-  fxcanvas: new ParticleGenerator()
+  audiomanager: new AudioManager()
 };
 
 const { Provider } = globalContext;
@@ -76,8 +68,13 @@ export const App = () => {
   const [tooSmall, setTooSmall] = useState(false);
   const [loggedIn, setLoggedIn] = useState(minerva.get("logged_in") || false);
 
+  const [statusMessage, setStatusMessage] = useState({
+    display: false,
+    text: "",
+    type: null
+  });
+
   const contextMenuElem = useRef(null);
-  const fxCanvasElem = useRef(null);
 
   const handleContextMenu = (e, hideMenu) => {
     e.preventDefault();
@@ -89,9 +86,13 @@ export const App = () => {
   };
 
   // set up hotkey listeners on initial load
-  useEffect(() => {
-    setupHotkeys();
-  }, []);
+  useEffect(
+    () => {
+      setupHotkeys();
+      new Typist(setStatusText, statusMessage.text).scramble();
+    },
+    [statusMessage.text]
+  );
 
   // log user in or out
   useEffect(
@@ -107,16 +108,10 @@ export const App = () => {
     [loggedIn]
   );
 
-  const [godMessage, setGodMessage] = useState({
-    display: false,
-    text: null
-  });
-
-  const [statusMessage, setStatusMessage] = useState({
-    display: false,
-    text: "",
-    type: null
-  });
+  // const [godMessage, setGodMessage] = useState({
+  //   display: false,
+  //   text: null
+  // });
 
   useEffect(
     () => {
@@ -126,10 +121,6 @@ export const App = () => {
   );
 
   const [statusText, setStatusText] = useState(statusMessage.text);
-
-  useEffect(() => {
-    new Typist(setStatusText, statusMessage.text).scramble();
-  }, []);
 
   // test for screen getting too small
   const smallScreen = window.matchMedia("(max-width: 1200px)");
