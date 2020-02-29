@@ -1,5 +1,4 @@
 import AkashicRecord from "./../structures/AkashicRecord";
-import Database from "./Database";
 import { uuidv4 } from "./../misc";
 
 // class for managing everything that goes on in the app, specifically users logging
@@ -10,7 +9,13 @@ import { uuidv4 } from "./../misc";
 export class Minerva {
   constructor(options, database) {
     this.user = options.user || null;
-    this.record = null;
+
+    this.record =
+      AkashicRecord.retrieveAkashicRecord(
+        this.user.id,
+        this.user.name,
+        database
+      ) || null;
 
     this.settings = {};
 
@@ -18,7 +23,6 @@ export class Minerva {
       ? MinervaArchive.get("minerva_store").windows
       : [];
 
-    console.log(this.windows);
     this.database = database;
 
     // maybe don't do this?
@@ -44,10 +48,14 @@ export class Minerva {
     this.user = user;
     this.userId = user.id;
 
-    this.set(`user:${user.id}:token`, {
-      user: user,
-      expires: new Date().toISOString()
-    });
+    this.set(
+      `user:${user.id}:token`,
+      {
+        user: user,
+        expires: new Date().toISOString()
+      },
+      "user"
+    );
 
     if (newUser) {
       this.record = new AkashicRecord(
@@ -134,6 +142,9 @@ export class Minerva {
 
       case "data":
         break;
+
+      default:
+        throw new Error("invalid type provided to minerva.set");
     }
   }
 
