@@ -10,14 +10,22 @@ export default class AudioManager {
   playFile(file) {}
 
   play(name) {
-    // check settings in minerva.settings
     const id = uuidv4();
 
     const source = this.ctx.createBufferSource();
+    const gainNode = this.ctx.createGain();
+    source.connect(gainNode);
+    gainNode.connect(this.ctx.destination);
+
+    // add the new audio to the sources, and set it's state to running.
     this.sources.push({ name, id, source, state: "running" });
     source.buffer = this.sounds[name];
     source.connect(this.ctx.destination);
 
+    // this is meant to prevent sounds from overlapping.
+    // if there is a sound source with the same name as
+    // a source that is still playing, the new sound
+    // does not play.
     if (this.sources.find(item => item.name === name)) {
       if (this.sources.every(item => item.name === name).state === "running") {
         console.log("sound rejected.", name);
@@ -25,7 +33,13 @@ export default class AudioManager {
       }
     }
 
+    // check settings in minerva.settings and set the correct volume here!
+    // gainNode.gain.value = minerva.settings.volume
     source.start();
+
+    // whenever a sound stops, it's state is set to stopped, and it is removed
+    // from the array of sources. this is to help when detecting sounds that might
+    // be inappropriately running at the same time and overlapping.
     source.addEventListener("ended", () => {
       this.sources = this.sources.map(i => {
         if (i.id === id)
@@ -41,8 +55,13 @@ export default class AudioManager {
     });
   }
 
-  stop() {}
+  // close the audio manager's audiocontext.
+  close() {
+    this.ctx.close();
+  }
 
+  // this could be used to refresh and reload the sound in the audiomanager's cache,
+  // if that were for some reason needed.
   unload() {
     this.sources = {};
   }
