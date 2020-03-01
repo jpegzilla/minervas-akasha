@@ -2,7 +2,7 @@ import React from "react";
 
 export const NoMobile = () => {
   return (
-    <section>
+    <section id="nomobile">
       minerva's akasha does not yet exist for your device. if you want to help
       make it a reality, get in touch with{" "}
       <a
