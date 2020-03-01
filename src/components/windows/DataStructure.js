@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  Fragment
+} from "react";
 
 import { uuidv4 } from "./../../utils/misc";
 import PropTypes from "prop-types";
@@ -15,10 +21,17 @@ import { globalContext } from "./../App";
 let timeouts = [];
 
 export const DataStructure = props => {
-  const { type } = props;
+  const { type, structId } = props;
 
   const [droppedFiles, setDroppedFiles] = useState();
   const [activeFileData, setActiveFileData] = useState();
+  const [deletionStarted, setDeletionStarted] = useState(false);
+
+  // add to minerva's record when first loading new data structure
+  useEffect(() => {
+    // ...add to record
+    console.log("adding item to record", structId);
+  }, []);
 
   useEffect(
     () => {
@@ -92,6 +105,23 @@ export const DataStructure = props => {
   const { setStatusMessage, setStatusText, audiomanager } = useContext(
     globalContext
   );
+
+  const handleDeleteRecord = () => {
+    // remove from minerva's record
+    setDeletionStarted(true);
+  };
+
+  // when user clicks confirm or deny, this is the function that handles the choice
+  // to delete or not delete the structure.
+  const onDeleteChoice = confirm => {
+    setDeletionStarted(false);
+
+    if (confirm) {
+      console.log("removing item from record", structId);
+
+      return;
+    }
+  };
 
   const addName = () => {
     let errorMessage;
@@ -195,6 +225,18 @@ export const DataStructure = props => {
             ref={tagRef}
           />
           <button onClick={addTag}>add tag</button>
+        </div>
+
+        <div>
+          <button className="delete-button" onClick={handleDeleteRecord}>
+            delete record
+          </button>
+          {deletionStarted && (
+            <Fragment>
+              <button onClick={() => onDeleteChoice(true)}>confirm</button>
+              <button onClick={() => onDeleteChoice(false)}>deny</button>
+            </Fragment>
+          )}
         </div>
       </section>
     </div>
