@@ -1,5 +1,8 @@
-class MinervaMethods {}
-class UserMethods {}
+// methods that are only for use by the system and privileged users.
+const MinervaMethods = {};
+
+// methods that are for use by anyone, including regular users.
+const UserMethods = {};
 
 export const parseCommand = (command, setLog, minerva) => {
   const username = minerva.user.name;
