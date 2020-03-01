@@ -113,9 +113,30 @@ export const Taskbar = props => {
       tooltip: "end your current session and return to the login screen."
     },
     {
-      title: "other option",
+      title: "open record viewer",
       onClick: (e, item) => {
         console.log("clicked", item.title);
+
+        const newRecord = {
+          title: "record viewer",
+          state: "restored",
+          stringType: "Window",
+          belongsTo: minerva.user.id,
+          id: uuidv4(),
+          component: "RecordViewer",
+          componentProps: {
+            windows,
+            setWindows
+          },
+          position: {
+            x: 100,
+            y: 100
+          }
+        };
+
+        minerva.setWindows([...minerva.windows, newRecord]);
+
+        setWindows([...minerva.windows]);
       }
     },
     {
@@ -154,7 +175,7 @@ export const Taskbar = props => {
 
   useEffect(
     () => {
-      console.log("useEffect minerva.windows", minerva.windows);
+      // console.log("useEffect minerva.windows", minerva.windows);
     },
     [minerva.windows]
   );

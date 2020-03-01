@@ -7,6 +7,7 @@ import { Topbar } from "./Topbar";
 import { Window } from "./windows/Window";
 import { DataStructure } from "./windows/DataStructure";
 import { FileDialog } from "./windows/FileDialog";
+import { RecordViewer } from "./windows/RecordViewer";
 
 import { Console } from "./windows/Console";
 
@@ -231,7 +232,8 @@ export const Home = () => {
               Console: Console,
               Window: Window,
               DataStructure: DataStructure,
-              FileDialog: FileDialog
+              FileDialog: FileDialog,
+              RecordViewer: RecordViewer
             };
 
             const Component = typeMap[item.stringType];
