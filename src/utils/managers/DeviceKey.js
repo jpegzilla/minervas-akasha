@@ -1,3 +1,8 @@
+/**
+ * DeviceKey - class for generating and verifying keys that are used to authenticate users.
+ * this is specifically for when a user wishes to log in and access their data on another
+ * device. the user receives their key, and then uses it on the new device.
+ */
 class DeviceKey {
   constructor(string) {
     this.rawInput = string;
@@ -6,6 +11,14 @@ class DeviceKey {
     this.codes = DeviceKey.generateSync(this.nodash);
   }
 
+  /**
+   * @static shuffle - shuffles an array.
+   *
+   * @param {array}   arr          array to be shuffled
+   * @param {number} [factor=0.25] factor to shuffle by
+   *
+   * @returns {string} a completed device key.
+   */
   static shuffle(arr, factor = 0.25) {
     if (factor > 1) factor = 1;
     if (factor <= 0) factor = 0.15;
@@ -18,7 +31,7 @@ class DeviceKey {
 
     while (curr > 0) {
       r = Math.floor(factor * curr);
-      curr -= 1;
+      curr--;
 
       temp = arr[curr];
       arr[curr] = arr[r];
@@ -58,6 +71,15 @@ class DeviceKey {
     }
   }
 
+  /**
+   * @static verify - verify a device key.
+   *
+   * @param {string} key    device key the user is using
+   * @param {string} userId id of user who is verifying their key
+   *
+   * @returns {promise} promise that resolves true if the key is valid,
+   * false if not. rejects on error.
+   */
   static verify(key, userId) {
     return new Promise((resolve, reject) => {
       try {
