@@ -30,8 +30,15 @@ export const Preloader = props => {
   const [panelsActive, setPanelsActive] = useState(false);
 
   const [audioLoaded, setAudioLoaded] = useState(false);
+  const [winLoaded, setWinLoaded] = useState(false);
 
   const [finished, setFinished] = useState(false);
+
+  // on window load, set winloaded to true. both this and
+  // audioloaded must be true in order to end the preloader.
+  window.onload = () => {
+    setWinLoaded(true);
+  };
 
   // scramble the loading screen text. but only once!
   useEffect(
@@ -76,9 +83,9 @@ export const Preloader = props => {
 
   useEffect(
     () => {
-      if (audioLoaded) setFinished(true);
+      if (audioLoaded && winLoaded) setFinished(true);
     },
-    [audioLoaded]
+    [audioLoaded, winLoaded]
   );
 
   useEffect(
