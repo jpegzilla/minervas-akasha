@@ -10,12 +10,15 @@ export class Minerva {
   constructor(options, database) {
     this.user = options.user || null;
 
-    this.record =
-      AkashicRecord.retrieveAkashicRecord(
-        this.user.id,
-        this.user.name,
-        database
-      ) || null;
+    // if a user exists already, get their record. otherwise, the record is
+    // an empty object.
+    this.record = this.user
+      ? AkashicRecord.retrieveAkashicRecord(
+          this.user.id,
+          this.user.name,
+          database
+        )
+      : {};
 
     this.settings = {};
 
