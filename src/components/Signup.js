@@ -53,6 +53,11 @@ export const Signup = props => {
 
   const { minerva, audiomanager } = useContext(globalContext);
 
+  // cleanup to clear timeouts after signup is complete
+  useEffect(() => {
+    () => clearAll();
+  });
+
   // error function that just shakes the form and plays an error sound
   const shakeAnim = (type = "error") => {
     if (shake) setShake(false);
