@@ -53,7 +53,8 @@ export const Taskbar = props => {
       stringType: "Window",
       component: "DataStructure",
       componentProps: {
-        type: "Athenaeum"
+        type: "Athenaeum",
+        structId: uuidv4()
       },
       belongsTo: minerva.user.id,
       id: uuidv4(),
