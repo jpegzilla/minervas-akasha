@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
+
+import { globalContext } from "./../App";
 
 import { WindowTypes } from "./WindowTypes";
 
@@ -17,6 +19,8 @@ export const Window = props => {
     component,
     componentProps
   } = props;
+
+  const { minerva } = useContext(globalContext);
 
   const Component = WindowTypes[component];
 
@@ -56,6 +60,7 @@ export const Window = props => {
   // handle commands such as minimize, maximize, close
   const handleWindowCommand = (e, command) => {
     e.stopPropagation();
+    e.preventDefault();
 
     const { state } = command;
 
@@ -133,6 +138,9 @@ export const Window = props => {
     setDroppable(false);
   };
 
+  // here, I attach a dropped files object to each window's props.
+  // it may be wise to do this some other way, since not every
+  // window has drag and drop functionality.
   useEffect(
     () => {
       componentProps.droppedFiles = droppedFiles;
@@ -140,12 +148,15 @@ export const Window = props => {
     [droppedFiles, componentProps.droppedFiles]
   );
 
+  const droppableWindows = ["DataStructure"];
+  const canDropFiles = droppableWindows.includes(component);
+
   return (
     <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDragEnter={allowDrag}
-      onDrop={handleDrop}
+      onDragOver={canDropFiles ? handleDragOver : undefined}
+      onDragLeave={canDropFiles ? handleDragLeave : undefined}
+      onDragEnter={canDropFiles ? allowDrag : undefined}
+      onDrop={canDropFiles ? handleDrop : undefined}
       style={
         activeWindowId === id
           ? { transform: `translate3d(${x}px, ${y}px, 0)` }
