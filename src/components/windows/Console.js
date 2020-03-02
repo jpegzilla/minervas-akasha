@@ -74,6 +74,13 @@ export const Console = props => {
   };
 
   const handleMouseDown = (e, bool) => {
+    if (
+      Array.from(document.querySelectorAll(".window-controls-button")).includes(
+        e.target
+      )
+    )
+      return;
+
     setActiveWindowId(id);
     if (bool) {
       const rect = e.target.getBoundingClientRect();
@@ -154,13 +161,13 @@ export const Console = props => {
         <b />
         <span className="window-controls">
           <div
-            className="window-controls-min"
+            className="window-controls-min window-controls-button"
             onClick={e => handleWindowCommand(e, { state: "minimized" })}
           >
             -
           </div>
           <div
-            className="window-controls-close"
+            className="window-controls-close window-controls-button"
             onClick={e => handleWindowCommand(e, "close")}
           >
             x

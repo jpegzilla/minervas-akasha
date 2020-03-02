@@ -25,6 +25,13 @@ export const Window = props => {
   const { x, y } = position;
 
   const handleMouseDown = (e, bool) => {
+    if (
+      Array.from(document.querySelectorAll(".window-controls-button")).includes(
+        e.target
+      )
+    )
+      return;
+
     setActiveWindowId(id);
     if (bool) {
       const rect = e.target.getBoundingClientRect();
@@ -86,7 +93,13 @@ export const Window = props => {
     } else {
       switch (command) {
         case "close":
-          setWindows([...windows.filter(w => (w.id === id ? false : true))]);
+          console.log("closing window");
+
+          minerva.setWindows([
+            ...minerva.windows.filter(w => (w.id === id ? false : true))
+          ]);
+
+          setWindows([...minerva.windows]);
           return;
         default:
           return;
@@ -156,14 +169,22 @@ export const Window = props => {
         <b />
         <span className="window-controls">
           <div
-            className="window-controls-min"
-            onClick={e => handleWindowCommand(e, { state: "minimized" })}
+            className="window-controls-min window-controls-button"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleWindowCommand(e, { state: "minimized" });
+            }}
           >
             -
           </div>
           <div
-            className="window-controls-close"
-            onClick={e => handleWindowCommand(e, "close")}
+            className="window-controls-close window-controls-button"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleWindowCommand(e, "close");
+            }}
           >
             x
           </div>
