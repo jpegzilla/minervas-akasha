@@ -64,8 +64,6 @@ export const Taskbar = props => {
       }
     };
 
-    minerva.record.addToRecord(new Athenaeum());
-
     minerva.setWindows([...minerva.windows, ath]);
 
     setWindows([...minerva.windows]);
@@ -118,24 +116,21 @@ export const Taskbar = props => {
       onClick: (e, item) => {
         console.log("clicked", item.title);
 
-        const newRecord = {
+        const newRecordViewer = {
           title: "record viewer",
           state: "restored",
           stringType: "Window",
           belongsTo: minerva.user.id,
           id: uuidv4(),
           component: "RecordViewer",
-          componentProps: {
-            windows,
-            setWindows
-          },
+          componentProps: {},
           position: {
             x: 100,
             y: 100
           }
         };
 
-        minerva.setWindows([...minerva.windows, newRecord]);
+        minerva.setWindows([...minerva.windows, newRecordViewer]);
 
         setWindows([...minerva.windows]);
       }
