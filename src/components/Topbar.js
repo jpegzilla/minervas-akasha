@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
-export const Topbar = () => {
+import { globalContext } from "./App";
+
+let timeFormat = false;
+
+export const Topbar = props => {
+  const { audiomanager, minerva } = useContext(globalContext);
+
   const time = () => {
     let hours = new Date().getHours();
 
@@ -13,13 +19,19 @@ export const Topbar = () => {
       .toString()
       .padStart(2, "0");
 
-    hours = hours % 12;
-    hours = hours ? hours : 12;
+    if (timeFormat) {
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+    }
 
     return `${hours.toString().padStart(2, "0")}:${minutes}:${seconds}`;
   };
 
   const [currentTime, setCurrentTime] = useState(time);
+
+  const openSettingsMenu = () => {
+    console.log("opening settings menu");
+  };
 
   setInterval(() => {
     setCurrentTime(time);
@@ -27,12 +39,24 @@ export const Topbar = () => {
 
   return (
     <section id="top-bar">
-      <div className="taskbar-button" id="settings-button">
+      <div
+        onClick={openSettingsMenu}
+        className="taskbar-button"
+        id="settings-button"
+      >
         settings
       </div>
       <b />
 
-      <div className="taskbar-button" id="topbar-clock">
+      <div
+        title="switch between 24 / 12 hour time"
+        onClick={() => {
+          timeFormat = !timeFormat;
+          setCurrentTime(time);
+        }}
+        className="taskbar-button"
+        id="topbar-clock"
+      >
         {currentTime}
       </div>
     </section>
