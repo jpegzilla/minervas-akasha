@@ -44,8 +44,17 @@ export default class AudioManager {
     }
 
     // check settings in minerva.settings and set the correct volume here!
-    // gainNode.gain.value = minerva.settings.volume
-    source.start();
+    const { master, effect, voice } = MinervaArchive.get(
+      "minerva_store"
+    ).settings.volume;
+
+    console.log(typeof master, master);
+    gainNode.gain.value = ((parseInt(master) / 100) * parseInt(effect)) / 100;
+
+    gainNode.gain.value = gainNode.gain.value > 1 ? 1 : gainNode.gain.value;
+    console.log(gainNode.gain.value);
+
+    if (gainNode.gain.value > 0) source.start();
 
     // whenever a sound stops, it's state is set to stopped, and it is removed
     // from the array of sources. this is to help when detecting sounds that might
