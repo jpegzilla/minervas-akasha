@@ -19,7 +19,17 @@ export default class AudioManager {
 
   playFile(file) {}
 
-  play(name) {
+  /**
+   * play - play a sound from the instance's currently loaded files.
+   *
+   * @param {string}   name       name of loaded sound to play.
+   * sound names are from the array of loaded sounds in this.sounds
+   * @param {object} [options={}] options for playing the sound,
+   * such as delay, panning, distortion, and other effects.
+   *
+   * @returns {undefined} void
+   */
+  play(name, options = {}) {
     const id = uuidv4();
 
     const source = this.ctx.createBufferSource();
@@ -85,6 +95,17 @@ export default class AudioManager {
     this.sources = {};
   }
 
+  /**
+   * load - load an array of audio objects that the audiomanager
+   * will need to play.
+   *
+   * @param {array} paths array of objects representing audio to load.
+   * objects must take the format `{ file: sound, name: "sound" }`, where
+   * `sound` is a reference to an imported sound file. the name can be whatever
+   * you'd like.
+   *
+   * @returns {promise} promise that resolves when all audio loads.
+   */
   load(paths) {
     return new Promise((resolve, reject) => {
       paths.forEach(async (path, i) => {
