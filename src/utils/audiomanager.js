@@ -1,10 +1,20 @@
 import { uuidv4 } from "./misc";
+import { MinervaArchive } from "./managers/MinervaInstance";
 
 export default class AudioManager {
   constructor() {
     this.ctx = new AudioContext();
     this.sounds = {};
     this.sources = [];
+    this.settings = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").settings
+      : {
+          volume: {
+            master: 100,
+            effect: 100,
+            voice: 100
+          }
+        };
   }
 
   playFile(file) {}
