@@ -164,6 +164,7 @@ export const Home = () => {
 
   const [mouseOffset, setMouseOffset] = useState([0, 0]);
   const taskBarMenuRef = useRef(null);
+  const settingsMenuRef = useRef(null);
 
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
@@ -181,6 +182,7 @@ export const Home = () => {
   };
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // object to track how many components there are of a certain type.
   // this is to help react correctly identify components by providing
@@ -196,11 +198,20 @@ export const Home = () => {
         setActiveWindowId("");
       }}
       onClick={e => {
-        if (e.target !== taskBarMenuRef) setMenuOpen(false);
+        if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
+          setMenuOpen(false);
+          setSettingsOpen(false);
+        }
       }}
       onMouseMove={handleMouseMove}
     >
-      <Topbar minerva={minerva} />
+      <Topbar
+        windows={windows}
+        setWindows={setWindows}
+        settingsOpen={settingsOpen}
+        setSettingsOpen={setSettingsOpen}
+        settingsMenuRef={settingsMenuRef}
+      />
       <section
         className={droppable ? "filedrop active" : "filedrop"}
         onDrop={handleDrop}
