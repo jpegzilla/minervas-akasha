@@ -28,10 +28,13 @@ export const DataStructure = props => {
   const [deletionStarted, setDeletionStarted] = useState(false);
 
   // add to minerva's record when first loading new data structure
-  useEffect(() => {
-    // ...add to record
-    console.log("adding item to record", structId);
-  }, []);
+  useEffect(
+    () => {
+      // ...add to record
+      console.log("adding item to record", structId);
+    },
+    [structId]
+  );
 
   useEffect(
     () => {
