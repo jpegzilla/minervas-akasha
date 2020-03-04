@@ -58,10 +58,11 @@ export default class AudioManager {
       "minerva_store"
     ).settings.volume;
 
-    console.log(typeof master, master);
-    gainNode.gain.value = ((parseInt(master) / 100) * parseInt(effect)) / 100;
+    gainNode.gain.setValueAtTime(
+      ((master / 100) * effect) / 100,
+      this.ctx.currentTime
+    );
 
-    gainNode.gain.value = gainNode.gain.value > 1 ? 1 : gainNode.gain.value;
     console.log(gainNode.gain.value);
 
     if (gainNode.gain.value > 0) source.start();
