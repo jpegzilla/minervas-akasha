@@ -20,7 +20,15 @@ export class Minerva {
         )
       : {};
 
-    this.settings = {};
+    this.settings = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").settings
+      : {
+          volume: {
+            master: 100,
+            effect: 100,
+            voice: 100
+          }
+        };
 
     this.windows = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").windows
@@ -37,14 +45,9 @@ export class Minerva {
     this.save();
   }
 
-  changeSetting(setting, value) {
-    switch (setting) {
-      case "volume":
-        this.settings[setting] = value;
-        return;
-      default:
-        return;
-    }
+  changeSetting(settings) {
+    this.settings = settings;
+    this.save();
   }
 
   login(user, newUser = false, database = false) {
