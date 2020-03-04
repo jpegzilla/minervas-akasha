@@ -1,6 +1,6 @@
 import cheatcode from "./../../utils/cheatcodes";
 
-import keySound from "./../../assets/audio/computer/click-short.wav";
+import keySound from "./../../assets/audio/computer/sine-short.wav";
 import audiomanager from "./../../utils/audiomanager";
 
 const m = new audiomanager();
