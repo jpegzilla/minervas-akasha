@@ -1,0 +1,38 @@
+@import vars
+
+$font: $proggy
+
+#settings-menu
+  color: var(--text-main)
+  font-family: $font
+  position: absolute
+  top: 100%
+  left: -1px
+  border: 1px solid var(--text-main)
+  padding: 1rem
+  font-size: 1rem
+
+  *:not(input), &
+    width: max-content
+
+  input
+    max-width: 20rem
+
+  fieldset
+    padding: 0.5rem 0.5rem
+
+  legend
+    padding: 0.25rem 0.5rem
+    border: 1px solid var(--text-main)
+
+  .settings-box
+    label *
+      display: inline-block
+      width: 100%
+
+    label
+      display: block
+      width: 100%
+
+    label + label
+      margin-top: 0.5rem
