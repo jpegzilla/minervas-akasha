@@ -1,10 +1,12 @@
 import React, { useState, useContext } from "react";
 
 import { globalContext } from "./App";
+import { Settings } from "./Settings";
 
 let timeFormat = false;
 
 export const Topbar = props => {
+  const { settingsMenuRef, settingsOpen, setSettingsOpen } = props;
   const { audiomanager, minerva } = useContext(globalContext);
 
   const time = () => {
@@ -29,10 +31,6 @@ export const Topbar = props => {
 
   const [currentTime, setCurrentTime] = useState(time);
 
-  const openSettingsMenu = () => {
-    console.log("opening settings menu");
-  };
-
   setInterval(() => {
     setCurrentTime(time);
   }, 1000);
@@ -40,11 +38,15 @@ export const Topbar = props => {
   return (
     <section id="top-bar">
       <div
-        onClick={openSettingsMenu}
+        onClick={e => {
+          e.stopPropagation();
+          setSettingsOpen(!settingsOpen);
+        }}
         className="taskbar-button"
         id="settings-button"
       >
         settings
+        {settingsOpen && <Settings settingsMenuRef={settingsMenuRef} />}
       </div>
       <b />
 
