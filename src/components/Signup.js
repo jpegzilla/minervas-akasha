@@ -55,7 +55,7 @@ export const Signup = props => {
 
   // cleanup to clear timeouts after signup is complete
   useEffect(() => {
-    () => clearAll();
+    return () => clearAll();
   });
 
   // error function that just shakes the form and plays an error sound
