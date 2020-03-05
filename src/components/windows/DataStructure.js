@@ -27,11 +27,14 @@ export const DataStructure = props => {
   const [activeFileData, setActiveFileData] = useState();
   const [deletionStarted, setDeletionStarted] = useState(false);
 
+  const { minerva } = useContext(globalContext);
+
   // add to minerva's record when first loading new data structure
   useEffect(
     () => {
       // ...add to record
       console.log("adding item to record", structId);
+      minerva.addRecord(structId, type);
     },
     [structId]
   );
@@ -112,6 +115,10 @@ export const DataStructure = props => {
   const handleDeleteRecord = () => {
     // remove from minerva's record
     setDeletionStarted(true);
+  };
+
+  const handleConnectRecord = () => {
+    console.log("connecting record...");
   };
 
   // when user clicks confirm or deny, this is the function that handles the choice
@@ -240,6 +247,12 @@ export const DataStructure = props => {
               <button onClick={() => onDeleteChoice(false)}>deny</button>
             </Fragment>
           )}
+        </div>
+
+        <div>
+          <button className="connect-button" onClick={handleConnectRecord}>
+            connect record
+          </button>
         </div>
       </section>
     </div>
