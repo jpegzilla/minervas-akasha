@@ -1,6 +1,5 @@
 import AkashicRecord from "./../structures/AkashicRecord";
 import { uuidv4 } from "./../misc";
-
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
 
@@ -27,7 +26,8 @@ export class Minerva {
             master: 100,
             effect: 100,
             voice: 100
-          }
+          },
+          connections: true
         };
 
     this.windows = MinervaArchive.get("minerva_store")
@@ -39,6 +39,23 @@ export class Minerva {
     // maybe don't do this?
     this.userId = options.user ? options.user.id : null;
   }
+
+  addRecord(id, type, data = {}) {
+    console.log(this);
+    console.log(type);
+    this.record.addToRecord(id, type, data, this);
+  }
+
+  // removeRecord(id, type) {
+  //   this.record[type].filter(item => item.id !== id);
+  // }
+  //
+  // update(id, data) {
+  //   this.record[type].map(item => {
+  //     if (item.id === id) return { ...item, data };
+  //     return item;
+  //   });
+  // }
 
   setWindows(array) {
     this.windows = array;
@@ -187,9 +204,8 @@ export class Minerva {
   }
 
   remove(key, item, database = false, type) {
-    if (database) {
+    if (database)
       this.database.delete(this.database.collections[type], item.id);
-    }
 
     Minerva._store.removeItem(key);
 

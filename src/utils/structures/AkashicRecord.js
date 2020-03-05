@@ -7,6 +7,8 @@ import { Structure } from "./structure";
 // import { Athenaeum } from "./athenaeum";
 import { Minerva } from "./../managers/MinervaInstance";
 
+import StructureMap from "./../managers/StructureMap";
+
 // the master structure, meant to represent a user's entire environment when working
 // within the tool. bound to user id and is created for every new user.
 export default class AkashicRecord {
@@ -45,29 +47,41 @@ export default class AkashicRecord {
   // and just retrieve the corresponding data structures from another store that
   // contains the actual objects? should I store the structures
   // in the records object?
-  addToRecord(structure) {
-    if (!structure instanceof Structure)
-      throw new TypeError(`${structure} is not a proper structure.`);
+  addToRecord(id, type, data, minerva) {
+    const s = StructureMap[type];
+    let t = type.toLowerCase();
 
-    this.records[structure.type].push(structure);
+    if (!s instanceof Structure)
+      throw new TypeError(`${s} is not a proper structure.`);
+
+    this.records[t].push({ id, data });
+    minerva.record = this;
 
     return this;
   }
 
-  editRecord(structure) {
-    if (!structure instanceof Structure)
-      throw new TypeError(`${structure} is not a proper structure.`);
+  editRecord(id, type, data, minerva) {
+    const s = StructureMap[type];
+    let t = type.toLowerCase();
 
-    this.records[structure.type].map(
-      item => (item.id === structure.id ? structure : item)
-    );
+    if (!s instanceof Structure)
+      throw new TypeError(`${s} is not a proper structure.`);
+
+    this.records[t].map(item => (item.id === id ? { data } : item));
+
+    minerva.record = this;
   }
 
-  removeFromRecord(structure) {
-    if (!structure.id || !structure.type)
-      throw new TypeError(`${structure} does not have the correct format`);
+  removeFromRecord(id, type, data, minerva) {
+    const s = StructureMap[type];
+    let t = type.toLowerCase();
 
-    this.records[structure.type].filter(e => structure.id === e.id);
+    if (!id || type)
+      throw new TypeError(`${s} does not have the correct format`);
+
+    this.records[t].filter(e => id === e.id);
+
+    minerva.record = this;
   }
 
   exportRecord(db = false) {

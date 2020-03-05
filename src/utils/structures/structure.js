@@ -7,9 +7,6 @@ export class Structure {
     // different structures. you can also sort by tags.
     this.tags = (options && options.tags) || [];
 
-    // determines state of display
-    this.display = (options && options.display) || "visible";
-
     // used to search for the structure and display a name.
     this.name = name;
 
@@ -59,7 +56,7 @@ export class Structure {
     this.colorCode = colorcodes[color];
   }
 
-  destroy() {
+  reset() {
     this.connectedTo = [];
     this.tags = [];
     this.colorCode = colorcodes.white;
