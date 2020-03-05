@@ -54,9 +54,9 @@ export default class AudioManager {
     }
 
     // check settings in minerva.settings and set the correct volume here!
-    const { master, effect, voice } = MinervaArchive.get(
-      "minerva_store"
-    ).settings.volume;
+    const { master, effect, voice } = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").settings.volume
+      : { master: 100, effect: 100, voice: 100 };
 
     gainNode.gain.setValueAtTime(
       ((master / 100) * effect) / 100,
