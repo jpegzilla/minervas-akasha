@@ -86,6 +86,37 @@ export const Settings = props => {
             />
           </label>
         </fieldset>
+
+        <fieldset className="connection-settings">
+          <legend>connections</legend>
+
+          <label
+            title="allows you to see content procured by other users of this software"
+            htmlFor="connection-settings-off"
+          >
+            <span className="connection-settings-label">connections on</span>
+            <span
+              className={`${
+                settings.connections
+                  ? "active connection-settings-checkbox"
+                  : "connection-settings-checkbox"
+              }`}
+            >
+              <b />
+            </span>
+            <input
+              onChange={() => {
+                setSettings({
+                  ...settings,
+                  connections: !settings.connections
+                });
+              }}
+              value={settings.connections}
+              id="connection-settings-off"
+              type="checkbox"
+            />
+          </label>
+        </fieldset>
       </div>
     </div>
   );
