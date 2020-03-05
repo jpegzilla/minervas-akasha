@@ -15,7 +15,10 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.error)
       return (
-        <h1>there's an error here! => {this.state.info.componentStack}</h1>
+        <h1>
+          there's an error here! =>{" "}
+          {JSON.stringify(this.state.info.componentStack, null, 5)}
+        </h1>
       );
     return this.props.children;
   }
