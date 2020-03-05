@@ -20,6 +20,50 @@ $font: $proggy
 
   fieldset
     padding: 0.5rem 0.5rem
+    width: 100%
+
+    & + fieldset
+      margin-top: 1rem
+
+  .connection-settings
+    label
+      +flexcenter
+
+      display: block
+      cursor: pointer
+
+    .connection-settings-label
+      margin-right: 0.5rem
+
+    .connection-settings-checkbox
+      +flexcenter
+
+      display: inline-flex
+      height: 0.5rem
+      width: 0.5rem
+      background-color: $white
+      border-radius: 1px
+      filter: invert(0)
+
+      b
+        height: 80%
+        width: 80%
+        display: inline
+        background: $white
+        flex-grow: 0
+        border-radius: 1px
+
+      &.active
+        b
+          background-color: $black
+
+    input[type=checkbox]
+      left: -9999px
+      position: absolute
+
+    input
+      width: auto
+      display: inline
 
   legend
     padding: 0.25rem 0.5rem
@@ -28,7 +72,6 @@ $font: $proggy
   .settings-box
     label *
       display: inline-block
-      width: 100%
 
     label
       display: block
