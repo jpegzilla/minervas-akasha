@@ -18,14 +18,14 @@ $font: $proggy
     padding: 0.25rem 0.5rem
     font-family: $font
 
-  #menu
+  #menu, #add-item
     border: 1px solid $white
     border-top: none
     padding: 0.25rem 0.5rem
     font-family: $font
     position: relative
 
-    .application-menu
+    .application-menu, .add-menu
       display: none
       color: $white
 
@@ -46,28 +46,28 @@ $font: $proggy
         .menu-container-items
           flex-grow: 1
 
-          ul
-            list-style-type: none
+    ul
+      list-style-type: none
 
-            li
-              padding: 0.25rem 0.5rem
-              border: 1px solid $white
-              background-color: $black
-              color: $white
-              position: relative
+      li
+        padding: 0.25rem 0.5rem
+        border: 1px solid $white
+        background-color: $black
+        color: $white
+        position: relative
 
-              &:hover
-                background-color: $white
-                color: $black
+        &:hover
+          background-color: $white
+          color: $black
 
-            li + li
-              margin-top: 0.5rem
+      li + li
+        margin-top: 0.5rem
 
     &.menu-open
       background-color: $white
       color: $black
 
-      .application-menu
+      .application-menu, .add-menu
         z-index: 2
         display: flex
         left: -1px

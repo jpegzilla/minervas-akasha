@@ -94,9 +94,11 @@ export const Home = () => {
     [droppedFiles]
   );
 
+  // effect that should fire whenever a file is dropped on the desktop
   useEffect(
     () => {
       if (!activeFileData) return;
+      console.log(activeFileData);
 
       const dia = {
         title: "new file",
@@ -183,6 +185,7 @@ export const Home = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [addMenuOpen, setAddMenuOpen] = useState(false);
 
   // object to track how many components there are of a certain type.
   // this is to help react correctly identify components by providing
@@ -200,6 +203,7 @@ export const Home = () => {
       onClick={e => {
         if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
           setMenuOpen(false);
+          setAddMenuOpen(false);
           setSettingsOpen(false);
         }
       }}
@@ -254,13 +258,23 @@ export const Home = () => {
 
             if (item.id === activeWindowId) isActive = "active";
 
-            componentCounts[item.component || item.stringType] =
-              componentCounts[item.component || item.stringType] + 1 || 1;
+            componentCounts[
+              item.componentProps.type || item.component || item.stringType
+            ] =
+              componentCounts[
+                item.componentProps.type || item.component || item.stringType
+              ] + 1 || 1;
 
             return (
               <Component
                 item={item}
-                num={componentCounts[item.component || item.stringType]}
+                num={
+                  componentCounts[
+                    item.componentProps.type ||
+                      item.component ||
+                      item.stringType
+                  ]
+                }
                 component={item.component}
                 componentProps={item.componentProps}
                 setWindows={setWindows}
@@ -287,6 +301,8 @@ export const Home = () => {
         setActiveWindowId={setActiveWindowId}
         windows={windows}
         setWindows={setWindows}
+        addMenuOpen={addMenuOpen}
+        setAddMenuOpen={setAddMenuOpen}
       />
     </section>
   );

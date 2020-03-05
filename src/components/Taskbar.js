@@ -32,8 +32,24 @@ export const Taskbar = props => {
     setActiveWindowId,
     taskBarMenuRef,
     menuOpen,
-    setMenuOpen
+    setMenuOpen,
+    addMenuOpen,
+    setAddMenuOpen
   } = props;
+
+  // if one menu is open, close the other one
+  useEffect(
+    () => {
+      menuOpen && setAddMenuOpen(false);
+    },
+    [menuOpen]
+  );
+  useEffect(
+    () => {
+      addMenuOpen && setMenuOpen(false);
+    },
+    [addMenuOpen]
+  );
 
   // const t = () => {
   //   setStatusText("");
@@ -45,7 +61,9 @@ export const Taskbar = props => {
   const [logout, setLogout] = useState(false);
 
   // function to add a new athenaeum structure
-  const addAthenaeum = () => {
+  const addStructure = type => {
+    if (type === type.toLowerCase())
+      throw new Error("invalid type provided to addStructure");
     // add new window to list
     const ath = {
       title: "datastructure",
@@ -53,7 +71,7 @@ export const Taskbar = props => {
       stringType: "Window",
       component: "DataStructure",
       componentProps: {
-        type: "Athenaeum",
+        type,
         structId: uuidv4()
       },
       belongsTo: minerva.user.id,
@@ -71,8 +89,6 @@ export const Taskbar = props => {
 
   // for minimizing / restoring windows
   const handleClickItem = (event, item) => {
-    console.log("clicked on", item);
-
     let newState;
 
     // todo: remove maximization
@@ -89,20 +105,18 @@ export const Taskbar = props => {
     setActiveWindowId(item.id);
   };
 
-  const addItem = () => {
-    console.log("adding item");
-  };
-
   const openMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const openAdd = () => {
+    setAddMenuOpen(!addMenuOpen);
   };
 
   const [menuItems, setMenuItems] = useState([
     {
       title: "log out",
       onClick: (e, item) => {
-        console.log("clicked", item.title);
-
         audiomanager.play("c_one");
 
         minerva.logout(minerva.user);
@@ -114,8 +128,6 @@ export const Taskbar = props => {
     {
       title: "open record viewer",
       onClick: (e, item) => {
-        console.log("clicked", item.title);
-
         const newRecordViewer = {
           title: "record viewer",
           state: "restored",
@@ -138,17 +150,13 @@ export const Taskbar = props => {
     {
       title: "add new athenaeum",
       onClick: (e, item) => {
-        console.log(item, "adding new structure.");
-
-        addAthenaeum();
+        addStructure("Athenaeum");
       },
       tooltip: "add a new structure."
     },
     {
       title: "open console",
       onClick: (e, item) => {
-        console.log("clicked", item.title);
-
         const newConsole = {
           title: "console",
           state: "restored",
@@ -168,6 +176,24 @@ export const Taskbar = props => {
       tooltip: "open a command console."
     }
   ]);
+
+  const addMenuItems = [
+    "+ shard",
+    "+ node",
+    "+ grimoire",
+    "+ athenaeum",
+    "+ hypostasis"
+  ].map(title => {
+    return {
+      title,
+      onClick: (e, item, id) => {
+        const type = title.split("+ ")[1];
+        addStructure(type.slice(0, 1).toUpperCase() + type.slice(1));
+      }
+    };
+  });
+
+  const [addItemsList, setAddItemsList] = useState([...addMenuItems]);
 
   useEffect(
     () => {
@@ -218,7 +244,10 @@ export const Taskbar = props => {
                       onClick={
                         i.onClick
                           ? e => i.onClick(e, i)
-                          : () => console.log("clicked on", i)
+                          : () => {
+                              console.log("clicked on", i);
+                              throw new Error("clicked on nonexistent option");
+                            }
                       }
                       key={uuidv4()}
                       title={i.tooltip || undefined}
@@ -232,8 +261,32 @@ export const Taskbar = props => {
           </div>
         </div>
       </div>
-      <div onClick={addItem} className="taskbar-button" id="add-item">
+      <div
+        onClick={e => {
+          e.stopPropagation();
+          openAdd();
+        }}
+        className={`taskbar-button ${addMenuOpen ? "menu-open" : ""}`}
+        id="add-item"
+      >
         + add
+        <div
+          className="add-menu"
+          onClick={e => e.stopPropagation()}
+          id="add-menu"
+        >
+          <ul>
+            {addItemsList.map(item => {
+              const id = uuidv4();
+
+              return (
+                <li onClick={e => item.onClick(e, item, id)} key={id}>
+                  {item.title}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
       <ul id="taskbar-tabs">
         {windows.map((w, i) => {
