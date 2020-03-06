@@ -258,11 +258,17 @@ export const Home = () => {
 
             if (item.id === activeWindowId) isActive = "active";
 
+            // used to determine how to count elements being rendered.
+            // counts based on type of component.
             componentCounts[
-              item.componentProps.type || item.component || item.stringType
+              item.componentProps
+                ? item.componentProps.type
+                : item.component || item.stringType
             ] =
               componentCounts[
-                item.componentProps.type || item.component || item.stringType
+                item.componentProps
+                  ? item.componentProps.type
+                  : item.component || item.stringType
               ] + 1 || 1;
 
             return (
@@ -270,9 +276,9 @@ export const Home = () => {
                 item={item}
                 num={
                   componentCounts[
-                    item.componentProps.type ||
-                      item.component ||
-                      item.stringType
+                    item.componentProps
+                      ? item.componentProps.type
+                      : item.component || item.stringType
                   ]
                 }
                 component={item.component}
