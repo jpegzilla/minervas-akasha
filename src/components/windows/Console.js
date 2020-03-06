@@ -61,6 +61,11 @@ export const Console = props => {
       ]);
     }
 
+    if (res.message && res.state === "error") {
+      audiomanager.play("e_one");
+      return setLog([...log, { type: "error", text: res.message }]);
+    }
+
     if (!res) {
       audiomanager.play("e_one");
       return setLog([
