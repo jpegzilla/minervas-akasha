@@ -1,0 +1,33 @@
+@import vars
+
+.record-viewer-window
+  height: auto
+  width: 40vw
+
+  .record-viewer-header
+    margin-bottom: 0
+
+  .record-viewer-container
+    display: flex
+    flex-direction: column
+    width: 100%
+    height: 100%
+
+    & > * > *
+      padding: 0.5rem
+
+    header
+      border-bottom: 1px solid var(--text-main)
+
+      div + div
+        border-top: 1px solid var(--text-main)
+
+    .record-viewer-main
+      display: flex
+      flex-grow: 1
+
+      .record-viewer-sidebar
+        border-right: 1px solid var(--text-main)
+
+    footer
+      border-top: 1px solid var(--text-main)
