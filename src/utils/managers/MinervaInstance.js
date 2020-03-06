@@ -40,7 +40,17 @@ export class Minerva {
     this.userId = options.user ? options.user.id : null;
   }
 
-  addRecord(id, type, data = {}) {
+  addRecord(
+    id,
+    type,
+    data = {
+      tags: [],
+      id: "",
+      connectedTo: [],
+      accepts: [],
+      colorCode: ""
+    }
+  ) {
     console.log(this);
     console.log(type);
     this.record.addToRecord(id, type, data, this);
@@ -49,7 +59,7 @@ export class Minerva {
   // removeRecord(id, type) {
   //   this.record[type].filter(item => item.id !== id);
   // }
-  //
+
   // update(id, data) {
   //   this.record[type].map(item => {
   //     if (item.id === id) return { ...item, data };
