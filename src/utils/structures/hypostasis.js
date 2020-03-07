@@ -10,8 +10,8 @@ import { Athenaeum } from "./athenaeum";
 // other collections that is the 'underlying reality'.
 
 export class Hypostasis extends Structure {
-  constructor(name) {
-    super(name);
+  constructor(name, options) {
+    super(name, options);
 
     this.type = "hypostasis";
 
