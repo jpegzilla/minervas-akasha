@@ -40,32 +40,29 @@ export class Minerva {
     this.userId = options.user ? options.user.id : null;
   }
 
-  addRecord(
-    id,
-    type,
-    data = {
-      tags: [],
-      id: "",
-      connectedTo: [],
-      accepts: [],
-      colorCode: ""
-    }
-  ) {
-    console.log(this);
-    console.log(type);
-    this.record.addToRecord(id, type, data, this);
+  addToRecord(id, structure) {
+    this.record.addToRecord(id, structure, this);
+    this.save();
   }
 
-  // removeRecord(id, type) {
-  //   this.record[type].filter(item => item.id !== id);
-  // }
+  removeRecord(id, type) {
+    this.record.removeRecord(id, type, this);
+    this.save();
+  }
 
-  // update(id, data) {
-  //   this.record[type].map(item => {
-  //     if (item.id === id) return { ...item, data };
-  //     return item;
-  //   });
-  // }
+  /**
+   * editRecord - edit a record in akasha
+   *
+   * @param {string} id   unique id of the record to edit
+   * @param {string} type type of record to edit
+   * @param {object} data data to give to the record
+   *
+   * @returns {Minerva} current instance of minerva
+   */
+  editRecord(id, type, key, value) {
+    this.record.editRecord(id, type, key, value, this);
+    this.save();
+  }
 
   setWindows(array) {
     this.windows = array;
@@ -110,7 +107,7 @@ export class Minerva {
     this.save();
   }
 
-  logout(user) {
+  logout() {
     // MinervaArchive.remove("minervas_akasha");
     // MinervaArchive.remove(user.name);
 
@@ -137,18 +134,19 @@ export class Minerva {
     });
   }
 
-  get(item, type, database = false) {
+  get(key, database) {
     // type is only for searching in the database
     if (database) {
+      const { type } = database;
       return new Promise((resolve, reject) => {
-        this.database.find(item, type).then(res => {
+        this.database.find(key, type).then(res => {
           if (!res) reject("nothing found");
           else resolve(res);
         });
       });
     }
 
-    return JSON.parse(Minerva._store.getItem(item));
+    return JSON.parse(Minerva._store.getItem(key));
   }
 
   set(name, item, type, database = false) {
