@@ -17,7 +17,7 @@ export class Hypostasis extends Structure {
 
     this.name = name;
 
-    this.accepts = [Athenaeum];
+    this.accepts = ["athenaeum"];
 
     this.reflections = {};
   }

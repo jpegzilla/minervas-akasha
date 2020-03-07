@@ -14,6 +14,6 @@ export class Athenaeum extends Structure {
     this.type = "athenaeum";
 
     // a list of structures that this type of structure can connect to.
-    this.accepts = [Grimoire, Node, Shard];
+    this.accepts = ["grimoire", "node", "shard"];
   }
 }

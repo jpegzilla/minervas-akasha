@@ -10,6 +10,6 @@ export class Node extends Structure {
     this.type = "node";
 
     // a list of structures that this type of structure can connect to.
-    this.accepts = [Shard];
+    this.accepts = ["shard"];
   }
 }
