@@ -5,9 +5,9 @@ import { Hypostasis } from "./../structures/hypostasis";
 import { Athenaeum } from "./../structures/athenaeum";
 
 export default {
-  Shard: Shard,
-  Grimoire: Grimoire,
-  Node: Node,
-  Hypostasis: Hypostasis,
-  Athenaeum: Athenaeum
+  shard: Shard,
+  grimoire: Grimoire,
+  node: Node,
+  hypostasis: Hypostasis,
+  athenaeum: Athenaeum
 };
