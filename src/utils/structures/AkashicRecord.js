@@ -47,39 +47,76 @@ export default class AkashicRecord {
   // and just retrieve the corresponding data structures from another store that
   // contains the actual objects? should I store the structures
   // in the records object?
-  addToRecord(id, type, data, minerva) {
-    const s = StructureMap[type];
-    let t = type.toLowerCase();
 
-    if (!s instanceof Structure)
-      throw new TypeError(`${s} is not a proper structure.`);
+  /**
+   * addToRecord - add a new structure to the record
+   *
+   * @param {string}    id        unique id for the class
+   * @param {Structure} structure instance of a structure to be added
+   * @param {Minerva}   minerva   current instance of minerva
+   *
+   * @returns {object} instance of akashicrecord
+   */
+  addToRecord(id, structure, minerva) {
+    if (!structure instanceof Structure)
+      throw new TypeError(`${structure} is not a proper structure.`);
 
-    this.records[t].push({ id, data });
+    this.records[structure.type].push({
+      id,
+      name: structure.name,
+      data: structure.data
+    });
+
     minerva.record = this;
 
     return this;
   }
 
-  editRecord(id, type, data, minerva) {
-    const s = StructureMap[type];
-    let t = type.toLowerCase();
+  /**
+   * editRecord - edit a record in the akashicrecord instance
+   *
+   * @param {string}    id        unique id belonging to the record
+   * @param {string}    type      type of structure to be edited
+   * @param {object}    data      object containing the new data for the structure
+   * @param {Minerva}   minerva   current instance of minerva
+   *
+   * @returns {undefined} void
+   */
+  editRecord(id, type, key, value, minerva) {
+    if (!id || !type || !key || !value || !minerva)
+      throw new SyntaxError("editRecord missing params");
+    if (!StructureMap[type] instanceof Structure)
+      throw new TypeError(`${id} is not a proper structure.`);
 
-    if (!s instanceof Structure)
-      throw new TypeError(`${s} is not a proper structure.`);
+    const newTypeRecords = this.records[type].map(item => {
+      if (item.id === id) item[key] = value;
 
-    this.records[t].map(item => (item.id === id ? { data } : item));
+      return item;
+    });
+
+    this.records = { ...this.records, [type]: newTypeRecords };
 
     minerva.record = this;
+
+    return this;
   }
 
-  removeFromRecord(id, type, data, minerva) {
-    const s = StructureMap[type];
-    let t = type.toLowerCase();
+  /**
+   * removeRecord - remove a record from akasha
+   *
+   * @param {string} id       unique id for the record to remove
+   * @param {string} type     type of record to be removed
+   * @param {Minerva} minerva current instance of minerva
+   *
+   * @returns {undefined} void
+   */
+  removeRecord(id, type, minerva) {
+    if (!StructureMap[type] instanceof Structure)
+      throw new TypeError(`${id} is not a proper structure.`);
 
-    if (!id || type)
-      throw new TypeError(`${s} does not have the correct format`);
+    const newTypeRecords = this.records[type].filter(item => id !== item.id);
 
-    this.records[t].filter(e => id === e.id);
+    this.records = { ...this.records, [type]: newTypeRecords };
 
     minerva.record = this;
   }
