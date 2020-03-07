@@ -177,7 +177,7 @@ export const Window = props => {
         onMouseDown={e => handleMouseDown(e, true)}
         onMouseUp={e => handleMouseDown(e, false)}
       >
-        <span>{`${componentProps.type || title} (${num})`}</span>
+        <span>{`${componentProps.type || t} (${num})`}</span>
         <b />
         <span className="window-controls">
           <div
