@@ -24,7 +24,8 @@ export const Window = props => {
 
   const Component = WindowTypes[component];
 
-  const { title, id, state, position } = item;
+  const { title: t, id, state, position } = item;
+  let title = t.replace(/\s/gim, "-");
 
   const { x, y } = position;
 
