@@ -203,7 +203,12 @@ export const Window = props => {
         </span>
       </header>
       <section className="window-content">
-        {<Component {...componentProps} />}
+        {
+          <Component
+            {...componentProps}
+            handleWindowCommand={handleWindowCommand}
+          />
+        }
       </section>
     </div>
   );
