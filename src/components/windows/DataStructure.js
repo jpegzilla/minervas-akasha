@@ -33,8 +33,18 @@ export const DataStructure = props => {
   useEffect(
     () => {
       // ...add to record
-      console.log("adding item to record", structId);
-      minerva.addRecord(structId, type);
+      console.log("adding item to record", structId, type, StructureMap[type]);
+      const structToAdd = new StructureMap[type](type, {
+        tags: [],
+        id: structId,
+        connectedTo: [],
+        colorCode: "white",
+        accepts: StructureMap[type].accepts
+      });
+
+      console.log(structToAdd);
+
+      minerva.addToRecord(structId, structToAdd);
     },
     [structId]
   );
