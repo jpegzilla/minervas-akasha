@@ -128,7 +128,7 @@ export const Home = () => {
   // will be more robust.
   useEffect(
     () => {
-      if (Object.keys(minerva.record).length < 1) {
+      if (Object.keys(minerva.record).length < 1 && minerva.get("logged_in")) {
         console.warn("minerva has lost her memory!!", minerva);
         throw new Error(
           "minerva has no record!! " + JSON.stringify(minerva.record, null, 5)
