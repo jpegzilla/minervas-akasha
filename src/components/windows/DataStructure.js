@@ -9,19 +9,14 @@ import React, {
 import { uuidv4 } from "./../../utils/misc";
 import PropTypes from "prop-types";
 
-// import { Structure } from "../../utils/structures/structure";
-// import { Hypostasis } from "../../utils/structures/hypostasis";
-// import { Shard } from "../../utils/structures/shard";
-// import { Node } from "../../utils/structures/node";
-// import { Grimoire } from "../../utils/structures/grimoire";
-// import { Athenaeum } from "../../utils/structures/athenaeum";
+import StructureMap from "./../../utils/managers/StructureMap";
 
 import { globalContext } from "./../App";
 
 let timeouts = [];
 
 export const DataStructure = props => {
-  const { type, structId } = props;
+  const { type, structId, handleWindowCommand } = props;
 
   const [droppedFiles, setDroppedFiles] = useState();
   const [activeFileData, setActiveFileData] = useState();
@@ -101,11 +96,13 @@ export const DataStructure = props => {
     [droppedFiles]
   );
 
+  // function that just clears the status message
   const t = () => {
     setStatusText("");
     setStatusMessage({ display: false, text: "", type: null });
   };
 
+  // function to clear all running timeouts belonging to this component
   const clearAll = () => {
     for (let i = 0; i < timeouts.length; i++) {
       clearTimeout(timeouts[i]);
@@ -122,24 +119,21 @@ export const DataStructure = props => {
     globalContext
   );
 
-  const handleDeleteRecord = () => {
-    // remove from minerva's record
-    setDeletionStarted(true);
-  };
-
   const handleConnectRecord = () => {
     console.log("connecting record...");
   };
 
   // when user clicks confirm or deny, this is the function that handles the choice
   // to delete or not delete the structure.
-  const onDeleteChoice = confirm => {
+  const onDeleteChoice = (e, confirm) => {
     setDeletionStarted(false);
 
     if (confirm) {
       console.log("removing item from record", structId);
 
-      return;
+      // remove the appropriate record from minerva and close the window.
+      minerva.removeFromRecord(structId, type);
+      handleWindowCommand(e, "close");
     }
   };
 
@@ -163,6 +157,10 @@ export const DataStructure = props => {
       return;
     }
 
+    // update the name in minerva's record...
+    minerva.editRecord(structId, type, "name", nameRef.current.value);
+
+    // ...then set the name in the ui.
     setName(nameRef.current.value);
   };
 
@@ -197,6 +195,19 @@ export const DataStructure = props => {
 
     tagRef.current.value = "";
   };
+
+  // this effect watches the taglist array and updates minerva's record
+  // whenever it changes. this prevents the two from ever desyncing.
+  useEffect(
+    () => {
+      if (info.taglist) {
+        console.log("taglist", info.taglist);
+
+        minerva.editRecord(structId, type, "tags", info.taglist);
+      }
+    },
+    [info.taglist]
+  );
 
   return (
     <div className="structure-content">
@@ -248,13 +259,16 @@ export const DataStructure = props => {
         </div>
 
         <div>
-          <button className="delete-button" onClick={handleDeleteRecord}>
+          <button
+            className="delete-button"
+            onClick={() => setDeletionStarted(true)}
+          >
             delete record
           </button>
           {deletionStarted && (
             <Fragment>
-              <button onClick={() => onDeleteChoice(true)}>confirm</button>
-              <button onClick={() => onDeleteChoice(false)}>deny</button>
+              <button onClick={e => onDeleteChoice(e, true)}>confirm</button>
+              <button onClick={e => onDeleteChoice(e, false)}>deny</button>
             </Fragment>
           )}
         </div>
