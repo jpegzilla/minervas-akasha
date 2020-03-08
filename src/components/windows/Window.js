@@ -25,11 +25,15 @@ export const Window = props => {
   const Component = WindowTypes[component];
 
   const { title: t, id, state, position } = item;
-  let title = t.replace(/\s/gim, "-");
+
+  // title is set here, replacing spaces with dashes
+  // in order to use it as a css class and id
+  let title = t.replace(/\s/gi, "-");
 
   const { x, y } = position;
 
   const handleMouseDown = (e, bool) => {
+    // when mouse is down, make sure that the mouse is not clicking on a window control button.
     if (
       Array.from(document.querySelectorAll(".window-controls-button")).includes(
         e.target
@@ -38,6 +42,8 @@ export const Window = props => {
       return;
 
     setActiveWindowId(id);
+
+    // bool is true if mouse is down, false if mouse is up.
     if (bool) {
       const rect = e.target.getBoundingClientRect();
 
