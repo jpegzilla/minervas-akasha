@@ -47,7 +47,7 @@ export const Console = props => {
       ".console-text"
     ).offsetHeight;
 
-    const res = parseCommand(cmd, setLog, minerva);
+    const res = parseCommand(cmd, setWindows, minerva);
 
     setCommand("");
     if (["clr", "clear"].includes(cmd)) return setLog([]);
