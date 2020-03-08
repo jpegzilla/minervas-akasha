@@ -109,7 +109,7 @@ export default class AkashicRecord {
    *
    * @returns {undefined} void
    */
-  editRecord(id, type, key, value, minerva) {
+  editInRecord(id, type, key, value, minerva) {
     if (!id || !type || !key || !value || !minerva)
       throw new SyntaxError("editRecord missing params");
     if (!StructureMap[type] instanceof Structure)
