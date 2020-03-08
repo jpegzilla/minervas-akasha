@@ -1,12 +1,31 @@
 import AkashicRecord from "./../structures/AkashicRecord";
+import DatabaseInterface from "./Database";
 import { uuidv4 } from "./../misc";
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
 
 // it's also responsible for storing the overall state of the application, including
 // volume, graphical settings, preferences, etc.
+
+/**
+ * Minerva - class that manages settings and records within this application.
+ * the ghost in the shell.
+ */
 export class Minerva {
+  /**
+   * constructor - instantiates an instance of minerva.
+   *
+   * @param {object} options  options object containing a user name string,
+   * an instance of AkashicRecord, a settings object, an array of windows,
+   * and a user id.
+   * @param {DatabaseInterface} database an instance of the DatabaseInterface class
+   *
+   * @returns {type} Description
+   */
   constructor(options, database) {
+    if (!database instanceof DatabaseInterface)
+      throw new TypeError("database must be an instance of DatabaseInterface.");
+
     this.user = options.user || null;
 
     // if a user exists already, get their record. otherwise, the record is
@@ -40,18 +59,35 @@ export class Minerva {
     this.userId = options.user ? options.user.id : null;
   }
 
+  /**
+   * addToRecord - add a new structure to the record.
+   *
+   * @param {string} id           unique id for the structure.
+   * @param {Structure} structure structure to add.
+   *
+   * @returns {undefined} void
+   */
   addToRecord(id, structure) {
     this.record.addToRecord(id, structure, this);
     this.save();
   }
 
-  removeRecord(id, type) {
-    this.record.removeRecord(id, type, this);
+  /**
+   * removeFromRecord - remove structure from the record.
+   *
+   * @param {string} id      unique id for the structure. provided to a structure upon
+   * initiation, in the DataStructure component.
+   * @param {Structure} type type of structure to remove.
+   *
+   * @returns {undefined} void
+   */
+  removeFromRecord(id, type) {
+    this.record.removeFromRecord(id, type, this);
     this.save();
   }
 
   /**
-   * editRecord - edit a record in akasha
+   * editInRecord - edit a record in akasha
    *
    * @param {string} id   unique id of the record to edit
    * @param {string} type type of record to edit
@@ -120,6 +156,16 @@ export class Minerva {
     this.settings = {};
   }
 
+  /**
+   * search - use the database interface to search for a user,
+   * or find user in localstorage.
+   *
+   * @param {object}  user             user object
+   * @param {boolean} [database=false] whether or not to search only in database
+   *
+   * @returns {promise} promise that resolves when user is found, rejects on error,
+   * or resolves false if user is not found.
+   */
   search(user, database = false) {
     console.trace("trace user from search,", user);
 
@@ -127,6 +173,8 @@ export class Minerva {
       // search in database
     }
 
+    // promise so I can do something like
+    // on login attempt: search(user).then(() => do login stuff)
     return new Promise((resolve, _reject) => {
       if (this.get(user.name)) {
         resolve(this.get(user.name));
@@ -189,6 +237,8 @@ export class Minerva {
     };
 
     MinervaArchive.set("minerva_store", store);
+
+    return this;
   }
 
   load() {
@@ -228,8 +278,10 @@ export class Minerva {
   static _session = window.sessionStorage;
 }
 
-// storage interaction utility methods
-
+/**
+ * MinervaArchive - utility class for interacting with localstorage.
+ * @extends Minerva
+ */
 export class MinervaArchive extends Minerva {
   static get(key) {
     return JSON.parse(Minerva._store.getItem(key));
