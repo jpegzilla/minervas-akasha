@@ -95,21 +95,51 @@ export class Minerva {
    *
    * @returns {Minerva} current instance of minerva
    */
-  editRecord(id, type, key, value) {
-    this.record.editRecord(id, type, key, value, this);
+  editInRecord(id, type, key, value) {
+    this.record.editInRecord(id, type, key, value, this);
     this.save();
   }
 
+  /**
+   * setWindows - change the windows in minerva's window array.
+   *
+   * @param {array} array array of windows to set
+   *
+   * @returns {undefined} void
+   */
   setWindows(array) {
+    if (!Array.isArray(array))
+      throw new TypeError("invalid parameters to minerva.setWindows");
+
     this.windows = array;
     this.save();
   }
 
+  /**
+   * changeSetting - change a setting in minerva's settings object.
+   *
+   * @param {object} settings object containing the settings to change.
+   *
+   * @returns {undefined} void
+   */
   changeSetting(settings) {
+    if (typeof settings !== "object")
+      throw new TypeError("invalid parameters to minerva.changeSetting");
+
     this.settings = settings;
     this.save();
   }
 
+  /**
+   * login - a function to set a user as 'logged in' to the application.
+   *
+   * @param {object}  user             user object containing a user id, a date of
+   * creation, a name, and a records object.
+   * @param {boolean} [newUser=false]  true if user is creating an account for the first time.
+   * @param {boolean} [database=false] true if the user needs to be loaded from the database.
+   *
+   * @returns {undefined} void
+   */
   login(user, newUser = false, database = false) {
     this.user = user;
     this.userId = user.id;
