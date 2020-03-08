@@ -12,7 +12,7 @@ import { globalContext } from "./App";
 // import { Shard } from "../utils/structures/shard";
 // import { Node } from "../utils/structures/node";
 // import { Grimoire } from "../utils/structures/grimoire";
-import { Athenaeum } from "../utils/structures/athenaeum";
+// import { Athenaeum } from "../utils/structures/athenaeum";
 
 import PropTypes from "prop-types";
 
@@ -60,9 +60,9 @@ export const Taskbar = props => {
 
   const [logout, setLogout] = useState(false);
 
-  // function to add a new athenaeum structure
+  // function to add a new structure
   const addStructure = type => {
-    if (type === type.toLowerCase())
+    if (type !== type.toLowerCase())
       throw new Error("invalid type provided to addStructure");
     // add new window to list
     const ath = {
@@ -88,7 +88,7 @@ export const Taskbar = props => {
   };
 
   // for minimizing / restoring windows
-  const handleClickItem = (event, item) => {
+  const handleClickItem = (_event, item) => {
     let newState;
 
     // todo: remove maximization
@@ -116,7 +116,7 @@ export const Taskbar = props => {
   const [menuItems, setMenuItems] = useState([
     {
       title: "log out",
-      onClick: (e, item) => {
+      onClick: (_e, _item) => {
         audiomanager.play("c_one");
 
         minerva.logout(minerva.user);
@@ -127,7 +127,7 @@ export const Taskbar = props => {
     },
     {
       title: "open record viewer",
-      onClick: (e, item) => {
+      onClick: (_e, _item) => {
         const newRecordViewer = {
           title: "record viewer",
           state: "restored",
@@ -149,14 +149,14 @@ export const Taskbar = props => {
     },
     {
       title: "add new athenaeum",
-      onClick: (e, item) => {
-        addStructure("Athenaeum");
+      onClick: (_e, _item) => {
+        addStructure("athenaeum");
       },
       tooltip: "add a new structure."
     },
     {
       title: "open console",
-      onClick: (e, item) => {
+      onClick: (_e, _item) => {
         const newConsole = {
           title: "console",
           state: "restored",
@@ -186,9 +186,9 @@ export const Taskbar = props => {
   ].map(title => {
     return {
       title,
-      onClick: (e, item, id) => {
+      onClick: (_e, _item, _id) => {
         const type = title.split("+ ")[1];
-        addStructure(type.slice(0, 1).toUpperCase() + type.slice(1));
+        addStructure(type);
       }
     };
   });
