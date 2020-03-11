@@ -203,9 +203,11 @@ export default class AkashicRecord {
       // retreive record for user with name from database
     } else {
       // retrieve from localStorage
-      const record = Minerva._store[name];
+      const user = JSON.parse(Minerva._store[name]);
+      const record = JSON.parse(Minerva._store["minerva_store"]).records;
 
-      const { dateCreated, records } = record;
+      const { dateCreated } = user;
+      const { records } = record;
 
       return new AkashicRecord(
         userId,
