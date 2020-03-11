@@ -38,6 +38,37 @@ export class Minerva {
         )
       : {};
 
+    let db = window.indexedDB.open("minerva_db");
+
+    this.indexedDB = null;
+
+    db.onerror = event => {
+      console.warn("error with indexedDB", event.target.errorCode);
+    };
+
+    db.onsuccess = event => {
+      console.log("indexedDB success.", event);
+      this.indexedDB = event.target.result;
+    };
+
+    db.onupgradeneeded = function(event) {
+      console.log("running database upgrade");
+
+      const db = event.target.result;
+
+      // create object store with keypath of id. keypath will cause
+      // the object store to use that key as a unique index.
+      const objectStore = db.createObjectStore("minerva_files", {
+        keyPath: "id"
+      });
+
+      // names can contain duplicates, but can be used to search the database
+      objectStore.createIndex("name", "name", { unique: false });
+
+      // an index to search documents by name. must be unique
+      objectStore.createIndex("id", "id", { unique: true });
+    };
+
     this.settings = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").settings
       : {
@@ -57,6 +88,17 @@ export class Minerva {
 
     // maybe don't do this?
     this.userId = options.user ? options.user.id : null;
+
+    this.recordUpdated = 0;
+    this.indexedDBUpdated = new Date().toISOString();
+  }
+
+  updateIndexedDBUpdatedTimestamp() {
+    this.indexedDBUpdated = new Date().toISOString();
+  }
+
+  updateRecordUpdatedTimeStamp() {
+    this.recordUpdated = new Date().toISOString();
   }
 
   /**
@@ -68,6 +110,7 @@ export class Minerva {
    * @returns {undefined} void
    */
   addToRecord(id, structure) {
+    this.updateRecordUpdatedTimeStamp();
     this.record.addToRecord(id, structure, this);
     this.save();
   }
@@ -82,6 +125,7 @@ export class Minerva {
    * @returns {undefined} void
    */
   removeFromRecord(id, type) {
+    this.updateRecordUpdatedTimeStamp();
     this.record.removeFromRecord(id, type, this);
     this.save();
   }
@@ -96,6 +140,7 @@ export class Minerva {
    * @returns {Minerva} current instance of minerva
    */
   editInRecord(id, type, key, value) {
+    this.updateRecordUpdatedTimeStamp();
     this.record.editInRecord(id, type, key, value, this);
     this.save();
   }
@@ -127,6 +172,11 @@ export class Minerva {
       throw new TypeError("invalid parameters to minerva.changeSetting");
 
     this.settings = settings;
+    this.save();
+  }
+
+  resetRecords() {
+    this.record.resetRecords();
     this.save();
   }
 
@@ -197,7 +247,7 @@ export class Minerva {
    * or resolves false if user is not found.
    */
   search(user, database = false) {
-    console.trace("trace user from search,", user);
+    // console.trace("trace user from search,", user);
 
     if (database) {
       // search in database
@@ -255,6 +305,100 @@ export class Minerva {
       default:
         throw new Error("invalid type provided to minerva.set");
     }
+  }
+
+  addFileToRecord(id, file, structure) {
+    // take this.records and store them in the database
+    const transaction = this.indexedDB.transaction(
+      ["minerva_files"],
+      "readwrite"
+    );
+
+    const { type } = structure;
+
+    const objectStore = transaction.objectStore("minerva_files");
+
+    const req = objectStore.put({
+      id,
+      userId: this.user.id,
+      file,
+      type
+    });
+
+    req.onsuccess = () => {
+      console.log("done.");
+      this.updateIndexedDBUpdatedTimestamp();
+    };
+  }
+
+  updateFileInRecord(id, key, value) {
+    const objectStore = this.indexedDB
+      .transaction(["minerva_files"], "readwrite")
+      .objectStore("minerva_files");
+
+    const request = objectStore.get(id);
+
+    return new Promise((resolve, reject) => {
+      request.onerror = event => {
+        reject({ status: "error", event });
+      };
+
+      request.onsuccess = event => {
+        // get the old value that we want to update
+        const data = event.target.result;
+
+        // update the value(s) in the object that you want to change
+        data[key] = value;
+
+        // put this updated object back into the database.
+        const requestUpdate = objectStore.put(data);
+
+        requestUpdate.onerror = event => {
+          // do something with the error
+          reject({ status: "error", event });
+        };
+
+        requestUpdate.onsuccess = event => {
+          // success - the data is updated!
+          this.updateIndexedDBUpdatedTimestamp();
+          resolve({ status: "success", event });
+        };
+      };
+    });
+  }
+
+  removeFileInRecord(id) {
+    const request = this.indexedDB
+      .transaction(["minerva_files"], "readwrite")
+      .objectStore("minerva_files")
+      .delete(id);
+
+    return new Promise((resolve, reject) => {
+      request.onsuccess = event => {
+        this.updateIndexedDBUpdatedTimestamp();
+        resolve(event.target.result);
+      };
+
+      request.onerror = e => {
+        reject(e);
+      };
+    });
+  }
+
+  findFileInRecord(id) {
+    const transaction = this.indexedDB.transaction(["minerva_files"]);
+    const objectStore = transaction.objectStore("minerva_files");
+    const request = objectStore.get(id);
+
+    return new Promise((resolve, reject) => {
+      request.onsuccess = event => {
+        resolve(event.target.result);
+      };
+
+      request.onerror = e => {
+        reject(e);
+      };
+    });
   }
 
   save() {
