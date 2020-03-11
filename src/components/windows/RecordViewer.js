@@ -48,12 +48,34 @@ export const RecordViewer = props => {
 
     minerva.setWindows([...minerva.windows, struct]);
 
-  // useEffect(
-  //   () => {
-  //     console.log(minerva.windows);
-  //   },
-  //   [minerva.windows]
-  // );
+    setWindows([...minerva.windows]);
+  };
+
+  useEffect(
+    () => {
+      setRecords(minerva.record.records);
+    },
+    [minerva.record.records]
+  );
+
+  useEffect(
+    () => {
+      let counter = 0;
+      let extant = [];
+      for (let [, v] of Object.entries(records)) {
+        if (v.length) {
+          counter += v.length;
+          v.forEach(item => extant.push(item));
+        }
+      }
+
+      setRecordData({
+        records: extant,
+        length: counter
+      });
+    },
+    [records]
+  );
 
   return (
     <div className="record-viewer-container">
