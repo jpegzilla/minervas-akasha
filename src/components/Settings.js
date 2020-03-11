@@ -9,6 +9,7 @@ export const Settings = props => {
 
   useEffect(() => minerva.changeSetting(settings), [
     settings,
+    minerva,
     minerva.settings
   ]);
 
