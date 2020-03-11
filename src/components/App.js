@@ -161,9 +161,9 @@ export const App = () => {
         >
           <Router>
             <section
-              onContextMenu={e => {
-                handleContextMenu(e, true);
-              }}
+              // onContextMenu={e => {
+              //   handleContextMenu(e, true);
+              // }}
               onClick={e => {
                 handleContextMenu(e, false);
               }}
