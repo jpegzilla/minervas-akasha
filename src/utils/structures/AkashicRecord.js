@@ -91,13 +91,35 @@ export default class AkashicRecord {
     if (!structure instanceof Structure)
       throw new TypeError(`${structure} is not a proper structure.`);
 
-    this.records[structure.type].push({
-      id,
-      name: structure.name,
-      data: structure.data
-    });
+    const {
+      type,
+      tags,
+      name,
+      connectedTo,
+      data,
+      colorCode,
+      accepts
+    } = structure;
+
+    const newTypeRecords = [
+      ...this.records[type],
+      {
+        id,
+        type,
+        tags,
+        name,
+        connectedTo,
+        data,
+        colorCode,
+        accepts
+      }
+    ];
+
+    this.records = { ...this.records, [type]: newTypeRecords };
 
     minerva.record = this;
+
+    this.updateDate();
 
     return this;
   }
@@ -120,6 +142,8 @@ export default class AkashicRecord {
     this.records = { ...this.records, [type]: newTypeRecords };
 
     minerva.record = this;
+
+    this.updateDate();
   }
 
   /**
@@ -147,6 +171,8 @@ export default class AkashicRecord {
     this.records = { ...this.records, [type]: newTypeRecords };
 
     minerva.record = this;
+
+    this.updateDate();
 
     return this;
   }
