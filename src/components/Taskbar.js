@@ -293,6 +293,11 @@ export const Taskbar = props => {
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1;
 
+            let title = w.title;
+
+            if (w.componentProps) {
+              if (w.componentProps.type) title = w.componentProps.type;
+            }
             return (
               <li
                 className={
@@ -305,7 +310,7 @@ export const Taskbar = props => {
                 }}
                 key={w.stringType + i}
               >
-                {`${w.title} (${tabCounts[w.stringType]})`}
+                {`${title} (${tabCounts[w.stringType]})`}
               </li>
             );
           }
