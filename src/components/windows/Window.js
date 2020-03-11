@@ -86,27 +86,12 @@ export const Window = props => {
             })
           ]);
           return;
-        case "maximized":
-          setWindows([
-            ...windows.map(w => {
-              // set state to minimized, or return the existing window object
-              return w.id === id
-                ? {
-                    ...w,
-                    state
-                  }
-                : w;
-            })
-          ]);
-          return;
         default:
           throw new Error("something went very wrong");
       }
     } else {
       switch (command) {
         case "close":
-          console.log("closing window");
-
           minerva.setWindows([
             ...minerva.windows.filter(w => (w.id === id ? false : true))
           ]);
