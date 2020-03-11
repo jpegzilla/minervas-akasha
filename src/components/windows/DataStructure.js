@@ -92,6 +92,7 @@ export const DataStructure = props => {
       const fileMime = f.type || "text/plain";
       const fileExt = f.name.slice(f.name.lastIndexOf("."));
 
+      // if file mimetype indicates a text file
       if (/text/gi.test(fileMime)) {
         f.text().then(e => {
           console.log(e);
@@ -212,7 +213,11 @@ export const DataStructure = props => {
     minerva.editInRecord(structId, type, "name", nameRef.current.value);
 
     // ...then set the name in the ui.
-    setName(nameRef.current.value);
+    setInfo({ ...info, name: nameRef.current.value });
+
+    setWindows([...minerva.windows]);
+
+    nameRef.current.value = "";
   };
 
   const addTag = () => {
@@ -285,7 +290,9 @@ export const DataStructure = props => {
         </ul>
       </header>
 
-      <section className="structure-data">(data goes here)</section>
+      <section className="structure-data">
+        {currentFileData ? currentFileData.title : "no current file data"}
+      </section>
 
       <section className="structure-controls">
         <div>
