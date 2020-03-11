@@ -65,7 +65,7 @@ export const Taskbar = props => {
     if (type !== type.toLowerCase())
       throw new Error("invalid type provided to addStructure");
     // add new window to list
-    const ath = {
+    const struct = {
       title: "datastructure",
       state: "restored",
       stringType: "Window",
@@ -82,7 +82,7 @@ export const Taskbar = props => {
       }
     };
 
-    minerva.setWindows([...minerva.windows, ath]);
+    minerva.setWindows([...minerva.windows, struct]);
 
     setWindows([...minerva.windows]);
   };
