@@ -1,17 +1,34 @@
 import { uuidv4 } from "./../utils/misc";
 
 const validTypes = ["shard", "node", "grimoire", "athenaeum", "hypostasis"];
+let awaitingAnswer = false;
+
+const { REACT_APP_MINERVA_ADMIN_KEY: ADMIN_KEY } = process.env;
 
 // methods that are only for use by the system and privileged users.
-const MinervaMethods = {};
+const MinervaMethods = {
+  verifyUser(key) {
+    awaitingAnswer = !awaitingAnswer;
+
+    if (awaitingAnswer)
+      return { state: "password", message: "enter admin key" };
+    else if (key) {
+      return ADMIN_KEY === key
+        ? {
+            state: "update",
+            message: "resetting record",
+            action: "reset records"
+          }
+        : { state: "error", message: "invalid key provided." };
+    }
+  }
+};
 
 // methods that are for use by anyone, including regular users.
 const UserMethods = {
   addStructure(type, setWindows, minerva) {
-    if (type === type.toLowerCase())
-      throw new Error("invalid type provided to addStructure");
     // add new window to list
-    const ath = {
+    const struct = {
       title: "datastructure",
       state: "restored",
       stringType: "Window",
@@ -28,7 +45,7 @@ const UserMethods = {
       }
     };
 
-    minerva.setWindows([...minerva.windows, ath]);
+    minerva.setWindows([...minerva.windows, struct]);
 
     setWindows([...minerva.windows]);
 
@@ -38,6 +55,13 @@ const UserMethods = {
 
 export const parseCommand = (command, setWindows, minerva) => {
   const username = minerva.user.name;
+
+  if (!awaitingAnswer && command.toLowerCase() !== command) {
+    return {
+      state: "error",
+      message: "no uppercase letters allowed."
+    };
+  }
 
   if (command.startsWith("add")) {
     const params = command.split(" ");
@@ -50,13 +74,22 @@ export const parseCommand = (command, setWindows, minerva) => {
           "invalid parameter passed to add. first parameter must be a structure type."
       };
 
-    UserMethods.addStructure(
-      params[0][0].toUpperCase() + params[0].slice(1),
-      setWindows,
-      minerva
-    );
+    UserMethods.addStructure(params[0], setWindows, minerva);
 
     return `added new ${params[0]}.`;
+  }
+
+  if (
+    ["reset records", "reset record"].includes(command) &&
+    awaitingAnswer === false
+  ) {
+    const stepOne = MinervaMethods.verifyUser();
+
+    return stepOne;
+  }
+
+  if (command.startsWith("key") && awaitingAnswer === true) {
+    return MinervaMethods.verifyUser(command.replace("key", "").trim());
   }
 
   switch (command) {
