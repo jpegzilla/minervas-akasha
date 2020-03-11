@@ -935,17 +935,17 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.56s forwards;
+  animation: flickerout 0.3s ease 2.42s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 2.42s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
@@ -955,28 +955,28 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 3.75s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(6) {
   transition: background-color 0.3s ease 0.3s;
-  animation: flickerout 0.3s ease 2.42s forwards;
+  animation: flickerout 0.3s ease 2.84s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 2.49s forwards;
+  animation: flickerout 0.3s ease 3.47s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 2.56s forwards;
+  animation: flickerout 0.3s ease 3.12s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 4.52s forwards;
+  animation: flickerout 0.3s ease 5.15s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -4692,11 +4692,6 @@ input[type="range"]:focus::-ms-fill-upper {
   }
 }
 
-.record-viewer-window {
-  height: auto;
-  width: 40vw;
-}
-
 .record-viewer-window .record-viewer-header {
   margin-bottom: 0;
 }
@@ -4723,6 +4718,19 @@ input[type="range"]:focus::-ms-fill-upper {
 .record-viewer-window .record-viewer-container .record-viewer-main {
   display: flex;
   flex-grow: 1;
+}
+
+.record-viewer-window .record-viewer-container .record-viewer-main .record-viewer-records {
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: repeat(3, min-content);
+}
+
+.record-viewer-window .record-viewer-container .record-viewer-main .record-viewer-records .record-viewer-record {
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--text-main);
+  padding: 0.25rem 0.5rem;
 }
 
 .record-viewer-window .record-viewer-container .record-viewer-main .record-viewer-sidebar {
@@ -5489,7 +5497,7 @@ input[type="range"]:focus::-ms-fill-upper {
   background-color: #df0971;
 }
 
-* {
+*:not(input) {
   text-transform: lowercase;
 }
 
