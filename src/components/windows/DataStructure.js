@@ -28,7 +28,18 @@ export const DataStructure = props => {
   useEffect(
     () => {
       // ...add to record
-      console.log("adding item to record", structId, type, StructureMap[type]);
+      // console.log("adding item to record:", type);
+
+      // if the structure already exists, do not add a new one
+      const existingRecord = minerva.record.records[type].find(
+        item => item.id === structId
+      );
+
+      if (existingRecord) {
+        setInfo(existingRecord);
+        return;
+      }
+
       const structToAdd = new StructureMap[type](type, {
         tags: [],
         id: structId,
