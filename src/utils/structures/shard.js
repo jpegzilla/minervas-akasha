@@ -1,5 +1,9 @@
 import { Structure } from "./structure";
 
+/**
+ * Shard - the smallest normal data structure.
+ * @extends Structure
+ */
 export class Shard extends Structure {
   constructor(name, options) {
     super(name, options);

@@ -1,6 +1,10 @@
 import { Structure } from "./structure";
 import { Shard } from "./shard";
 
+/**
+ * Node - second smallest data structure.
+ * @extends Structure
+ */
 export class Node extends Structure {
   constructor(name, options) {
     super(name, options);

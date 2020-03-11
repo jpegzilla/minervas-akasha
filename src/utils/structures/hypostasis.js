@@ -6,9 +6,14 @@ import { Athenaeum } from "./athenaeum";
 // to be shared across multiple collections through modification of only one collection.
 
 // hypostasis - an underlying reality or substance, as opposed to
-// attributes or to that which lacks substance. think of this structure as a parent to multiple
-// other collections that is the 'underlying reality'.
+// attributes or to that which lacks substance. think of this structure as a parent that is
+// the 'underlying reality' of multiple other collections.
 
+/**
+ * hypostasis - the largest possible data structure, and currently the only
+ * special structure.
+ * @extends Structure
+ */
 export class Hypostasis extends Structure {
   constructor(name, options) {
     super(name, options);

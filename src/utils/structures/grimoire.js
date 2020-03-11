@@ -2,6 +2,10 @@ import { Node } from "./node";
 import { Structure } from "./structure";
 import { Shard } from "./shard";
 
+/**
+ * Grimoire - second to largest normal structure.
+ * @extends Structure
+ */
 export class Grimoire extends Structure {
   constructor(name, options) {
     super(name, options);

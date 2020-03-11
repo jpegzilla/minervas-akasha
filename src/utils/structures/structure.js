@@ -1,6 +1,9 @@
 import { uuidv4 } from "./../misc";
 import { colorcodes } from "./utils/colorcodes";
 
+/**
+ * Structure - main structure class from which other substructures are extended
+ */
 export class Structure {
   /**
    * creates a new structure object

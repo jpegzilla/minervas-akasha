@@ -10,8 +10,15 @@ import DatabaseInterface from "./../managers/Database";
 
 import StructureMap from "./../managers/StructureMap";
 
-// the master structure, meant to represent a user's entire environment when working
+// the master structure, meant to represent a user's entire record library when working
 // within the tool. bound to user id and is created for every new user.
+
+/**
+ * AkashicRecord - a record that contains all of a user's data structures.
+ * controls / maintains all data.
+ * @constructor
+ * @struct
+ */
 export default class AkashicRecord {
   constructor(userId, dateCreated, id, name, records, database) {
     if (!database instanceof DatabaseInterface)

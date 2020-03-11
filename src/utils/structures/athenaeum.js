@@ -5,6 +5,11 @@ import { Node } from "./node";
 
 // an athenaeum is meant to hold large amounts of grimoires, similar to an actual
 // athenaeum.
+
+/**
+ * Athenaeum - largest normal data structure.
+ * @extends Structure
+ */
 export class Athenaeum extends Structure {
   constructor(name, options) {
     super(name, options);
