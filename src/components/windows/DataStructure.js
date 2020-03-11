@@ -74,11 +74,28 @@ export const DataStructure = props => {
             type: f.type,
             mime: fileMime,
             size: f.size,
-            ext: fileExt
+            ext: fileExt,
+            humanSize: bytesToSize(f.size)
           });
         });
 
         return;
+      }
+
+      if (/audio/gi.test(fileMime)) {
+        f.arrayBuffer().then(e => {
+          console.log(e);
+
+          setActiveFileData({
+            data: ab2obj(e),
+            title: f.name,
+            type: f.type,
+            mime: fileMime,
+            size: f.size,
+            ext: fileExt,
+            humanSize: bytesToSize(f.size)
+          });
+        });
       }
 
       // function for reading images only
