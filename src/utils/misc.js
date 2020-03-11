@@ -8,6 +8,38 @@ const m = new audiomanager();
 m.load([{ file: keySound, name: "key" }]);
 
 /**
+ * bytesToSize - convert a number in bytes to a size with a unit
+ *
+ * @param {number} bytes number of bytes
+ *
+ * @returns {string} size with unit
+ */
+export const bytesToSize = bytes => {
+  const sizes = ["bytes", "kb", "mb", "gb", "tb"];
+
+  if (bytes == 0) return "0 bytes";
+
+  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+
+  return `${Math.round(bytes / Math.pow(1024, i), 2)}${sizes[i]}`;
+};
+
+export const ab2obj = buf => {
+  console.log(new Uint16Array(buf));
+  return { type: "Uint16Array", data: Array.from(new Uint16Array(buf)) };
+};
+
+export const str2ab = str => {
+  const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+  const bufView = new Uint16Array(buf);
+
+  for (let i = 0, strLen = str.length; i < strLen; i++)
+    bufView[i] = str.charCodeAt(i);
+
+  return buf;
+};
+
+/**
  * getRandomInt - get a random number from within a range
  *
  * @param {number} min minimum number that can be generated
