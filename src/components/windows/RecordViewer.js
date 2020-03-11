@@ -88,10 +88,41 @@ export const RecordViewer = props => {
           <div>sidebar</div>
         </section>
         <section className="record-viewer-records">
-          <div>records</div>
+          {recordData.records.map((item, i) => {
+            // looks sort of like this: {id: uuidv4(), name: "node", data: {...}}
+            const { type, tags, name } = item;
+
+            // if a type starts with a vowel, use an instead of a when referring to it
+            const aOrAn = ["a", "e", "i", "o", "u", "y"].some(item =>
+              type.startsWith(item)
+            )
+              ? "an"
+              : "a";
+
+            const tagsToShow = tags.length
+              ? tags.map(tag => `"${tag.name}"`).join(", ")
+              : "none";
+
+            return (
+              <div
+                key={`type-${i}-record`}
+                onDoubleClick={e => handleOpenRecord(e, item)}
+                title={
+                  `${aOrAn} ${type}.
+tags: ${tagsToShow}
+name: ${name}` || "null"
+                }
+                className="record-viewer-record record-box"
+              >
+                {type}
+              </div>
+            );
+          })}
         </section>
       </section>
-      <footer className="record-viewer-footer">footer</footer>
+      <footer className="record-viewer-footer">
+        <div>record count: {recordData.length}</div>
+      </footer>
     </div>
   );
 };
