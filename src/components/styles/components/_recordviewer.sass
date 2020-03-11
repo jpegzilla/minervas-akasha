@@ -1,9 +1,6 @@
 @import vars
 
 .record-viewer-window
-  height: auto
-  width: 40vw
-
   .record-viewer-header
     margin-bottom: 0
 
@@ -25,6 +22,17 @@
     .record-viewer-main
       display: flex
       flex-grow: 1
+
+      .record-viewer-records
+        display: grid
+        grid-gap: 0.5rem
+        grid-template-columns: repeat(3, min-content)
+
+        .record-viewer-record
+          cursor: pointer
+          user-select: none
+          border: 1px solid var(--text-main)
+          padding: 0.25rem 0.5rem
 
       .record-viewer-sidebar
         border-right: 1px solid var(--text-main)
