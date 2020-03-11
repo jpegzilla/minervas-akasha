@@ -86,8 +86,11 @@ export const Console = props => {
       ]);
     }
 
+    if (res.state === "update") {
+      setLog([...log, { type: "update", text: `> ${res.message} -> success` }]);
+    } else setLog([...log, { type: "command", text: `> ${cmd} -> ${res}` }]);
+
     setHistory([...history, { type: "command", text: cmd }]);
-    setLog([...log, { type: "command", text: `> ${cmd} -> ${res}` }]);
   };
 
   const handleMouseDown = (e, bool) => {
