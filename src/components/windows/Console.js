@@ -24,6 +24,7 @@ export const Console = props => {
   const { x, y } = position;
   const { minerva, audiomanager } = useContext(globalContext);
   const [command, setCommand] = useState("");
+  const [inputState, setInputState] = useState("default");
 
   const [history, setHistory] = useState([]);
   const [log, setLog] = useState([]);
@@ -50,20 +51,31 @@ export const Console = props => {
     const res = parseCommand(cmd, setWindows, minerva);
 
     setCommand("");
+    setInputState("default");
     if (["clr", "clear"].includes(cmd)) return setLog([]);
     if (cmd === "") return setLog([...log, { type: "none", text: " " }]);
 
-    if (cmd.toLowerCase() !== cmd) {
-      audiomanager.play("e_one");
-      return setLog([
-        ...log,
-        { type: "error", text: "no uppercase letters allowed." }
-      ]);
-    }
+    console.log("response from command parser:", res);
 
-    if (res.message && res.state === "error") {
-      audiomanager.play("e_one");
-      return setLog([...log, { type: "error", text: res.message }]);
+    if (res.message) {
+      if (res.action) {
+        const { action } = res;
+
+        switch (action) {
+          case "reset records":
+            minerva.resetRecords();
+        }
+      }
+
+      if (res.state === "error") {
+        audiomanager.play("e_one");
+        return setLog([...log, { type: "error", text: res.message }]);
+      }
+
+      if (res.state === "password") {
+        setInputState("password");
+        return setLog([...log, { type: "command", text: res.message }]);
+      }
     }
 
     if (!res) {
@@ -202,7 +214,7 @@ export const Console = props => {
             autoComplete="new-password"
             onKeyPress={handleCommand}
             onChange={e => setCommand(e.target.value)}
-            type="text"
+            type={inputState === "password" ? "password" : "text"}
             ref={input}
             value={command}
           />
