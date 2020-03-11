@@ -16,6 +16,7 @@ export const Window = props => {
     setWindows,
     className,
     num,
+    records,
     component,
     componentProps
   } = props;
@@ -64,7 +65,8 @@ export const Window = props => {
     setActiveWindow(bool ? title : "");
   };
 
-  // handle commands such as minimize, maximize, close
+  // handle commands such as minimize and close.
+  // event is only passed in in order to prevent bubbling and any default action.
   const handleWindowCommand = (e, command) => {
     e.stopPropagation();
     e.preventDefault();
@@ -125,7 +127,6 @@ export const Window = props => {
   const handleDrop = e => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("drop event on window: ", item, e.dataTransfer.files[0]);
     setDroppedFiles(e.dataTransfer.files[0]);
     setDroppable(false);
   };
@@ -198,6 +199,9 @@ export const Window = props => {
           <Component
             {...componentProps}
             handleWindowCommand={handleWindowCommand}
+            records={records}
+            setWindows={setWindows}
+            droppedFiles={droppedFiles}
           />
         }
       </section>
