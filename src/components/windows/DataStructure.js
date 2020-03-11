@@ -220,7 +220,7 @@ export const DataStructure = props => {
 
     let errorMessage;
 
-    if (info.taglist && info.taglist.some(e => e.name === newTag.name))
+    if (info.tags && info.tags.some(e => e.name === newTag.name))
       errorMessage = "cannot add duplicate tag.";
     if (!newTag.name) errorMessage = "cannot add empty tags.";
 
@@ -241,34 +241,37 @@ export const DataStructure = props => {
 
     setInfo({
       ...info,
-      taglist: info.taglist ? [...info.taglist, newTag] : [newTag]
+      tags: info.tags ? [...info.tags, newTag] : [newTag]
     });
 
     tagRef.current.value = "";
   };
 
-  // this effect watches the taglist array and updates minerva's record
+  // this effect watches the tags array and updates minerva's record
   // whenever it changes. this prevents the two from ever desyncing.
   useEffect(
     () => {
-      if (info.taglist) {
-        console.log("taglist", info.taglist);
+      if (info.tags) {
+        // console.log("tags", info.tags);
 
-        minerva.editRecord(structId, type, "tags", info.taglist);
+        minerva.editInRecord(structId, type, "tags", info.tags);
+
+        setWindows([...minerva.windows]);
       }
     },
-    [info.taglist]
+    [info.tags]
   );
 
   return (
     <div className="structure-content">
       <header className="structure-header">
         <h2>
-          {name ? name : "untitled data structure"} - {type}
+          {info.type === info.name ? "untitled data structure" : info.name} -{" "}
+          {type}
         </h2>
         <ul className="structure-taglist">
-          {info.taglist
-            ? info.taglist.map(t => {
+          {info.tags
+            ? info.tags.map(t => {
                 return (
                   <li
                     key={`${t.name}-${uuidv4()}`}
