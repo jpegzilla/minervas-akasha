@@ -209,7 +209,7 @@ export const DataStructure = props => {
     }
 
     // update the name in minerva's record...
-    minerva.editRecord(structId, type, "name", nameRef.current.value);
+    minerva.editInRecord(structId, type, "name", nameRef.current.value);
 
     // ...then set the name in the ui.
     setName(nameRef.current.value);
