@@ -35,9 +35,30 @@ export default class AkashicRecord {
     };
   }
 
+  // for keeping track of the last time the record was updated.
+  // can be useful for certain functionality, but may also be
+  // interesting to a user.
+  updateDate() {
+    this.lastUpdate = new Date().toISOString();
+  }
+
+  // mainly for development purposes. empties all records.
+  resetRecords() {
+    this.records = {
+      hypostasis: [],
+      athenaeum: [],
+      grimoire: [],
+      node: [],
+      shard: []
+    };
+
+    this.updateDate();
+  }
+
   parseStructures(data) {
     // parse and reconstruct data by iterating over the json object from localstorage
     // used to recreate the records in this.records.
+    // this may not be needed.
 
     for (let [k, v] of Object.entries(data)) {
       console.log({ key: k, value: v });
