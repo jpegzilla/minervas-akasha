@@ -73,15 +73,6 @@ export const DataStructure = props => {
 
   useEffect(
     () => {
-      if (activeFileData) {
-        console.log("new file data is", activeFileData);
-      }
-    },
-    [activeFileData]
-  );
-
-  useEffect(
-    () => {
       // handle dropped file
       if (!droppedFiles) return;
 
