@@ -16,13 +16,29 @@ import { globalContext } from "./../App";
 let timeouts = [];
 
 export const DataStructure = props => {
-  const { type, structId, handleWindowCommand } = props;
+  const {
+    type,
+    structId,
+    handleWindowCommand,
+    setWindows,
+    droppedFiles
+  } = props;
 
-  const [droppedFiles, setDroppedFiles] = useState();
+  // const [droppedFiles, setDroppedFiles] = useState();
   const [activeFileData, setActiveFileData] = useState();
+  const [currentFileData, setCurrentFileData] = useState();
   const [deletionStarted, setDeletionStarted] = useState(false);
 
-  const { minerva } = useContext(globalContext);
+  const tagRef = useRef();
+  const nameRef = useRef();
+
+  const { minerva, setStatusMessage, setStatusText, audiomanager } = useContext(
+    globalContext
+  );
+
+  const [info, setInfo] = useState(
+    minerva.record.records[type].find(item => item.id === structId) || {}
+  );
 
   // add to minerva's record when first loading new data structure
   useEffect(
@@ -153,16 +169,6 @@ export const DataStructure = props => {
       clearTimeout(timeouts[i]);
     }
   };
-
-  const [info, setInfo] = useState({});
-  const [name, setName] = useState();
-
-  const tagRef = useRef();
-  const nameRef = useRef();
-
-  const { setStatusMessage, setStatusText, audiomanager } = useContext(
-    globalContext
-  );
 
   const handleConnectRecord = () => {
     console.log("connecting record...");
