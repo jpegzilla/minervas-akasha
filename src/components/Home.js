@@ -281,6 +281,7 @@ export const Home = () => {
                       : item.component || item.stringType
                   ]
                 }
+                records={minerva.record.records}
                 component={item.component}
                 componentProps={item.componentProps}
                 setWindows={setWindows}
