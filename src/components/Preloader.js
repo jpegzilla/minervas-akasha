@@ -40,34 +40,39 @@ export const Preloader = props => {
     setWinLoaded(true);
   };
 
-  // scramble the loading screen text. but only once!
   useEffect(
     () => {
-      let loadingTypist = new Typist(setPreloaderText, text);
-      loadingTypist.scramble(false);
-
-      // load all audio files
-      const files = [
-        { file: click, name: "click" },
-        { file: noise, name: "noise" },
-        { file: e_one, name: "e_one" },
-        { file: s_one, name: "s_one" },
-        { file: s_two, name: "s_two" },
-        { file: k_one, name: "k_one" },
-        { file: w_one, name: "w_one" },
-        { file: c_one, name: "c_one" },
-        { file: o_one, name: "o_one" },
-        { file: su_two, name: "su_two" },
-        { file: i_one, name: "i_one" }
-      ];
-
-      audiomanager.load(files).then(files => {
-        setAudioLoaded(true);
-      });
-      setup(audiomanager);
+      if (audioLoaded && winLoaded) setFinished(true);
     },
-    [audiomanager]
+    [audioLoaded, winLoaded]
   );
+
+  // scramble the loading screen text.
+  useEffect(() => {
+    let loadingTypist = new Typist(setPreloaderText, text);
+    loadingTypist.scramble(false);
+
+    // load all audio files
+    const files = [
+      { file: click, name: "click" },
+      { file: noise, name: "noise" },
+      { file: e_one, name: "e_one" },
+      { file: s_one, name: "s_one" },
+      { file: s_two, name: "s_two" },
+      { file: k_one, name: "k_one" },
+      { file: w_one, name: "w_one" },
+      { file: c_one, name: "c_one" },
+      { file: o_one, name: "o_one" },
+      { file: su_two, name: "su_two" },
+      { file: i_one, name: "i_one" }
+    ];
+
+    audiomanager.load(files).then(() => {
+      setAudioLoaded(true);
+    });
+
+    setup(audiomanager);
+  }, []);
 
   // TODO: remove this timeout hell
   // setTimeout(() => {
@@ -76,17 +81,11 @@ export const Preloader = props => {
   //   setTimeout(() => {
   //     setPreloaderText("complete.");
   //     setTimeout(() => {
+  //       if (audioLoaded && winLoaded) setFinished(true);
   //       setWindowLoaded(true);
   //     }, 2400);
   //   }, 5500);
   // }, 2000);
-
-  useEffect(
-    () => {
-      if (audioLoaded && winLoaded) setFinished(true);
-    },
-    [audioLoaded, winLoaded]
-  );
 
   useEffect(
     () => {
