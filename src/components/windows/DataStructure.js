@@ -37,9 +37,9 @@ export const DataStructure = props => {
         accepts: StructureMap[type].accepts
       });
 
-      console.log(structToAdd);
-
       minerva.addToRecord(structId, structToAdd);
+
+      setWindows([...minerva.windows]);
     },
     [structId]
   );
