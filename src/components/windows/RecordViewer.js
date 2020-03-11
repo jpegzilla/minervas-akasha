@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import { uuidv4 } from "./../../utils/misc";
+
 import { globalContext } from "./../App";
 
 export const RecordViewer = props => {
+  const { setWindows } = props;
   const { minerva } = useContext(globalContext);
+  const [records, setRecords] = useState(minerva.record.records);
+
+  const [recordData, setRecordData] = useState({
+    records: [],
+    length: 0
+  });
 
   const handleOpenRecord = (e, item) => {
     // make sure the window isn't already open
