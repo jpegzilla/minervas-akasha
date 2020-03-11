@@ -13,7 +13,7 @@ export const RecordViewer = props => {
   // );
 
   return (
-    <div>
+    <div className="record-viewer-container">
       <header>
         <div className="record-viewer-navigation">navigation</div>
         <div className="record-viewer-tabs">tabs</div>
