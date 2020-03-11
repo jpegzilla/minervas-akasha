@@ -1,3 +1,6 @@
+/**
+ * DatabaseInterface - a class for interacting with the server-side database.
+ */
 export default class DatabaseInterface {
   constructor(path) {
     this.path = path;

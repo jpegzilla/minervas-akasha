@@ -20,6 +20,9 @@ export class Minerva {
    * and a user id.
    * @param {DatabaseInterface} database an instance of the DatabaseInterface class
    *
+   * @constructor
+   * @struct
+   *
    * @returns {type} Description
    */
   constructor(options, database) {
@@ -367,6 +370,13 @@ export class Minerva {
     });
   }
 
+  /**
+   * removeFileInRecord - remove a file from a record in indexeddb.
+   *
+   * @param {string} id id of the record to be removed.
+   *
+   * @returns {type} Description
+   */
   removeFileInRecord(id) {
     const request = this.indexedDB
       .transaction(["minerva_files"], "readwrite")
@@ -385,6 +395,14 @@ export class Minerva {
     });
   }
 
+  /**
+   * findFileInRecord - find a file object belonging to a certain record.
+   *
+   * @param {string} id id string of the record in question.
+   *
+   * @returns {promise} resolves when the database request completes,
+   * rejects on error.
+   */
   findFileInRecord(id) {
     const transaction = this.indexedDB.transaction(["minerva_files"]);
     const objectStore = transaction.objectStore("minerva_files");
