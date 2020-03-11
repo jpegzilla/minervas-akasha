@@ -6,7 +6,7 @@ import React, {
   Fragment
 } from "react";
 
-import { uuidv4 } from "./../../utils/misc";
+import { uuidv4, bytesToSize, ab2obj, str2ab } from "./../../utils/misc";
 import PropTypes from "prop-types";
 
 import StructureMap from "./../../utils/managers/StructureMap";
