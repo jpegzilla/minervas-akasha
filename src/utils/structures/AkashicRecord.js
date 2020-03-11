@@ -24,6 +24,7 @@ export default class AkashicRecord {
     this.id = id || uuidv4();
     this.name = name;
     this.database = database;
+    this.lastUpdate = new Date().toISOString();
 
     // contains all of the data structures in an akashic record.
     this.records = records || {
@@ -68,6 +69,7 @@ export default class AkashicRecord {
   setBoundTo(userId) {
     this.boundTo = userId;
 
+    this.updateDate();
     return this;
   }
 
