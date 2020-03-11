@@ -63,8 +63,6 @@ export default class AudioManager {
       this.ctx.currentTime
     );
 
-    console.log(gainNode.gain.value);
-
     if (gainNode.gain.value > 0) source.start();
 
     // whenever a sound stops, it's state is set to stopped, and it is removed
