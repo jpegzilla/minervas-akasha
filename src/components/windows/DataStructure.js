@@ -124,6 +124,23 @@ export const DataStructure = props => {
     [droppedFiles]
   );
 
+  useEffect(
+    () => {
+      console.log("current active file data", activeFileData);
+      minerva.addFileToRecord(structId, activeFileData, { type });
+
+      // when active file data changes, make sure that the structure ui
+      // updates to show the new file data.
+      minerva.findFileInRecord(structId).then(e => {
+        if (e.file) {
+          console.log(e.file);
+          setCurrentFileData(e.file);
+        }
+      });
+    },
+    [activeFileData]
+  );
+
   // function that just clears the status message
   const t = () => {
     setStatusText("");
