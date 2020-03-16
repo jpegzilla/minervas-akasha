@@ -21,7 +21,7 @@ for archivists, researchers, and other information addicts.
 
 ![the login screen.](./docs/images/login-screen.png "the login screen.")
 
-![some windows on the desktop.](./docs/images/structures-desktop.png "some windows on the desktop.")
+![some windows on the desktop.](./docs/images/image-view-audio-view.png "some windows on the desktop.")
 
 ![some console commands.](./docs/images/console-commands.gif "some console commands.")
 
