@@ -21,9 +21,11 @@ for archivists, researchers, and other information addicts.
 
 ![the login screen.](./docs/images/login-screen.png "the login screen.")
 
-![some windows on the desktop.](./docs/images/image-view-audio-view.png "some windows on the desktop.")
+![some windows on the desktop.](./docs/images/bunch-of-images.png "some windows on the desktop.")
 
 ![some console commands.](./docs/images/console-commands.gif "some console commands.")
+
+<video autoplay loop src="./docs/images/2020-03-17 16-16-21.mp4" />
 
 ## contributing:
 
