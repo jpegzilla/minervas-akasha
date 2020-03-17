@@ -56,7 +56,7 @@ export const Window = props => {
       };
 
       // TODO: come back and un hardcode this
-      setMouseOffset([e.clientX - o.left, e.clientY - o.top + 30]);
+      setMouseOffset([e.clientX - o.left, e.clientY - o.top]);
 
       // reset offset if mouse is not clicked
     } else setMouseOffset([0, 0]);
@@ -134,15 +134,16 @@ export const Window = props => {
   // here, I attach a dropped files object to each window's props.
   // it may be wise to do this some other way, since not every
   // window has drag and drop functionality.
-  useEffect(
-    () => {
-      componentProps.droppedFiles = droppedFiles;
-    },
-    [droppedFiles, componentProps.droppedFiles]
-  );
 
   const droppableWindows = ["DataStructure"];
   const canDropFiles = droppableWindows.includes(component);
+
+  useEffect(
+    () => {
+      if (canDropFiles) componentProps.droppedFiles = droppedFiles;
+    },
+    [droppedFiles, componentProps.droppedFiles]
+  );
 
   return (
     <div
@@ -159,17 +160,17 @@ export const Window = props => {
       className={`${title}-window system-window ${className} ${
         droppable ? "filedrop drop-active" : "filedrop"
       } window-${state}`}
-      onClick={() => {
-        setActiveWindowId(id);
-      }}
-      onMouseUp={e => handleMouseDown(e, false)}
+      onClick={() => void setActiveWindowId(id)}
+      onMouseUp={e => void handleMouseDown(e, false)}
     >
       <header
         className={`${title}-header`}
         onMouseDown={e => handleMouseDown(e, true)}
         onMouseUp={e => handleMouseDown(e, false)}
+        onDrag={() => void false}
       >
-        <span>{`${componentProps.type || t} (${num})`}</span>
+        <span className="window-title-text">{`${componentProps.type ||
+          t} (${num})`}</span>
         <b />
         <span className="window-controls">
           <div

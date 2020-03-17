@@ -7,21 +7,8 @@ import { globalContext } from "./../App";
 import PropTypes from "prop-types";
 
 export const Console = props => {
-  const {
-    windows,
-    setActiveWindow,
-    setActiveWindowId,
-    item,
-    setMouseOffset,
-    activeWindowId,
-    setWindows,
-    className,
-    num
-  } = props;
+  const { setWindows } = props;
 
-  const { title, id, state, position } = item;
-
-  const { x, y } = position;
   const { minerva, audiomanager } = useContext(globalContext);
   const [command, setCommand] = useState("");
   const [inputState, setInputState] = useState("default");
@@ -31,10 +18,6 @@ export const Console = props => {
 
   const input = useRef(null);
   const cmdLog = useRef(null);
-
-  if (className === "active") {
-    document.getElementById(`${title}-window-${id}`).focus();
-  }
 
   useEffect(() => {
     input.current.focus();
@@ -64,6 +47,18 @@ export const Console = props => {
         switch (action) {
           case "reset records":
             minerva.resetRecords();
+            break;
+
+          default:
+            console.log(
+              "action returned from parseCommand was not known. response:",
+              res
+            );
+
+            return setLog([
+              ...log,
+              { type: "error", text: "unknown command." }
+            ]);
         }
       }
 
@@ -93,137 +88,35 @@ export const Console = props => {
     setHistory([...history, { type: "command", text: cmd }]);
   };
 
-  const handleMouseDown = (e, bool) => {
-    if (
-      Array.from(document.querySelectorAll(".window-controls-button")).includes(
-        e.target
-      )
-    )
-      return;
-
-    setActiveWindowId(id);
-    if (bool) {
-      const rect = e.target.getBoundingClientRect();
-
-      // this is to get the position of the cursor
-      // relative to the element in the window
-      const o = {
-        top: rect.top + document.body.scrollTop,
-        left: rect.left + document.body.scrollLeft
-      };
-
-      // TODO: come back and un hardcode this
-      setMouseOffset([e.clientX - o.left, e.clientY - o.top + 30]);
-
-      // reset offset if mouse is not clicked
-    } else setMouseOffset([0, 0]);
-
-    // set active window title
-    setActiveWindow(bool ? title : "");
-  };
-
-  // handle commands such as minimize, maximize, close
-  const handleWindowCommand = (e, command) => {
-    e.stopPropagation();
-
-    const { state } = command;
-
-    if (state) {
-      switch (state) {
-        case "minimized":
-          setWindows([
-            ...windows.map(w => {
-              // set state to minimized, or return the existing window object
-              return w.id === id
-                ? {
-                    ...w,
-                    state
-                  }
-                : w;
-            })
-          ]);
-          return;
-        default:
-          throw new Error("something went very wrong");
-      }
-    } else {
-      switch (command) {
-        case "close":
-          setWindows([...windows.filter(w => (w.id === id ? false : true))]);
-          return;
-        default:
-          return;
-      }
-    }
-  };
-
   return (
-    <div
-      style={
-        activeWindowId === id
-          ? { transform: `translate3d(${x}px, ${y}px, 0)` }
-          : { transform: `translate3d(${position.x}px, ${position.y}px, 0)` }
-      }
-      id={`${title}-window-${id}`}
-      className={`${title}-window system-window ${className} window-${state}`}
-      onClick={() => {
-        setActiveWindowId(id);
-        input.current.focus();
-      }}
-      onMouseUp={e => handleMouseDown(e, false)}
-    >
-      <header
-        className={`${title}-header`}
-        onMouseDown={e => handleMouseDown(e, true)}
-        onMouseUp={e => handleMouseDown(e, false)}
-      >
-        <span>{`${title} (${num})`}</span>
-        <b />
-        <span className="window-controls">
-          <div
-            className="window-controls-min window-controls-button"
-            onClick={e => handleWindowCommand(e, { state: "minimized" })}
-          >
-            -
+    <section onClick={() => input.current.focus()} className="window-content">
+      {/* command log */}
+      <section ref={cmdLog} className="console-text">
+        {log.map(e => (
+          <div className={`console-${e.type}`} key={uuidv4()}>
+            {e.text}
           </div>
-          <div
-            className="window-controls-close window-controls-button"
-            onClick={e => handleWindowCommand(e, "close")}
-          >
-            x
-          </div>
-        </span>
-      </header>
-
-      <section className="window-content">
-        {/* command log */}
-        <section ref={cmdLog} className="console-text">
-          {log.map(e => (
-            <div className={`console-${e.type}`} key={uuidv4()}>
-              {e.text}
-            </div>
-          ))}
-        </section>
-
-        {/* input */}
-        <div className="console-input">
-          <span className="command-prefix">
-            {minerva.user.name}
-            @minerva.akasha <span className="console-tag">MNRV</span>
-            &nbsp;
-            <span className="console-type">~!</span>
-          </span>
-          <input
-            autoComplete="new-password"
-            onKeyPress={handleCommand}
-            onChange={e => setCommand(e.target.value)}
-            type={inputState === "password" ? "password" : "text"}
-            ref={input}
-            value={command}
-          />
-        </div>
+        ))}
       </section>
-    </div>
+
+      {/* input */}
+      <div className="console-input">
+        <span className="command-prefix">
+          {minerva.user.name}
+          @minerva.akasha <span className="console-tag">MNRV</span>
+          &nbsp;
+          <span className="console-type">~!</span>
+        </span>
+        <input
+          autoComplete="new-password"
+          onKeyPress={handleCommand}
+          onChange={e => setCommand(e.target.value)}
+          type={inputState === "password" ? "password" : "text"}
+          ref={input}
+          value={command}
+        />
+      </div>
+    </section>
   );
 };
 
