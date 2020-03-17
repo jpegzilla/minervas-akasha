@@ -42,13 +42,14 @@ export const Taskbar = props => {
     () => {
       menuOpen && setAddMenuOpen(false);
     },
-    [menuOpen]
+    [menuOpen, setAddMenuOpen]
   );
+
   useEffect(
     () => {
       addMenuOpen && setMenuOpen(false);
     },
-    [addMenuOpen]
+    [addMenuOpen, setMenuOpen]
   );
 
   // const t = () => {
@@ -160,7 +161,11 @@ export const Taskbar = props => {
         const newConsole = {
           title: "console",
           state: "restored",
-          stringType: "Console",
+          stringType: "Window",
+          component: "Console",
+          componentProps: {
+            setWindows
+          },
           belongsTo: minerva.user.id,
           id: uuidv4(),
           position: {
@@ -292,6 +297,8 @@ export const Taskbar = props => {
         {windows.map((w, i) => {
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1;
+            // this needs to change so that tabs are independent components with their own state,
+            // their own contextmenu listeners, etc.
 
             let title = w.title;
 
@@ -314,6 +321,8 @@ export const Taskbar = props => {
               </li>
             );
           }
+
+          return false;
         })}
       </ul>
     </section>
