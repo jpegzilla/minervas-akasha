@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { uuidv4 } from "./../utils/misc";
 
+import { uuidv4 } from "./../utils/misc";
+import PropTypes from "prop-types";
 import { Taskbar } from "./Taskbar";
 import { Topbar } from "./Topbar";
 
@@ -313,4 +314,8 @@ export const Home = () => {
       />
     </section>
   );
+};
+
+Home.propTypes = {
+  routeProps: PropTypes.object
 };
