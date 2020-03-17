@@ -105,7 +105,8 @@ export default class AkashicRecord {
       connectedTo,
       data,
       colorCode,
-      accepts
+      accepts,
+      belongsTo
     } = structure;
 
     const newTypeRecords = [
@@ -118,9 +119,12 @@ export default class AkashicRecord {
         connectedTo,
         data,
         colorCode,
-        accepts
+        accepts,
+        belongsTo
       }
     ];
+
+    console.log(newTypeRecords);
 
     this.records = { ...this.records, [type]: newTypeRecords };
 
@@ -211,7 +215,9 @@ export default class AkashicRecord {
     } else {
       // retrieve from localStorage
       const user = JSON.parse(Minerva._store[name]);
-      const record = JSON.parse(Minerva._store["minerva_store"]).records;
+      const record = JSON.parse(Minerva._store["minerva_store"]).records[
+        userId
+      ]; // make sure to get the record for the current user
 
       const { dateCreated } = user;
       const { records } = record;
