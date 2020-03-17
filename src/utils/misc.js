@@ -7,6 +7,21 @@ const m = new audiomanager();
 // load key sound into audio manager for typing sound
 m.load([{ file: keySound, name: "key" }]);
 
+export const secondsToTime = sec => {
+  let totalSeconds = sec;
+
+  let hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+
+  minutes = String(minutes).padStart(2, "0");
+  hours = String(hours).padStart(2, "0");
+  seconds = String(seconds).padStart(2, "0");
+
+  return `${hours}:${minutes}:${seconds}`;
+};
+
 /**
  * bytesToSize - convert a number in bytes to a size with a unit
  *
@@ -17,16 +32,27 @@ m.load([{ file: keySound, name: "key" }]);
 export const bytesToSize = bytes => {
   const sizes = ["bytes", "kb", "mb", "gb", "tb"];
 
-  if (bytes == 0) return "0 bytes";
+  if (parseInt(bytes) === 0) return "0 bytes";
 
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
 
   return `${Math.round(bytes / Math.pow(1024, i), 2)}${sizes[i]}`;
 };
 
-export const ab2obj = buf => {
-  console.log(new Uint16Array(buf));
-  return { type: "Uint16Array", data: Array.from(new Uint16Array(buf)) };
+export const ab2obj = ({ buffer, type }) => {
+  // const s = String.fromCharCode.apply(null, new Uint32Array(buf));
+  let buf, enc;
+  console.log(buffer, type);
+
+  if (/audio/gi.test(type)) {
+    buf = Array.from(new Int8Array(buffer));
+    enc = "Int8Array";
+  } else {
+    buf = Array.from(new Uint16Array(buffer));
+    enc = "Uint16Array";
+  }
+
+  return { enc, data: buf };
 };
 
 export const str2ab = str => {
