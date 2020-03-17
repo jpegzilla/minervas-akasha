@@ -20,7 +20,6 @@ export const Signup = props => {
   const {
     setStatusText,
     setStatusMessage,
-    setLoggedIn,
     loginScreenInstead,
     routeProps
   } = props;
@@ -52,11 +51,6 @@ export const Signup = props => {
   );
 
   const { minerva, audiomanager } = useContext(globalContext);
-
-  // cleanup to clear timeouts after signup is complete
-  useEffect(() => {
-    return () => clearAll();
-  });
 
   // error function that just shakes the form and plays an error sound
   const shakeAnim = (type = "error") => {
@@ -95,7 +89,7 @@ export const Signup = props => {
   const passwordInput = useRef(null);
   const usernameInput = useRef(null);
 
-  // simple function to clear the status method
+  // simple function to clear the status message
   const t = () => {
     setStatusText("");
     setStatusMessage({ display: false, text: "", type: null });
@@ -131,6 +125,7 @@ export const Signup = props => {
             });
 
             shakeAnim();
+
             clearAll();
             timeouts.push(setTimeout(t, 3000));
           } else {
@@ -140,18 +135,8 @@ export const Signup = props => {
               if (res) {
                 audiomanager.play("s_two");
 
-                setStatusMessage({
-                  display: true,
-                  text: "login complete.",
-                  type: "success"
-                });
-
                 // set akashic record with stored data here!!
                 // AkashicRecord
-
-                // this code clears all timeouts and then adds the latest one
-                clearAll();
-                timeouts.push(setTimeout(t, 3000));
 
                 // create user's minerva instance
                 minerva.login(u);
@@ -164,8 +149,6 @@ export const Signup = props => {
                 });
 
                 setFadeOut(true);
-
-                setLoggedIn(true);
 
                 setTimeout(() => setFinished(true), 500);
               } else {
@@ -244,14 +227,6 @@ export const Signup = props => {
 
                 audiomanager.play("s_two");
 
-                setStatusMessage({
-                  display: true,
-                  text: "status: signup successful.",
-                  type: "success"
-                });
-
-                setTimeout(t, 3000);
-
                 // set akashic record with stored data here!!
                 // AkashicRecord
 
@@ -259,7 +234,6 @@ export const Signup = props => {
 
                 setTimeout(() => {
                   setFinished(true);
-                  setLoggedIn(true);
                 }, 500);
               } else {
                 // if user exists in localstorage, warn the user to just go ahead and log in
@@ -353,9 +327,17 @@ export const Signup = props => {
   // if finished, and all is good, redirect to the home screen.
   // otherwise, render the signup screen or the login screen
   // depending on the path ('/login' or '/signup').
-  return finished ? (
-    <Redirect to="/" />
-  ) : (
+
+  if (finished) {
+    console.log(finished);
+    return (
+      <Redirect
+        to={{ pathname: "/", state: loginScreenInstead ? "login" : "signup" }}
+      />
+    );
+  }
+
+  return (
     <section className={fadeOut ? "fadeout" : ""} id="login-signup">
       <section className="spinning-squares">
         <div />
@@ -475,7 +457,6 @@ export const Signup = props => {
 Signup.propTypes = {
   setStatusText: PropTypes.func,
   setStatusMessage: PropTypes.func,
-  setLoggedIn: PropTypes.func,
   loginScreenInstead: PropTypes.bool,
   routeProps: PropTypes.object
 };
