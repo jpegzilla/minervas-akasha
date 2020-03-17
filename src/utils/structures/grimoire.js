@@ -1,6 +1,6 @@
-import { Node } from "./node";
 import { Structure } from "./structure";
-import { Shard } from "./shard";
+// import { Node } from "./node";
+// import { Shard } from "./shard";
 
 /**
  * Grimoire - second to largest normal structure.

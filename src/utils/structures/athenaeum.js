@@ -1,7 +1,7 @@
-import { Shard } from "./shard";
 import { Structure } from "./structure";
-import { Grimoire } from "./grimoire";
-import { Node } from "./node";
+// import { Shard } from "./shard";
+// import { Grimoire } from "./grimoire";
+// import { Node } from "./node";
 
 // an athenaeum is meant to hold large amounts of grimoires, similar to an actual
 // athenaeum.
