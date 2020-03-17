@@ -1,6 +1,8 @@
 @import vars
 
 .record-viewer-window
+  background-color: transparentize($black, 0.15)
+
   .record-viewer-header
     margin-bottom: 0
 
@@ -18,6 +20,12 @@
 
       div + div
         border-top: 1px solid var(--text-main)
+
+    footer
+      padding: 0.5rem 1rem
+
+      div
+        padding: 0
 
     .record-viewer-main
       display: flex
