@@ -433,7 +433,12 @@ export class Minerva {
       user: this.user,
       settings: this.settings,
       storage: this.storage,
-      records: this.record,
+      records: MinervaArchive.get("minerva_store")
+        ? {
+            ...MinervaArchive.get("minerva_store").records,
+            [this.user.id]: this.record
+          }
+        : { [this.user.id]: this.record },
       windows: this.windows
     };
 
