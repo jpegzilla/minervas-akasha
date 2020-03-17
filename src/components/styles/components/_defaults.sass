@@ -2,6 +2,11 @@
   box-sizing: border-box
   margin: 0
   padding: 0
+  text-rendering: optimizeSpeed
+
+  // most important rule
+  &:not(input, textarea, *[contenteditable])
+    text-transform: lowercase
 
 \:root
   font-size: 16px
