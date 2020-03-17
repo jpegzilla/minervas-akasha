@@ -34,45 +34,44 @@ export const Preloader = props => {
 
   const [finished, setFinished] = useState(false);
 
-  // on window load, set winloaded to true. both this and
-  // audioloaded must be true in order to end the preloader.
-  window.onload = () => {
-    setWinLoaded(true);
-  };
-
   useEffect(
     () => {
-      if (audioLoaded && winLoaded) setFinished(true);
+      if (audioLoaded && winLoaded) {
+        setFinished(true);
+      }
     },
     [audioLoaded, winLoaded]
   );
 
   // scramble the loading screen text.
-  useEffect(() => {
-    let loadingTypist = new Typist(setPreloaderText, text);
-    loadingTypist.scramble(false);
+  useEffect(
+    () => {
+      let loadingTypist = new Typist(setPreloaderText, text);
+      loadingTypist.scramble(false);
 
-    // load all audio files
-    const files = [
-      { file: click, name: "click" },
-      { file: noise, name: "noise" },
-      { file: e_one, name: "e_one" },
-      { file: s_one, name: "s_one" },
-      { file: s_two, name: "s_two" },
-      { file: k_one, name: "k_one" },
-      { file: w_one, name: "w_one" },
-      { file: c_one, name: "c_one" },
-      { file: o_one, name: "o_one" },
-      { file: su_two, name: "su_two" },
-      { file: i_one, name: "i_one" }
-    ];
+      // load all audio files
+      const files = [
+        { file: click, name: "click" },
+        { file: noise, name: "noise" },
+        { file: e_one, name: "e_one" },
+        { file: s_one, name: "s_one" },
+        { file: s_two, name: "s_two" },
+        { file: k_one, name: "k_one" },
+        { file: w_one, name: "w_one" },
+        { file: c_one, name: "c_one" },
+        { file: o_one, name: "o_one" },
+        { file: su_two, name: "su_two" },
+        { file: i_one, name: "i_one" }
+      ];
 
-    audiomanager.load(files).then(() => {
-      setAudioLoaded(true);
-    });
+      audiomanager.load(files).then(() => {
+        setAudioLoaded(true);
+      });
 
-    setup(audiomanager);
-  }, []);
+      setup(audiomanager);
+    },
+    [audiomanager]
+  );
 
   // TODO: remove this timeout hell
   // setTimeout(() => {
@@ -86,6 +85,12 @@ export const Preloader = props => {
   //     }, 2400);
   //   }, 5500);
   // }, 2000);
+
+  // on window load, set winloaded to true. both this and
+  // audioloaded must be true in order to end the preloader.
+  window.onload = () => {
+    setWinLoaded(true);
+  };
 
   useEffect(
     () => {
