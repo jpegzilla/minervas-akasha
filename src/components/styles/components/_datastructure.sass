@@ -1,13 +1,19 @@
 @import vars
+@import colorbox
+@import tag
 
 .datastructure-window
   $w: 10vw
   $h: 40vh
   $font: $proggy
   $gap: 0.5rem
+  $hgap: 0.25rem
+  $maxWidth: fit-content
+  $maxWidth2: 350px
 
   display: flex
   flex-direction: column
+  max-width: $maxWidth
 
   // todo: refactor this somehow to use css vars
   background-color: transparentize($black, 0.25)
@@ -15,12 +21,12 @@
   min-height: $h
 
   .structure-header
-    margin-bottom: 1.5rem
+    max-width: $maxWidth2
 
-    h2
+    p
       font-weight: normal
       font-size: 1rem
-      margin-bottom: 0.5rem
+      line-height: 1.42
 
   .structure-content
     height: 100%
@@ -29,6 +35,36 @@
     display: flex
     width: 100%
     flex-direction: column
+
+    .structure-tag-editor
+      $size: 3rem
+
+      .color-box
+        +flexcenter
+
+        margin-top: 1.5rem
+
+        ul
+          list-style-type: none
+          display: flex
+          flex-basis: auto
+          width: 100%
+          height: $size
+
+          li
+            flex-grow: 1
+            flex-shrink: 1
+            flex-basis: auto
+
+            &:hover
+              flex-grow: 2
+
+  .structure-type
+    font-style: italic
+    border: 1px solid $pink
+    padding: 0.15rem 0.25rem
+    border-radius: 4px
+    user-select: none
 
   button, input
     line-height: 1rem
@@ -71,6 +107,55 @@
   .structure-data
     flex-grow: 1
     width: 100%
+    margin-bottom: 1rem
+
+    div
+      min-width: 100%
+
+    header
+      margin-bottom: 1rem
+      max-width: $maxWidth2
+      overflow-wrap: anywhere
+
+    img, p, h2
+      max-width: $maxWidth2
+
+    audio, video
+      width: 100%
+      max-width: $maxWidth2
+
+    video
+      max-width: 400px
+
+    .structure-data-meta-display
+      margin-top: 0.5rem
+      padding: 0.5rem 0
+      border-top: 1px solid var(--text-main)
+      border-bottom: 1px solid var(--text-main)
+
+      img
+        margin-bottom: 0.25rem
+
+      span
+        display: block
+        padding: 0.25rem 0.5rem
+        background-color: var(--text-main)
+        color: var(--bg-main)
+
+    .structure-metadata
+      margin-top: 1rem
+      max-width: $maxWidth2
+
+      ul
+        list-style-type: none
+
+        li
+          overflow: hidden
+          white-space: nowrap
+          text-overflow: ellipsis
+
+        & + span
+          margin-top: 0.5rem
 
   .structure-controls
     display: flex
@@ -87,24 +172,42 @@
 
   .structure-taglist
     list-style-type: none
+    width: 100%
+    line-height: 1rem
+    margin: 1rem 0
+    display: grid
+    grid-gap: $gap
+    grid-row-gap: $gap
+    grid-template-columns: repeat(3, minmax(min-content, auto))
+    grid-auto-flow: row
 
-    li + li
-      margin-left: 0.25rem
+    &:empty
+      margin: 0
 
   .structure-tag
-    +flexcenter
-
-    font-size: 0.7rem
+    font-size: 1rem
     border-radius: 4pt
-    width: auto
-    display: inline
-    padding: 0.15rem 0.25rem
+    width: 100%
+    min-width: max-content
+    display: inline-flex
+    align-items: center
+    user-select: none
+    cursor: pointer
+
+    span
+      &:nth-child(1)
+        padding: 0.15rem 0 0.15rem 0.5rem
+        flex-grow: 1
+
+      &:nth-child(2)
+        margin-left: 0.15rem
+        padding: 0.15rem 0.35rem 0.15rem 0.35rem
+
+        &:hover
+          background-color: $pink
+          color: $white
+
+      display: inline-block
 
     &:hover
-      background-color: transparentize($white, 0.2)
-      color: var(--bg-main)
-      cursor: pointer
-      user-select: none
-
-    &.red
-      border: 1px solid red
+      background-color: transparentize($white, 0.8)
