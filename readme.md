@@ -3,6 +3,14 @@
 this is an application for collection, connection, analysis and organization of research data.
 for archivists, researchers, and other information addicts.
 
+## running
+
+built with react / `create-react-app`.
+
+1.  clone this repo
+2.  in your clone, run `npm i` and `npm start`
+3.  there you go
+
 ## features:
 
 -   drag and drop functionality allows you to add any file of any type to a record to be prepared for research
@@ -16,8 +24,6 @@ for archivists, researchers, and other information addicts.
 -   minerva system tracks and takes care of all the heavy lifting of data organization.
 
 ## screenshots / recordings
-
-
 
 ![the login screen.](./docs/images/login-screen.png "the login screen.")
 
