@@ -65,8 +65,11 @@ export const App = () => {
   // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
   // then this is not the user's first login. maybe change this to check ids in order to
   // support multiple users and set the flag independently for each one.
+
+  // thinking about just checking to see if minerva_store already exists, meaning someone
+  // (not necessarily the current user) has logged in.
   const [firstLoad, setFirstLoad] = useState(
-    (MinervaArchive.get("minervas_akasha") && false) || true
+    MinervaArchive.get("minerva_store") ? false : true
   );
 
   // flag for determining if the screen is too small
@@ -99,17 +102,15 @@ export const App = () => {
   };
 
   // set up hotkey listeners on initial load, as well as type out the status text
-  useEffect(
-    () => {
-      setupHotkeys();
-      new Typist(setStatusText, statusMessage.text).scramble();
-    },
-    [statusMessage.text]
-  );
+  useEffect(() => {
+    setupHotkeys();
+  }, []);
 
   // log user in or out
   useEffect(
     () => {
+      if (!minerva.user) return void minerva.set("logged_in", false, "user");
+
       if (loggedIn) {
         minerva.set("logged_in", true, "user");
 
@@ -118,7 +119,7 @@ export const App = () => {
         minerva.set("logged_in", false, "user");
       }
     },
-    [loggedIn]
+    [loggedIn, minerva.user]
   );
 
   // message that covers screen and shows in the center. only used for special messages
@@ -156,7 +157,9 @@ export const App = () => {
             statusMessage,
             setStatusMessage,
             statusText,
-            setStatusText
+            setStatusText,
+            loggedIn,
+            setLoggedIn
           }}
         >
           <Router>
@@ -189,16 +192,18 @@ export const App = () => {
 
               {!loggedIn && firstLoad && <Redirect to="/signup" />}
 
-              {!firstLoad && !loggedIn && <Redirect to="/login" />}
+              {!loggedIn && !firstLoad && <Redirect to="/login" />}
 
-              {!firstLoad && loggedIn && <Redirect to="/" />}
+              {!firstLoad && loggedIn && minerva.user && <Redirect to="/" />}
 
               <Switch>
                 {/* main screen */}
                 <Route
                   exact
                   path="/"
-                  render={routeProps => <Home routeProps={routeProps} />}
+                  render={routeProps => (
+                    <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
+                  )}
                 />
 
                 {/* signup screen */}
