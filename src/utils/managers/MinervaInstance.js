@@ -316,6 +316,10 @@ export class Minerva {
   }
 
   addFileToRecord(id, file, structure) {
+    if (!id || !file || !structure) {
+      console.log("trying to call addFileToRecord with missing arguments.");
+      return false;
+    }
     // take this.records and store them in the database
     const transaction = this.indexedDB.transaction(
       ["minerva_files"],
