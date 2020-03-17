@@ -1,5 +1,5 @@
 import { uuidv4 } from "./../misc";
-import { colorcodes } from "./utils/colorcodes";
+import ColorCodes from "./utils/colorcodes";
 
 /**
  * Structure - main structure class from which other substructures are extended
@@ -30,12 +30,15 @@ export class Structure {
     // structures to smaller types.
     this.connectedTo = (options && options.connectedTo) || [];
 
+    // shows what user the structure belongs to.
+    this.belongsTo = (options && options.belongsTo) || null;
+
     // shows the data within the structure in object format, for storage
     this.data = {};
 
     // these color codes are applied to data structures' html representations as css
     // classes, which are used to apply colors to the elements.
-    this.colorCode = (options && options.colorCode) || colorcodes.white;
+    this.colorCode = (options && options.colorCode) || ColorCodes.white;
 
     // the inputs that each structure connects to are defined on the child classes
     this.accepts = (options && options.accepts) || [];
@@ -50,7 +53,7 @@ export class Structure {
    * @returns {undefined} void
    */
   addTag(name, color) {
-    if (!(color in colorcodes))
+    if (!(color in ColorCodes))
       throw new SyntaxError("invalid color passed to addTag");
 
     if (this.tags.find(e => e.name === name))
@@ -59,7 +62,7 @@ export class Structure {
     const tag = {
       name,
       id: uuidv4(),
-      color: colorcodes[color]
+      color: ColorCodes[color]
     };
 
     this.tags.push(tag);
@@ -85,10 +88,10 @@ export class Structure {
    * @returns {Structure} the current instance of the structure
    */
   changeColor(color) {
-    if (!(color in colorcodes))
+    if (!(color in ColorCodes))
       throw new SyntaxError("invalid color passed to changeColor");
 
-    this.colorCode = colorcodes[color];
+    this.colorCode = ColorCodes[color];
     return this;
   }
 
@@ -100,7 +103,7 @@ export class Structure {
   reset() {
     this.connectedTo = [];
     this.tags = [];
-    this.colorCode = colorcodes.white;
+    this.colorCode = ColorCodes.white;
     return this;
   }
 
