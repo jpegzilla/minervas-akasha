@@ -30,6 +30,45 @@ export const Home = () => {
   const hideDropZone = () => setDroppable(false);
 
   const [droppedFiles, setDroppedFiles] = useState();
+
+  useEffect(
+    () => {
+      setLoggedIn(true);
+    },
+    [loggedIn, setLoggedIn]
+  );
+
+  useEffect(
+    () => {
+      const t = () => {
+        setStatusText("");
+        setStatusMessage({ display: false, text: "", type: null });
+      };
+
+      if (routeProps.location.state === "signup") {
+        setStatusMessage({
+          display: true,
+          text: "status: signup successful.",
+          type: "success"
+        });
+
+        setTimeout(t, 3000);
+      }
+
+      if (routeProps.location.state === "login") {
+        setStatusMessage({
+          display: true,
+          text: "login complete.",
+          type: "success"
+        });
+
+        setTimeout(t, 3000);
+      }
+    },
+    [routeProps.location.state, setStatusMessage, setStatusText]
+  );
+
+  // handlers for dealing with file drag + drop on desktop
   const allowDrag = e => {
     e.dataTransfer.dropEffect = "copy";
     e.preventDefault();
