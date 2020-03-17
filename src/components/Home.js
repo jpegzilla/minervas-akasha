@@ -14,8 +14,17 @@ import { Console } from "./windows/Console";
 
 import { globalContext } from "./App";
 
-export const Home = () => {
-  const { minerva } = useContext(globalContext);
+export const Home = props => {
+  const { routeProps } = props;
+
+  const {
+    minerva,
+    setStatusText,
+    setStatusMessage,
+    loggedIn,
+    setLoggedIn
+  } = useContext(globalContext);
+
   const [activeWindow, setActiveWindow] = useState(null);
   const [activeWindowId, setActiveWindowId] = useState("default");
   const [activeFileData, setActiveFileData] = useState();
@@ -198,7 +207,7 @@ export const Home = () => {
 
     minerva.setWindows(newWindows);
 
-    setWindows([...newWindows]);
+    setWindows([...minerva.windows]);
   };
 
   // this is to keep the windows in state synchronized with minerva
@@ -210,16 +219,45 @@ export const Home = () => {
 
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
+
+  // for performance: maybe send the event to a worker to calculate the position?
+  const [wait, setWait] = useState(false);
   const handleMouseMove = e => {
-    if (activeWindow) {
+    if (!activeWindow) return void false;
+
+    if (activeWindow && !wait) {
+      setWait(true);
       const { clientX, clientY } = e;
 
-      requestAnimationFrame(() =>
+      const onMouseUp = () => {
+        setActiveWindow(null);
+        setActiveWindowId("");
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+
+      document.addEventListener("mouseup", onMouseUp, {
+        once: true,
+        capture: true
+      });
+
+      // the offset is off! fix fix fix.
+      // from the mdn web documentation of raf():
+      // // note: your callback routine must itself call requestAnimationFrame()
+      // // if you want to animate another frame at the next repaint.
+      const moveWindow = () => {
+        setTimeout(() => void setWait(false), 15);
         setPosition(activeWindowId, {
           x: clientX - mouseOffset[0],
           y: clientY - mouseOffset[1]
-        })
-      );
+        });
+      };
+
+      requestAnimationFrame(() => {
+        // update the window position and immediately request another frame to update again.
+
+        moveWindow();
+        requestAnimationFrame(moveWindow);
+      });
     }
   };
 
@@ -236,12 +274,10 @@ export const Home = () => {
   return (
     <section
       id="window-system"
-      onMouseUp={() => {
-        setActiveWindow(null);
-        setActiveWindowId("");
-      }}
       onClick={e => {
         if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
+          // e.stopPropagation();
+          // e.preventDefault();
           setMenuOpen(false);
           setAddMenuOpen(false);
           setSettingsOpen(false);
@@ -257,6 +293,7 @@ export const Home = () => {
         settingsMenuRef={settingsMenuRef}
       />
       <section
+        onMouseDown={e => void e.stopPropagation()}
         className={droppable ? "filedrop active" : "filedrop"}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -264,7 +301,7 @@ export const Home = () => {
         onDragEnter={allowDrag}
         id="main-container"
       >
-        {windows.map((item, i) => {
+        {windows.map(item => {
           if (item.belongsTo === minerva.user.id) {
             // if item is offscreen, reset.
             // this should maybe change to use the iselementinviewport utility.
@@ -336,6 +373,8 @@ export const Home = () => {
               />
             );
           }
+
+          return false;
         })}
       </section>
       <Taskbar
