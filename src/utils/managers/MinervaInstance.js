@@ -41,8 +41,10 @@ export class Minerva {
         )
       : {};
 
+    // open indexedDB instance
     let db = window.indexedDB.open("minerva_db");
 
+    // this will be given a value when the database is successfully opened
     this.indexedDB = null;
 
     db.onerror = event => {
@@ -51,7 +53,10 @@ export class Minerva {
 
     db.onsuccess = event => {
       console.log("indexedDB success.", event);
-      this.indexedDB = event.target.result;
+
+      if (event.target instanceof IDBOpenDBRequest) {
+        this.indexedDB = event.target.result;
+      }
     };
 
     db.onupgradeneeded = function(event) {
