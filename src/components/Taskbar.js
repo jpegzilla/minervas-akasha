@@ -3,6 +3,8 @@ import { Redirect } from "react-router-dom";
 import { uuidv4 } from "./../utils/misc";
 import { globalContext } from "./App";
 
+import { Tab } from "./windows/elements/Tab";
+
 // import { Console } from "./windows/Console";
 // import { Window } from "./windows/Window";
 // import { DataStructure } from "./windows/DataStructure";
@@ -305,20 +307,16 @@ export const Taskbar = props => {
             if (w.componentProps) {
               if (w.componentProps.type) title = w.componentProps.type;
             }
+
             return (
-              <li
-                className={
-                  w.id === activeWindowId
-                    ? "taskbar-button active"
-                    : "taskbar-button"
-                }
-                onClick={e => {
-                  handleClickItem(e, w);
-                }}
+              <Tab
                 key={w.stringType + i}
-              >
-                {`${title} (${tabCounts[w.stringType]})`}
-              </li>
+                w={w}
+                title={title}
+                tabCounts={tabCounts}
+                activeWindowId={activeWindowId}
+                handleClickItem={handleClickItem}
+              />
             );
           }
 
