@@ -178,6 +178,19 @@ export const uuidv4 = () => {
 };
 
 /**
+ * validateUUIDv4 - validate a uuidv4 for minerva's purposes.
+ *
+ * @param {string} id id string to validate.
+ *
+ * @returns {boolean} true if valid, false otherwise.
+ */
+export const validateUUIDv4 = id => {
+  const uuidV4Regex = /^(?:[a-zA-Z0-9]{8}-(?:[a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12})$/gi;
+
+  return uuidV4Regex.test(id);
+};
+
+/**
  * stringSort - sort array by strings, alphabetically
  *
  * @param {array} arr  array to sort
