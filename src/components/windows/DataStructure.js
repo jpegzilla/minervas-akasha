@@ -32,6 +32,13 @@ export const DataStructure = props => {
     setWindows,
     droppedFiles
   } = props;
+  const { minerva, setStatusMessage, setStatusText, audiomanager } = useContext(
+    globalContext
+  );
+
+  const currentWindow = minerva.windows.find(item => {
+    return item.componentProps.structId === structId;
+  });
 
   // const [droppedFiles, setDroppedFiles] = useState();
   const [activeFileData, setActiveFileData] = useState();
@@ -39,16 +46,16 @@ export const DataStructure = props => {
   const [deletionStarted, setDeletionStarted] = useState(false);
   const [FileDisplay, setFileDisplay] = useState(false);
   const [ImageDisplay, setImageDisplay] = useState(false);
-  const [MetadataDisplay, setMetadataDisplay] = useState(true);
+  const [MetadataDisplay, setMetadataDisplay] = useState(
+    currentWindow.componentProps.MetadataDisplay === false ? false : true
+  );
   const [metadata, setMetadata] = useState(null);
-  const [showImage, setShowImage] = useState(true);
+  const [showImage, setShowImage] = useState(
+    currentWindow.componentProps.ImageDisplay === false ? false : true
+  );
 
   const tagRef = useRef();
   const nameRef = useRef();
-
-  const { minerva, setStatusMessage, setStatusText, audiomanager } = useContext(
-    globalContext
-  );
 
   const [info, setInfo] = useState(
     minerva.record.records[type].find(item => item.id === structId) || {}
@@ -67,17 +74,19 @@ export const DataStructure = props => {
               ...item,
               componentProps: {
                 ...item.componentProps,
-                MetadataDisplay,
-                ImageDisplay
+                MetadataDisplay: MetadataDisplay ? true : false,
+                ImageDisplay: showImage
               }
             };
           }
         return item;
       });
 
+      console.log(newWindows);
+
       minerva.setWindows([...newWindows]);
     },
-    [MetadataDisplay, ImageDisplay]
+    [MetadataDisplay, showImage, ImageDisplay]
   );
 
   // add to minerva's record when first loading new data structure
