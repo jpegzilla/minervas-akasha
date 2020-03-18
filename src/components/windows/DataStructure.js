@@ -82,8 +82,6 @@ export const DataStructure = props => {
         return item;
       });
 
-      console.log(newWindows);
-
       minerva.setWindows([...newWindows]);
     },
     [MetadataDisplay, showImage, ImageDisplay]
