@@ -147,7 +147,7 @@ export class Minerva {
    * @returns {undefined} void
    */
   removeFromRecord(id, type) {
-    if (!key || !validateUUIDv4(id) || !type)
+    if (!id || !validateUUIDv4(id) || !type)
       throw new Error("invalid arguments to Minerva.removeFromRecord.");
 
     this.updateRecordUpdatedTimeStamp();
