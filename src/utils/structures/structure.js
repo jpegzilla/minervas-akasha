@@ -42,6 +42,14 @@ export class Structure {
 
     // the inputs that each structure connects to are defined on the child classes
     this.accepts = (options && options.accepts) || [];
+
+    this.createdAt = new Date().toISOString();
+
+    this.updatedAt = new Date().toISOString();
+  }
+
+  updateTimeStamp() {
+    this.updatedAt = new Date().toISOString();
   }
 
   /**
@@ -66,6 +74,8 @@ export class Structure {
     };
 
     this.tags.push(tag);
+
+    this.updateTimeStamp();
   }
 
   /**
@@ -77,6 +87,10 @@ export class Structure {
    */
   removeTag(name) {
     this.tags.filter(e => e.name !== name);
+
+    this.createdAt = new Date().toISOString();
+    this.updateTimeStamp();
+
     return this;
   }
 
@@ -92,6 +106,9 @@ export class Structure {
       throw new SyntaxError("invalid color passed to changeColor");
 
     this.colorCode = ColorCodes[color];
+
+    this.updateTimeStamp();
+
     return this;
   }
 
@@ -104,6 +121,8 @@ export class Structure {
     this.connectedTo = [];
     this.tags = [];
     this.colorCode = ColorCodes.white;
+    this.updateTimeStamp();
+
     return this;
   }
 
@@ -114,6 +133,8 @@ export class Structure {
     this.connectedTo.push(node);
 
     this.data[node.constructor.name] = node.data;
+
+    this.updateTimeStamp();
   }
 
   disconnect(node) {
@@ -121,5 +142,7 @@ export class Structure {
       throw new SyntaxError("invalid argument to disconnect.");
 
     this.connectedTo.filter(e => e.id !== node.id);
+
+    this.updateTimeStamp();
   }
 }
