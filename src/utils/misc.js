@@ -39,28 +39,18 @@ export const bytesToSize = bytes => {
   return `${Math.round(bytes / Math.pow(1024, i), 2)}${sizes[i]}`;
 };
 
-export const ab2obj = ({ buffer, type }) => {
-  // const s = String.fromCharCode.apply(null, new Uint32Array(buf));
-  let buf, enc;
-  console.log(buffer, type);
-
-  if (/audio/gi.test(type)) {
-    buf = Array.from(new Int8Array(buffer));
-    enc = "Int8Array";
-  } else {
-    buf = Array.from(new Uint16Array(buffer));
-    enc = "Uint16Array";
-  }
-
-  return { enc, data: buf };
-};
-
+/**
+ * str2ab - converts a string to an array buffer.
+ *
+ * @param {string} str string to convert.
+ *
+ * @returns {ArrayBuffer} a buffer created from the string.
+ */
 export const str2ab = str => {
   const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
   const bufView = new Uint16Array(buf);
 
-  for (let i = 0, strLen = str.length; i < strLen; i++)
-    bufView[i] = str.charCodeAt(i);
+  for (let i = 0; i < str.length; i++) bufView[i] = str.charCodeAt(i);
 
   return buf;
 };
