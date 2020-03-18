@@ -12,7 +12,7 @@ import Paragraph from "./elements/Paragraph";
 import Tag from "./elements/Tag";
 import Video from "./elements/Video";
 
-import { uuidv4, bytesToSize, ab2obj } from "./../../utils/misc";
+import { bytesToSize } from "./../../utils/misc";
 import PropTypes from "prop-types";
 
 import StructureMap, {
@@ -153,6 +153,7 @@ export const DataStructure = props => {
 
       const f = droppedFiles;
 
+      // currently rejects files above 50mb
       if (f.size > 5e7) {
         console.log("very large file detected. rejecting.");
         return;
@@ -224,6 +225,10 @@ export const DataStructure = props => {
         reader.readAsDataURL(file);
       };
 
+      if (/image/gi.test(fileMime)) {
+        readImg(f);
+      }
+
       // function for reading videos only
       const readVideo = file => {
         const reader = new FileReader();
@@ -246,10 +251,6 @@ export const DataStructure = props => {
       if (/video/gi.test(fileMime)) {
         readVideo(f);
       }
-
-      if (/image/gi.test(fileMime)) {
-        readImg(f);
-      }
     },
     [droppedFiles]
   );
@@ -259,6 +260,7 @@ export const DataStructure = props => {
       if (activeFileData) {
         console.log("current active file data", activeFileData);
 
+        // when new file data is detected, minerva will immediately add the file to the record
         minerva.addFileToRecord(structId, activeFileData, { type });
       }
 
