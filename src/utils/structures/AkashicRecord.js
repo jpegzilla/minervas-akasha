@@ -106,7 +106,9 @@ export default class AkashicRecord {
       data,
       colorCode,
       accepts,
-      belongsTo
+      belongsTo,
+      createdAt,
+      updatedAt
     } = structure;
 
     const newTypeRecords = [
@@ -120,7 +122,9 @@ export default class AkashicRecord {
         data,
         colorCode,
         accepts,
-        belongsTo
+        belongsTo,
+        createdAt,
+        updatedAt
       }
     ];
 
@@ -174,7 +178,10 @@ export default class AkashicRecord {
       throw new TypeError(`${id} is not a proper structure.`);
 
     const newTypeRecords = this.records[type].map(item => {
-      if (item.id === id) item[key] = value;
+      if (item.id === id) {
+        item[key] = value;
+        item.updatedAt = new Date().toISOString();
+      }
 
       return item;
     });
