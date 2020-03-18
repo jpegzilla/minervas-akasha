@@ -1,9 +1,9 @@
 import AkashicRecord from "./../structures/AkashicRecord";
 import DatabaseInterface from "./Database";
-import { uuidv4 } from "./../misc";
+import { uuidv4, validateUUIDv4 } from "./../misc";
+
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
-
 // it's also responsible for storing the overall state of the application, including
 // volume, graphical settings, preferences, etc.
 
@@ -28,8 +28,16 @@ export class Minerva {
   constructor(options, database) {
     if (!database instanceof DatabaseInterface)
       throw new TypeError("database must be an instance of DatabaseInterface.");
+    if (!options.user || !options.user.name || !options.user.id)
+      throw new Error(
+        "minerva must always be constructed with a valid user object."
+      );
+    if (!validateUUIDv4(options.user.id))
+      throw new Error(
+        `user was created with an invalid user id: ${options.user.id}`
+      );
 
-    this.user = options.user || null;
+    this.user = options.user;
 
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
@@ -54,12 +62,15 @@ export class Minerva {
     db.onsuccess = event => {
       console.log("indexedDB success.", event);
 
+      // this part makes sure that the indexedDB property is set only if
+      // the success event that fired was an IDBOpenDBRequest.
       if (event.target instanceof IDBOpenDBRequest) {
         this.indexedDB = event.target.result;
       }
     };
 
-    db.onupgradeneeded = function(event) {
+    // if a version is specified that is higher than the existing version
+    db.onupgradeneeded = event => {
       console.log("running database upgrade");
 
       const db = event.target.result;
@@ -118,6 +129,9 @@ export class Minerva {
    * @returns {undefined} void
    */
   addToRecord(id, structure) {
+    if (!id || !validateUUIDv4(id) || !structure)
+      throw new Error("missing arguments to addToRecord.");
+
     this.updateRecordUpdatedTimeStamp();
     this.record.addToRecord(id, structure, this);
     this.save();
@@ -133,6 +147,9 @@ export class Minerva {
    * @returns {undefined} void
    */
   removeFromRecord(id, type) {
+    if (!key || !validateUUIDv4(id) || !type)
+      throw new Error("invalid arguments to Minerva.removeFromRecord.");
+
     this.updateRecordUpdatedTimeStamp();
     this.record.removeFromRecord(id, type, this);
     this.save();
@@ -148,6 +165,9 @@ export class Minerva {
    * @returns {Minerva} current instance of minerva
    */
   editInRecord(id, type, key, value) {
+    if (!key || !validateUUIDv4(id) || !type || !value)
+      throw new Error("invalid arguments to Minerva.editInRecord.");
+
     this.updateRecordUpdatedTimeStamp();
     this.record.editInRecord(id, type, key, value, this);
     this.save();
@@ -161,7 +181,7 @@ export class Minerva {
    * @returns {undefined} void
    */
   setWindows(array) {
-    if (!Array.isArray(array))
+    if (!array || !Array.isArray(array))
       throw new TypeError("invalid parameters to minerva.setWindows");
 
     this.windows = array;
@@ -176,7 +196,7 @@ export class Minerva {
    * @returns {undefined} void
    */
   changeSetting(settings) {
-    if (typeof settings !== "object")
+    if (!settings || typeof settings !== "object")
       throw new TypeError("invalid parameters to minerva.changeSetting");
 
     this.settings = settings;
@@ -199,6 +219,9 @@ export class Minerva {
    * @returns {undefined} void
    */
   login(user, newUser = false, database = false) {
+    if (!user || typeof user !== "object")
+      throw new Error("Minerva.login requires a user object.");
+
     this.user = user;
     this.userId = user.id;
 
@@ -232,7 +255,9 @@ export class Minerva {
   }
 
   logout() {
-    // MinervaArchive.remove("minervas_akasha");
+    // because the minervas_akasha key is meant to represent the currently
+    // logged-in user, this key must be removed on logout.
+    MinervaArchive.remove("minervas_akasha");
     // MinervaArchive.remove(user.name);
 
     MinervaArchive.set("logged_in", false);
@@ -255,6 +280,8 @@ export class Minerva {
    * or resolves false if user is not found.
    */
   search(user, database = false) {
+    if (!user) throw new Error("Minerva.get requires a user object.");
+
     // console.trace("trace user from search,", user);
 
     if (database) {
@@ -271,6 +298,8 @@ export class Minerva {
   }
 
   get(key, database) {
+    if (!key) throw new Error("Minerva.get requires a key.");
+
     // type is only for searching in the database
     if (database) {
       const { type } = database;
@@ -286,6 +315,9 @@ export class Minerva {
   }
 
   set(name, item, type, database = false) {
+    if (!name || !item || !type)
+      throw new Error("invalid arguments passed to Minerva.set.");
+
     switch (type) {
       case "user":
         if (database) {
@@ -316,10 +348,9 @@ export class Minerva {
   }
 
   addFileToRecord(id, file, structure) {
-    if (!id || !file || !structure) {
-      console.log("trying to call addFileToRecord with missing arguments.");
-      return false;
-    }
+    if (!id || !validateUUIDv4(id) || !file || !structure)
+      throw new Error("invalid arguments passed to Minerva.addFileToRecord.");
+
     // take this.records and store them in the database
     const transaction = this.indexedDB.transaction(
       ["minerva_files"],
@@ -330,6 +361,7 @@ export class Minerva {
 
     const objectStore = transaction.objectStore("minerva_files");
 
+    // around here is where you'd compress the file. maybe use a worker to compress it?
     const req = objectStore.put({
       id,
       userId: this.user.id,
@@ -344,6 +376,11 @@ export class Minerva {
   }
 
   updateFileInRecord(id, key, value) {
+    if (!id || !validateUUIDv4(id) || !key || !value)
+      throw new Error(
+        "invalid arguments passed to Minerva.removeFileInRecord."
+      );
+
     const objectStore = this.indexedDB
       .transaction(["minerva_files"], "readwrite")
       .objectStore("minerva_files");
@@ -387,6 +424,9 @@ export class Minerva {
    * @returns {type} Description
    */
   removeFileInRecord(id) {
+    if (!id || !validateUUIDv4(id))
+      throw new Error("invalid id passed to Minerva.removeFileInRecord.");
+
     const request = this.indexedDB
       .transaction(["minerva_files"], "readwrite")
       .objectStore("minerva_files")
@@ -413,12 +453,16 @@ export class Minerva {
    * rejects on error.
    */
   findFileInRecord(id) {
+    if (!id || !validateUUIDv4(id))
+      throw new Error("invalid id passed to Minerva.findFileInRecord.");
+
     const transaction = this.indexedDB.transaction(["minerva_files"]);
     const objectStore = transaction.objectStore("minerva_files");
     const request = objectStore.get(id);
 
     return new Promise((resolve, reject) => {
       request.onsuccess = event => {
+        console.log("result from findFileInRecord", event);
         resolve(event.target.result);
       };
 
@@ -452,14 +496,24 @@ export class Minerva {
   }
 
   setSession(key, item) {
+    if (!key || !item)
+      throw new Error(
+        "Minerva.setSession must be called with a key and an item."
+      );
+
     Minerva._session.setItem(key, JSON.stringify(item));
   }
 
   static removeSession(key) {
+    if (!key)
+      throw new Error("Minerva.removeSession must be called with a key.");
+
     Minerva._session.removeItem(key);
   }
 
   getSession(key) {
+    if (!key) throw new Error("Minerva.getSession must be called with a key.");
+
     return JSON.parse(Minerva._session.getItem(key));
   }
 
@@ -468,6 +522,9 @@ export class Minerva {
   }
 
   remove(key, item, database = false, type) {
+    if (!key || !item || !type)
+      throw new Error("invalid arguments to Minerva.remove.");
+
     if (database)
       this.database.delete(this.database.collections[type], item.id);
 
@@ -486,18 +543,27 @@ export class Minerva {
 
 /**
  * MinervaArchive - utility class for interacting with localstorage.
- * @extends Minerva
  */
-export class MinervaArchive extends Minerva {
+export class MinervaArchive {
   static get(key) {
+    if (!key) throw new Error("MinervaArchive.get must be called with a key.");
+
     return JSON.parse(Minerva._store.getItem(key));
   }
 
   static remove(key) {
+    if (!key)
+      throw new Error("MinervaArchive.remove must be called with a key.");
+
     return Minerva._store.removeItem(key);
   }
 
   static set(key, item) {
+    if (!key || !item)
+      throw new Error(
+        "MinervaArchive.set must be called with both a key and a value."
+      );
+
     Minerva._store.setItem(key, JSON.stringify(item));
 
     return Minerva._store;
