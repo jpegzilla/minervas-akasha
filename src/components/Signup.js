@@ -329,7 +329,6 @@ export const Signup = props => {
   // depending on the path ('/login' or '/signup').
 
   if (finished) {
-    console.log(finished);
     return (
       <Redirect
         to={{ pathname: "/", state: loginScreenInstead ? "login" : "signup" }}
