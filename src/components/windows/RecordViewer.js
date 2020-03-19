@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { uuidv4 } from "./../../utils/misc";
 
 import { globalContext } from "./../App";
+import { makeStruct } from "../../utils/managers/StructureMap";
 
 export const RecordViewer = props => {
   const { setWindows } = props;
@@ -31,22 +32,8 @@ export const RecordViewer = props => {
 
     const { id, type } = itemToOpen;
 
-    const struct = {
-      title: "datastructure",
-      state: "restored",
-      stringType: "Window",
-      component: "DataStructure",
-      componentProps: {
-        type,
-        structId: id
-      },
-      belongsTo: minerva.user.id,
-      id: uuidv4(),
-      position: {
-        x: 100,
-        y: 100
-      }
-    };
+    // move objects like this to structuremap to dry things up
+    const struct = makeStruct(type, id, minerva, uuidv4);
 
     minerva.setWindows([...minerva.windows, struct]);
 

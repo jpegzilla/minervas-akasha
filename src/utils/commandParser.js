@@ -1,4 +1,5 @@
 import { uuidv4 } from "./../utils/misc";
+import { makeStruct } from "./../utils/managers/StructureMap";
 
 const validTypes = ["shard", "node", "grimoire", "athenaeum", "hypostasis"];
 let awaitingAnswer = false;
@@ -28,22 +29,7 @@ const MinervaMethods = {
 const UserMethods = {
   addStructure(type, setWindows, minerva) {
     // add new window to list
-    const struct = {
-      title: "datastructure",
-      state: "restored",
-      stringType: "Window",
-      component: "DataStructure",
-      componentProps: {
-        type,
-        structId: uuidv4()
-      },
-      belongsTo: minerva.user.id,
-      id: uuidv4(),
-      position: {
-        x: 100,
-        y: 100
-      }
-    };
+    const struct = makeStruct(type, uuidv4(), minerva, uuidv4);
 
     minerva.setWindows([...minerva.windows, struct]);
 

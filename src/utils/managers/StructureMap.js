@@ -3,6 +3,7 @@ import { Grimoire } from "./../structures/grimoire";
 import { Node } from "./../structures/node";
 import { Hypostasis } from "./../structures/hypostasis";
 import { Athenaeum } from "./../structures/athenaeum";
+import { uuidv4 } from "./../misc";
 
 export default {
   shard: Shard,
@@ -10,6 +11,35 @@ export default {
   node: Node,
   hypostasis: Hypostasis,
   athenaeum: Athenaeum
+};
+
+/**
+ * makeStruct - creates a data representation of a structure.
+ *
+ * @param {string}   type    type of structure to create
+ * @param {string}   id      id of structure (structId)
+ * @param {Minerva}  minerva current instance of minerva
+ * @param {function} uuidv4  uuid generation function
+ *
+ * @returns {object} created structure
+ */
+export const makeStruct = (type, id = uuidv4(), minerva, uuidv4) => {
+  return {
+    title: "datastructure",
+    state: "restored",
+    stringType: "Window",
+    component: "DataStructure",
+    componentProps: {
+      type,
+      structId: id
+    },
+    belongsTo: minerva.user.id,
+    id: uuidv4(),
+    position: {
+      x: 100,
+      y: 100
+    }
+  };
 };
 
 export const StructureDescriptions = {

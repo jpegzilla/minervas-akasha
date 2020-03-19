@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { uuidv4 } from "./../utils/misc";
+import { makeStruct } from "../utils/managers/StructureMap";
 import { globalContext } from "./App";
 
 import { Tab } from "./windows/elements/Tab";
@@ -68,22 +69,7 @@ export const Taskbar = props => {
     if (type !== type.toLowerCase())
       throw new Error("invalid type provided to addStructure");
     // add new window to list
-    const struct = {
-      title: "datastructure",
-      state: "restored",
-      stringType: "Window",
-      component: "DataStructure",
-      componentProps: {
-        type,
-        structId: uuidv4()
-      },
-      belongsTo: minerva.user.id,
-      id: uuidv4(),
-      position: {
-        x: 100,
-        y: 100
-      }
-    };
+    const struct = makeStruct(type, uuidv4(), minerva, uuidv4);
 
     minerva.setWindows([...minerva.windows, struct]);
 
