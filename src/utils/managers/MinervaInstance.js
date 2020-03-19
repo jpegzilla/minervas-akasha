@@ -28,16 +28,13 @@ export class Minerva {
   constructor(options, database) {
     if (!database instanceof DatabaseInterface)
       throw new TypeError("database must be an instance of DatabaseInterface.");
-    if (!options.user || !options.user.name || !options.user.id)
-      throw new Error(
-        "minerva must always be constructed with a valid user object."
-      );
-    if (!validateUUIDv4(options.user.id))
+
+    if (options.user && !validateUUIDv4(options.user.id))
       throw new Error(
         `user was created with an invalid user id: ${options.user.id}`
       );
 
-    this.user = options.user;
+    this.user = options.user || null;
 
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
@@ -315,7 +312,7 @@ export class Minerva {
   }
 
   set(name, item, type, database = false) {
-    if (!name || !item || !type)
+    if (!name || !type)
       throw new Error("invalid arguments passed to Minerva.set.");
 
     switch (type) {
