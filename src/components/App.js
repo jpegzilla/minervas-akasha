@@ -256,8 +256,10 @@ export const App = () => {
 
   // preloader is returned if the window is not too small, and the windowloaded flag is false.
   return (
-    <Provider value={initialContext}>
-      <Preloader setWindowLoaded={setWindowLoaded} />
-    </Provider>
+    <ErrorBoundary>
+      <Provider value={initialContext}>
+        <Preloader setWindowLoaded={setWindowLoaded} />
+      </Provider>
+    </ErrorBoundary>
   );
 };
