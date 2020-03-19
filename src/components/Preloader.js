@@ -3,6 +3,8 @@ import { Typist } from "./../utils/misc";
 import { globalContext } from "./App";
 import PropTypes from "prop-types";
 
+import "./tasks/setupErrorHandling";
+
 // audio files
 import click from "./../assets/audio/computer/click-short.wav";
 import noise from "./../assets/audio/computer/click-noise.wav";
