@@ -23,6 +23,14 @@ export const hasDatePassed = date => {
   // true if expiry date has been passed
   return expiresOn < currentDate;
 };
+
+/**
+ * secondsToTime - convert seconds to an hh:mm:ss string
+ *
+ * @param {number} sec number of seconds to convert
+ *
+ * @returns {string} an hh:mm:ss string
+ */
 export const secondsToTime = sec => {
   let totalSeconds = sec;
 
