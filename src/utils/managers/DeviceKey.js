@@ -14,7 +14,7 @@ class DeviceKey {
   /**
    * @static shuffle - shuffles an array.
    *
-   * @param {array}   arr          array to be shuffled
+   * @param {array}  arr           array to be shuffled
    * @param {number} [factor=0.25] factor to shuffle by
    *
    * @returns {string} a completed device key.
@@ -41,6 +41,14 @@ class DeviceKey {
     return `${arr.join("-")}.FAC${factor}`;
   }
 
+  /**
+   * @static generate - generate a new set of device keys.
+   *
+   * @param {string} from the id to generate keys from. should be a unique id
+   * bound to a particular user.
+   *
+   * @returns {promise} promise that resolves with an array of codes.
+   */
   static generate(from) {
     return new Promise((resolve, reject) => {
       try {
@@ -57,7 +65,16 @@ class DeviceKey {
     });
   }
 
-  static generateSync(from) {
+  /**
+   * @static generateSync - generate 6 device keys.
+   * uses callback instead of promise.
+   *
+   * @param {string}   from      string to generate keys from
+   * @param {function} callback  callback to execute after generation
+   *
+   * @returns {void} undefined
+   */
+  static generateSync(from, callback) {
     try {
       const codes = [...Array(6)].map((_item, i, a) => {
         return DeviceKey.shuffle(from.match(/.{1,4}/gim), i / a.length);
@@ -65,7 +82,7 @@ class DeviceKey {
 
       this.output = codes;
 
-      return codes;
+      callback(codes);
     } catch (err) {
       throw err;
     }
@@ -97,7 +114,17 @@ class DeviceKey {
     });
   }
 
-  static verifySync(key, userId) {
+  /**
+   * @static verifySync - verify a device key.
+   * uses callback instead of promise.
+   *
+   * @param {string}   key      key to verify
+   * @param {string}   userId   user id to verify key for
+   * @param {function} callback callback to execute after verification
+   *
+   * @returns {undefined} void
+   */
+  static verifySync(key, userId, callback) {
     try {
       const fac = key.split(/.FAC/)[1];
 
@@ -106,7 +133,7 @@ class DeviceKey {
         fac
       );
 
-      return key === compTo;
+      callback(key === compTo);
     } catch (err) {
       throw err;
     }
