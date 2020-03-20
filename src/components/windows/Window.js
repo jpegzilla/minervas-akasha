@@ -127,6 +127,10 @@ export const Window = props => {
   const handleDrop = e => {
     e.preventDefault();
     e.stopPropagation();
+
+    // currently, dropped files are sent to the datastructure component
+    // as only the first dropped file. this may change in the future as
+    // I'd like to implement some sort of slideshow thing for images.
     setDroppedFiles(e.dataTransfer.files[0]);
     setDroppable(false);
   };
