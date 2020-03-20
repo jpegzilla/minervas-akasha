@@ -156,9 +156,10 @@ export default class AkashicRecord {
 
     this.records = { ...this.records, [type]: newTypeRecords };
 
-    minerva.record = this;
-
-    this.updateDate();
+    minerva.removeFileFromRecord(id).then(() => {
+      minerva.record = this;
+      this.updateDate();
+    });
   }
 
   /**
