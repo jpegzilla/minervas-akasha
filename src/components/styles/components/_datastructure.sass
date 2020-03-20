@@ -11,6 +11,13 @@
   $maxWidth: fit-content
   $maxWidth2: 350px
 
+  a
+    color: $pink
+
+  .image-error
+    max-width: $maxWidth2
+    display: block
+
   display: flex
   flex-direction: column
   max-width: $maxWidth
@@ -123,6 +130,9 @@
     audio, video
       width: 100%
       max-width: $maxWidth2
+
+    img
+      min-width: $maxWidth2
 
     video
       max-width: 400px
