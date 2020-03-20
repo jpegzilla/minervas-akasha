@@ -611,6 +611,75 @@ export class Minerva {
     Minerva._session.clear();
   }
 
+  /**
+   * @static getCookie - get the value of a cookie.
+   *
+   * @param {string} key key of the cookie you want to read.
+   *
+   * @returns {string} the value of the retrieved cookie.
+   */
+  static getCookie(key) {
+    if (key === undefined)
+      throw new Error("getCookie must be called with a key.");
+
+    return document.cookie
+      .split(";")
+      .map(item => ({ [item.split("=")[0].trim()]: item.split("=")[1].trim() }))
+      .find(item => Object.keys(item)[0] === key)[key];
+  }
+
+  /**
+   * @static removeCookie - deletes a cookie.
+   *
+   * @param {string} key key of cookie to delete.
+   *
+   * @returns {string} the remaining cookies.
+   */
+  static removeCookie(key) {
+    if (key === undefined)
+      throw new Error("removeCookie must be called with a key.");
+
+    document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+
+    return document.cookie;
+  }
+
+  /**
+   * @static setCookie - set a cookie.
+   *
+   * @param {string} key      key of cookie
+   * @param {string} value    value of cookie
+   * @param {string} maxage   date of expiration
+   * @param {string} expires  also date of expiration.
+   * @param {string} secure   a flag that determines whether to
+   * only transfer this cookie over https.
+   * @param {string} samesite prevents the browser from sending
+   * this cookie in cross-site requests.
+   *
+   * @returns {string} the current cookies.
+   */
+  static setCookie(key, value, maxage, expires, secure, samesite) {
+    if (maxage !== undefined && expires !== undefined) {
+      throw new TypeError("maxage / expires cannot be undefined.");
+    }
+
+    if (key === undefined || value === undefined) {
+      throw new Error("setCookie must be called with a key and a value.");
+    }
+
+    if (typeof samesite === "string" && !["lax", "strict"].includes(samesite)) {
+      throw new SyntaxError(
+        "samesite must be set to either 'lax' or 'strict'."
+      );
+    }
+
+    document.cookie = `${key}=${value};max-age=${maxage}${
+      expires ? `;expires=${expires}` : ""
+    }${secure ? `;secure` : ""}${samesite ? `;samesite=${samesite}` : ""}`;
+
+    return document.cookie;
+  }
+
   remove(key, item, database = false, type) {
     if (!key || !item || !type)
       throw new Error("invalid arguments to Minerva.remove.");
