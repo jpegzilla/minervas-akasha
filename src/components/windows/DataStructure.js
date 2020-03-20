@@ -188,7 +188,7 @@ export const DataStructure = props => {
           const data = e.target.result;
 
           setActiveFileData({
-            data: { enc: "base64", data },
+            data,
             title: f.name,
             type: f.type,
             mime: fileMime,
@@ -235,7 +235,7 @@ export const DataStructure = props => {
 
         reader.addEventListener("load", e => {
           setActiveFileData({
-            data: { enc: "base64", data: e.target.result },
+            data: e.target.result,
             title: f.name,
             type: f.type,
             mime: fileMime,
@@ -269,10 +269,10 @@ export const DataStructure = props => {
       minerva.findFileInRecord(structId).then(e => {
         if (e)
           if (e.file) {
-            // console.log(
-            //   `found a file for record ${structId}, attaching it.`,
-            //   e.file
-            // );
+            console.log(
+              `found a file for record ${structId}, attaching it.`,
+              e.file
+            );
 
             if (info) {
               const newWindows = minerva.windows.map(item => {
