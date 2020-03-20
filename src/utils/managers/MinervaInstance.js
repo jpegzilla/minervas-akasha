@@ -585,7 +585,7 @@ export class Minerva {
     return JSON.parse(MinervaArchive.get("minerva_store"));
   }
 
-  setSession(key, item) {
+  static setSession(key, item) {
     if (!key || !item)
       throw new Error(
         "Minerva.setSession must be called with a key and an item."
@@ -601,7 +601,7 @@ export class Minerva {
     Minerva._session.removeItem(key);
   }
 
-  getSession(key) {
+  static getSession(key) {
     if (!key) throw new Error("Minerva.getSession must be called with a key.");
 
     return JSON.parse(Minerva._session.getItem(key));
