@@ -55,12 +55,12 @@ export const naturalDate = string => {
  * hasDatePassed - determines if a given iso-formatted date string has passed
  * the current date
  *
- * @param {string} date iso-formatted date string
+ * @param {number} date date in milliseconds
  *
  * @returns {boolean} true if date has passed, false if not
  */
 export const hasDatePassed = date => {
-  const expiresOn = Date.parse(date);
+  const expiresOn = new Date(date);
   const currentDate = Date.parse(new Date().toISOString());
 
   // true if expiry date has been passed
