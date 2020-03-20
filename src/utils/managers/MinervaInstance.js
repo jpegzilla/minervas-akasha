@@ -1,6 +1,9 @@
 import AkashicRecord from "./../structures/AkashicRecord";
 import DatabaseInterface from "./Database";
 import { uuidv4, validateUUIDv4 } from "./../misc";
+import worker from "workerize-loader!./workers/compressionWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+
+const workerInstance = worker();
 
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
@@ -279,8 +282,6 @@ export class Minerva {
   search(user, database = false) {
     if (!user) throw new Error("Minerva.get requires a user object.");
 
-    // console.trace("trace user from search,", user);
-
     if (database) {
       // search in database
     }
@@ -344,7 +345,54 @@ export class Minerva {
     }
   }
 
-  addFileToRecord(id, file, structure) {
+  // compression / decompression methods
+  lzCompress(base64String) {
+    return new Promise((resolve, reject) => {
+      try {
+        workerInstance.postMessage({
+          action: "compress",
+          toCompress: base64String
+        });
+
+        workerInstance.onmessage = message => {
+          resolve(message.data);
+        };
+      } catch (err) {
+        console.warn(err);
+        reject(err);
+      }
+    });
+  }
+
+  lzDecompress(data) {
+    return new Promise((resolve, reject) => {
+      try {
+        workerInstance.postMessage({
+          action: "decompress",
+          toDecompress: data
+        });
+
+        workerInstance.onmessage = message => {
+          resolve(message.data);
+        };
+      } catch (err) {
+        console.warn(err);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * addFileToRecord - add a file to a record, adding an entry for
+   * the structure in indexeddb
+   *
+   * @param {string} id        id of structure associated with file
+   * @param {object} file      file object to add to the database
+   * @param {object} structure structure to add file to
+   *
+   * @returns {void} undefined
+   */
+  addFileToRecord(id, file, structure, compress = false) {
     if (!id || !validateUUIDv4(id) || !file || !structure)
       throw new Error("invalid arguments passed to Minerva.addFileToRecord.");
 
@@ -358,24 +406,53 @@ export class Minerva {
 
     const objectStore = transaction.objectStore("minerva_files");
 
-    // around here is where you'd compress the file. maybe use a worker to compress it?
-    const req = objectStore.put({
-      id,
-      userId: this.user.id,
-      file,
-      type
-    });
+    if (compress) {
+      return new Promise((resolve, reject) => {
+        // compress file before storing
+        this.lzCompress(file.data).then(res => {
+          // take this.records and store them in the database
+          const transaction = this.indexedDB.transaction(
+            ["minerva_files"],
+            "readwrite"
+          );
 
-    req.onsuccess = () => {
-      console.log("done.");
-      this.updateIndexedDBUpdatedTimestamp();
-    };
+          const { type } = structure;
+
+          const objectStore = transaction.objectStore("minerva_files");
+
+          const req = objectStore.put({
+            id,
+            userId: this.user.id,
+            file,
+            type,
+            fileType: "audio"
+          });
+
+          req.onsuccess = () => {
+            resolve();
+            this.updateIndexedDBUpdatedTimestamp();
+          };
+        });
+      });
+    } else {
+      // otherwise just store immediately
+      const req = objectStore.put({
+        id,
+        userId: this.user.id,
+        file,
+        type
+      });
+
+      req.onsuccess = () => {
+        this.updateIndexedDBUpdatedTimestamp();
+      };
+    }
   }
 
   updateFileInRecord(id, key, value) {
     if (!id || !validateUUIDv4(id) || !key || !value)
       throw new Error(
-        "invalid arguments passed to Minerva.removeFileInRecord."
+        "invalid arguments passed to Minerva.updateFileInRecord."
       );
 
     const objectStore = this.indexedDB
@@ -414,15 +491,15 @@ export class Minerva {
   }
 
   /**
-   * removeFileInRecord - remove a file from a record in indexeddb.
+   * removeFileFromRecord - remove a file from a record in indexeddb.
    *
    * @param {string} id id of the record to be removed.
    *
    * @returns {type} Description
    */
-  removeFileInRecord(id) {
+  removeFileFromRecord(id) {
     if (!id || !validateUUIDv4(id))
-      throw new Error("invalid id passed to Minerva.removeFileInRecord.");
+      throw new Error("invalid id passed to Minerva.removeFileFromRecord.");
 
     const request = this.indexedDB
       .transaction(["minerva_files"], "readwrite")
@@ -430,9 +507,9 @@ export class Minerva {
       .delete(id);
 
     return new Promise((resolve, reject) => {
-      request.onsuccess = event => {
+      request.onsuccess = () => {
         this.updateIndexedDBUpdatedTimestamp();
-        resolve(event.target.result);
+        resolve();
       };
 
       request.onerror = e => {
@@ -449,7 +526,7 @@ export class Minerva {
    * @returns {promise} resolves when the database request completes,
    * rejects on error.
    */
-  findFileInRecord(id) {
+  findFileInRecord(id, compressed = false) {
     if (!id || !validateUUIDv4(id))
       throw new Error("invalid id passed to Minerva.findFileInRecord.");
 
@@ -459,8 +536,24 @@ export class Minerva {
 
     return new Promise((resolve, reject) => {
       request.onsuccess = event => {
-        console.log("result from findFileInRecord", event);
-        resolve(event.target.result);
+        console.log("result from findFileInRecord", event.target.result);
+
+        if (event.target.result) {
+          if (compressed) {
+            // decompress file.data here
+
+            this.lzDecompress(event.target.result.file.data).then(res => {
+              const fileInformation = {
+                ...event.target.result,
+                file: { ...event.target.result.file, data: res }
+              };
+
+              resolve(fileInformation);
+            });
+          } else {
+            resolve(event.target.result);
+          }
+        }
       };
 
       request.onerror = e => {
