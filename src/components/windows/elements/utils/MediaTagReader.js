@@ -115,7 +115,7 @@ export default class MediaTagReader {
     });
   }
 
-  getFullImageInfo(mime) {
+  getFullImageInfo() {
     const { mediaString } = this;
     // fix this so that whatever lib is used to pull tags, the resulting tags
     // are formatted in identically structured objects
