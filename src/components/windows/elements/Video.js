@@ -9,28 +9,7 @@ export default props => {
 
   console.log("in video component", props);
 
-  const { enc, data } = src;
-  let arr, url, blob;
-
-  switch (enc) {
-    case "Float64Array":
-      arr = new Float64Array(data);
-
-      blob = new Blob([arr], { type: mime });
-      url = window.URL.createObjectURL(blob);
-
-      break;
-
-    case "base64":
-      url = data;
-      break;
-
-    default:
-      console.log("unknown video encoding");
-      fileInfo =
-        "this file type is unknown. please report this error so I can add support for this file type.";
-      break;
-  }
+  const data = src;
 
   return (
     <video
@@ -42,7 +21,7 @@ export default props => {
         });
       }}
       controls
-      src={url}
+      src={data}
       title={fileInfo}
     />
   );

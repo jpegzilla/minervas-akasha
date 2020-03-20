@@ -6,32 +6,11 @@ export default props => {
 
   let fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}`;
 
-  const { enc, data } = src;
-  let arr, url, blob;
-
-  switch (enc) {
-    case "Float64Array":
-      arr = new Float64Array(data);
-
-      blob = new Blob([arr], { type: mime });
-      url = window.URL.createObjectURL(blob);
-
-      break;
-
-    case "base64":
-      url = data;
-      break;
-
-    default:
-      console.log("unknown audio encoding");
-      fileInfo =
-        "this file type is unknown. please report this error so I can add support for this file type.";
-      break;
-  }
+  const data = src;
 
   return (
     <audio
-      onLoadedMetadata={e => {
+      onLoadedMetadata={() => {
         // hand off metadata reading to a worker here
         const metaDataReader = new MediaTagReader(data);
 
@@ -42,7 +21,7 @@ export default props => {
         });
       }}
       controls
-      src={url}
+      src={data}
       title={fileInfo}
     >
       audio element encountered an error.
