@@ -77,6 +77,8 @@ export const App = () => {
 
   // flag that determines whether to take the user straight to the home screen or the main screen
   const [loggedIn, setLoggedIn] = useState(minerva.get("logged_in") || false);
+  // for controlling volume throughout the application
+  const [globalVolume, setGlobalVolume] = useState(minerva.settings.volume);
 
   const [statusMessage, setStatusMessage] = useState({
     display: false,
@@ -160,6 +162,8 @@ export const App = () => {
             setStatusText,
             loggedIn,
             setLoggedIn
+            globalVolume,
+            setGlobalVolume
           }}
         >
           <Router>

@@ -3,17 +3,17 @@ import React, { useState, useEffect, useContext } from "react";
 import { globalContext } from "./../App";
 
 export const Settings = props => {
-  const { minerva } = useContext(globalContext);
+  const { minerva, setGlobalVolume } = useContext(globalContext);
   const [settings, setSettings] = useState(minerva.settings);
   const { settingsMenuRef } = props;
 
-  console.log(settings);
-
-  useEffect(() => minerva.changeSetting(settings), [
-    settings,
-    minerva,
-    minerva.settings
-  ]);
+  useEffect(
+    () => {
+      minerva.changeSetting(settings);
+      setGlobalVolume(settings);
+    },
+    [settings, minerva, minerva.settings]
+  );
 
   return (
     <div
@@ -95,7 +95,7 @@ export const Settings = props => {
           <legend>connections</legend>
 
           <label
-            title="allows you to see content procured by other users of this software"
+            title="allows you to see content procured by other users of this software."
             htmlFor="connection-settings-off"
           >
             <span className="connection-settings-label">connections on</span>
@@ -117,6 +117,38 @@ export const Settings = props => {
               }}
               value={settings.connections}
               id="connection-settings-off"
+              type="checkbox"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset className="connection-settings">
+          <legend>autoplay media</legend>
+
+          <label
+            title="allows audio and videos to start playing automatically when they load."
+            htmlFor="autoplay-settings-off"
+          >
+            <span className="connection-settings-label">autoplay on</span>
+            <span
+              className={`${
+                settings.autoplayMedia
+                  ? "active connection-settings-checkbox"
+                  : "connection-settings-checkbox"
+              }`}
+            >
+              <b />
+            </span>
+            <input
+              onChange={() => {
+                console.log(settings);
+                setSettings({
+                  ...settings,
+                  autoplayMedia: !settings.autoplayMedia
+                });
+              }}
+              value={settings.autoplayMedia}
+              id="autoplay-settings-off"
               type="checkbox"
             />
           </label>

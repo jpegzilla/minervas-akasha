@@ -1,5 +1,4 @@
 import React from "react";
-// useContext,
 
 import { Clock } from "./windows/elements/Clock";
 
@@ -8,7 +7,6 @@ import { Settings } from "./windows/Settings";
 
 export const Topbar = props => {
   const { settingsMenuRef, settingsOpen, setSettingsOpen } = props;
-  // const { audiomanager, minerva } = useContext(globalContext);
 
   return (
     <section id="top-bar">
