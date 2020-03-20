@@ -7,8 +7,6 @@ export default props => {
 
   let fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}`;
 
-  console.log("in video component", props);
-
   const data = src;
 
   return (
