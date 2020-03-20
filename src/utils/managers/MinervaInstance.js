@@ -423,7 +423,7 @@ export class Minerva {
           const req = objectStore.put({
             id,
             userId: this.user.id,
-            file,
+            file: { ...file, data: res },
             type,
             fileType: "audio"
           });
