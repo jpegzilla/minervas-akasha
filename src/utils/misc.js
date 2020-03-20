@@ -9,22 +9,6 @@ const m = new audiomanager();
 m.load([{ file: keySound, name: "key" }]);
 
 /**
- * hasDatePassed - determines if a given iso-formatted date string has passed
- * the current date
- *
- * @param {string} date iso-formatted date string
- *
- * @returns {boolean} true if date has passed, false if not
- */
-export const hasDatePassed = date => {
-  const expiresOn = Date.parse(date);
-  const currentDate = Date.parse(new Date().toISOString());
-
-  // true if expiry date has been passed
-  return expiresOn < currentDate;
-};
-
-/**
  * secondsToTime - convert seconds to an hh:mm:ss string
  *
  * @param {number} sec number of seconds to convert
