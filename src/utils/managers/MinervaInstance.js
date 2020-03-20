@@ -1,6 +1,7 @@
 import AkashicRecord from "./../structures/AkashicRecord";
 import DatabaseInterface from "./Database";
 import { uuidv4, validateUUIDv4 } from "./../misc";
+import { naturalDate } from "./../dateUtils";
 import worker from "workerize-loader!./workers/compressionWorker"; // eslint-disable-line import/no-webpack-loader-syntax
 
 const workerInstance = worker();
@@ -88,16 +89,27 @@ export class Minerva {
       objectStore.createIndex("id", "id", { unique: true });
     };
 
-    this.settings = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").settings
-      : {
-          volume: {
-            master: 100,
-            effect: 100,
-            voice: 100
-          },
-          connections: true
-        };
+    if (MinervaArchive.get("minerva_store")) {
+      const settings = MinervaArchive.get("minerva_store").settings;
+
+      const defaultSettings = {
+        volume: {
+          master: 100,
+          effect: 100,
+          voice: 100
+        },
+        autoplayMedia: false,
+        connections: true
+      };
+
+      if (Object.keys(settings).length === 0) {
+        this.settings = defaultSettings;
+      } else {
+        this.settings = { ...defaultSettings, ...settings };
+      }
+    }
+
+    console.log(this.settings);
 
     this.windows = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").windows
@@ -225,11 +237,12 @@ export class Minerva {
     this.user = user;
     this.userId = user.id;
 
+    this.settings = MinervaArchive.get("minerva_store").settings;
+
     this.set(
       `user:${user.id}:token`,
       {
-        user: user,
-        expires: new Date().toISOString()
+        expires: naturalDate("1 month from now")
       },
       "user"
     );
@@ -261,6 +274,7 @@ export class Minerva {
     // MinervaArchive.remove(user.name);
 
     MinervaArchive.set("logged_in", false);
+    MinervaArchive.remove(`user:${this.user.id}:token`);
 
     this.user = null;
     this.record = null;
@@ -313,7 +327,7 @@ export class Minerva {
   }
 
   set(name, item, type, database = false) {
-    if (!name || !type)
+    if (name === undefined || type === undefined)
       throw new Error("invalid arguments passed to Minerva.set.");
 
     switch (type) {
@@ -682,7 +696,7 @@ export class Minerva {
   }
 
   remove(key, item, database = false, type) {
-    if (!key || !item || !type)
+    if (!key || (database && !type && !item))
       throw new Error("invalid arguments to Minerva.remove.");
 
     if (database)
@@ -706,20 +720,21 @@ export class Minerva {
  */
 export class MinervaArchive {
   static get(key) {
-    if (!key) throw new Error("MinervaArchive.get must be called with a key.");
+    if (key === undefined)
+      throw new Error("MinervaArchive.get must be called with a key.");
 
     return JSON.parse(Minerva._store.getItem(key));
   }
 
   static remove(key) {
-    if (!key)
+    if (key === undefined)
       throw new Error("MinervaArchive.remove must be called with a key.");
 
     return Minerva._store.removeItem(key);
   }
 
   static set(key, item) {
-    if (!key || !item)
+    if (key === undefined || item === undefined)
       throw new Error(
         "MinervaArchive.set must be called with both a key and a value."
       );
