@@ -425,7 +425,8 @@ export class Minerva {
             userId: this.user.id,
             file: { ...file, data: res },
             type,
-            fileType: "audio"
+            fileType: "audio",
+            compressed: "lzutf8"
           });
 
           req.onsuccess = () => {
@@ -526,7 +527,7 @@ export class Minerva {
    * @returns {promise} resolves when the database request completes,
    * rejects on error.
    */
-  findFileInRecord(id, compressed = false) {
+  findFileInRecord(id) {
     if (!id || !validateUUIDv4(id))
       throw new Error("invalid id passed to Minerva.findFileInRecord.");
 
@@ -539,7 +540,7 @@ export class Minerva {
         console.log("result from findFileInRecord", event.target.result);
 
         if (event.target.result) {
-          if (compressed) {
+          if (event.target.result.compressed) {
             // decompress file.data here
 
             this.lzDecompress(event.target.result.file.data).then(res => {
