@@ -78,6 +78,7 @@ export const videoTagSchema = tags => {
 };
 
 export const audioTagSchema = tags => {
+  console.log(tags);
   const tagSchema = {};
   const msg = {};
 
@@ -99,7 +100,9 @@ export const audioTagSchema = tags => {
       if ("common" in tags) {
         if (item in tags.common) {
           if (item === "track")
-            tagSchema[item] = tags.common[item].no.toString().padStart(2, "0");
+            tagSchema[item] = tags.common[item].no
+              ? tags.common[item].no.toString().padStart(2, "0")
+              : "no track information";
           else if (item === "picture") tagSchema[item] = tags.common[item][0];
           else tagSchema[item] = tags.common[item];
         }
