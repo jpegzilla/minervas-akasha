@@ -13,6 +13,7 @@ import { RecordViewer } from "./windows/RecordViewer";
 import { Console } from "./windows/Console";
 
 import { globalContext } from "./App";
+import { hasDatePassed } from "./../utils/dateUtils";
 
 export const Home = props => {
   const { routeProps } = props;
@@ -42,7 +43,11 @@ export const Home = props => {
 
   useEffect(
     () => {
-      setLoggedIn(true);
+      let loginExpired = minerva.get(`user:${minerva.user.id}:token`)
+        ? hasDatePassed(minerva.get(`user:${minerva.user.id}:token`).expires)
+        : false;
+
+      setLoggedIn(loginExpired ? false : true);
     },
     [loggedIn, setLoggedIn]
   );
@@ -286,8 +291,6 @@ export const Home = props => {
       onMouseMove={handleMouseMove}
     >
       <Topbar
-        windows={windows}
-        setWindows={setWindows}
         settingsOpen={settingsOpen}
         setSettingsOpen={setSettingsOpen}
         settingsMenuRef={settingsMenuRef}

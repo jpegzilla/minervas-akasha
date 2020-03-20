@@ -13,6 +13,9 @@ import { Home } from "./Home";
 import { Signup } from "./Signup";
 import { ContextMenu } from "./ContextMenu";
 
+// utils
+import { hasDatePassed } from "./../utils/dateUtils";
+
 // error boundary
 import ErrorBoundary from "./subcomponents/ErrorBoundary";
 
@@ -76,7 +79,14 @@ export const App = () => {
   const [tooSmall, setTooSmall] = useState(false);
 
   // flag that determines whether to take the user straight to the home screen or the main screen
-  const [loggedIn, setLoggedIn] = useState(minerva.get("logged_in") || false);
+  let loginExpired = minerva.get(`user:${minerva.user.id}:token`)
+    ? hasDatePassed(minerva.get(`user:${minerva.user.id}:token`).expires)
+    : false;
+
+  const [loggedIn, setLoggedIn] = useState(
+    loginExpired === true ? false : minerva.get("logged_in") || false
+  );
+
   // for controlling volume throughout the application
   const [globalVolume, setGlobalVolume] = useState(minerva.settings.volume);
 
@@ -161,7 +171,7 @@ export const App = () => {
             statusText,
             setStatusText,
             loggedIn,
-            setLoggedIn
+            setLoggedIn,
             globalVolume,
             setGlobalVolume
           }}
