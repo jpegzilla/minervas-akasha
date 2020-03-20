@@ -40,7 +40,6 @@ export const DataStructure = props => {
     return item.componentProps.structId === structId;
   });
 
-  // const [droppedFiles, setDroppedFiles] = useState();
   const [activeFileData, setActiveFileData] = useState();
   const [currentFileData, setCurrentFileData] = useState();
   const [deletionStarted, setDeletionStarted] = useState(false);
@@ -150,26 +149,47 @@ export const DataStructure = props => {
       if (!droppedFiles) return;
 
       console.log("freshly dropped file:", droppedFiles);
-
+      // f is a file object.
       const f = droppedFiles;
 
-      // currently rejects files above 50mb
-      if (f.size > 5e7) {
+      // currently rejects files above 80mb
+      if (f.size > 8e7) {
         console.log("very large file detected. rejecting.");
         return;
       }
 
-      const fileMime = f.type || "text/plain";
+      let assignedType;
+      let fileMime = f.type || "text/plain";
       const fileExt = f.name.slice(f.name.lastIndexOf("."));
+
+      const videoExtensions = ["y4m", "mkv", "yuv", "flv"];
+      const audioExtensions = ["8svx", "16svx", "bwf"];
+
+      if (videoExtensions.find(item => new RegExp(item, "gi").test(fileExt))) {
+        fileMime = `video/${videoExtensions.find(item =>
+          new RegExp(item, "gi").test(fileExt)
+        )}`;
+
+        assignedType = fileMime;
+      } else if (
+        audioExtensions.find(item => new RegExp(item, "gi").test(fileExt))
+      ) {
+        fileMime = `audio/${audioExtensions.find(item =>
+          new RegExp(item, "gi").test(fileExt)
+        )}`;
+
+        assignedType = fileMime;
+      }
+
+      console.log(assignedType);
 
       // if file mimetype indicates a text file
       if (/text/gi.test(fileMime)) {
         f.text().then(e => {
-          console.log(e);
           setActiveFileData({
-            text: e,
+            data: e,
             title: f.name,
-            type: f.type,
+            type: fileMime,
             mime: fileMime,
             size: f.size,
             ext: fileExt,
@@ -180,75 +200,75 @@ export const DataStructure = props => {
         return;
       }
 
-      // function for reading audio only
-      const readAudio = file => {
-        const reader = new FileReader();
-
-        reader.addEventListener("load", e => {
-          const data = e.target.result;
-
-          setActiveFileData({
-            data,
-            title: f.name,
-            type: f.type,
-            mime: fileMime,
-            size: f.size,
-            ext: fileExt,
-            humanSize: bytesToSize(f.size)
-          });
-        });
-
-        // reader.readAsArrayBuffer(file);
-        reader.readAsDataURL(file);
-      };
-
       if (/audio/gi.test(fileMime)) {
+        // function for reading audio only
+        const readAudio = file => {
+          const reader = new FileReader();
+
+          reader.addEventListener("load", e => {
+            const data = e.target.result;
+
+            setActiveFileData({
+              data,
+              title: f.name,
+              type: assignedType || f.type,
+              mime: fileMime,
+              size: f.size,
+              ext: fileExt,
+              humanSize: bytesToSize(f.size)
+            });
+          });
+
+          // reader.readAsArrayBuffer(file);
+          reader.readAsDataURL(file);
+        };
+
         readAudio(f);
       }
 
-      // function for reading images only
-      const readImg = file => {
-        const reader = new FileReader();
-
-        reader.addEventListener("load", e => {
-          setActiveFileData({
-            data: e.target.result,
-            title: f.name,
-            type: f.type,
-            mime: fileMime,
-            size: f.size,
-            ext: fileExt,
-            humanSize: bytesToSize(f.size)
-          });
-        });
-
-        reader.readAsDataURL(file);
-      };
-
       if (/image/gi.test(fileMime)) {
+        // function for reading images only
+        const readImg = file => {
+          const reader = new FileReader();
+
+          reader.addEventListener("load", e => {
+            setActiveFileData({
+              data: e.target.result,
+              title: f.name,
+              type: f.type,
+              mime: fileMime,
+              size: f.size,
+              ext: fileExt,
+              humanSize: bytesToSize(f.size)
+            });
+          });
+
+          reader.readAsDataURL(file);
+        };
+
         readImg(f);
       }
 
-      // function for reading videos only
-      const readVideo = file => {
-        const reader = new FileReader();
-
-        reader.addEventListener("load", e => {
-          setActiveFileData({
-            data: e.target.result,
-            title: f.name,
-            type: f.type,
-            mime: fileMime,
-            size: f.size,
-            ext: fileExt,
-            humanSize: bytesToSize(f.size)
-          });
-        });
-
-        reader.readAsDataURL(file);
-      };
-
       if (/video/gi.test(fileMime)) {
+        // function for reading videos only
+        const readVideo = file => {
+          const reader = new FileReader();
+
+          reader.addEventListener("load", e => {
+            setActiveFileData({
+              data: e.target.result,
+              title: f.name,
+              type: assignedType || f.type,
+              mime: fileMime,
+              size: f.size,
+              ext: fileExt,
+              humanSize: bytesToSize(f.size)
+            });
+          });
+
+          reader.readAsDataURL(file);
+        };
+
         readVideo(f);
       }
     },
@@ -259,6 +279,14 @@ export const DataStructure = props => {
     () => {
       if (activeFileData) {
         console.log("current active file data", activeFileData);
+
+        // the image display and metadata needs to reset here.
+        // if a file is loaded that has an image attached,
+        // such as a song with an album cover, the next time a
+        // file is loaded that does not have an image, the image
+        // from the last file will remain attached - without this.
+        setImageDisplay(false);
+        setFileDisplay(false);
 
         // when new file data is detected, minerva will immediately add the file to the record
         minerva.addFileToRecord(structId, activeFileData, { type });
@@ -350,15 +378,16 @@ export const DataStructure = props => {
             />
           );
         }
+
         if (/text/gi.test(currentFileData.type)) {
-          console.log(currentFileData);
           type = (
             <Paragraph
-              fullText={currentFileData.text}
-              showText={currentFileData.text.substring(0, 300) + "…"}
+              fullText={currentFileData.data}
+              showText={currentFileData.data.substring(0, 300) + "…"}
               title={title}
               humanSize={humanSize}
               mime={mime}
+              setMetadata={setMetadata}
             />
           );
         }
@@ -679,7 +708,9 @@ export const DataStructure = props => {
               className="structure-data-meta-display"
               onClick={() => setShowImage(true)}
             >
-              <span>click to show image</span>
+              <span>
+                {ImageDisplay ? "click to show image" : "no image to show."}
+              </span>
             </div>
           )
         ) : (
@@ -716,7 +747,9 @@ export const DataStructure = props => {
               className="structure-data-meta-display"
               onClick={() => setMetadataDisplay(true)}
             >
-              <span>click to show metadata</span>
+              <span>
+                {metadata ? "click to show metadata" : "no file metadata"}
+              </span>
             </div>
           )
         ) : (

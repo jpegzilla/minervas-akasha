@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export default props => {
-  const { fullText, showText, title, humanSize, mime } = props;
+  const { fullText, showText, title, humanSize, mime, setMetadata } = props;
 
-  const fileInfo = `title: ${title}\r\nsize: ${humanSize}\r\ntype: ${mime}`;
+  const fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}`;
 
-  console.log(props);
+  useEffect(
+    () => {
+      setMetadata({
+        title,
+        size: humanSize,
+        type: mime,
+        "character count": fullText.length,
+        "word count": fullText.split(/\b/gi).length,
+        "line count": fullText.split(/\n/gi).length
+      });
+    },
+    [fullText]
+  );
 
   return (
-    <p title={fileInfo}>
+    <div title={fileInfo}>
       <pre>{showText}</pre>
-    </p>
+    </div>
   );
 };
