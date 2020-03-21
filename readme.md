@@ -35,4 +35,8 @@ built with react / `create-react-app`.
 
 minerva's akasha is very well commented and soon to be very well documented. I aim to make it extremely easy to create additions / modifications to this application (given you know javascript / sass / html). once this software reaches beta, I hope that some people will develop useful additions / plugins for it.
 
-***\~contribution info coming soon\~***
+### current issues that I don't know how to fix
+
+for solved issues see /docs/main/solved-issues.md.
+
+***\~ more contribution info coming soon\~***
