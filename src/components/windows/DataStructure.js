@@ -50,7 +50,7 @@ const DataStructureComponent = props => {
     currentWindow.componentProps.MetadataDisplay === false ? false : true
   );
 
-  const [loadingFileData, setLoadingFileData] = useState(true);
+  const [loadingFileData, setLoadingFileData] = useState(false);
   const [metadata, setMetadata] = useState(null);
   const [showImage, setShowImage] = useState(
     currentWindow.componentProps.ImageDisplay === false ? false : true
@@ -130,6 +130,8 @@ const DataStructureComponent = props => {
               `found a file for record ${structId}, attaching it.`,
               e.file
             );
+
+            setLoadingFileData(true);
 
             if (/image/gi.test(e.file.type)) {
               setFileDisplay(e.file);
@@ -300,12 +302,12 @@ const DataStructureComponent = props => {
       minerva.findFileInRecord(structId).then(e => {
         if (e)
           if (e.file) {
+            setLoadingFileData(true);
+
             console.log(
               `found a file for record ${structId}, attaching it.`,
               e.file
             );
-
-            setLoadingFileData(true);
 
             if (info) {
               const newWindows = minerva.windows.map(item => {
@@ -674,11 +676,7 @@ const DataStructureComponent = props => {
             : false}
         </ul>
 
-        {FileDisplay && loadingFileData ? (
-          <div>loading file data...</div>
-        ) : (
-          false
-        )}
+        {loadingFileData ? <div>loading file data...</div> : false}
 
         {showTagEditInterface && (
           <div className="structure-tag-editor">
