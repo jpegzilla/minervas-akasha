@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from "react";
-let timeFormat = false;
+import React, { useState, useEffect, useContext } from "react";
+
+import { globalContext } from "./../../App";
+
+let timeFormat;
+
 export const Clock = () => {
+  const { minerva } = useContext(globalContext);
+
+  timeFormat = minerva.settings.timeFormat;
+
   const time = () => {
     let hours = new Date().getHours();
 
@@ -38,7 +46,11 @@ export const Clock = () => {
       title="switch between 24 / 12 hour time"
       onClick={e => {
         e.stopPropagation();
+
         timeFormat = !timeFormat;
+
+        minerva.changeSetting({}, "timeFormat", timeFormat);
+
         setCurrentTime(time);
       }}
       className="taskbar-button"
