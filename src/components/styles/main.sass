@@ -1,13 +1,13 @@
 // compile main
 
 // utils
-@import ./components/fontImports
-@import ./components/defaults
-@import ./components/vars
-@import ./components/anims
-@import ./components/colorcodes
-@import ./components/filters
-@import ./components/fx
+@import ./components/utils/fontImports
+@import ./components/utils/defaults
+@import ./components/utils/vars
+@import ./components/utils/anims
+@import ./components/utils/colorcodes
+@import ./components/utils/filters
+@import ./components/utils/fx
 
 // components
 @import ./components/preloader
@@ -16,16 +16,16 @@
 @import ./components/home
 @import ./components/contextmenu
 @import ./components/taskbar
-@import ./components/window
 @import ./components/topbar
 @import ./components/filedrop
 @import ./components/nomobile
 @import ./components/settings
-@import ./components/recordviewer
 
 // windows
-@import ./components/console
-@import ./components/datastructure
+@import ./components/windows/window
+@import ./components/windows/recordviewer
+@import ./components/windows/console
+@import ./components/windows/datastructure
 
 \:root
   +theme("dark")
