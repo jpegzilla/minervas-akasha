@@ -123,6 +123,7 @@ export class Minerva {
         effect: 100,
         voice: 100
       },
+      timeFormat: true, // true sets 12 hour mode, false is 24 hour mode
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true // dictates whether users can see content from other users.
     };
