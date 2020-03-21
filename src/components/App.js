@@ -98,6 +98,7 @@ export const App = () => {
       : { master: 100, effect: 100, voice: 100 }
   );
 
+  // status message types: success, error / fail, warning
   const [statusMessage, setStatusMessage] = useState({
     display: false,
     text: "",
@@ -166,6 +167,12 @@ export const App = () => {
   // listen for screen resize
   smallScreen.addListener(smallScreenTest);
 
+  // function to reset status text
+  const resetStatusText = () => {
+    setStatusText("");
+    setStatusMessage({ display: false, text: "", type: null });
+  };
+
   if (windowLoaded) {
     // effects canvases / other graphical elements here / crt filter
     // brightness / color filters / cursor click effects outside switch
@@ -181,7 +188,8 @@ export const App = () => {
             loggedIn,
             setLoggedIn,
             globalVolume,
-            setGlobalVolume
+            setGlobalVolume,
+            resetStatusText
           }}
         >
           <Router>
