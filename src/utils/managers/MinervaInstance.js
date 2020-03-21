@@ -212,9 +212,14 @@ export class Minerva {
    *
    * @returns {undefined} void
    */
-  changeSetting(settings) {
+  changeSetting(settings, key, value) {
     if (!settings || typeof settings !== "object")
       throw new TypeError("invalid parameters to minerva.changeSetting");
+
+    if (key && value !== undefined) {
+      this.settings[key] = value;
+      return void this.save();
+    }
 
     this.settings = settings;
     this.save();
