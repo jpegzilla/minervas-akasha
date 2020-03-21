@@ -79,16 +79,24 @@ export const App = () => {
   const [tooSmall, setTooSmall] = useState(false);
 
   // flag that determines whether to take the user straight to the home screen or the main screen
-  let loginExpired = minerva.get(`user:${minerva.user.id}:token`)
-    ? hasDatePassed(minerva.get(`user:${minerva.user.id}:token`).expires)
-    : false;
+  let loginExpired = true;
+
+  if (minerva.user && minerva.user.id) {
+    loginExpired = minerva.get(`user:${minerva.user.id}:token`)
+      ? hasDatePassed(minerva.get(`user:${minerva.user.id}:token`).expires)
+      : false;
+  }
 
   const [loggedIn, setLoggedIn] = useState(
     loginExpired === true ? false : minerva.get("logged_in") || false
   );
 
   // for controlling volume throughout the application
-  const [globalVolume, setGlobalVolume] = useState(minerva.settings.volume);
+  const [globalVolume, setGlobalVolume] = useState(
+    minerva.settings
+      ? minerva.settings.volume
+      : { master: 100, effect: 100, voice: 100 }
+  );
 
   const [statusMessage, setStatusMessage] = useState({
     display: false,
