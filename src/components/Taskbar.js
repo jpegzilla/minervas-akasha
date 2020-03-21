@@ -285,13 +285,20 @@ export const Taskbar = props => {
         {windows.map((w, i) => {
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1;
+            if (w.component === "Console") {
+              tabCounts[w.component] = tabCounts[w.component] + 1 || 1;
+            }
             // this needs to change so that tabs are independent components with their own state,
             // their own contextmenu listeners, etc.
 
             let title = w.title;
 
             if (w.componentProps) {
-              if (w.componentProps.type) title = w.componentProps.type;
+              if (w.componentProps.type) {
+                title = w.componentProps.type;
+                tabCounts[w.componentProps.type] =
+                  tabCounts[w.componentProps.type] + 1 || 1;
+              }
             }
 
             return (
@@ -299,7 +306,12 @@ export const Taskbar = props => {
                 key={w.stringType + i}
                 w={w}
                 title={title}
-                tabCounts={tabCounts}
+                tabCounts={
+                  w.component === "Console"
+                    ? tabCounts[w.component]
+                    : tabCounts[w.componentProps.type] ||
+                      tabCounts[w.stringType]
+                }
                 activeWindowId={activeWindowId}
                 handleClickItem={handleClickItem}
               />
