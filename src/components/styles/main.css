@@ -448,7 +448,7 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
@@ -458,17 +458,17 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 2.42s forwards;
+  animation: flickerout 0.3s ease 2.84s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 3.12s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.75s forwards;
+  animation: flickerout 0.3s ease 3.4s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
@@ -479,17 +479,17 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 3.96s forwards;
+  animation: flickerout 0.3s ease 2.98s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 4.8s forwards;
+  animation: flickerout 0.3s ease 3.68s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 3.89s forwards;
+  animation: flickerout 0.3s ease 5.15s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -771,7 +771,7 @@
   border-color: #53b97f;
 }
 
-#status-message > div.fail {
+#status-message > div.fail, #status-message > div.error {
   border-color: #d76864;
 }
 
