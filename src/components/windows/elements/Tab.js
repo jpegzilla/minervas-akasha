@@ -4,14 +4,14 @@ export const Tab = props => {
   const { w, title, activeWindowId, tabCounts, handleClickItem } = props;
 
   let titleToUse = title,
-    typeToUse = w.componentProps.type;
+    typeToUse = w.componentProps.type || w.component;
 
   if (w.componentProps) {
     if (w.componentProps.info)
       if (w.componentProps.info.name) titleToUse = w.componentProps.info.name;
   }
 
-  const titleText = `name: ${titleToUse}\ntype: ${typeToUse}`;
+  const titleText = `name: ${titleToUse}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase();
 
   return (
     <li
@@ -23,7 +23,7 @@ export const Tab = props => {
         handleClickItem(e, w);
       }}
     >
-      {`${titleToUse} (${tabCounts[w.stringType]})`}
+      {`${titleToUse} (${tabCounts})`}
     </li>
   );
 };
