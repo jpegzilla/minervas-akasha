@@ -12,7 +12,7 @@ export const Settings = props => {
       minerva.changeSetting(settings);
       setGlobalVolume(settings);
     },
-    [settings, minerva, minerva.settings]
+    [settings]
   );
 
   return (
