@@ -27,8 +27,9 @@ export default props => {
 
   useEffect(
     () => {
-      audioRef.current.volume =
-        globalVolume.master / 100 || minerva.settings.volume.master / 100;
+      if (audioRef.current)
+        audioRef.current.volume =
+          globalVolume.master / 100 || minerva.settings.volume.master / 100;
     },
     [minerva.settings.volume.master, minerva.settings.volume, minerva.settings]
   );
