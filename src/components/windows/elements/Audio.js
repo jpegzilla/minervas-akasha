@@ -1,11 +1,25 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
+import { b64toBlob } from "./utils/mediaUtils";
 
 import { globalContext } from "./../../App";
 
 export default props => {
-  const { src, title, humanSize, mime, setMetadata } = props;
-  const { minerva, globalVolume } = useContext(globalContext);
+  const {
+    src,
+    title,
+    humanSize,
+    mime,
+    setMetadata,
+    setLoadingFileData
+  } = props;
+
+  const {
+    minerva,
+    globalVolume,
+    setStatusMessage,
+    resetStatusText
+  } = useContext(globalContext);
 
   const audioRef = useRef();
 
@@ -20,12 +34,17 @@ export default props => {
   );
 
   const [error, setError] = useState(false);
+  const [audioData, setAudioData] = useState();
 
   let fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}`;
 
   useEffect(
     () => {
       setError(false);
+
+      const data = URL.createObjectURL(b64toBlob(src.split(",")[1], mime));
+
+      setAudioData(data);
     },
     [fileInfo]
   );
@@ -45,10 +64,23 @@ export default props => {
     <audio
       autoPlay={shouldAutoplay}
       onError={() => {
+        setLoadingFileData(false);
+
+        setStatusMessage({
+          display: true,
+          text: `status: file failed to load: ${title}`,
+          type: "warning"
+        });
+
+        setTimeout(resetStatusText, 5000);
+
         setMetadata(false);
         setError(`audio format not supported: ${mime}`);
       }}
-      onLoadStart={() => void setError(false)}
+      onLoadStart={() => {
+        setLoadingFileData(false);
+        setError(false);
+      }}
       ref={audioRef}
       onLoadedMetadata={e => {
         e.target.volume = minerva.settings.volume.master / 100;
@@ -62,7 +94,7 @@ export default props => {
         });
       }}
       controls
-      src={data}
+      src={audioData}
       title={fileInfo}
     >
       audio element encountered an error.

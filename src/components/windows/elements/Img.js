@@ -1,11 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
+import { b64toBlob } from "./utils/mediaUtils";
+
+import { globalContext } from "./../../App";
 
 // read metadata
 export default props => {
-  const { src, title, humanSize, mime, setMetadata, onLoad } = props;
+  const {
+    src,
+    title,
+    humanSize,
+    mime,
+    setMetadata,
+    onLoad,
+    setLoadingFileData
+  } = props;
+
+  const { setStatusMessage, resetStatusText } = useContext(globalContext);
 
   const [error, setError] = useState(false);
+  const [imageData, setImageData] = useState();
 
   const fileInfo = `title: ${title ||
     "no title provided"}\nsize: ${humanSize}\ntype: ${mime}`;
@@ -13,6 +27,10 @@ export default props => {
   useEffect(
     () => {
       setError(false);
+
+      const data = URL.createObjectURL(b64toBlob(src.split(",")[1], mime));
+
+      setImageData(data);
     },
     [fileInfo]
   );
@@ -52,13 +70,26 @@ export default props => {
     <img
       decoding="async"
       loading="lazy"
-      onLoadStart={() => void setError(false)}
-      onLoad={onLoadAction}
+      onLoad={e => {
+        setLoadingFileData(false);
+        setError(false);
+        onLoadAction(e);
+      }}
       onError={() => {
+        setLoadingFileData(false);
+
+        setStatusMessage({
+          display: true,
+          text: `status: file failed to load: ${title}`,
+          type: "warning"
+        });
+
+        setTimeout(resetStatusText, 5000);
+
         setMetadata(false);
         setError(`image format not supported: ${mime}`);
       }}
-      src={src}
+      src={imageData}
       title={fileInfo}
       alt={fileInfo}
     />
