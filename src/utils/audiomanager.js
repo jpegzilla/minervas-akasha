@@ -1,5 +1,5 @@
 import { uuidv4 } from "./misc";
-import { MinervaArchive } from "./managers/MinervaInstance";
+import { MinervaArchive, Minerva } from "./managers/MinervaInstance";
 
 export default class AudioManager {
   constructor() {
@@ -8,13 +8,7 @@ export default class AudioManager {
     this.sources = [];
     this.settings = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").settings
-      : {
-          volume: {
-            master: 100,
-            effect: 100,
-            voice: 100
-          }
-        };
+      : Minerva.defaultSettings;
   }
 
   playFile(file) {}
@@ -54,16 +48,9 @@ export default class AudioManager {
     }
 
     // check settings in minerva.settings and set the correct volume here!
-    const { master, effect } = this.settings.volume || {
-      master: 100,
-      effect: 100,
-      voice: 100
-    };
+    const { effect } = this.settings.volume;
 
-    gainNode.gain.setValueAtTime(
-      ((master / 100) * effect) / 100,
-      this.ctx.currentTime
-    );
+    gainNode.gain.setValueAtTime(effect / 100, this.ctx.currentTime);
 
     if (gainNode.gain.value > 0) source.start();
 
