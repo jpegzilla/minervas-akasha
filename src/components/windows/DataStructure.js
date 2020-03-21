@@ -11,6 +11,7 @@ import Audio from "./elements/Audio";
 import Paragraph from "./elements/Paragraph";
 import Tag from "./elements/Tag";
 import Video from "./elements/Video";
+import { StructureData } from "./elements/StructureData";
 
 import { bytesToSize } from "./../../utils/misc";
 import PropTypes from "prop-types";
@@ -24,7 +25,7 @@ import { globalContext } from "./../App";
 
 let timeouts = [];
 
-export const DataStructure = props => {
+const DataStructureComponent = props => {
   const {
     type,
     structId,
@@ -48,6 +49,8 @@ export const DataStructure = props => {
   const [MetadataDisplay, setMetadataDisplay] = useState(
     currentWindow.componentProps.MetadataDisplay === false ? false : true
   );
+
+  const [loadingFileData, setLoadingFileData] = useState(true);
   const [metadata, setMetadata] = useState(null);
   const [showImage, setShowImage] = useState(
     currentWindow.componentProps.ImageDisplay === false ? false : true
@@ -98,9 +101,7 @@ export const DataStructure = props => {
       );
 
       if (existingRecord) {
-        console.log("exists already");
         // here's where I check for filedisplay, metadatadisplay, etc. and set their hooks
-        // appropriately
         setInfo(existingRecord);
         return;
       }
@@ -149,6 +150,8 @@ export const DataStructure = props => {
       if (!droppedFiles) return;
 
       console.log("freshly dropped file:", droppedFiles);
+
+      setLoadingFileData(true);
       // f is a file object.
       const f = droppedFiles;
 
@@ -302,6 +305,8 @@ export const DataStructure = props => {
               e.file
             );
 
+            setLoadingFileData(true);
+
             if (info) {
               const newWindows = minerva.windows.map(item => {
                 if (item.componentProps)
@@ -351,6 +356,7 @@ export const DataStructure = props => {
               humanSize={humanSize}
               mime={mime}
               setMetadata={setMetadata}
+              setLoadingFileData={setLoadingFileData}
             />
           );
         }
@@ -363,6 +369,7 @@ export const DataStructure = props => {
               humanSize={humanSize}
               mime={mime}
               setMetadata={setMetadata}
+              setLoadingFileData={setLoadingFileData}
             />
           );
         }
@@ -375,6 +382,7 @@ export const DataStructure = props => {
               humanSize={humanSize}
               mime={mime}
               setMetadata={setMetadata}
+              setLoadingFileData={setLoadingFileData}
             />
           );
         }
@@ -521,8 +529,6 @@ export const DataStructure = props => {
 
   const removeTag = (tag, idx) => {
     if (info.tags) {
-      console.log("removing", info.tags, tag, idx);
-
       const newTags = info.tags.filter(item => item.name !== tag.name);
 
       setInfo({ ...info, tags: newTags });
@@ -614,6 +620,7 @@ export const DataStructure = props => {
               mime={f.mime}
               setMetadata={setMetadata}
               onLoad={() => void false}
+              setLoadingFileData={setLoadingFileData}
             />
           );
 
@@ -667,12 +674,18 @@ export const DataStructure = props => {
             : false}
         </ul>
 
+        {FileDisplay && loadingFileData ? (
+          <div>loading file data...</div>
+        ) : (
+          false
+        )}
+
         {showTagEditInterface && (
           <div className="structure-tag-editor">
             <div className="color-box">
               <ul>
-                {[...Array(Object.values(ColorCodes).length)].map((c, i) => {
-                  const [k, v] = Object.entries(ColorCodes)[i];
+                {[...Array(Object.values(ColorCodes).length)].map((_c, i) => {
+                  const [, v] = Object.entries(ColorCodes)[i];
                   return (
                     <li
                       onClick={() => changeTagColor(v)}
@@ -690,71 +703,16 @@ export const DataStructure = props => {
       </header>
 
       <section className="structure-data">
-        <header>
-          {currentFileData ? currentFileData.title : "no current file data"}
-        </header>
-        {FileDisplay && currentFileData ? <div>{FileDisplay}</div> : false}
-
-        {FileDisplay && ImageDisplay ? (
-          showImage ? (
-            <div className="structure-data-meta-display">
-              <p onClick={() => setShowImage(false)}>
-                {ImageDisplay ? ImageDisplay : "cannot display image."}
-                <span>click to hide image</span>
-              </p>
-            </div>
-          ) : (
-            <div
-              className="structure-data-meta-display"
-              onClick={() => setShowImage(true)}
-            >
-              <span>
-                {ImageDisplay ? "click to show image" : "no image to show."}
-              </span>
-            </div>
-          )
-        ) : (
-          false
-        )}
-
-        {FileDisplay ? (
-          MetadataDisplay && metadata ? (
-            <div className="structure-metadata">
-              {typeof metadata === "string" ? (
-                <p>{metadata}</p>
-              ) : (
-                <div className="structure-data-meta-display">
-                  <ul>
-                    {Object.keys(metadata).map((k, i) => {
-                      if (["picture", "pictureData", "pictureSize"].includes(k))
-                        return false;
-
-                      return (
-                        <li title={`${k}: ${metadata[k]}`} key={`${k}-${i}`}>
-                          {k}: {metadata[k]}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <span onClick={() => setMetadataDisplay(false)}>
-                    click to hide metadata
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div
-              className="structure-data-meta-display"
-              onClick={() => setMetadataDisplay(true)}
-            >
-              <span>
-                {metadata ? "click to show metadata" : "no file metadata"}
-              </span>
-            </div>
-          )
-        ) : (
-          false
-        )}
+        <StructureData
+          currentFileData={currentFileData}
+          showImage={showImage}
+          FileDisplay={FileDisplay}
+          ImageDisplay={ImageDisplay}
+          setShowImage={setShowImage}
+          MetadataDisplay={MetadataDisplay}
+          metadata={metadata}
+          setMetadataDisplay={setMetadataDisplay}
+        />
       </section>
 
       <section className="structure-controls">
@@ -809,6 +767,8 @@ export const DataStructure = props => {
     </div>
   );
 };
+
+export const DataStructure = React.memo(DataStructureComponent);
 
 DataStructure.propTypes = {
   type: PropTypes.string
