@@ -92,15 +92,7 @@ export class Minerva {
     if (MinervaArchive.get("minerva_store")) {
       const settings = MinervaArchive.get("minerva_store").settings;
 
-      const defaultSettings = {
-        volume: {
-          master: 100,
-          effect: 100,
-          voice: 100
-        },
-        autoplayMedia: false,
-        connections: true
-      };
+      const defaultSettings = Minerva.defaultSettings;
 
       if (Object.keys(settings).length === 0) {
         this.settings = defaultSettings;
@@ -122,6 +114,18 @@ export class Minerva {
 
     this.recordUpdated = 0;
     this.indexedDBUpdated = new Date().toISOString();
+  }
+
+  static get defaultSettings() {
+    return {
+      volume: {
+        master: 100,
+        effect: 100,
+        voice: 100
+      },
+      autoplayMedia: false, // dictates whether audio and video elements will autoplay.
+      connections: true // dictates whether users can see content from other users.
+    };
   }
 
   updateIndexedDBUpdatedTimestamp() {
@@ -237,7 +241,9 @@ export class Minerva {
     this.user = user;
     this.userId = user.id;
 
-    this.settings = MinervaArchive.get("minerva_store").settings;
+    this.settings = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").settings
+      : Minerva.defaultSettings;
 
     this.set(
       `user:${user.id}:token`,
