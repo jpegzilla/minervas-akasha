@@ -33,9 +33,13 @@ const DataStructureComponent = props => {
     setWindows,
     droppedFiles
   } = props;
-  const { minerva, setStatusMessage, setStatusText, audiomanager } = useContext(
-    globalContext
-  );
+  const {
+    minerva,
+    setStatusMessage,
+    setStatusText,
+    audiomanager,
+    resetStatusText
+  } = useContext(globalContext);
 
   const currentWindow = minerva.windows.find(item => {
     return item.componentProps.structId === structId;
@@ -153,15 +157,24 @@ const DataStructureComponent = props => {
 
       console.log("freshly dropped file:", droppedFiles);
 
-      setLoadingFileData(true);
       // f is a file object.
       const f = droppedFiles;
 
-      // currently rejects files above 80mb
-      if (f.size > 8e7) {
+      // currently rejects files above 50mb
+      if (f.size > 5e7) {
+        setStatusMessage({
+          display: true,
+          text: `status: large files (size >= 50mb) currently not supported.`,
+          type: "fail"
+        });
+
+        setTimeout(resetStatusText, 6000);
+
         console.log("very large file detected. rejecting.");
         return;
       }
+
+      setLoadingFileData(true);
 
       let assignedType;
       let fileMime = f.type || "text/plain";
