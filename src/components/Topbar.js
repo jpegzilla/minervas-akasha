@@ -2,7 +2,6 @@ import React from "react";
 
 import { Clock } from "./windows/elements/Clock";
 
-// import { globalContext } from "./App";
 import { Settings } from "./windows/Settings";
 
 export const Topbar = props => {
