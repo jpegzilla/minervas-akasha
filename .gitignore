@@ -8,6 +8,7 @@
 # testing
 /coverage
 /test/filetypes
+/docs/performance-profiles
 
 # production
 /build
