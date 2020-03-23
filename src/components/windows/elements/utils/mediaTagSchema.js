@@ -1,12 +1,20 @@
-// maybe use a worker for this
-
 import MediaTagReader from "./MediaTagReader";
 import { bytesToSize, secondsToTime } from "./../../../../utils/misc";
 
+/**
+ * imageTagSchema - generate image metadata tag object.
+ *
+ * @param {object} tags an object containing the raw tags passed
+ * from MediaTagReader.
+ *
+ * @returns {object} an object containing the uniformly formatted tags.
+ */
 export const imageTagSchema = tags => {
   const tagSchema = {};
   const msg = {};
 
+  // the arrays like this that are in each of these schema functions are used
+  // to determine the properties to retrieve from media metadata.
   const neededTags = [
     "software",
     "datetime",
@@ -27,8 +35,7 @@ export const imageTagSchema = tags => {
     msg.message = err;
   }
 
-  if (msg.status === "failure") {
-  } else {
+  if (msg.status !== "failure") {
     msg.status = "success";
     msg.message = tagSchema;
   }
@@ -39,6 +46,14 @@ export const imageTagSchema = tags => {
   });
 };
 
+/**
+ * videoTagSchema - generate video metadata tag object.
+ *
+ * @param {object} tags an object containing the raw tags passed
+ * from MediaTagReader.
+ *
+ * @returns {object} an object containing the uniformly formatted tags.
+ */
 export const videoTagSchema = tags => {
   const tagSchema = {};
   const msg = {};
@@ -65,8 +80,7 @@ export const videoTagSchema = tags => {
   delete tagSchema["videoWidth"];
   delete tagSchema["videoHeight"];
 
-  if (msg.status === "failure") {
-  } else {
+  if (msg.status !== "failure") {
     msg.status = "success";
     msg.message = tagSchema;
   }
@@ -77,6 +91,14 @@ export const videoTagSchema = tags => {
   });
 };
 
+/**
+ * audioTagSchema - generate video metadata tag object.
+ *
+ * @param {object} tags an object containing the raw tags passed
+ * from MediaTagReader.
+ *
+ * @returns {object} an object containing the uniformly formatted tags.
+ */
 export const audioTagSchema = tags => {
   const tagSchema = {};
   const msg = {};
@@ -111,15 +133,19 @@ export const audioTagSchema = tags => {
         }
       }
 
+      // if a record has a date, delete the year...
       if ("date" in tagSchema) {
         delete tagSchema.year;
       }
 
+      // ...and if it has a year, delete the date. no need for both
       if ("year" in tagSchema) {
         tagSchema["date"] = tagSchema["year"];
         delete tagSchema.year;
       }
 
+      // if there are multiple entries for a certain tag, which usually happens when
+      // there are multiple artists attached to a file, list them with commas.
       if (tagSchema[item] instanceof Array) tagSchema[item].join(", ");
     });
   } catch (err) {
@@ -127,12 +153,12 @@ export const audioTagSchema = tags => {
     msg.message = err;
   }
 
-  if (msg.status === "failure") {
-  } else {
+  if (msg.status !== "failure") {
     msg.status = "success";
     msg.message = tagSchema;
   }
 
+  // if there is an album image attached to the audio metadata
   if (tagSchema.picture) {
     if (!(tagSchema.picture.data instanceof Uint8Array))
       tagSchema.picture.data = Uint8Array.from(tagSchema.picture.data);
