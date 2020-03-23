@@ -199,8 +199,6 @@ const DataStructureComponent = props => {
         assignedType = fileMime;
       }
 
-      console.log(assignedType);
-
       // if file mimetype indicates a text file
       if (/text/gi.test(fileMime)) {
         f.text().then(e => {
@@ -448,8 +446,6 @@ const DataStructureComponent = props => {
     setDeletionStarted(false);
 
     if (confirm) {
-      console.log("removing item from record", structId);
-
       // remove the appropriate record from minerva and close the window.
       minerva.removeFromRecord(structId, type);
       handleWindowCommand(e, "close");
