@@ -35,7 +35,13 @@ built with react / `create-react-app`.
 
 minerva's akasha is very well commented and soon to be very well documented. I aim to make it extremely easy to create additions / modifications to this application (given you know javascript / sass / html). once this software reaches beta, I hope that some people will develop useful additions / plugins for it.
 
-### current issues that I don't know how to fix
+### current issues that I don't know how to fix:
+
+-   dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
+
+-   the ui is subject to frame drops when rapidly moving a window, despite using `requestAnimationFrame()` in conjunction with `transform3d()`, throttling the mouse move event, and `will-change` (the effect of which is most likely negligible).
+
+-   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
 for solved issues see /docs/main/solved-issues.md.
 
