@@ -1,4 +1,3 @@
-import jDataView from "jdataview";
 import jsmediatags from "jsmediatags";
 import * as musicMetadata from "music-metadata-browser";
 import { audioTagSchema, imageTagSchema } from "./mediaTagSchema";
@@ -9,6 +8,17 @@ export default class MediaTagReader {
     this.mediaString = mediaString;
   }
 
+  /**
+   * dataURItoBlob - convert a base64 data uri into a blob.
+   * in the database, images and audio are stored as base64 data.
+   * performance suffers if large base64 strings have to be loaded,
+   * so a web worker uses this function to convert the long strings
+   * to object urls, which are much, much faster to load.
+   *
+   * @param {string} dataURI base64 data uri.
+   *
+   * @returns {object} object containing both a blob and a buffer.
+   */
   async dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
     const byteString = atob(dataURI.split(",")[1]);
@@ -37,44 +47,14 @@ export default class MediaTagReader {
     return { blob, buffer: buf };
   }
 
-  getAudioInfo() {
-    const { mediaString } = this;
-
-    return new Promise((resolve, reject) => {
-      this.dataURItoBlob(mediaString).then(e => {
-        this.view = new jDataView(e.buffer);
-
-        const { view } = this;
-
-        if (view.getString(3, view.byteLength - 128) === "TAG") {
-          const title = view.getString(30, view.tell());
-          const artist = view.getString(30, view.tell());
-          const album = view.getString(30, view.tell());
-          const year = view.getString(4, view.tell());
-
-          const metadata = {
-            title: title.trim(),
-            artist: artist.trim(),
-            album: album.trim(),
-            year: year.trim()
-          };
-
-          ["title", "artist", "album", "year"].forEach(i => {
-            // for some reason, this data sometimes has control characters in it. remove them
-
-            metadata[i] = metadata[i]
-              .replace(/[^\x00-\x7F]/g, "")
-              .replace(/[\x00-\x1F\x7F-\x9F]/g, "");
-          });
-
-          resolve({ status: "success", message: metadata });
-        } else {
-          resolve({ status: "failure", message: "no id3v1 data found" });
-        }
-      });
-    });
-  }
-
+  /**
+   * getFullAudioInfo - get audio information / metadata.
+   *
+   * @param {string} mime the mime type of the audio.
+   *
+   * @returns {Promise} resolves on successful tag retrieval,
+   * rejects on error.
+   */
   getFullAudioInfo(mime) {
     const { mediaString } = this;
     // fix this so that whatever lib is used to pull tags, the resulting tags
@@ -115,6 +95,14 @@ export default class MediaTagReader {
     });
   }
 
+  /**
+   * getFullImageInfo - get image information / metadata.
+   *
+   * @param {string} mime the mime type of the audio.
+   *
+   * @returns {Promise} resolves on successful tag retrieval,
+   * rejects on error.
+   */
   getFullImageInfo() {
     const { mediaString } = this;
     // fix this so that whatever lib is used to pull tags, the resulting tags
@@ -129,6 +117,7 @@ export default class MediaTagReader {
           EXIF.getData(res.blob, function() {
             const tags = {};
 
+            // make sure everything is in correct case
             for (const [k, v] of Object.entries(this.exifdata)) {
               tags[k.toString().toLowerCase()] = v.toString().toLowerCase();
             }
@@ -145,6 +134,14 @@ export default class MediaTagReader {
     });
   }
 
+  /**
+   * @static arrayBufferToBase64 - convert array buffer to base64.
+   * this is mainly used when getting album covers from audio metadata.
+   *
+   * @param {ArrayBuffer} buffer array buffer to convert
+   *
+   * @returns {string} base64 encoded string.
+   */
   static arrayBufferToBase64(buffer) {
     let binary = "";
     const bytes = new Uint8Array(buffer);
