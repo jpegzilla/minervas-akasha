@@ -78,7 +78,6 @@ export const videoTagSchema = tags => {
 };
 
 export const audioTagSchema = tags => {
-  console.log(tags);
   const tagSchema = {};
   const msg = {};
 
