@@ -1,10 +1,18 @@
 const logErrors = (message, rethrown = null) => {
+  /**
+   * some error messages are not able to be displayed cross-origin (script errors).
+   * so, I catch them and then throw them back through this function to get the full error.
+   * see: https://stackoverflow.com/questions/44815172/log-shows-error-object-istrustedtrue-instead-of-actual-error-data
+   **/
   if (rethrown) {
     const errorObject = rethrown;
 
+    // get currently stored list of errors
     const errors =
       JSON.parse(window.localStorage.getItem("minerva_errors")) || null;
 
+    // if there are existing errors, then attach the new error object to the existing ones.
+    // otherwise, just set the new error.
     const newError = errors
       ? {
           ...errors,
@@ -14,13 +22,17 @@ const logErrors = (message, rethrown = null) => {
           [new Date().toISOString()]: errorObject
         };
 
+    // store in localstorage.
     window.localStorage.setItem("minerva_errors", JSON.stringify(newError));
   }
 
+  // this code is run if the current error being processed was not rethrown, and is not
+  // a script error.
   try {
     const errors =
       JSON.parse(window.localStorage.getItem("minerva_errors")) || null;
 
+    // get the information needed from the error message object.
     const {
       message: msg,
       filename,
@@ -32,7 +44,6 @@ const logErrors = (message, rethrown = null) => {
     } = message;
 
     // navigator props to get
-
     const {
       appName,
       userAgent,
@@ -45,6 +56,7 @@ const logErrors = (message, rethrown = null) => {
 
     let errMsg;
 
+    // check to see if there was an error property in the error message
     if (error === null) {
       console.log(message, "error was null.");
 
@@ -63,8 +75,11 @@ const logErrors = (message, rethrown = null) => {
       };
     }
 
+    // get window sizes
     const { innerHeight, innerWidth, scrollX, scrollY } = window;
 
+    // finish setting up compound error object. this is done in order to gather as much
+    // error information as possible to aid in debugging.
     const errorObject = {
       msg,
       filename,
@@ -98,6 +113,7 @@ const logErrors = (message, rethrown = null) => {
 
     window.localStorage.setItem("minerva_errors", JSON.stringify(newError));
   } catch (err) {
+    // this is where I catch script errors and re-process them as a new error.
     logErrors({
       message: "an unknown script error was thrown. the message is included.",
       error: err
