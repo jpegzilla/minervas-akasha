@@ -135,12 +135,13 @@ export const Window = props => {
     setDroppable(false);
   };
 
-  // here, I attach a dropped files object to each window's props.
-  // it may be wise to do this some other way, since not every
-  // window has drag and drop functionality.
-
+  // here's where I determine whether or not to allow dropping files on a record.
+  // you can only drop files into datastructures with the shard type.
   const droppableWindows = ["DataStructure"];
-  const canDropFiles = droppableWindows.includes(component);
+  const canDropFiles =
+    droppableWindows.includes(component) &&
+    componentProps &&
+    componentProps.type === "shard";
 
   useEffect(
     () => {
