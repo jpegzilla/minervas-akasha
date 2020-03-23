@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, Fragment } from "react";
+import React, { Fragment } from "react";
 
 export const StructureData = props => {
   const {
