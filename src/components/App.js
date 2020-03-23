@@ -130,14 +130,14 @@ export const App = () => {
   // log user in or out
   useEffect(
     () => {
-      if (!minerva.user) return void minerva.set("logged_in", false, "user");
+      if (!minerva.user) return void minerva.set("logged_in", false);
 
       if (loggedIn) {
-        minerva.set("logged_in", true, "user");
+        minerva.set("logged_in", true);
 
         setFirstLoad(false);
       } else if (!loggedIn) {
-        minerva.set("logged_in", false, "user");
+        minerva.set("logged_in", false);
       }
     },
     [loggedIn, minerva.user]

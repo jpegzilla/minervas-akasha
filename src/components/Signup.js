@@ -218,7 +218,7 @@ export const Signup = props => {
               // if user doesn't exist after attempting to sign up
               // (which it should not)
               if (!user) {
-                minerva.set(newUser.name, newUser, "user");
+                minerva.set(newUser.name, newUser);
 
                 // create user's minerva instance
                 minerva.login(newUser, true);
