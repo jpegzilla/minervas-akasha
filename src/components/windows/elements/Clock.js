@@ -7,7 +7,7 @@ let timeFormat;
 export const Clock = () => {
   const { minerva } = useContext(globalContext);
 
-  timeFormat = minerva.settings.timeFormat;
+  timeFormat = minerva.settings ? minerva.settings.timeFormat : true;
 
   const time = () => {
     let hours = new Date().getHours();
