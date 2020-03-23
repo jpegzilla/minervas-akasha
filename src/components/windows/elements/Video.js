@@ -4,6 +4,8 @@ import { videoTagSchema } from "./utils/mediaTagSchema";
 import { b64toBlob } from "./utils/mediaUtils";
 import { globalContext } from "./../../App";
 
+import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+
 export default props => {
   const {
     src,
@@ -34,9 +36,22 @@ export default props => {
     () => {
       setError(false);
 
-      const data = URL.createObjectURL(b64toBlob(src.split(",")[1], mime));
+      const workerInstance = new worker();
 
-      setVideoData(data);
+      workerInstance.postMessage({
+        action: "getObjectUrl",
+        src,
+        mime
+      });
+
+      workerInstance.onmessage = message => {
+        console.log(message);
+        if (message.data.status && message.data.status === "failure") {
+          throw new Error(message.data);
+        }
+
+        if (typeof message.data === "string") setVideoData(message.data);
+      };
     },
     [fileInfo]
   );

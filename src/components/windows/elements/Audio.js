@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
-import { b64toBlob } from "./utils/mediaUtils";
+import PropTypes from "prop-types";
 
+import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
 import { globalContext } from "./../../App";
 
 export default props => {
@@ -43,9 +44,22 @@ export default props => {
     () => {
       setError(false);
 
-      const data = URL.createObjectURL(b64toBlob(src.split(",")[1], mime));
+      const workerInstance = new worker();
 
-      setAudioData(data);
+      workerInstance.postMessage({
+        action: "getObjectUrl",
+        src,
+        mime
+      });
+
+      workerInstance.onmessage = message => {
+        console.log(message);
+        if (message.data.status && message.data.status === "failure") {
+          throw new Error(message.data);
+        }
+
+        if (typeof message.data === "string") setAudioData(message.data);
+      };
     },
     [fileInfo]
   );
@@ -94,6 +108,7 @@ export default props => {
           } else setMetadata(res.metadata);
         });
       }}
+      onClick={e => void e.stopPropagation()}
       controls
       src={audioData}
       title={fileInfo}
@@ -101,4 +116,13 @@ export default props => {
       audio element encountered an error.
     </audio>
   );
+};
+
+Audio.propTypes = {
+  src: PropTypes.string,
+  title: PropTypes.string,
+  humanSize: PropTypes.string,
+  mime: PropTypes.string,
+  setMetadata: PropTypes.func,
+  setLoadingFileData: PropTypes.func
 };
