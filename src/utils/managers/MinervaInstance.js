@@ -89,6 +89,10 @@ export class Minerva {
       objectStore.createIndex("id", "id", { unique: true });
     };
 
+    // if there's already settings in storage, combine them with the default settings
+    // just to add resilience in case more settings are added in the future - this
+    // will allow us to avoid errors if there is an extra setting that wasn't previously
+    // stored in localstorage when the app loads
     if (MinervaArchive.get("minerva_store")) {
       const settings = MinervaArchive.get("minerva_store").settings;
 
@@ -101,27 +105,30 @@ export class Minerva {
       }
     }
 
-    console.log(this.settings);
-
+    // windows is an array of window objects that contain info on the windows contents / position
     this.windows = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").windows
       : [];
 
+    // this should always be an instance of databaseinterface
     this.database = database;
 
-    // maybe don't do this?
+    // userId that's the same as user.id. not sure what this would be for yet
     this.userId = options.user ? options.user.id : null;
 
+    // records last update date
     this.recordUpdated = 0;
+    // and indexeddb last update date
     this.indexedDBUpdated = new Date().toISOString();
   }
 
+  // this is the single source of truth for the default application settings
   static get defaultSettings() {
     return {
       volume: {
-        master: 100,
-        effect: 100,
-        voice: 100
+        master: 100, // volume for media (videos / audio)
+        effect: 100, // volume for sound effects like the typing sound, startup sound
+        voice: 100 // volume for minerva's voice (not yet implemented)
       },
       timeFormat: true, // true sets 12 hour mode, false is 24 hour mode
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
@@ -129,10 +136,12 @@ export class Minerva {
     };
   }
 
+  // used to update the record's last update date
   updateIndexedDBUpdatedTimestamp() {
     this.indexedDBUpdated = new Date().toISOString();
   }
 
+  // used to update indexeddb's last update date
   updateRecordUpdatedTimeStamp() {
     this.recordUpdated = new Date().toISOString();
   }
@@ -259,6 +268,7 @@ export class Minerva {
       "user"
     );
 
+    // if it's a new user, make them a brand new record.
     if (newUser) {
       this.record = new AkashicRecord(
         user.id,
@@ -269,6 +279,8 @@ export class Minerva {
         this.database
       );
     } else {
+      // if not a new user, get their record information
+      // using the record's retrieval method.
       this.record = AkashicRecord.retrieveAkashicRecord(
         user.id,
         user.name,
@@ -321,6 +333,17 @@ export class Minerva {
     });
   }
 
+  /**
+   * get - get an item from the database or from localstorage
+   *
+   * @param {string} key      key of item to get
+   * @param {object} database database options including type (data / user)
+   * of database table to search in
+   *
+   * @returns {(object|Promise)} either the found object, or an error object
+   * returns promise that resolves with one of those things if working
+   * with the database
+   */
   get(key, database) {
     if (!key) throw new Error("Minerva.get requires a key.");
 
@@ -328,53 +351,81 @@ export class Minerva {
     if (database) {
       const { type } = database;
       return new Promise((resolve, reject) => {
-        this.database.find(key, type).then(res => {
-          if (!res) reject("nothing found");
-          else resolve(res);
-        });
+        this.database
+          .find(key, type)
+          .then(res => {
+            if (!res) reject({ status: "failure", message: "nothing found" });
+            else resolve(res);
+          })
+          .catch(err => {
+            reject({ status: "failure", message: err });
+          });
       });
     }
 
     return JSON.parse(Minerva._store.getItem(key));
   }
 
-  set(name, item, type, database = false) {
-    if (name === undefined || type === undefined)
+  /**
+   * set - set a key / value pair in the database or in localstorage
+   *
+   * @param {string}  key              key of item to store
+   * @param {any}     value            value of item to store
+   * @param {string}  type             type of data to insert (user / data)
+   * @param {boolean} [database=false] if true, the insert action will be performed
+   * in the database instead of localstorage.
+   *
+   * @returns {(object|Promise)} returns the current state of localstorage if using localstorage.
+   * if using the database, returns a promise.
+   */
+  set(key, value, type, database = false) {
+    if (key === undefined)
       throw new Error("invalid arguments passed to Minerva.set.");
 
-    switch (type) {
-      case "user":
-        if (database) {
-          // add to database
+    if (database) {
+      // add to database
 
-          return new Promise((resolve, reject) => {
-            this.database.find(item, type).then(u => {
-              if (!u) {
-                this.database.insert(item, type).then(res => {
-                  if (!res) reject("setting item failed");
-                  else resolve(res);
-                });
-              }
-            });
-          });
-        }
-
-        Minerva._store.setItem(name, JSON.stringify(item));
-
-        return Minerva._store;
-
-      case "data":
-        break;
-
-      default:
-        throw new Error("invalid type provided to minerva.set");
+      return new Promise((resolve, reject) => {
+        this.database.find(value, type).then(u => {
+          if (!u) {
+            this.database
+              .insert(value, type)
+              .then(res => {
+                if (!res)
+                  reject({
+                    status: "failure",
+                    message: "setting value failed"
+                  });
+                else resolve(res);
+              })
+              .catch(err => {
+                reject({ status: "failure", message: err });
+              });
+          }
+        });
+      });
     }
+
+    Minerva._store.setItem(key, JSON.stringify(value));
+
+    return Minerva._store;
   }
 
   // compression / decompression methods
+
+  /**
+   * lzCompress - compress a string using lzutf8 compression
+   *
+   * @param {string} base64String base64 encoded string to compress
+   *
+   * @returns {Promise} promise that resolves with the compressed data
+   * or rejects on an error
+   */
   lzCompress(base64String) {
     return new Promise((resolve, reject) => {
       try {
+        // this part takes a long time and is causing the ui
+        // to lag when compressing / decompressing a large file
         workerInstance.postMessage({
           action: "compress",
           toCompress: base64String
@@ -390,9 +441,20 @@ export class Minerva {
     });
   }
 
+  /**
+   * lzDecompress - decompress a lzutf8 compressed string
+   *
+   * @param {string} data compressed string to decompress
+   *
+   * @returns {Promise} resolves with the decompressed data, or rejects with an error.
+   */
   lzDecompress(data) {
     return new Promise((resolve, reject) => {
       try {
+        // this is the main part that causes the most lag.
+        // passing in a large amount of data to this function seems to
+        // block the main thread while waiting for the worker
+        // to finish decompressing the file
         workerInstance.postMessage({
           action: "decompress",
           toDecompress: data
@@ -416,7 +478,7 @@ export class Minerva {
    * @param {object} file      file object to add to the database
    * @param {object} structure structure to add file to
    *
-   * @returns {void} undefined
+   * @returns {undefined} undefined
    */
   addFileToRecord(id, file, structure, compress = false) {
     if (!id || !validateUUIDv4(id) || !file || !structure)
@@ -476,6 +538,15 @@ export class Minerva {
     }
   }
 
+  /**
+   * updateFileInRecord - Description
+   *
+   * @param {string} id    id of record (structure id / structId)
+   * @param {string} key   key to modify
+   * @param {any}    value value to modify with
+   *
+   * @returns {Promise} resolves on success or rejects on failure
+   */
   updateFileInRecord(id, key, value) {
     if (!id || !validateUUIDv4(id) || !key || !value)
       throw new Error(
@@ -563,8 +634,6 @@ export class Minerva {
 
     return new Promise((resolve, reject) => {
       request.onsuccess = event => {
-        console.log("result from findFileInRecord", event.target.result);
-
         if (event.target.result) {
           if (event.target.result.compressed) {
             // decompress file.data here
@@ -589,6 +658,12 @@ export class Minerva {
     });
   }
 
+  /**
+   * save - stores all information that needs to be stored in localstorage.
+   * storing: user info, settings info, storage info, record info, and window info.
+   *
+   * @returns {Minerva} the current instance of minerva.
+   */
   save() {
     const store = {
       user: this.user,
@@ -608,19 +683,39 @@ export class Minerva {
     return this;
   }
 
+  /**
+   * load - load saved data from localstorage
+   *
+   * @returns {object} the contents of minerva's localstorage archive
+   */
   load() {
     return JSON.parse(MinervaArchive.get("minerva_store"));
   }
 
-  static setSession(key, item) {
-    if (!key || !item)
+  /**
+   * @static setSession - set an item in session storage
+   *
+   * @param {string} key  key of item to set
+   * @param {any}    item value of item to set
+   *
+   * @returns {undefined} undefined
+   */
+  static setSession(key, value) {
+    if (!key || !value)
       throw new Error(
-        "Minerva.setSession must be called with a key and an item."
+        "Minerva.setSession must be called with a key and a value."
       );
 
-    Minerva._session.setItem(key, JSON.stringify(item));
+    Minerva._session.setItem(key, JSON.stringify(value));
   }
 
+  /**
+   * @static removeSession - remove a session storage item
+   *
+   * @param {string} key key to remove
+   *
+   * @returns {undefined} undefined
+   */
   static removeSession(key) {
     if (!key)
       throw new Error("Minerva.removeSession must be called with a key.");
@@ -628,12 +723,24 @@ export class Minerva {
     Minerva._session.removeItem(key);
   }
 
+  /**
+   * @static getSession - retrieve an item from session storage
+   *
+   * @param {string} key key to get
+   *
+   * @returns {object} the value of the key
+   */
   static getSession(key) {
     if (!key) throw new Error("Minerva.getSession must be called with a key.");
 
     return JSON.parse(Minerva._session.getItem(key));
   }
 
+  /**
+   * @static clearSessionStorage - clears session storage
+   *
+   * @returns {undefined} undefined
+   */
   static clearSessionStorage() {
     Minerva._session.clear();
   }
@@ -707,18 +814,45 @@ export class Minerva {
     return document.cookie;
   }
 
+  /**
+   * remove - remove an item in storage
+   *
+   * @param {string}  key              key of item to remove, if using localstorage
+   * @param {any}     item             item to remove. used only for the id of the item,
+   * if using database
+   * @param {boolean} [database=false] true if using database, false if using localstorage
+   * @param {string}  type             when using database, the type of table to remove from
+   * (user / data)
+   *
+   * @returns {(object|Promise)} current state of localstorage if using localstorage.
+   * promise if using database
+   */
   remove(key, item, database = false, type) {
     if (!key || (database && !type && !item))
       throw new Error("invalid arguments to Minerva.remove.");
 
     if (database)
-      this.database.delete(this.database.collections[type], item.id);
+      return new Promise((resolve, reject) => {
+        this.database
+          .delete(this.database.collections[type], item.id)
+          .then(res => {
+            resolve(res);
+          })
+          .catch(err => {
+            reject({ status: "failure", message: err });
+          });
+      });
 
     Minerva._store.removeItem(key);
 
     return Minerva._store;
   }
 
+  /**
+   * @static clearStorage - clears localstorage
+   *
+   * @returns {undefined} undefined
+   */
   static clearStorage() {
     return Minerva._store.clear();
   }
