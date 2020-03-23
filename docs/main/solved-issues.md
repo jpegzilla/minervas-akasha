@@ -15,3 +15,14 @@ I am currently loading the files &mdash; such as images, videos, and audio &mdas
 **SOLVED:** convert retrieved base64 into blobs, then create an object url and use that as the media source.
 
 ---
+
+## minerva performace issues when decompressing base64 strings / creating object urls
+
+-   *logged on 20 / 3 / 2020*
+-   *marked as solved on 21 / 3 / 2020*
+
+when loading large files, the main thread waits for a worker to decompress the compressed data that's stored in the database. or, it has to wait to convert a base64 string into an object url. this causes the ui to be completely non-interactible for however long it takes to load the file.
+
+**SOLVED:** moved decompression / object url conversion to a dynamically created web worker thread.
+
+---
