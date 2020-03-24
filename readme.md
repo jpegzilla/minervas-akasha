@@ -1,7 +1,12 @@
 # minerva's akasha.
 
-this is an application for collection, connection, analysis and organization of research data.
-for archivists, researchers, and other information addicts.
+this is an offline-first, local-storage-first application for collection, connection, analysis and organization of research data.
+
+for archivists, researchers, internet archaeologists, and other information addicts.
+
+the main idea is to provide a canvas on which to construct and connect webs of information of any type. I hope to give researchers an interesting and intuitive interface to conduct any level of research of any topic. minerva's akasha gives you very granular control over pieces of data called "shards", which you can then structure in as complex or simple of a method as you'd like.
+
+includes data reflection (the ability to separate but connect collections of data that branch off of one parent), note taking utility, data tagging, automatic metadata retrieval, cross-user connection, and more...all contained within a pleasant and intuitive user interface.
 
 ## running
 
