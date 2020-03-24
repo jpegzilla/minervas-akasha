@@ -4,7 +4,6 @@
 
 ## minerva performance issues when loading multiple large files
 
-
 -   *logged on 20 / 3 / 2020*
 -   *marked as solved on 20 / 3 / 2020*
 
