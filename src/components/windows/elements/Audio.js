@@ -53,7 +53,6 @@ export default props => {
       });
 
       workerInstance.onmessage = message => {
-        console.log(message);
         if (message.data.status && message.data.status === "failure") {
           throw new Error(message.data);
         }
