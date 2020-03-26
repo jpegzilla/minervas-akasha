@@ -24,12 +24,13 @@ const text = "loading...";
 
 export const Preloader = props => {
   const { setWindowLoaded } = props;
-  const { audiomanager } = useContext(globalContext);
+  const { audiomanager, minervaVoice } = useContext(globalContext);
 
   const [preloaderText, setPreloaderText] = useState("");
   const [panelsActive, setPanelsActive] = useState(false);
 
   const [audioLoaded, setAudioLoaded] = useState(false);
+  const [voiceLoaded, setVoiceLoaded] = useState(false);
   const [winLoaded, setWinLoaded] = useState(false);
 
   const [finished, setFinished] = useState(false);
@@ -68,9 +69,13 @@ export const Preloader = props => {
         setAudioLoaded(true);
       });
 
+      minervaVoice.load(minervaVoice.voiceSamples).then(() => {
+        setVoiceLoaded(true);
+      });
+
       setup(audiomanager);
     },
-    [audiomanager]
+    [audiomanager, minervaVoice]
   );
 
   // TODO: remove this timeout hell
@@ -94,9 +99,9 @@ export const Preloader = props => {
 
   useEffect(
     () => {
-      if (finished) setWindowLoaded(true);
+      if (finished && voiceLoaded) setWindowLoaded(true);
     },
-    [setWindowLoaded, finished]
+    [setWindowLoaded, finished, voiceLoaded]
   );
 
   return (
