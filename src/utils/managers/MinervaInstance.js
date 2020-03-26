@@ -42,6 +42,9 @@ export class Minerva {
 
     // minerva's voice synth engine
     this.voice = null;
+
+    this.usageData = {};
+
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
     this.record = this.user
@@ -257,6 +260,10 @@ export class Minerva {
 
     this.user = user;
     this.userId = user.id;
+
+    this.usageData = MinervaArchive.get("minerva_store")
+      ? MinervaArchive.get("minerva_store").usageData
+      : {};
 
     this.settings = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").settings
@@ -535,6 +542,10 @@ export class Minerva {
       });
 
       req.onsuccess = () => {
+        this.updateUsageData(
+          "structures",
+          Object.values(this.record.records).flat(Infinity).length
+        );
         this.updateIndexedDBUpdatedTimestamp();
       };
     }
@@ -609,6 +620,10 @@ export class Minerva {
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
         this.updateIndexedDBUpdatedTimestamp();
+        this.updateUsageData(
+          "structures",
+          Object.values(this.record.records).flat(Infinity).length
+        );
         resolve();
       };
 
@@ -671,6 +686,7 @@ export class Minerva {
       user: this.user,
       settings: this.settings,
       storage: this.storage,
+      usageData: this.usageData,
       records: MinervaArchive.get("minerva_store")
         ? {
             ...MinervaArchive.get("minerva_store").records,
@@ -683,6 +699,80 @@ export class Minerva {
     MinervaArchive.set("minerva_store", store);
 
     return this;
+  }
+
+  updateUsageData(type, value) {
+    const today = `${new Date()
+      .getDate()
+      .toString()
+      .padStart(2, "0")}-${new Date().getMonth() +
+      1}-${new Date().getFullYear()}`;
+
+    const timeOfUpdate = `${new Date()
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${new Date()
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+
+    const baseData = {
+      time: timeOfUpdate
+    };
+
+    const commitUpdate = (key, updateObject) => {
+      console.log(key, updateObject);
+      console.log("today did not have an existing update.", this.usageData);
+      if (!this.usageData[today]) {
+        this.usageData = {
+          ...this.usageData,
+          [today]: {
+            ...this.usageData[today],
+            [key]: [updateObject]
+          }
+        };
+      } else {
+        console.log("today had an existing update.", this.usageData[today]);
+        this.usageData = {
+          ...this.usageData,
+          [today]: {
+            ...this.usageData[today],
+            [key]: [...this.usageData[today][key], updateObject]
+          }
+        };
+      }
+
+      this.save();
+    };
+
+    switch (type) {
+      case "uptime":
+        if (typeof value !== "number")
+          throw new TypeError("uptime value must be a number.");
+
+        const uptimeUpdate = {
+          ...baseData,
+          uptime: value
+        };
+
+        commitUpdate("uptime", uptimeUpdate);
+        break;
+
+      case "structures":
+        if (typeof value !== "number")
+          throw new TypeError("uptime value must be a number.");
+
+        const structureUpdate = {
+          ...baseData,
+          structureCount: value
+        };
+
+        commitUpdate("structures", structureUpdate);
+        break;
+
+      default:
+        break;
+    }
   }
 
   /**
