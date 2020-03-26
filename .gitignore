@@ -38,3 +38,12 @@ yarn-error.log*
 
 # templates
 **.template.**
+
+# unused assets
+**cleaned**
+/src/assets/raw**
+/src/assets/audio/voice/*.wav
+/src/assets/audio/voice/letters/*
+
+# un-ignore currently used audio
+!/src/assets/audio/voice/letters/v4
