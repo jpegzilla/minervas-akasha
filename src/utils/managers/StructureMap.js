@@ -3,7 +3,6 @@ import { Grimoire } from "./../structures/grimoire";
 import { Node } from "./../structures/node";
 import { Hypostasis } from "./../structures/hypostasis";
 import { Athenaeum } from "./../structures/athenaeum";
-import { uuidv4 } from "./../misc";
 
 export default {
   shard: Shard,
@@ -23,7 +22,10 @@ export default {
  *
  * @returns {object} created structure
  */
-export const makeStruct = (type, id = uuidv4(), minerva, uuidv4) => {
+export const makeStruct = (type, id, minerva, uuidv4) => {
+  if (!type || !id || !minerva || !uuidv4)
+    throw new Error("missing arguments to makeStruct.");
+
   return {
     title: "datastructure",
     state: "restored",
