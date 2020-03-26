@@ -40,6 +40,8 @@ export class Minerva {
 
     this.user = options.user || null;
 
+    // minerva's voice synth engine
+    this.voice = null;
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
     this.record = this.user
