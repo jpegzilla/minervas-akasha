@@ -21,6 +21,7 @@ import ErrorBoundary from "./subcomponents/ErrorBoundary";
 
 // managers
 import { Minerva, MinervaArchive } from "./../utils/managers/MinervaInstance";
+import MinervaVoice from "./../utils/managers/MinervaVoice";
 import { Typist } from "./../utils/misc";
 import DatabaseInterface from "../utils/managers/Database";
 import AkashicRecord from "./../utils/structures/AkashicRecord";
@@ -46,6 +47,10 @@ export const minerva = new Minerva(
   db
 );
 
+export const minervaVoice = new MinervaVoice(minerva);
+
+minerva.voice = minervaVoice;
+
 // Minerva.clearStorage();
 Minerva.clearSessionStorage();
 
@@ -57,7 +62,8 @@ const initialContext = {
   minerva,
   db,
   AkashicRecord,
-  audiomanager: new AudioManager()
+  audiomanager: new AudioManager(),
+  minervaVoice
 };
 
 const { Provider } = globalContext;
@@ -140,7 +146,7 @@ export const App = () => {
         minerva.set("logged_in", false);
       }
     },
-    [loggedIn, minerva.user]
+    [loggedIn]
   );
 
   // message that covers screen and shows in the center. only used for special messages
