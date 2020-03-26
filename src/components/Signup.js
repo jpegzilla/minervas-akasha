@@ -311,7 +311,19 @@ export const Signup = props => {
 
         break;
       case "confirm":
-        if (value === confirm && confirm.length > 0 && passwordValid)
+        // detect any spaces in confirmation
+        if (/\s/gi.test(value)) {
+          shakeAnim("warn");
+
+          setStatusMessage({
+            display: true,
+            text: "warning: password cannot contain spaces",
+            type: "warning"
+          });
+
+          clearAll();
+          timeouts.push(setTimeout(t, 3000));
+        } else if (value === confirm && confirm.length > 0 && passwordValid)
           setConfirmValid(true);
         else setConfirmValid(false);
 
