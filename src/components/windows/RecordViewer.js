@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
+import PropTypes from "prop-types";
+
 import { uuidv4 } from "./../../utils/misc";
 
 import { globalContext } from "./../App";
@@ -157,4 +159,8 @@ name: ${name}` || "null"
       </footer>
     </div>
   );
+};
+
+RecordViewer.propTypes = {
+  setWindows: PropTypes.func
 };

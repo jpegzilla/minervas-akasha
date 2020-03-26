@@ -16,7 +16,7 @@ export default props => {
         "line count": fullText.split(/\n/gi).length
       });
     },
-    [fullText]
+    [humanSize, mime, setMetadata, title, fullText]
   );
 
   return (

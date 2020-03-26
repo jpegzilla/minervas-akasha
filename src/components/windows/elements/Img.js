@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 import { b64toBlob } from "./utils/mediaUtils";
 
+import PropTypes from "prop-types";
 import { globalContext } from "./../../App";
 
 // read metadata
-export default props => {
+const Img = props => {
   const {
     src,
     title,
@@ -32,7 +33,7 @@ export default props => {
 
       setImageData(data);
     },
-    [fileInfo]
+    [mime, src, fileInfo]
   );
 
   const altOnLoad = e => {
@@ -62,7 +63,7 @@ export default props => {
   return typeof error === "string" ? (
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this image. error message: {error}.{" "}
-      <a target="_blank" href={reportUrl}>
+      <a rel="noopener noreferrer" target="_blank" href={reportUrl}>
         please report this to jpegzilla so she can try to fix it.
       </a>
     </span>
@@ -94,4 +95,16 @@ export default props => {
       alt={fileInfo}
     />
   );
+};
+
+export default Img;
+
+Img.propTypes = {
+  src: PropTypes.string,
+  title: PropTypes.string,
+  humanSize: PropTypes.string,
+  mime: PropTypes.string,
+  setMetadata: PropTypes.func,
+  setLoadingFileData: PropTypes.func,
+  onLoad: PropTypes.func
 };

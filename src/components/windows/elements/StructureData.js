@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
 
+import PropTypes from "prop-types";
+
 export const StructureData = props => {
   const {
     currentFileData,
@@ -79,4 +81,15 @@ export const StructureData = props => {
       )}
     </Fragment>
   );
+};
+
+StructureData.propTypes = {
+  currentFileData: PropTypes.object,
+  showImage: PropTypes.any,
+  FileDisplay: PropTypes.any,
+  ImageDisplay: PropTypes.any,
+  setShowImage: PropTypes.func,
+  MetadataDisplay: PropTypes.any,
+  metadata: PropTypes.object,
+  setMetadataDisplay: PropTypes.func
 };

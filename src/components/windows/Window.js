@@ -147,7 +147,7 @@ export const Window = props => {
     () => {
       if (canDropFiles) componentProps.droppedFiles = droppedFiles;
     },
-    [droppedFiles, componentProps.droppedFiles]
+    [canDropFiles, droppedFiles, componentProps.droppedFiles]
   );
 
   return (

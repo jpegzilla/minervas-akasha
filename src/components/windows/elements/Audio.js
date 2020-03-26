@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
 import { globalContext } from "./../../App";
 
-export default props => {
+const Audio = props => {
   const {
     src,
     title,
@@ -32,7 +32,12 @@ export default props => {
         audioRef.current.volume =
           globalVolume.master / 100 || minerva.settings.volume.master / 100;
     },
-    [minerva.settings.volume.master, minerva.settings.volume, minerva.settings]
+    [
+      globalVolume.master,
+      minerva.settings.volume.master,
+      minerva.settings.volume,
+      minerva.settings
+    ]
   );
 
   const [error, setError] = useState(false);
@@ -60,7 +65,7 @@ export default props => {
         if (typeof message.data === "string") setAudioData(message.data);
       };
     },
-    [fileInfo]
+    [mime, src, fileInfo]
   );
 
   const data = src;
@@ -70,7 +75,7 @@ export default props => {
   return typeof error === "string" ? (
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this audio. error message: {error}.{" "}
-      <a target="_blank" href={reportUrl}>
+      <a rel="noopener noreferrer" target="_blank" href={reportUrl}>
         please report this to jpegzilla so she can try to fix it.
       </a>
     </span>
@@ -116,6 +121,8 @@ export default props => {
     </audio>
   );
 };
+
+export default Audio;
 
 Audio.propTypes = {
   src: PropTypes.string,

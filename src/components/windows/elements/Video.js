@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 
 import { videoTagSchema } from "./utils/mediaTagSchema";
-import { b64toBlob } from "./utils/mediaUtils";
 import { globalContext } from "./../../App";
+
+import PropTypes from "prop-types";
 
 import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
 
-export default props => {
+const Video = props => {
   const {
     src,
     title,
@@ -52,7 +53,7 @@ export default props => {
         if (typeof message.data === "string") setVideoData(message.data);
       };
     },
-    [fileInfo]
+    [mime, src, fileInfo]
   );
 
   useEffect(
@@ -70,7 +71,7 @@ export default props => {
   return typeof error === "string" ? (
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this video. error message: {error}.{" "}
-      <a target="_blank" href={reportUrl}>
+      <a rel="noopener noreferrer" target="_blank" href={reportUrl}>
         please report this to jpegzilla so she can try to fix it.
       </a>
     </span>
@@ -108,4 +109,15 @@ export default props => {
       title={fileInfo}
     />
   );
+};
+
+export default Video;
+
+Video.propTypes = {
+  src: PropTypes.string,
+  title: PropTypes.string,
+  humanSize: PropTypes.string,
+  mime: PropTypes.string,
+  setMetadata: PropTypes.func,
+  setLoadingFileData: PropTypes.func
 };

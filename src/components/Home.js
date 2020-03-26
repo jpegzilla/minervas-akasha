@@ -49,7 +49,7 @@ export const Home = props => {
 
       setLoggedIn(loginExpired ? false : true);
     },
-    [loggedIn, setLoggedIn]
+    [minerva, loggedIn, setLoggedIn]
   );
 
   useEffect(

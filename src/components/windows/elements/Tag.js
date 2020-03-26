@@ -1,6 +1,8 @@
 import React from "react";
 
-export default props => {
+import PropTypes from "prop-types";
+
+const Tag = props => {
   const { editTag, removeTag, i, t } = props;
 
   const truncName =
@@ -27,4 +29,13 @@ export default props => {
       </span>
     </li>
   );
+};
+
+export default Tag;
+
+Tag.propTypes = {
+  editTag: PropTypes.func,
+  removeTag: PropTypes.func,
+  i: PropTypes.number,
+  t: PropTypes.object
 };

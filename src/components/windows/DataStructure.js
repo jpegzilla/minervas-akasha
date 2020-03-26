@@ -90,7 +90,7 @@ const DataStructureComponent = props => {
 
       minerva.setWindows([...newWindows]);
     },
-    [MetadataDisplay, showImage, ImageDisplay]
+    [minerva, structId, MetadataDisplay, showImage, ImageDisplay]
   );
 
   // add to minerva's record when first loading new data structure
@@ -171,6 +171,9 @@ const DataStructureComponent = props => {
         setTimeout(resetStatusText, 6000);
 
         console.log("very large file detected. rejecting.");
+
+        // instead, possibly set a flag to add the file to the database as a compressed string
+        // rather than uncompressed.
         return;
       }
 
@@ -698,9 +701,7 @@ const DataStructureComponent = props => {
                       onClick={() => changeTagColor(v)}
                       key={`${v}-${i}`}
                       className={`${v}`}
-                    >
-                      {i}
-                    </li>
+                    />
                   );
                 })}
               </ul>

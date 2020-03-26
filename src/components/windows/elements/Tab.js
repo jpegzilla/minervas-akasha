@@ -1,5 +1,7 @@
 import React from "react";
 
+import PropTypes from "prop-types";
+
 export const Tab = props => {
   const { w, title, activeWindowId, tabCounts, handleClickItem } = props;
 
@@ -26,4 +28,12 @@ export const Tab = props => {
       {`${titleToUse} (${tabCounts})`}
     </li>
   );
+};
+
+Tab.propTypes = {
+  w: PropTypes.object,
+  title: PropTypes.string,
+  activeWindowId: PropTypes.string,
+  tabCounts: PropTypes.number,
+  handleClickItem: PropTypes.func
 };
