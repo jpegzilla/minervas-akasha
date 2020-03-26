@@ -64,7 +64,7 @@ export const str2ab = str => {
 };
 
 /**
- * getRandomInt - get a random number from within a range
+ * getRandomInt - get a random integer from within a range
  *
  * @param {number} min minimum number that can be generated
  * @param {number} max maximum number that can be generated
@@ -75,6 +75,18 @@ export const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+};
+
+/**
+ * getRandomFloat - get a random number from within a range
+ *
+ * @param {number} min minimum number that can be generated
+ * @param {number} max maximum number that can be generated
+ *
+ * @returns {number} a random number within the provided range
+ */
+export const getRandomFloat = (min, max) => {
+  return Math.random() * (max - min) + min;
 };
 
 /**
