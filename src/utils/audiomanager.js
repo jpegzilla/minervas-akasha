@@ -4,14 +4,18 @@ import { MinervaArchive, Minerva } from "./managers/MinervaInstance";
 export default class AudioManager {
   constructor() {
     this.ctx = new AudioContext();
+
+    // contains sounds loaded via the load function
     this.sounds = {};
+
+    // contains the current playing sounds
     this.sources = [];
+
+    // contains minerva's stored settings or the default ones
     this.settings = MinervaArchive.get("minerva_store")
       ? MinervaArchive.get("minerva_store").settings
       : Minerva.defaultSettings;
   }
-
-  playFile(file) {}
 
   /**
    * play - play a sound from the instance's currently loaded files.
