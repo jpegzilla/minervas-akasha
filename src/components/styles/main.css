@@ -317,7 +317,6 @@
 }
 
 #filters {
-  display: none;
   height: 100vh;
   width: 100vw;
   position: absolute;
@@ -331,6 +330,13 @@
   height: 100%;
   width: 100%;
   mix-blend-mode: multiply;
+}
+
+#filters #filters-noise {
+  background-image: url("./img/binding-dark.png");
+  opacity: 0.4;
+  background-repeat: repeat;
+  background-size: 6rem;
 }
 
 #filters #filters-brightness {
@@ -448,22 +454,22 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.35s forwards;
+  animation: flickerout 0.3s ease 2.21s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.14s forwards;
+  animation: flickerout 0.3s ease 2.7s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 2.63s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 2.56s forwards;
+  animation: flickerout 0.3s ease 3.4s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
@@ -479,17 +485,17 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 3.47s forwards;
+  animation: flickerout 0.3s ease 2.98s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 2.56s forwards;
+  animation: flickerout 0.3s ease 3.68s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 4.52s forwards;
+  animation: flickerout 0.3s ease 2.63s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -761,7 +767,7 @@
   font-size: 1rem;
 }
 
-#status-message > div.success, #status-message > div.fail, #status-message > div.warning {
+#status-message > div.success, #status-message > div.fail, #status-message > div.warning, #status-message > div.error {
   opacity: 1;
   transition: border-color 0.3s ease, opacity 0.3s ease 0.3s;
   color: #fefefe;
@@ -1184,7 +1190,7 @@ input[type="range"]:focus::-ms-fill-upper {
   margin-top: 1rem;
 }
 
-#settings-menu .connection-settings label {
+#settings-menu .checkbox-settings label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1192,11 +1198,11 @@ input[type="range"]:focus::-ms-fill-upper {
   cursor: pointer;
 }
 
-#settings-menu .connection-settings .connection-settings-label {
+#settings-menu .checkbox-settings .checkbox-settings-label {
   margin-right: 0.5rem;
 }
 
-#settings-menu .connection-settings .connection-settings-checkbox {
+#settings-menu .checkbox-settings .checkbox-settings-checkbox {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1208,7 +1214,7 @@ input[type="range"]:focus::-ms-fill-upper {
   filter: invert(0);
 }
 
-#settings-menu .connection-settings .connection-settings-checkbox b {
+#settings-menu .checkbox-settings .checkbox-settings-checkbox b {
   height: 80%;
   width: 80%;
   display: inline;
@@ -1217,16 +1223,16 @@ input[type="range"]:focus::-ms-fill-upper {
   border-radius: 1px;
 }
 
-#settings-menu .connection-settings .connection-settings-checkbox.active b {
+#settings-menu .checkbox-settings .checkbox-settings-checkbox.active b {
   background-color: #111111;
 }
 
-#settings-menu .connection-settings input[type=checkbox] {
+#settings-menu .checkbox-settings input[type=checkbox] {
   left: -9999px;
   position: absolute;
 }
 
-#settings-menu .connection-settings input {
+#settings-menu .checkbox-settings input {
   width: auto;
   display: inline;
 }
@@ -1547,6 +1553,7 @@ input[type="range"]:focus::-ms-fill-upper {
 }
 
 .datastructure-window {
+  will-change: contents;
   display: flex;
   flex-direction: column;
   max-width: fit-content;
@@ -1678,7 +1685,7 @@ input[type="range"]:focus::-ms-fill-upper {
   overflow-wrap: anywhere;
 }
 
-.datastructure-window .structure-data img, .datastructure-window .structure-data p, .datastructure-window .structure-data h2 {
+.datastructure-window .structure-data img:not(.image-viewer-image), .datastructure-window .structure-data p, .datastructure-window .structure-data h2 {
   max-width: 350px;
 }
 
@@ -1798,6 +1805,19 @@ input[type="range"]:focus::-ms-fill-upper {
 
 .datastructure-window .structure-tag:hover {
   background-color: rgba(254, 254, 254, 0.2);
+}
+
+.large-image-viewer {
+  position: absolute;
+  background-color: transparent;
+  isolation: isolate;
+  z-index: 10000000000;
+  pointer-events: none;
+  user-select: none;
+}
+
+.datastructure-window .structure-data .large-image-viewer img {
+  max-width: auto;
 }
 
 :root {
