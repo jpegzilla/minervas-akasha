@@ -1,8 +1,8 @@
 @import vars
 
 #filters
-  // to turn off all filters, uncomment next line
-  display: none
+  // to turn off all filters, set display to none
+  // display: none
   height: 100vh
   width: 100vw
   position: absolute
@@ -15,6 +15,14 @@
     height: 100%
     width: 100%
     mix-blend-mode: multiply
+
+  #filters-noise
+    background-image: url("./img/binding-dark.png")
+    opacity: 0.4
+    background-repeat: repeat
+    background-size: 6rem
+
+    // background-color: red
 
   #filters-brightness
     background-color: $black
