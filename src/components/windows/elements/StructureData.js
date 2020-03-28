@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 
 import PropTypes from "prop-types";
 
+// this component is the data display part of a DataStructure window
 export const StructureData = props => {
   const {
     currentFileData,
