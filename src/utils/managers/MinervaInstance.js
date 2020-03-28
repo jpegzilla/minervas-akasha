@@ -38,7 +38,7 @@ export class Minerva {
         `user was created with an invalid user id: ${options.user.id}`
       );
 
-    this.user = options.user || null;
+    this.user = { ...options.user, password: "" } || null;
 
     // minerva's voice synth engine
     this.voice = null;
@@ -137,7 +137,11 @@ export class Minerva {
       },
       timeFormat: true, // true sets 12 hour mode, false is 24 hour mode
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
-      connections: true // dictates whether users can see content from other users.
+      connections: true, // dictates whether users can see content from other users.
+      filters: {
+        crt: true,
+        noise: false
+      } // enables / disables graphical filters.
     };
   }
 
