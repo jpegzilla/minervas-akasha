@@ -5,12 +5,7 @@ import PropTypes from "prop-types";
 import { Taskbar } from "./Taskbar";
 import { Topbar } from "./Topbar";
 
-import { Window } from "./windows/Window";
-import { DataStructure } from "./windows/DataStructure";
-import { FileDialog } from "./windows/FileDialog";
-import { RecordViewer } from "./windows/RecordViewer";
-
-import { Console } from "./windows/Console";
+import { WindowTypes } from "./windows/WindowTypes";
 
 import { globalContext } from "./App";
 import { hasDatePassed } from "./../utils/dateUtils";
@@ -323,13 +318,7 @@ export const Home = props => {
             // this object must contain every type of component that the home
             // screen needs to render, becuase it uses a dynamic component
             // jsx name or whatever it's called. lol
-            const typeMap = {
-              Console: Console,
-              Window: Window,
-              DataStructure: DataStructure,
-              FileDialog: FileDialog,
-              RecordViewer: RecordViewer
-            };
+            const typeMap = WindowTypes;
 
             const Component = typeMap[item.stringType];
 
