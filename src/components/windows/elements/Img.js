@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
+
+import { uuidv4 } from "./../../../utils/misc";
+
 import { b64toBlob } from "./utils/mediaUtils";
 
 import PropTypes from "prop-types";
@@ -17,7 +20,11 @@ const Img = props => {
     setLoadingFileData
   } = props;
 
-  const { setStatusMessage, resetStatusText } = useContext(globalContext);
+  const imageRef = useRef();
+
+  const { setStatusMessage, resetStatusText, minerva, setWindows } = useContext(
+    globalContext
+  );
 
   const [error, setError] = useState(false);
   const [imageData, setImageData] = useState();
@@ -60,6 +67,43 @@ const Img = props => {
 
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20image%20decoding%20issue%20with%20an%20${mime}%20encoded%20image`;
 
+  const handleDoubleClick = () => {
+    console.log("opening image viewer");
+    const reader = new FileReader();
+    let base64;
+
+    fetch(imageData)
+      .then(res => res.blob())
+      .then(body => {
+        reader.readAsDataURL(body);
+
+        reader.addEventListener("load", e => {
+          base64 = e.target.result;
+
+          const newImageViewer = {
+            title: "image viewer",
+            state: "restored",
+            stringType: "Window",
+            component: "ImageViewer",
+            componentProps: {
+              src: base64,
+              alt: fileInfo
+            },
+            belongsTo: minerva.user.id,
+            id: uuidv4(),
+            position: {
+              x: 100,
+              y: 100
+            }
+          };
+
+          minerva.setWindows([...minerva.windows, newImageViewer]);
+
+          minerva.setApplicationWindows(minerva.windows);
+        });
+      });
+  };
+
   return typeof error === "string" ? (
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this image. error message: {error}.{" "}
@@ -71,6 +115,8 @@ const Img = props => {
     <img
       decoding="async"
       loading="lazy"
+      onDoubleClick={handleDoubleClick}
+      ref={imageRef}
       onLoad={e => {
         setLoadingFileData(false);
         setError(false);
