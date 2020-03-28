@@ -2,6 +2,7 @@
 // voice clips that I need to record:
 
 // vowels: a i u e o - done
+// consonants: b, d, f, j, k, g, m, p, r, s, t, v, w, y, z
 
 // import vowels
 import a from "./../../assets/audio/voice/letters/v4/a.wav";
@@ -27,9 +28,6 @@ import w from "./../../assets/audio/voice/letters/v4/w.wav";
 import y from "./../../assets/audio/voice/letters/v4/y.wav";
 import z from "./../../assets/audio/voice/letters/v4/z.wav";
 import silent from "./../../assets/audio/voice/letters/v4/silent.wav";
-
-// b, d, f, j, k ,g, m, p,r,s, t, v, w ,y z
-// k, , w
 
 import { getRandomInt, getRandomFloat } from "./../misc";
 
