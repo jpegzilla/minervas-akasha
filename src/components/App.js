@@ -22,7 +22,7 @@ import ErrorBoundary from "./subcomponents/ErrorBoundary";
 // managers
 import { Minerva, MinervaArchive } from "./../utils/managers/MinervaInstance";
 import MinervaVoice from "./../utils/managers/MinervaVoice";
-import { Typist } from "./../utils/misc";
+import { Typist } from "./../utils/managers/Typist";
 import DatabaseInterface from "../utils/managers/Database";
 import AkashicRecord from "./../utils/structures/AkashicRecord";
 import AudioManager from "./../utils/audiomanager";
@@ -220,7 +220,8 @@ export const App = () => {
               )}
 
               <section id="filters">
-                <div id="crt-overlay" />
+                {minerva.settings.filters.noise && <div id="filters-noise" />}
+                {minerva.settings.filters.crt && <div id="crt-overlay" />}
               </section>
 
               {/* godmessage */}

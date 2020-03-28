@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Typist } from "./../utils/misc";
+import { Typist } from "./../utils/managers/Typist";
 import { globalContext } from "./App";
 import PropTypes from "prop-types";
 

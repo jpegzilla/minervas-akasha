@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
 import { MinervaArchive } from "./../utils/managers/MinervaInstance";
 import PropTypes from "prop-types";
-import { uuidv4, Typist } from "./../utils/misc";
+import { uuidv4 } from "./../utils/misc";
+import { Typist } from "./../utils/managers/Typist";
 import { globalContext } from "./App";
 import bcrypt from "bcryptjs";
 
@@ -223,12 +224,7 @@ export const Signup = props => {
                 // create user's minerva instance
                 minerva.login(newUser, true);
 
-                console.log(minerva);
-
                 audiomanager.play("s_two");
-
-                // set akashic record with stored data here!!
-                // AkashicRecord
 
                 setFadeOut(true);
 
