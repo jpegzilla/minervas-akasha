@@ -91,19 +91,22 @@ export const Settings = props => {
           </label>
         </fieldset>
 
-        <fieldset className="connection-settings">
+        {/* connection settings */}
+        <fieldset className="checkbox-settings">
           <legend>connections</legend>
 
           <label
             title="allows you to see content procured by other users of this software."
             htmlFor="connection-settings-off"
           >
-            <span className="connection-settings-label">connections on</span>
+            <span className="checkbox-settings-label">
+              {settings.connections ? "connections on" : "connections off"}
+            </span>
             <span
               className={`${
                 settings.connections
-                  ? "active connection-settings-checkbox"
-                  : "connection-settings-checkbox"
+                  ? "active checkbox-settings-checkbox"
+                  : "checkbox-settings-checkbox"
               }`}
             >
               <b />
@@ -122,19 +125,22 @@ export const Settings = props => {
           </label>
         </fieldset>
 
-        <fieldset className="connection-settings">
+        {/* autoplay settings */}
+        <fieldset className="checkbox-settings">
           <legend>autoplay media</legend>
 
           <label
             title="allows audio and videos to start playing automatically when they load."
             htmlFor="autoplay-settings-off"
           >
-            <span className="connection-settings-label">autoplay on</span>
+            <span className="checkbox-settings-label">
+              {settings.autoplayMedia ? "autoplay on" : "autoplay off"}
+            </span>
             <span
               className={`${
                 settings.autoplayMedia
-                  ? "active connection-settings-checkbox"
-                  : "connection-settings-checkbox"
+                  ? "active checkbox-settings-checkbox"
+                  : "checkbox-settings-checkbox"
               }`}
             >
               <b />
@@ -149,6 +155,78 @@ export const Settings = props => {
               }}
               value={settings.autoplayMedia}
               id="autoplay-settings-off"
+              type="checkbox"
+            />
+          </label>
+        </fieldset>
+
+        {/* filter display settings */}
+        <fieldset className="checkbox-settings">
+          <legend>display filters</legend>
+
+          {/* crt filter */}
+          <label
+            title="enables / disables crt filter. disabling may improve performance if you are having issues."
+            htmlFor="filter-crt-settings-off"
+          >
+            <span className="checkbox-settings-label">
+              {settings.filters.crt ? "crt filter on" : "crt filter off"}{" "}
+            </span>
+            <span
+              className={`${
+                settings.filters.crt
+                  ? "active checkbox-settings-checkbox"
+                  : "checkbox-settings-checkbox"
+              }`}
+            >
+              <b />
+            </span>
+            <input
+              onChange={() => {
+                setSettings({
+                  ...settings,
+                  filters: {
+                    ...settings.filters,
+                    crt: !settings.filters.crt
+                  }
+                });
+              }}
+              value={settings.filters}
+              id="filter-crt-settings-off"
+              type="checkbox"
+            />
+          </label>
+
+          {/* noise filter */}
+          <label
+            title="enables / disables noise filter. disabling may improve performance if you are having issues."
+            htmlFor="filter-noise-settings-off"
+          >
+            <span className="checkbox-settings-label">
+              {settings.filters.noise ? "noise filter on" : "noise filter off"}{" "}
+            </span>
+            <span
+              className={`${
+                settings.filters.noise
+                  ? "active checkbox-settings-checkbox"
+                  : "checkbox-settings-checkbox"
+              }`}
+            >
+              <b />
+            </span>
+            <input
+              onChange={() => {
+                console.log(settings);
+                setSettings({
+                  ...settings,
+                  filters: {
+                    ...settings.filters,
+                    noise: !settings.filters.noise
+                  }
+                });
+              }}
+              value={settings.filters.noise}
+              id="filter-noise-settings-off"
               type="checkbox"
             />
           </label>
