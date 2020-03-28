@@ -27,6 +27,7 @@ export const Home = props => {
 
   // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows);
+  minerva.setApplicationWindows = setWindows;
 
   // handle drag / drop events
   const [droppable, setDroppable] = useState(false);
