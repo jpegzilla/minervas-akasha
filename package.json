@@ -7,7 +7,6 @@
     "bcryptjs": "^2.4.3",
     "exif-js": "^2.3.0",
     "jsmediatags": "^3.9.3",
-    "mongodb": "^3.5.2",
     "music-metadata-browser": "^2.0.4",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
