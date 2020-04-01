@@ -24,9 +24,11 @@ export const StructureData = props => {
       {FileDisplay && ImageDisplay ? (
         showImage ? (
           <div className="structure-data-meta-display">
-            <p onClick={() => setShowImage(false)}>
+            <p>
               {ImageDisplay ? ImageDisplay : "cannot display image."}
-              <span>click to hide image</span>
+              <span onClick={() => setShowImage(false)}>
+                click to hide image
+              </span>
             </p>
           </div>
         ) : (
