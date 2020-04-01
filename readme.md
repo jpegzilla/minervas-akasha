@@ -46,8 +46,6 @@ minerva's akasha is very well commented and soon to be very well documented. I a
 
 -   the ui is subject to frame drops when rapidly moving a window, despite using `requestAnimationFrame()` in conjunction with `transform3d()`, throttling the mouse move event, and `will-change` (the effect of which is most likely negligible).
 
--   the imageviewer component is slow because it has to store a base64 encoded image in its state currently to prevent itself from losing the reference to the original image in the datastructure that it was opened from. this could be solved by telling the imageviewer to find the correct datastructure and get the image from it every time the application loads.
-
 -   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
 for solved issues see /docs/main/solved-issues.md.

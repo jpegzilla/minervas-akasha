@@ -25,3 +25,14 @@ when loading large files, the main thread waits for a worker to decompress the c
 **SOLVED:** moved decompression / object url conversion to a dynamically created web worker thread.
 
 ---
+
+## the imageviewer component is slow
+
+-   *logged on 28 / 3 / 2020*
+-   *marked as solved on 1 / 4 / 2020*
+
+the imageviewer component is slow  because it has to store a base64 encoded image in its state currently to prevent itself from losing the reference to the original image in the datastructure that it was opened from. this could be solved by telling the imageviewer to find the correct datastructure and get the image from it every time the application loads.
+
+**SOLVED:** stored imageviewer images in indexeddb as base64 strings. when an imageviewer window is loaded, it automatically retrieves the base64 file, uses a worker to convert that into a blob url, and sets that url as the image source.
+
+---
