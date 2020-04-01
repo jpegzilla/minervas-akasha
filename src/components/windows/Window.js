@@ -98,6 +98,12 @@ export const Window = props => {
             ...minerva.windows.filter(w => (w.id === id ? false : true))
           ]);
 
+          // if there's an id present, then remove the file from the record, because a component
+          // with an id in componentProps is always going to be using indexeddb to store files.
+          if (componentProps.id) {
+            minerva.removeFileFromRecord(id);
+          }
+
           setWindows([...minerva.windows]);
           return;
         default:
