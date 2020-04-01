@@ -76,7 +76,7 @@ const Audio = props => {
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this audio. error message: {error}.{" "}
       <a rel="noopener noreferrer" target="_blank" href={reportUrl}>
-        please report this to jpegzilla so she can try to fix it.
+        please click here to report this to jpegzilla so she can try to fix it.
       </a>
     </span>
   ) : (
