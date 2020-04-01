@@ -459,33 +459,33 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.7s forwards;
+  animation: flickerout 0.3s ease 2.28s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 2.63s forwards;
+  animation: flickerout 0.3s ease 3.05s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 3.4s forwards;
+  animation: flickerout 0.3s ease 2.84s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 3.4s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(6) {
   transition: background-color 0.3s ease 0.3s;
-  animation: flickerout 0.3s ease 2.84s forwards;
+  animation: flickerout 0.3s ease 4.1s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 2.98s forwards;
+  animation: flickerout 0.3s ease 2.49s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
@@ -495,7 +495,7 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 2.63s forwards;
+  animation: flickerout 0.3s ease 3.26s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -1807,17 +1807,9 @@ input[type="range"]:focus::-ms-fill-upper {
   background-color: rgba(254, 254, 254, 0.2);
 }
 
-.large-image-viewer {
-  position: absolute;
-  background-color: transparent;
-  isolation: isolate;
-  z-index: 10000000000;
-  pointer-events: none;
-  user-select: none;
-}
-
-.datastructure-window .structure-data .large-image-viewer img {
-  max-width: auto;
+.image-viewer-window img {
+  max-width: 1000px;
+  max-height: 80vh;
 }
 
 :root {
