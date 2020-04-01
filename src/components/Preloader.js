@@ -35,15 +35,6 @@ export const Preloader = props => {
 
   const [finished, setFinished] = useState(false);
 
-  useEffect(
-    () => {
-      if (audioLoaded && winLoaded) {
-        setFinished(true);
-      }
-    },
-    [audioLoaded, winLoaded]
-  );
-
   // scramble the loading screen text.
   useEffect(
     () => {
@@ -65,12 +56,21 @@ export const Preloader = props => {
         { file: i_one, name: "i_one" }
       ];
 
+      // longest running load time is here. must load all these files
       audiomanager.load(files).then(() => {
         setAudioLoaded(true);
+        // setPreloaderText("complete.");
+        // setFinished(true);
+
+        // setTimeout(() => {
+        //   setWindowLoaded(true);
+        // }, 2500);
       });
 
+      // this one is shorter
       minervaVoice.load(minervaVoice.voiceSamples).then(() => {
         setVoiceLoaded(true);
+        // setPanelsActive(true);
       });
 
       setup(audiomanager);
@@ -85,7 +85,7 @@ export const Preloader = props => {
   //   setTimeout(() => {
   //     setPreloaderText("complete.");
   //     setTimeout(() => {
-  //       if (audioLoaded && winLoaded) setFinished(true);
+  //       if (audioLoaded && winLoaded && voiceLoaded) setFinished(true);
   //       setWindowLoaded(true);
   //     }, 2400);
   //   }, 5500);
@@ -95,14 +95,15 @@ export const Preloader = props => {
   // audioloaded must be true in order to end the preloader.
   window.onload = () => {
     setWinLoaded(true);
+    setWindowLoaded(true);
   };
 
-  useEffect(
-    () => {
-      if (finished && voiceLoaded) setWindowLoaded(true);
-    },
-    [setWindowLoaded, finished, voiceLoaded]
-  );
+  // useEffect(
+  //   () => {
+  //     if (finished && voiceLoaded) setWindowLoaded(true);
+  //   },
+  //   [setWindowLoaded, finished, voiceLoaded]
+  // );
 
   return (
     <section
