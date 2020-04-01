@@ -137,6 +137,7 @@ const DataStructureComponent = props => {
 
             setLoadingFileData(true);
 
+            // if there's an image to show, display it.
             if (/image/gi.test(e.file.type)) {
               setFileDisplay(e.file);
             }
@@ -179,10 +180,15 @@ const DataStructureComponent = props => {
 
       setLoadingFileData(true);
 
+      // if a file has a certain extension but no mime type, then I will assign
+      // one based on the extension.
       let assignedType;
       let fileMime = f.type || "text/plain";
       const fileExt = f.name.slice(f.name.lastIndexOf("."));
 
+      // this is a list of extensions that I think need to be manually assigned mimetypes.
+      // it is currently incomplete, and also none of these formats are supported on the
+      // web. I may figure out a way to convert them to web-friendly formats in the future.
       const videoExtensions = ["y4m", "mkv", "yuv", "flv"];
       const audioExtensions = ["8svx", "16svx", "bwf"];
 
@@ -238,7 +244,6 @@ const DataStructureComponent = props => {
             });
           });
 
-          // reader.readAsArrayBuffer(file);
           reader.readAsDataURL(file);
         };
 
@@ -323,6 +328,9 @@ const DataStructureComponent = props => {
               e.file
             );
 
+            // if a structure has info attached to it (tags, etc.), then add that
+            // info object into the structure's window object inside the window
+            // array. data such as the database id and user id are also inserted.
             if (info) {
               const newWindows = minerva.windows.map(item => {
                 if (item.componentProps)
@@ -345,6 +353,7 @@ const DataStructureComponent = props => {
                 return item;
               });
 
+              // this code 'commits' the new window object and rerenders the windows
               minerva.setWindows([...newWindows]);
               setWindows([...minerva.windows]);
             }
@@ -359,11 +368,12 @@ const DataStructureComponent = props => {
   useEffect(
     () => {
       if (currentFileData) {
-        // console.log("new current file data object:", currentFileData);
         const { data, title, humanSize, mime } = currentFileData;
 
         let type;
 
+        // here I test to figure out what type of file I'm trying to process.
+        // currently only audio, video, images, and text are supported.
         if (/audio/gi.test(currentFileData.type)) {
           type = (
             <Audio
@@ -416,6 +426,8 @@ const DataStructureComponent = props => {
           );
         }
 
+        // this will set the file display to the correct element created above based on
+        // the file's type.
         setFileDisplay(type);
       }
     },
@@ -435,10 +447,12 @@ const DataStructureComponent = props => {
     }
   };
 
+  // when the user wants to connect a record to another one
   const handleConnectRecord = () => {
     console.log("connecting record...");
   };
 
+  // when a user wants to disconnect a record from its parent
   const handleDisconnectRecord = () => {
     console.log("disconnecting record...");
   };
@@ -455,6 +469,7 @@ const DataStructureComponent = props => {
     }
   };
 
+  // this function names the structure.
   const addName = () => {
     let errorMessage;
 
@@ -489,11 +504,14 @@ const DataStructureComponent = props => {
   const [showTagEditInterface, setShowTagEditInterface] = useState(false);
   const [currentTag, setCurrentTag] = useState();
 
+  // show the tag editing interface when a tag is right clicked,
+  // or hide it if it's already showing.
   const editTag = tag => {
     setCurrentTag(tag);
-    setShowTagEditInterface(true);
+    setShowTagEditInterface(!showTagEditInterface);
   };
 
+  // change the tag color to whatever color the user clicks.
   const changeTagColor = color => {
     const colorCode = Object.entries(ColorCodes).find(
       item => color === item[1]
