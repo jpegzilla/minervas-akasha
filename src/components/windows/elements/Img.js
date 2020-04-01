@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 
+import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
 import { uuidv4 } from "./../../../utils/misc";
 
 import { b64toBlob } from "./utils/mediaUtils";
@@ -68,47 +69,55 @@ const Img = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20image%20decoding%20issue%20with%20an%20${mime}%20encoded%20image`;
 
   const handleDoubleClick = () => {
-    console.log("opening image viewer");
-    const reader = new FileReader();
-    let base64;
+    const workerInstance = new worker();
 
-    fetch(imageData)
-      .then(res => res.blob())
-      .then(body => {
-        reader.readAsDataURL(body);
+    workerInstance.postMessage({
+      action: "getObjectUrl",
+      src,
+      mime
+    });
 
-        reader.addEventListener("load", e => {
-          base64 = e.target.result;
+    workerInstance.onmessage = message => {
+      if (message.data.status && message.data.status === "failure") {
+        throw new Error(message.data);
+      }
 
-          const newImageViewer = {
-            title: "image viewer",
-            state: "restored",
-            stringType: "Window",
-            component: "ImageViewer",
-            componentProps: {
-              src: base64,
-              alt: fileInfo
-            },
-            belongsTo: minerva.user.id,
-            id: uuidv4(),
-            position: {
-              x: 100,
-              y: 100
-            }
-          };
+      if (typeof message.data === "string") {
+        const id = uuidv4();
 
-          minerva.setWindows([...minerva.windows, newImageViewer]);
+        const newImageViewer = {
+          title: `image viewer - ${humanSize} [${mime}] image.`,
+          state: "restored",
+          stringType: "Window",
+          component: "ImageViewer",
+          componentProps: {
+            src: message.data,
+            alt: fileInfo,
+            id,
+            mime
+          },
+          belongsTo: minerva.user.id,
+          id,
+          position: {
+            x: 100,
+            y: 100
+          }
+        };
 
-          minerva.setApplicationWindows(minerva.windows);
-        });
-      });
+        minerva.addFileToRecord(id, src, { type: "imageviewer" });
+
+        minerva.setWindows([...minerva.windows, newImageViewer]);
+
+        minerva.setApplicationWindows(minerva.windows);
+      }
+    };
   };
 
   return typeof error === "string" ? (
     <span className="image-error" onClick={e => void e.stopPropagation()}>
       there was an issue decoding this image. error message: {error}.{" "}
       <a rel="noopener noreferrer" target="_blank" href={reportUrl}>
-        please report this to jpegzilla so she can try to fix it.
+        please click here to report this to jpegzilla so she can try to fix it.
       </a>
     </span>
   ) : (
