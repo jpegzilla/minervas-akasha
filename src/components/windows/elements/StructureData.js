@@ -15,6 +15,11 @@ export const StructureData = props => {
     setMetadataDisplay
   } = props;
 
+  // filedisplay is the actual element file that is currently loaded into the structure,
+  // such as and <Img> component, an <Audio> component, or a <Video> component.
+  // the imagedisplay comes into play when a file has an image attached to it. this
+  // usually occurs with audio files that have album covers embedded in them.
+  // metadata display is all of the metadata about the file.
   return (
     <Fragment>
       <header>
@@ -53,6 +58,8 @@ export const StructureData = props => {
               <div className="structure-data-meta-display">
                 <ul>
                   {Object.keys(metadata).map((k, i) => {
+                    // if metadata has pictures in it, leave that picture data out.
+                    // the picture will be rendered above the metadata anyway.
                     if (["picture", "pictureData", "pictureSize"].includes(k))
                       return false;
 
@@ -93,6 +100,6 @@ StructureData.propTypes = {
   ImageDisplay: PropTypes.any,
   setShowImage: PropTypes.func,
   MetadataDisplay: PropTypes.any,
-  metadata: PropTypes.object,
+  metadata: PropTypes.any,
   setMetadataDisplay: PropTypes.func
 };
