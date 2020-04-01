@@ -607,6 +607,8 @@ export class Minerva {
 
   /**
    * removeFileFromRecord - remove a file from a record in indexeddb.
+   * this completely deletes the entry with the specified id in the
+   * database.
    *
    * @param {string} id id of the record to be removed.
    *
