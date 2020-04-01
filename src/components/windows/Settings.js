@@ -25,7 +25,10 @@ export const Settings = props => {
       <div className="volume-setting-box settings-box">
         <fieldset>
           <legend>volume</legend>
-          <label htmlFor="volume-control-master">
+          <label
+            htmlFor="volume-control-master"
+            title="master volume for all media containing audio."
+          >
             <span>
               master volume {settings.volume.master.toString().padStart(3, "0")}
               %
@@ -48,7 +51,10 @@ export const Settings = props => {
           </label>
 
           {/* fx volume */}
-          <label htmlFor="volume-control-effect">
+          <label
+            htmlFor="volume-control-effect"
+            title="volume for special effects sounds, such as the typing sound associated with popup messages, or the sound that plays when an error occurs."
+          >
             <span>
               effect volume {settings.volume.effect.toString().padStart(3, "0")}
               %
@@ -70,7 +76,10 @@ export const Settings = props => {
           </label>
 
           {/* voice volume */}
-          <label htmlFor="volume-control-voice">
+          <label
+            htmlFor="volume-control-voice"
+            title="the volume for minerva's voice, which is heard only at certain times..."
+          >
             <span>
               voice volume {settings.volume.voice.toString().padStart(3, "0")}%
             </span>
