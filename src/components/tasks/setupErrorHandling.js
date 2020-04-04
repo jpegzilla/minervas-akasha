@@ -123,4 +123,23 @@ const logErrors = (message, rethrown = null) => {
 
 window.addEventListener("error", logErrors);
 
+if (window.localStorage.getItem("minerva_errors")) {
+  const errs = JSON.parse(window.localStorage.getItem("minerva_errors"));
+  const len = Object.keys(errs).length;
+
+  if (len > 50) {
+    window.localStorage.removeItem("minerva_errors");
+
+    const newErrs = {};
+
+    Object.entries(errs).forEach(([k, v], i) => {
+      if (i > 49) {
+        newErrs[k] = v;
+      }
+    });
+
+    window.localStorage.setItem("minerva_errors", JSON.stringify(newErrs));
+  }
+}
+
 export default logErrors;
