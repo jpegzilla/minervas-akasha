@@ -23,7 +23,7 @@ export default {
  * @returns {object} created structure
  */
 export const makeStruct = (type, id, minerva, uuidv4) => {
-  if (!type || !id || !minerva || !uuidv4)
+  if (!type || !id || !minerva || !uuidv4 || typeof uuidv4 !== "function")
     throw new Error("missing arguments to makeStruct.");
 
   return {
@@ -33,7 +33,8 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
     component: "DataStructure",
     componentProps: {
       type,
-      structId: id
+      structId: id,
+      notes: ""
     },
     belongsTo: minerva.user.id,
     id: uuidv4(),
