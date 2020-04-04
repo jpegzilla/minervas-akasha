@@ -122,7 +122,7 @@ export const Window = props => {
     e.preventDefault();
   };
 
-  const handleDragLeave = () => setDroppable(false);
+  const handleDragLeave = () => void setDroppable(false);
 
   const handleDragOver = e => {
     e.stopPropagation();
@@ -176,8 +176,8 @@ export const Window = props => {
     >
       <header
         className={`${title}-header`}
-        onMouseDown={e => handleMouseDown(e, true)}
-        onMouseUp={e => handleMouseDown(e, false)}
+        onMouseDown={e => void handleMouseDown(e, true)}
+        onMouseUp={e => void handleMouseDown(e, false)}
         onDrag={() => void false}
       >
         <span className="window-title-text">{`${componentProps.type ||
