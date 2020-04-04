@@ -24,6 +24,8 @@ export class Hypostasis extends Structure {
 
     this.accepts = ["athenaeum"];
 
+    this.connectsTo = null;
+
     this.reflections = {};
   }
 

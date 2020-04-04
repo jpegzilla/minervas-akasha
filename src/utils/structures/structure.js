@@ -28,7 +28,7 @@ export class Structure {
     // shows what structures this structure is connected to. connections are all
     // directional, since connections can only be made from larger types of
     // structures to smaller types.
-    this.connectedTo = (options && options.connectedTo) || [];
+    this.connectedTo = (options && options.connectedTo) || {};
 
     // shows what user the structure belongs to.
     this.belongsTo = (options && options.belongsTo) || null;
@@ -42,6 +42,8 @@ export class Structure {
 
     // the inputs that each structure connects to are defined on the child classes
     this.accepts = (options && options.accepts) || [];
+
+    this.connectsTo = (options && options.connectsTo) || null;
 
     this.createdAt = new Date().toISOString();
 
@@ -132,7 +134,7 @@ export class Structure {
 
     this.connectedTo.push(node);
 
-    this.data[node.constructor.name] = node.data;
+    this.data[node.constructor.id] = node.data;
 
     this.updateTimeStamp();
   }
