@@ -101,5 +101,6 @@ StructureData.propTypes = {
   setShowImage: PropTypes.func,
   MetadataDisplay: PropTypes.any,
   metadata: PropTypes.any,
-  setMetadataDisplay: PropTypes.func
+  type: PropTypes.string,
+  structId: PropTypes.string
 };
