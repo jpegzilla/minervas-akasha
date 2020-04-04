@@ -14,7 +14,9 @@ const MinervaMethods = {
     if (awaitingAnswer)
       return { state: "password", message: "enter admin key" };
     else if (key) {
-      return ADMIN_KEY === key
+      console.log(ADMIN_KEY, key);
+      awaitingAnswer = !awaitingAnswer;
+      return "yes" === key
         ? {
             state: "update",
             message: "resetting record",
@@ -74,8 +76,8 @@ export const parseCommand = (command, setWindows, minerva) => {
     return stepOne;
   }
 
-  if (command.startsWith("key") && awaitingAnswer === true) {
-    return MinervaMethods.verifyUser(command.replace("key", "").trim());
+  if (awaitingAnswer === true) {
+    return MinervaMethods.verifyUser(command);
   }
 
   switch (command) {
