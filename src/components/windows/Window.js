@@ -21,6 +21,12 @@ export const Window = props => {
     componentProps
   } = props;
 
+  // this will be used to apply certain classes only to datastructure windows.
+  // it is also used to determine if notes can be attached to a window.
+  const isDataStructure = component.toLowerCase() === "datastructure";
+
+  const { notes } = isDataStructure ? componentProps : { notes: null };
+
   const { minerva } = useContext(globalContext);
 
   const Component = WindowTypes[component];
