@@ -34,20 +34,23 @@ export class Typist {
     }, this.delay);
   }
 
-  talkType(string, minerva) {
+  talkType(minerva) {
     let i = 0;
 
-    const typer = setInterval(() => {
-      if (i < this.string.length) this.setter(this.string.slice(0, i + 1));
-      if (i === this.string.length - 1) {
-        this.complete = true;
-        clearInterval(typer);
-      }
+    return new Promise(resolve => {
+      const typer = setInterval(() => {
+        if (i < this.string.length) this.setter(this.string.slice(0, i + 1));
+        if (i === this.string.length - 1) {
+          this.complete = true;
+          clearInterval(typer);
+          resolve();
+        }
 
-      minerva.say(string[i]);
+        // minerva.voice.say(this.string[i]);
 
-      i++;
-    }, this.delay);
+        i++;
+      }, this.delay);
+    });
   }
 
   scramble(sound = true) {
