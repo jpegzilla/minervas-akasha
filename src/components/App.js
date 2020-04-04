@@ -158,7 +158,7 @@ export const App = () => {
   // whenever statusmessage.text changes, type out the new messge using typist.
   useEffect(
     () => {
-      new Typist(setStatusText, statusMessage.text).scramble();
+      new Typist(setStatusText, statusMessage.text).talkType(minerva);
     },
     [statusMessage.text]
   );
