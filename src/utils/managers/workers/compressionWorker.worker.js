@@ -1,3 +1,5 @@
+/* eslint no-restricted-globals: off */
+
 import * as LZUTF8 from "./lzutf8.min";
 
 self.addEventListener("message", message => {

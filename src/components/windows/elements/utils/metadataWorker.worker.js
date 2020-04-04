@@ -1,3 +1,5 @@
+/* eslint no-restricted-globals: off */
+
 const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];

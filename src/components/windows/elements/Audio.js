@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 import PropTypes from "prop-types";
 
-import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+import worker from "./utils/metadataWorker.worker";
+
 import { globalContext } from "./../../App";
 
 const Audio = props => {

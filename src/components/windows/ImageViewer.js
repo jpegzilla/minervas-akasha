@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 
 import { globalContext } from "./../App";
 
-import worker from "workerize-loader!./elements/utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+import worker from "./elements/utils/metadataWorker.worker";
 
 export const ImageViewer = props => {
   const { src, alt, id, mime } = props;

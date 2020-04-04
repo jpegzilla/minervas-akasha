@@ -5,7 +5,7 @@ import { globalContext } from "./../../App";
 
 import PropTypes from "prop-types";
 
-import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+import worker from "./utils/metadataWorker.worker";
 
 const Video = props => {
   const {

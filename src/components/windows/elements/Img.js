@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 
-import worker from "workerize-loader!./utils/metadataWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+import worker from "./utils/metadataWorker.worker";
+
 import { uuidv4 } from "./../../../utils/misc";
 
 import { b64toBlob } from "./utils/mediaUtils";
