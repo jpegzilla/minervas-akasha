@@ -231,6 +231,33 @@ Window.propTypes = {
   setWindows: PropTypes.func,
   className: PropTypes.string,
   num: PropTypes.number,
+  records: PropTypes.object,
   component: PropTypes.string,
-  componentProps: PropTypes.object
+  componentProps: PropTypes.shape({
+    type: PropTypes.string,
+    structId: PropTypes.string,
+    name: PropTypes.string,
+    connectedTo: PropTypes.object,
+
+    colorCode: PropTypes.string,
+    accepts: PropTypes.array,
+    belongsTo: PropTypes.string,
+    createdAt: PropTypes.string,
+    updatedAt: PropTypes.string,
+    info: PropTypes.shape({
+      id: PropTypes.string,
+      connectedTo: PropTypes.object,
+      data: PropTypes.exact({
+        file: PropTypes.object,
+        metadata: PropTypes.object,
+        dbId: PropTypes.string,
+        dbUserId: PropTypes.string
+      }),
+      name: PropTypes.string,
+      tags: PropTypes.arrayOf(PropTypes.object)
+    }),
+    droppedFiles: PropTypes.object,
+    MetadataDisplay: PropTypes.any,
+    ImageDisplay: PropTypes.any
+  })
 };
