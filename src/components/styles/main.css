@@ -454,27 +454,27 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(1) {
   transition: background-color 0.3s ease 0.05s;
-  animation: flickerout 0.3s ease 2.21s forwards;
+  animation: flickerout 0.3s ease 2.14s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(2) {
   transition: background-color 0.3s ease 0.1s;
-  animation: flickerout 0.3s ease 2.28s forwards;
+  animation: flickerout 0.3s ease 2.56s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(3) {
   transition: background-color 0.3s ease 0.15s;
-  animation: flickerout 0.3s ease 3.05s forwards;
+  animation: flickerout 0.3s ease 2.84s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(4) {
   transition: background-color 0.3s ease 0.2s;
-  animation: flickerout 0.3s ease 2.84s forwards;
+  animation: flickerout 0.3s ease 2.28s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(5) {
   transition: background-color 0.3s ease 0.25s;
-  animation: flickerout 0.3s ease 3.4s forwards;
+  animation: flickerout 0.3s ease 3.75s forwards;
   animation: flickerout 0.25s ease 6s forwards;
 }
 
@@ -485,17 +485,17 @@
 
 #preloader-container .preloader-middleground.active div:nth-child(7) {
   transition: background-color 0.3s ease 0.35s;
-  animation: flickerout 0.3s ease 2.49s forwards;
+  animation: flickerout 0.3s ease 2.98s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(8) {
   transition: background-color 0.3s ease 0.4s;
-  animation: flickerout 0.3s ease 3.68s forwards;
+  animation: flickerout 0.3s ease 4.8s forwards;
 }
 
 #preloader-container .preloader-middleground.active div:nth-child(9) {
   transition: background-color 0.3s ease 0.45s;
-  animation: flickerout 0.3s ease 3.26s forwards;
+  animation: flickerout 0.3s ease 4.52s forwards;
 }
 
 #preloader-container .preloader-middleground div {
@@ -1556,7 +1556,7 @@ input[type="range"]:focus::-ms-fill-upper {
   will-change: contents;
   display: flex;
   flex-direction: column;
-  max-width: fit-content;
+  max-width: max-content;
   background-color: rgba(17, 17, 17, 0.75);
   min-width: 10vw;
   min-height: 40vh;
@@ -1810,6 +1810,28 @@ input[type="range"]:focus::-ms-fill-upper {
 .image-viewer-window img {
   max-width: 1000px;
   max-height: 80vh;
+}
+
+.connection-options-list {
+  margin-top: 1rem;
+  max-width: 350px;
+}
+
+.connection-options-list ul {
+  list-style-type: none;
+}
+
+.connection-options-list ul li {
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.connection-options-list ul li li + li {
+  margin-top: 0.5rem;
+}
+
+.connection-options-list ul li:hover {
+  background-color: rgba(254, 254, 254, 0.3);
 }
 
 :root {
