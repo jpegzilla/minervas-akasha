@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { globalContext } from "./../App";
 
 import { WindowTypes } from "./WindowTypes";
+import { Notes } from "./elements/Notes";
 
 export const Window = props => {
   const {
