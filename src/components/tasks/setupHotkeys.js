@@ -12,9 +12,5 @@ export default () => {
     console.log("hotkey working!");
   });
 
-  const sound = new cheatcode("a", () => {
-    m.play("key");
-  });
-
-  [testHotkey, sound].forEach(c => c.start());
+  [testHotkey].forEach(c => c.start());
 };
