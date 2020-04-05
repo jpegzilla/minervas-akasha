@@ -1,7 +1,7 @@
 # DeviceKey
 
 -   feature name: `DeviceKey` class
--   start date: 12.2.2020
+-   start date: 2020.02.12
 -   source location: `/src/utils/managers/DeviceKey.js`
 
 ## summary

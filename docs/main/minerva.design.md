@@ -1,7 +1,7 @@
 # Minerva
 
 -   feature name: `Minerva` class
--   start date: 7.2.2020
+-   start date: 2020.02.07
 -   source location: `/src/utils/managers/MinervaInstance.js`
 
 ## summary

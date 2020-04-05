@@ -2,7 +2,7 @@
 [minerva-voice]: #minerva-voice
 
 -   feature name: minerva voice
--   start date: 25.3.2020
+-   start date: 2020.03.25
 -   source location: `/src/utils/managers/MinervaVoice.js`
 
 ## summary

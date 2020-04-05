@@ -4,8 +4,8 @@
 
 ## minerva performance issues when loading multiple large files
 
--   *logged on 20 / 3 / 2020*
--   *marked as solved on 20 / 3 / 2020*
+-   *logged on 2020.03.20*
+-   *marked as solved on 2020.03.20*
 
 minerva's ui becomes noticeably slow when a large amount of space is being taken up by files in memory (~50mb). closing datastructures (and thereby removing the large files from the render) restores normal performance.
 
@@ -17,8 +17,8 @@ I am currently loading the files &mdash; such as images, videos, and audio &mdas
 
 ## minerva performace issues when decompressing base64 strings / creating object urls
 
--   *logged on 20 / 3 / 2020*
--   *marked as solved on 21 / 3 / 2020*
+-   *logged on 2020.03.20*
+-   *marked as solved on 2020.03.21*
 
 when loading large files, the main thread waits for a worker to decompress the compressed data that's stored in the database. or, it has to wait to convert a base64 string into an object url. this causes the ui to be completely non-interactible for however long it takes to load the file.
 
@@ -28,8 +28,8 @@ when loading large files, the main thread waits for a worker to decompress the c
 
 ## the imageviewer component is slow
 
--   *logged on 28 / 3 / 2020*
--   *marked as solved on 1 / 4 / 2020*
+-   *logged on 2020.03.28*
+-   *marked as solved on 2020.04.01*
 
 the imageviewer component is slow  because it has to store a base64 encoded image in its state currently to prevent itself from losing the reference to the original image in the datastructure that it was opened from. this could be solved by telling the imageviewer to find the correct datastructure and get the image from it every time the application loads.
 
