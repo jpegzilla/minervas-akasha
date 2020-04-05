@@ -30,7 +30,7 @@ includes data reflection (the ability to separate but connect collections of dat
 _if you want to see more detailed information, dig into `./docs/main` and read the design docs._
 
 ## running
-[#running]: #running
+[#running]: running
 
 built with react / `create-react-app`.
 
@@ -39,7 +39,7 @@ built with react / `create-react-app`.
 3.  there you go
 
 ## features:
-[#features]: #features
+[#features]: features
 
 -   drag and drop functionality allows you to add any file of any type to a record to be prepared for research
 
@@ -52,7 +52,7 @@ built with react / `create-react-app`.
 -   minerva system tracks and takes care of all the heavy lifting of data organization.
 
 ## screenshots / recordings
-[#screenshots]: #screenshots
+[#screenshots]: screenshots
 
 ![the login screen.](./docs/images/login-screen.png "the login screen.")
 
@@ -61,7 +61,7 @@ built with react / `create-react-app`.
 ![some more windows on the desktop.](./docs/images/more-windows.png "some more windows on the desktop.")
 
 ## contributing:
-[#contributing]: #contributing
+[#contributing]: contributing
 
 minerva's akasha is very well commented and soon to be very well documented. I aim to make it extremely easy to create additions / modifications to this application (given you know javascript / sass / html). once this software reaches beta, I hope that some people will develop useful additions / plugins for it.
 
@@ -87,8 +87,8 @@ _\~ more contribution info coming soon\~_
 
 
 
-### current issues that I don't know how to fix:
-[#issues]: #issues
+## current issues that I don't know how to fix:
+[#issues]: issues
 
 -   dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
 
