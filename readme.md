@@ -38,7 +38,7 @@ built with react / `create-react-app`.
 2.  in your clone, run `npm i` and `npm start`
 3.  there you go
 
-<a id="features"></a>
+<a name="features"></a>
 ## features:
 
 -   drag and drop functionality allows you to add any file of any type to a record to be prepared for research
@@ -51,7 +51,7 @@ built with react / `create-react-app`.
 
 -   minerva system tracks and takes care of all the heavy lifting of data organization.
 
-<a id="screenshots"></a>
+<a name="screenshots"></a>
 ## screenshots:
 
 ![the login screen.](./docs/images/login-screen.png "the login screen.")
@@ -60,7 +60,7 @@ built with react / `create-react-app`.
 
 ![some more windows on the desktop.](./docs/images/more-windows.png "some more windows on the desktop.")
 
-<a id="contributing"></a>
+<a name="contributing"></a>
 ## contributing:
 
 minerva's akasha is very well commented and soon to be very well documented. I aim to make it extremely easy to create additions / modifications to this application (given you know javascript / sass / html). once this software reaches beta, I hope that some people will develop useful additions / plugins for it.
@@ -87,7 +87,7 @@ _\~ more contribution info coming soon\~_
 
 
 
-<a id="issues"></a>
+<a name="issues"></a>
 ## current issues that I don't know how to fix:
 
 -   dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
