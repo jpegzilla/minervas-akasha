@@ -10,5 +10,7 @@ assignees: jpegzilla
 **describe the problem to be solved**
 new features should solve problems. tell me what problem this feature will solve.
 
+also, please take a look at the **contributing** section of the readme if you think you could implement this feature on your own.
+
 **describe the feature**
 a clear and concise description of what the feature will do. add as much detail as you can. include pros / cons, technical implementation details (if you know what would be involved), and any other information you think would be useful.
