@@ -5,21 +5,18 @@
 -   source location: `/src/utils/managers/MinervaInstance.js`
 
 ## summary
-[summary]: #summary
 
 `Minerva` is a class designed for managing everything that goes on within the application &mdash; logging users in and out, managing records, and controlling the general state of the application.
 
 *this is an ongoing design document, because `Minerva` is yet in an incomplete state.*
 
 ## motivation
-[motivation]: #motivation
 
 `Minerva` is a critical piece of infrastructure that allows the application to communicate with other interfaces &mdash; such as the remote database, the indexedDB database, and localStorage.
 
 the main reason for its creation is to abstract away database and storage communication.
 
 ## explanation
-[explanation]: #explanation
 
 interacts with: `AkashicRecord`, `DatabaseInterface`, `Structure`
 
@@ -46,12 +43,10 @@ not currently used, as `Minerva`'s akasha is local-first to mimic a native appli
 in the future, inter-user communication will be implemented, as well as the ability to easily transfer local data between devices, necessitating a database to store user information. currently, [`Minerva`'s servant](https://github.com/jpegzilla/`Minerva`-servant) is serving as the api for interacting with that database.  
 
 ## drawbacks
-[drawbacks]: #drawbacks
 
 `Minerva` is somewhat complicated by design and by necessity.
 
 ## unresolved questions
-[unresolved-questions]: #unresolved-questions
 
 -   will `Minerva` be used to manage webrtc communication?
 -   will `Minerva` be used to communicate with web workers?
