@@ -21,8 +21,11 @@ what you expected to happen.
 add screenshots to help explain your problem if you'd like
 
 **desktop (please complete the following information):**
- - os:
- - browser (with version / build number):
+-   os:
+-   browser (with version / build number):
+
+**minerva's akasha settings**
+tell me what your minerva settings are (in the settings menu on the main desktop)
 
 **additional information**
 put any other context about the problem here.
