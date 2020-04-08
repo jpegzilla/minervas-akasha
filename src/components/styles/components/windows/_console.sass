@@ -12,6 +12,9 @@ $consolebackground: $darkblue
   border-radius: 2px
   background-color: transparentize($consolebackground, 0.2)
 
+  .console-header
+    margin-bottom: 0
+
   $w: 40vw
   $h: 40vh
 
@@ -23,13 +26,15 @@ $consolebackground: $darkblue
   flex-direction: column
 
   .console-text
+    margin-top: 1rem
     flex-grow: 1
+    flex-basis: 30vh
     color: $color
     padding: 1rem
     display: flex
     flex-direction: column
-    overflow-y: auto
     position: relative
+    overflow-y: scroll
     scrollbar-width: none
     overflow: -moz-scrollbars-none
     -ms-overflow-style: none
@@ -37,8 +42,16 @@ $consolebackground: $darkblue
     div
       text-overflow: ellipsis
 
+    pre
+      font-family: $font
+      line-height: 1.4
+      margin-left: 1rem
+
     &::-webkit-scrollbar
       display: none
+
+  .console-response + div
+    margin-top: 1rem
 
   .console-input
     +flexcenter(true)
