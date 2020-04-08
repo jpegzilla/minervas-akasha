@@ -105,7 +105,7 @@ export const Taskbar = props => {
   const [menuItems, setMenuItems] = useState([
     {
       title: "log out",
-      onClick: (_e, _item) => {
+      onClick: () => {
         audiomanager.play("c_one");
 
         minerva.logout(minerva.user);
@@ -116,7 +116,25 @@ export const Taskbar = props => {
     },
     {
       title: "open record viewer",
-      onClick: (_e, _item) => {
+      onClick: () => {
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity);
+
+          console.log(allWindows);
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          );
+
+          return windowToFind || false;
+        };
+
+        let finalPosition = 100;
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10;
+        }
+
         const newRecordViewer = {
           title: "record viewer",
           state: "restored",
@@ -126,8 +144,8 @@ export const Taskbar = props => {
           component: "RecordViewer",
           componentProps: {},
           position: {
-            x: 100,
-            y: 100
+            x: finalPosition,
+            y: finalPosition
           }
         };
 
@@ -137,15 +155,33 @@ export const Taskbar = props => {
       }
     },
     {
-      title: "add new athenaeum",
-      onClick: (_e, _item) => {
-        addStructure("athenaeum");
+      title: "add new shard",
+      onClick: () => {
+        addStructure("shard");
       },
-      tooltip: "add a new structure."
+      tooltip: "add a new shard."
     },
     {
       title: "open console",
-      onClick: (_e, _item) => {
+      onClick: () => {
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity);
+
+          console.log(allWindows);
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          );
+
+          return windowToFind || false;
+        };
+
+        let finalPosition = 100;
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10;
+        }
+
         const newConsole = {
           title: "console",
           state: "restored",
@@ -157,8 +193,8 @@ export const Taskbar = props => {
           belongsTo: minerva.user.id,
           id: uuidv4(),
           position: {
-            x: 100,
-            y: 100
+            x: finalPosition,
+            y: finalPosition
           }
         };
 
@@ -167,6 +203,28 @@ export const Taskbar = props => {
         setWindows([...minerva.windows]);
       },
       tooltip: "open a command console."
+    },
+    {
+      title: "submit feedback",
+      onClick: () => {
+        // const link = document.createElement("a");
+        // link.href =
+        //   "https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D";
+        // link.target = "_blank";
+        // link.click();
+      },
+      tooltip: "submit feedback about minerva's akasha."
+    },
+    {
+      title: "submit bug report",
+      onClick: () => {
+        const link = document.createElement("a");
+        link.href =
+          "https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D";
+        link.target = "_blank";
+        link.click();
+      },
+      tooltip: "submit a bug report about minerva's akasha."
     }
   ]);
 
@@ -179,7 +237,7 @@ export const Taskbar = props => {
   ].map(title => {
     return {
       title,
-      onClick: (_e, _item, _id) => {
+      onClick: () => {
         const type = title.split("+ ")[1];
         addStructure(type);
       }
@@ -231,12 +289,12 @@ export const Taskbar = props => {
             {/* actual menu items */}
             <div className="menu-container-items">
               <ul>
-                {menuItems.map((i, idx) => {
+                {menuItems.map(i => {
                   return (
                     <li
                       onClick={
                         i.onClick
-                          ? e => i.onClick(e, i)
+                          ? () => i.onClick()
                           : () => {
                               console.log("clicked on", i);
                               throw new Error("clicked on nonexistent option");
@@ -273,7 +331,7 @@ export const Taskbar = props => {
               const id = uuidv4();
 
               return (
-                <li onClick={e => item.onClick(e, item, id)} key={id}>
+                <li onClick={() => item.onClick()} key={id}>
                   {item.title}
                 </li>
               );

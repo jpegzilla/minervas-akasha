@@ -26,6 +26,24 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
   if (!type || !id || !minerva || !uuidv4 || typeof uuidv4 !== "function")
     throw new Error("missing arguments to makeStruct.");
 
+  const findWindowAtPosition = xy => {
+    const allWindows = Object.values(minerva.windows).flat(Infinity);
+
+    console.log(allWindows);
+
+    const windowToFind = allWindows.find(
+      item => item.position.x === xy && item.position.y === xy
+    );
+
+    return windowToFind || false;
+  };
+
+  let finalPosition = 100;
+
+  while (findWindowAtPosition(finalPosition)) {
+    finalPosition += 10;
+  }
+
   return {
     title: "datastructure",
     state: "restored",
@@ -39,8 +57,8 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
     belongsTo: minerva.user.id,
     id: uuidv4(),
     position: {
-      x: 100,
-      y: 100
+      x: finalPosition,
+      y: finalPosition
     }
   };
 };
