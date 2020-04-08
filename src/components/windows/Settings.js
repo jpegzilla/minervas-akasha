@@ -109,7 +109,9 @@ export const Settings = props => {
             htmlFor="connection-settings-off"
           >
             <span className="checkbox-settings-label">
-              {settings.connections ? "connections on" : "connections off"}
+              {settings.connections
+                ? "offworld connections on"
+                : "offworld connections off"}
             </span>
             <span
               className={`${
@@ -156,7 +158,6 @@ export const Settings = props => {
             </span>
             <input
               onChange={() => {
-                console.log(settings);
                 setSettings({
                   ...settings,
                   autoplayMedia: !settings.autoplayMedia
@@ -225,7 +226,6 @@ export const Settings = props => {
             </span>
             <input
               onChange={() => {
-                console.log(settings);
                 setSettings({
                   ...settings,
                   filters: {
