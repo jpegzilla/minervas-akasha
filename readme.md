@@ -54,11 +54,7 @@ built with react / `create-react-app`.
 <a name="screenshots"></a>
 ## screenshots:
 
-![the login screen.](./docs/images/login-screen.png "the login screen.")
-
-![some windows on the desktop.](./docs/images/bunch-of-images.png "some windows on the desktop.")
-
-![some more windows on the desktop.](./docs/images/more-windows.png "some more windows on the desktop.")
+I'm currently redoing the ui design. so, screenshots will be prepared accordingly. of course, I have retained old screenshots for archival purposes. please look at `/docs/archival` for the old screenshots.
 
 <a name="contributing"></a>
 ## contributing:
