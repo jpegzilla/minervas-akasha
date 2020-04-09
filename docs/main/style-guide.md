@@ -7,7 +7,6 @@ do not use uppercase letters. exceptions:
 -   class names
 -   special constant names ('true' constants like mathematical constants, component names that have to be uppercase in react, etc.)
 -   words after the first word in a camel-cased variable name
--   function names that have to be uppercase (like react's function components)
 
 ok:
 ```javascript
