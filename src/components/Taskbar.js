@@ -19,13 +19,13 @@ import { Tab } from "./windows/elements/Tab";
 
 import PropTypes from "prop-types";
 
-// let timeouts = [];
+let timeouts = [];
 
-// const clearAll = () => {
-//   for (let i = 0; i < timeouts.length; i++) {
-//     clearTimeout(timeouts[i]);
-//   }
-// };
+const clearAll = () => {
+  for (let i = 0; i < timeouts.length; i++) {
+    clearTimeout(timeouts[i]);
+  }
+};
 
 export const Taskbar = props => {
   const {
@@ -55,12 +55,14 @@ export const Taskbar = props => {
     [addMenuOpen, setMenuOpen]
   );
 
-  // const t = () => {
-  //   setStatusText("");
-  //   setStatusMessage({ display: false, text: "", type: null });
-  // };
+  const t = () => {
+    setStatusText("");
+    setStatusMessage({ display: false, text: "", type: null });
+  };
 
-  const { audiomanager, minerva } = useContext(globalContext);
+  const { audiomanager, minerva, setStatusMessage, setStatusText } = useContext(
+    globalContext
+  );
 
   const [logout, setLogout] = useState(false);
 
@@ -102,7 +104,10 @@ export const Taskbar = props => {
     setAddMenuOpen(!addMenuOpen);
   };
 
-  const [menuItems, setMenuItems] = useState([
+  const [
+    menuItems
+    // setMenuItems
+  ] = useState([
     {
       title: "log out",
       onClick: () => {
@@ -216,6 +221,23 @@ export const Taskbar = props => {
       tooltip: "submit feedback about minerva's akasha."
     },
     {
+      title: "export user data",
+      onClick: () => {
+        setStatusMessage({
+          display: true,
+          text:
+            "it may take a while to export your records. please wait warmly.",
+          type: "success"
+        });
+
+        clearAll();
+        timeouts.push(setTimeout(t, 10000));
+
+        minerva.exportDataToJsonFile();
+      },
+      tooltip: "export all user data for the currently logged in user."
+    },
+    {
       title: "submit bug report",
       onClick: () => {
         const link = document.createElement("a");
@@ -244,7 +266,7 @@ export const Taskbar = props => {
     };
   });
 
-  const [addItemsList, setAddItemsList] = useState([...addMenuItems]);
+  const [addItemsList] = useState([...addMenuItems]);
 
   useEffect(
     () => {
