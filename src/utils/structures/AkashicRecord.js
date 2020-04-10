@@ -237,6 +237,7 @@ export default class AkashicRecord {
   static retrieveAkashicRecord(userId, name, dbObject, database = false) {
     if (database) {
       // retreive record for user with name from database
+      console.log("retrieving record using database interface:", dbObject);
     } else {
       // retrieve from localStorage
       const user = JSON.parse(Minerva._store[name]);
