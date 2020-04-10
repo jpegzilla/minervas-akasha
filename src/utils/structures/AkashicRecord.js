@@ -52,7 +52,16 @@ export default class AkashicRecord {
   }
 
   // mainly for development purposes. empties all records.
-  resetRecords() {
+  resetRecords(minerva) {
+    // just needs id, type, minerva
+    Object.entries(this.records).forEach(([k, v]) => {
+      const type = k;
+
+      v.forEach(item => {
+        this.removeFromRecord(item.id, type, minerva);
+      });
+    });
+
     this.records = {
       hypostasis: [],
       athenaeum: [],
