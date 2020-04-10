@@ -4,6 +4,7 @@ import { uuidv4, validateUUIDv4 } from "./../misc";
 import { naturalDate } from "./../dateUtils";
 
 import worker from "./workers/compressionWorker.worker";
+import exportWorker from "./workers/exportWorker.worker";
 
 const workerInstance = worker();
 
@@ -377,6 +378,109 @@ export class Minerva {
     this.settings = settings;
     this.save();
   }
+
+  exportDataToJsonFile() {
+    const t1 = performance.now();
+
+    const mStore = MinervaArchive.get("minerva_store");
+    const userStore = MinervaArchive.get(this.user.name);
+    const db = this.indexedDB;
+
+    const transaction = db.transaction(["minerva_files"], "readonly");
+
+    const objectStore = transaction.objectStore("minerva_files");
+
+    // promise that resolves when all values are retrieved from db
+    const promiseVals = new Promise((resolve, reject) => {
+      const reqVals = objectStore.getAll();
+
+      reqVals.onsuccess = e => {
+        resolve({ values: e.target.result });
+      };
+
+      reqVals.onerror = err => void reject({ status: "failure", err });
+    });
+
+    // promise that resolves when all keys are retrieved from db
+    const promiseKeys = new Promise((resolve, reject) => {
+      const reqKeys = objectStore.getAllKeys();
+
+      reqKeys.onsuccess = e => {
+        resolve({ keys: e.target.result });
+      };
+
+      reqKeys.onerror = err => void reject({ status: "failure", err });
+    });
+
+    return new Promise((resolveAll, rejectWithError) => {
+      // wait for all values to be retrieved...
+      Promise.all([promiseVals, promiseKeys])
+        .then(result => {
+          const res = {};
+          const toExport = {};
+
+          result.forEach(item => {
+            if ("keys" in item) res.keys = item["keys"];
+            if ("values" in item) res.values = item["values"];
+          });
+
+          res.values.forEach(item => {
+            if (res.keys.includes(item.id)) toExport[item.id] = item;
+            else
+              rejectWithError(
+                new Error({
+                  message:
+                    "malformed indexedDB object encountered. you should literally never ever see this error.",
+                  items: res
+                })
+              );
+          });
+
+          const workerInstance = new exportWorker();
+
+          workerInstance.postMessage({ data: toExport, action: "stringify" });
+
+          workerInstance.addEventListener("message", e => {
+            const exportObject = {
+              minerva_file_header: Minerva.fileHeader,
+              minerva_store: mStore,
+              [`${this.user.name}${this.user.id}`]: userStore,
+              minerva_db: e.data.minerva_db
+            };
+
+            const finalStringifyWorker = new exportWorker();
+
+            finalStringifyWorker.postMessage({
+              data: exportObject,
+              action: "stringifyandblob"
+            });
+
+            finalStringifyWorker.addEventListener("message", e => {
+              const dataUrl = e.data;
+
+              const dlLink = document.createElement("a");
+              dlLink.href = dataUrl;
+              dlLink.download = `${
+                this.user.name
+              }${new Date().toISOString()}.json`;
+              dlLink.rel = "noopener noreferrer";
+
+              dlLink.click();
+
+              const t2 = performance.now();
+
+              console.log(`exportDataToJsonFile took ${t2 - t1}ms.`);
+              resolveAll({ status: "success", link: e });
+            });
+          });
+        })
+        .catch(err => {
+          console.log("error in catch in exportDataToJsonFile", err);
+        });
+    });
+  }
+
+  importDataFromJsonFile() {}
 
   resetRecords() {
     this.record.resetRecords(this);
