@@ -1,3 +1,5 @@
+/* eslint react-hooks/exhaustive-deps: off */
+
 import React, {
   useEffect,
   useRef,
