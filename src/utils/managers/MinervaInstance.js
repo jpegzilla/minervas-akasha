@@ -652,31 +652,37 @@ export class Minerva {
     if (compress) {
       return new Promise((resolve, reject) => {
         // compress file before storing
-        this.lzCompress(file.data).then(res => {
-          // take this.records and store them in the database
-          const transaction = this.indexedDB.transaction(
-            ["minerva_files"],
-            "readwrite"
-          );
+        this.lzCompress(file.data)
+          .then(res => {
+            // take this.records and store them in the database
+            const transaction = this.indexedDB.transaction(
+              ["minerva_files"],
+              "readwrite"
+            );
 
-          const { type } = structure;
+            const { type } = structure;
 
-          const objectStore = transaction.objectStore("minerva_files");
+            const objectStore = transaction.objectStore("minerva_files");
 
-          const req = objectStore.put({
-            id,
-            userId: this.user.id,
-            file: { ...file, data: res },
-            type,
-            fileType: "audio",
-            compressed: "lzutf8"
+            const req = objectStore.put({
+              id,
+              userId: this.user.id,
+              file: { ...file, data: res },
+              type,
+              fileType: "audio",
+              compressed: "lzutf8"
+            });
+
+            req.onsuccess = () => {
+              resolve();
+              this.updateIndexedDBUpdatedTimestamp();
+            };
+          })
+          .catch(err => {
+            console.log("error in lzCompress:", err);
+
+            reject({ status: "failure", message: err });
           });
-
-          req.onsuccess = () => {
-            resolve();
-            this.updateIndexedDBUpdatedTimestamp();
-          };
-        });
       });
     } else {
       // otherwise just store immediately
