@@ -1,3 +1,5 @@
+/* eslint react-hooks/exhaustive-deps: off */
+
 import React, { useState, useEffect, useContext } from "react";
 
 import { globalContext } from "./../App";
