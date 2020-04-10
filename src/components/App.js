@@ -111,6 +111,8 @@ export const App = () => {
     type: null
   });
 
+  const [renderConList, setRenderConList] = useState();
+
   // context menu stuff
   const contextMenuElem = useRef(null);
 
@@ -195,7 +197,9 @@ export const App = () => {
             setLoggedIn,
             globalVolume,
             setGlobalVolume,
-            resetStatusText
+            resetStatusText,
+            renderConList,
+            setRenderConList
           }}
         >
           <Router>
