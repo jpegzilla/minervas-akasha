@@ -128,6 +128,8 @@ export class Minerva {
     this.indexedDBUpdated = new Date().toISOString();
   }
 
+  static fileHeader = "minervas_akasha_alpha";
+
   // this is the single source of truth for the default application settings
   static get defaultSettings() {
     return {
