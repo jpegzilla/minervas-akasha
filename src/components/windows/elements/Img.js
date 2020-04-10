@@ -86,6 +86,22 @@ const Img = props => {
       if (typeof message.data === "string") {
         const id = uuidv4();
 
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity);
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          );
+
+          return windowToFind || false;
+        };
+
+        let finalPosition = 100;
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10;
+        }
+
         const newImageViewer = {
           title: `image viewer - ${humanSize} [${mime}] image.`,
           state: "restored",
@@ -100,8 +116,8 @@ const Img = props => {
           belongsTo: minerva.user.id,
           id,
           position: {
-            x: 100,
-            y: 100
+            x: finalPosition,
+            y: finalPosition
           }
         };
 
