@@ -13,13 +13,15 @@ import Tag from "./elements/Tag";
 import Video from "./elements/Video";
 import { StructureData } from "./elements/StructureData";
 
-import { bytesToSize } from "./../../utils/misc";
+import { bytesToSize, uuidv4 } from "./../../utils/misc";
 import PropTypes from "prop-types";
 
 import StructureMap, {
   StructureDescriptions
 } from "./../../utils/managers/StructureMap";
 import ColorCodes from "../../utils/structures/utils/colorcodes";
+
+import { ConnectionList } from "./elements/ConnectionList";
 
 import { globalContext } from "./../App";
 
@@ -115,13 +117,12 @@ const DataStructureComponent = props => {
       const structToAdd = new Struct(type, {
         tags: [],
         id: structId,
-        connectedTo: [],
+        connectedTo: {},
         colorCode: new Struct().colorCode,
         accepts: new Struct().accepts,
+        connectsTo: new Struct().connectsTo,
         belongsTo: minerva.user.id
       });
-
-      console.log(structToAdd);
 
       minerva.addToRecord(structId, structToAdd);
 
@@ -448,13 +449,62 @@ const DataStructureComponent = props => {
   };
 
   // when the user wants to connect a record to another one
+  const [makingConnection, setMakingConnection] = useState(false);
+  const [makingDisconnection, setMakingDisconnection] = useState(false);
+  const [connectionOptions, setConnectionOptions] = useState(false);
+  const [disconnectionOptions, setDisconnectionOptions] = useState(false);
+  const [render, setRender] = useState(() => {});
+
+  // handle connecting a record to another record.
   const handleConnectRecord = () => {
-    console.log("connecting record...");
+    // find out what the record can actually connect to. all connections are bidirectional
+    const canConnectTo = new StructureMap[type]().connectsTo;
+
+    // find all the possible connections, meaning find every structure that this structure
+    // 1. can connect to, as defined above
+    // 2. is not already connected to.
+    const possibleConnections = minerva.record.records[canConnectTo].filter(
+      item => {
+        if (Object.values(item.connectedTo).includes(structId)) return false;
+        else return true;
+      }
+    );
+
+    console.log(
+      `current list of possible connections for ${structId}`,
+      possibleConnections
+    );
+
+    // set the ui to indicate that a connection can be made
+    setMakingConnection(!makingConnection);
+
+    // hide the disconnection menu if it's showing
+    setMakingDisconnection(false);
+
+    // set the list of connection options as determined above.
+    setConnectionOptions(possibleConnections);
   };
 
-  // when a user wants to disconnect a record from its parent
+  // when a user wants to disconnect a record from its parent.
   const handleDisconnectRecord = () => {
-    console.log("disconnecting record...");
+    // find the "parent" of this child, or the structure that it's connected to.
+    // then, get the connectedTo array associated with that structure. this contains
+    // the ids of the structures that can be disconnected.
+    const currentRecord = minerva.record.records[type].find(
+      r => r.id === structId
+    );
+
+    // find what the record is connected to
+    const possibleDisconnections = currentRecord.connectedTo;
+
+    // set the ui to indicate that a disconnection can be made
+    setMakingDisconnection(!makingDisconnection);
+
+    // hide the connection ui if it's showing
+    setMakingConnection(false);
+
+    // set the disconnections array to the possible disconnection options.
+    setDisconnectionOptions(possibleDisconnections);
   };
 
   // when user clicks confirm or deny, this is the function that handles the choice
@@ -738,6 +788,11 @@ const DataStructureComponent = props => {
           MetadataDisplay={MetadataDisplay}
           metadata={metadata}
           setMetadataDisplay={setMetadataDisplay}
+          type={type}
+          structId={structId}
+          connectionOptions={connectionOptions}
+          disconnectionOptions={disconnectionOptions}
+          render={render}
         />
       </section>
 
@@ -782,14 +837,31 @@ const DataStructureComponent = props => {
         </div>
 
         <div>
-          <button className="connect-button" onClick={handleConnectRecord}>
-            connect record
-          </button>
+          {type !== "hypostasis" && (
+            <button className="connect-button" onClick={handleConnectRecord}>
+              connect record
+            </button>
+          )}
+
           <button className="connect-button" onClick={handleDisconnectRecord}>
             disconnect record
           </button>
         </div>
       </section>
+
+      {(makingConnection || makingDisconnection) && (
+        <ConnectionList
+          connectsTo={new StructureMap[type]().connectsTo}
+          structId={structId}
+          connectionOptions={connectionOptions}
+          disconnectionOptions={disconnectionOptions}
+          setDisconnectionOptions={setDisconnectionOptions}
+          setConnectionOptions={setConnectionOptions}
+          makingConnection={makingConnection}
+          setRender={setRender}
+          uuidv4={uuidv4}
+        />
+      )}
     </div>
   );
 };

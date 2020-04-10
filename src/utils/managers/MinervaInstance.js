@@ -2,7 +2,8 @@ import AkashicRecord from "./../structures/AkashicRecord";
 import DatabaseInterface from "./Database";
 import { uuidv4, validateUUIDv4 } from "./../misc";
 import { naturalDate } from "./../dateUtils";
-import worker from "workerize-loader!./workers/compressionWorker"; // eslint-disable-line import/no-webpack-loader-syntax
+
+import worker from "./workers/compressionWorker.worker";
 
 const workerInstance = worker();
 
@@ -141,18 +142,29 @@ export class Minerva {
       filters: {
         crt: true,
         noise: false
-      } // enables / disables graphical filters.
+      }, // enables / disables graphical filters.
+      dateFormat: "ja-JP" // for formatting dates / times
     };
   }
 
-  // used to update the record's last update date
+  /**
+   * updateIndexedDBUpdatedTimestamp - used to update the record's last update date
+   *
+   * @returns {AkashicRecord} the current akashic record
+   */
   updateIndexedDBUpdatedTimestamp() {
     this.indexedDBUpdated = new Date().toISOString();
   }
 
-  // used to update indexeddb's last update date
+  /**
+   * updateRecordUpdatedTimeStamp - used to update indexeddb's last update date
+   *
+   * @returns {AkashicRecord} the current akashic record
+   */
   updateRecordUpdatedTimeStamp() {
     this.recordUpdated = new Date().toISOString();
+
+    return this.record;
   }
 
   /**
@@ -161,7 +173,7 @@ export class Minerva {
    * @param {string} id           unique id for the structure.
    * @param {Structure} structure structure to add.
    *
-   * @returns {undefined} void
+   * @returns {AkashicRecord} the current akashic record
    */
   addToRecord(id, structure) {
     if (!id || !validateUUIDv4(id) || !structure)
@@ -170,6 +182,8 @@ export class Minerva {
     this.updateRecordUpdatedTimeStamp();
     this.record.addToRecord(id, structure, this);
     this.save();
+
+    return this.record;
   }
 
   /**
@@ -179,7 +193,7 @@ export class Minerva {
    * initiation, in the DataStructure component.
    * @param {Structure} type type of structure to remove.
    *
-   * @returns {undefined} void
+   * @returns {AkashicRecord} the current akashic record
    */
   removeFromRecord(id, type) {
     if (!id || !validateUUIDv4(id) || !type)
@@ -188,6 +202,8 @@ export class Minerva {
     this.updateRecordUpdatedTimeStamp();
     this.record.removeFromRecord(id, type, this);
     this.save();
+
+    return this.record;
   }
 
   /**
@@ -197,7 +213,7 @@ export class Minerva {
    * @param {string} type type of record to edit
    * @param {object} data data to give to the record
    *
-   * @returns {Minerva} current instance of minerva
+   * @returns {AkashicRecord} the current akashic record
    */
   editInRecord(id, type, key, value) {
     if (!key || !validateUUIDv4(id) || !type || !value)
@@ -206,6 +222,136 @@ export class Minerva {
     this.updateRecordUpdatedTimeStamp();
     this.record.editInRecord(id, type, key, value, this);
     this.save();
+
+    return this.record;
+  }
+
+  /**
+   * connectRecord - connect one record (bidirectionally) to another.
+   *
+   * @param {object} item        record to connect.
+   * @param {object} destination record to connect to
+   *
+   * @returns {AkashicRecord} the current akashic record
+   */
+  connectRecord(item, destination) {
+    const destType = destination.type;
+    const itemType = item.type;
+
+    item.connectedTo[destination.id] = destination.id;
+    destination.connectedTo[item.id] = item.id;
+
+    // add the newly connected record to the records of item's type
+    const newItemTypeRecords = this.record.records[itemType].map(r => {
+      return r.id === item.id ? item : r;
+    });
+
+    // add the newly connected record to the records of destination's type
+    const newDestTypeRecords = this.record.records[destType].map(r => {
+      return r.id === destination.id ? destination : r;
+    });
+
+    this.record.records[itemType] = newItemTypeRecords;
+    this.record.records[destType] = newDestTypeRecords;
+
+    // if the current record is an athenaeum, a few extra steps must be handled here.
+    if (destType === "hypostasis") {
+      console.log(
+        "the destination is a hypostasis! make sure that the connection is handled correctly."
+      );
+    }
+
+    console.log(this.record.records);
+
+    this.save();
+
+    console.log("record after connection", this.record.records);
+
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
+
+    this.updateRecordUpdatedTimeStamp();
+
+    return this.record;
+  }
+
+  /**
+   * disconnectFromAll - disconnect the record with the provided id from all records
+   * to which it is connected.
+   *
+   * @param {string} id uuid of structure to be deleted
+   *
+   * @returns {AkashicRecord} the current akashic record
+   */
+  disconnectFromAll(id) {
+    console.log("id to disconnect from all", id);
+    console.log("current state of records", this.record.records);
+
+    const record = this.record.findRecordById(id);
+
+    console.log("record to disconnect from all", record);
+
+    // delete every entry for the specified id in every records connections object
+    Object.entries(this.record.records).forEach(([_, v]) => {
+      v.forEach(item => delete item.connectedTo[id]);
+    });
+
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
+
+    return this.record;
+  }
+
+  /**
+   * disconnectRecord - disconnect a record from another specific record.
+   *
+   * @param {object} item        the record to be disconnected (the 'child' record)
+   * @param {object} destination the record to be disconnected from (the 'parent' record)
+   *
+   * @returns {AkashicRecord} the current akashic record
+   */
+  disconnectRecord(item, destination) {
+    const destType = destination.type;
+    const itemType = item.type;
+
+    const newItemTypeRecords = this.record.records[itemType].map(record => {
+      // if this is the item I'm trying to disconnect, delete the
+      // corresponding connectedTo entry
+      if (record.id === item.id) {
+        const r = record;
+        delete r.connectedTo[destination.id];
+
+        return r;
+      }
+      return record;
+    });
+
+    // do the same thing as above, but in the other 'direction'
+    const newDestTypeRecords = this.record.records[destType].map(record => {
+      if (record.id === destination.id) {
+        const r = record;
+        delete r.connectedTo[item.id];
+
+        return r;
+      }
+      return record;
+    });
+
+    // set the records of the correct types to the newly formed arrays
+    this.record.records[itemType] = newItemTypeRecords;
+    this.record.records[destType] = newDestTypeRecords;
+
+    this.save();
+
+    console.log("record after disconnection", this.record.records);
+
+    this.updateRecordUpdatedTimeStamp();
+
+    return this.record;
   }
 
   /**
@@ -245,6 +391,15 @@ export class Minerva {
 
   resetRecords() {
     this.record.resetRecords();
+
+    this.windows = this.windows.filter(item => {
+      console.log(item);
+      console.log(item.component.toLowerCase() !== "datastructure");
+      return item.component.toLowerCase() !== "datastructure";
+    });
+
+    this.setApplicationWindows([...this.windows]);
+
     this.save();
   }
 
@@ -598,6 +753,10 @@ export class Minerva {
 
         requestUpdate.onsuccess = event => {
           // success - the data is updated!
+          this.updateUsageData(
+            "structures",
+            Object.values(this.record.records).flat(Infinity).length
+          );
           this.updateIndexedDBUpdatedTimestamp();
           resolve({ status: "success", event });
         };

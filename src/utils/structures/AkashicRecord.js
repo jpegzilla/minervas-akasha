@@ -6,6 +6,7 @@ import { Structure } from "./structure";
 // import { Hypostasis } from "./hypostasis";
 // import { Athenaeum } from "./athenaeum";
 import { Minerva } from "./../managers/MinervaInstance";
+import { validateUUIDv4 } from "./../../utils/misc";
 import DatabaseInterface from "./../managers/Database";
 
 import StructureMap from "./../managers/StructureMap";
@@ -63,16 +64,6 @@ export default class AkashicRecord {
     this.updateDate();
   }
 
-  parseStructures(data) {
-    // parse and reconstruct data by iterating over the json object from localstorage
-    // used to recreate the records in this.records.
-    // this may not be needed.
-
-    for (let [k, v] of Object.entries(data)) {
-      console.log({ key: k, value: v });
-    }
-  }
-
   setBoundTo(userId) {
     this.boundTo = userId;
 
@@ -108,7 +99,8 @@ export default class AkashicRecord {
       accepts,
       belongsTo,
       createdAt,
-      updatedAt
+      updatedAt,
+      connectsTo
     } = structure;
 
     const newTypeRecords = [
@@ -124,11 +116,10 @@ export default class AkashicRecord {
         accepts,
         belongsTo,
         createdAt,
-        updatedAt
+        updatedAt,
+        connectsTo
       }
     ];
-
-    console.log(newTypeRecords);
 
     this.records = { ...this.records, [type]: newTypeRecords };
 
@@ -137,6 +128,26 @@ export default class AkashicRecord {
     this.updateDate();
 
     return this;
+  }
+
+  /**
+   * findRecordById - find a record in akasha using a uuid
+   *
+   * @param {type} id Description
+   *
+   * @returns {type} Description
+   */
+  findRecordById(id) {
+    if (!id || !validateUUIDv4(id))
+      throw new Error(
+        "invalid arguments passed to AkashicRecord.findRecordById"
+      );
+
+    const allRecs = Object.values(this.records).flat(Infinity);
+
+    const found = allRecs.find(o => o.id === id);
+
+    return found;
   }
 
   /**
@@ -152,12 +163,18 @@ export default class AkashicRecord {
     if (!StructureMap[type] instanceof Structure)
       throw new TypeError(`${id} is not a proper structure.`);
 
+    // first, disconnect the record from all the records it's connected to
+    minerva.disconnectFromAll(id);
+
+    // then, remove it from its record array
     const newTypeRecords = this.records[type].filter(item => id !== item.id);
 
     this.records = { ...this.records, [type]: newTypeRecords };
 
+    // remove all files from the record
     minerva.removeFileFromRecord(id).then(() => {
       minerva.record = this;
+      console.log(minerva.record);
       this.updateDate();
     });
   }
@@ -194,15 +211,6 @@ export default class AkashicRecord {
     this.updateDate();
 
     return this;
-  }
-
-  /**
-   * exportRecord - returns the records contained in the current instance.
-   *
-   * @returns {object} returns records object.
-   */
-  exportRecord() {
-    return this.records;
   }
 
   /**

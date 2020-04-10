@@ -44,7 +44,7 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
     finalPosition += 10;
   }
 
-  return {
+  const structObject = {
     title: "datastructure",
     state: "restored",
     stringType: "Window",
@@ -61,6 +61,8 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
       y: finalPosition
     }
   };
+
+  return structObject;
 };
 
 export const StructureDescriptions = {
