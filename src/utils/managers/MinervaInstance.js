@@ -379,7 +379,7 @@ export class Minerva {
   }
 
   resetRecords() {
-    this.record.resetRecords();
+    this.record.resetRecords(this);
 
     this.windows = this.windows.filter(item => {
       return item.component.toLowerCase() !== "datastructure";
