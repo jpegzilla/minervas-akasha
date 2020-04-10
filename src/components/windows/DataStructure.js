@@ -611,7 +611,7 @@ const DataStructureComponent = props => {
     tagRef.current.value = "";
   };
 
-  const removeTag = (tag, idx) => {
+  const removeTag = tag => {
     if (info.tags) {
       const newTags = info.tags.filter(item => item.name !== tag.name);
 
