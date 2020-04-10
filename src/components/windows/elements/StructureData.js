@@ -17,11 +17,10 @@ export const StructureData = props => {
     type,
     structId,
     disconnectionOptions,
-    connectionOptions,
-    render
+    connectionOptions
   } = props;
 
-  const { minerva } = useContext(globalContext);
+  const { minerva, renderConList } = useContext(globalContext);
 
   // if the record is one that can contain records (anything that's not a shard)
   // then find out if there are records attached to it.
@@ -29,34 +28,25 @@ export const StructureData = props => {
 
   useEffect(
     () => {
-      if (type !== "shard") {
-        const record = minerva.record.records[type].find(
-          r => r.id === structId
-        );
+      console.log("records have changed.", structId);
+    },
+    [renderConList]
+  );
 
-        console.log("current selected record:", record);
+  useEffect(
+    () => {
+      const record = minerva.record.records[type].find(r => r.id === structId);
 
-        if (!record) return;
+      if (!record) return;
 
-        const connectedToIds = record.connectedTo;
-        const connectedToObjects = Object.values(minerva.record.records)
-          .flat(Infinity)
-          .filter(item => Object.keys(record.connectedTo).includes(item.id));
+      const connectedToObjects = Object.values(minerva.record.records)
+        .flat(Infinity)
+        .filter(item => Object.keys(record.connectedTo).includes(item.id));
 
-        console.log(
-          `records that this ${type} is connected to:`,
-          connectedToObjects
-        );
-        console.log(
-          `records (ids) that this ${type} is connected to:`,
-          connectedToIds
-        );
-
-        setConnections(connectedToObjects);
-      }
+      setConnections(connectedToObjects);
     },
     [
-      render,
+      renderConList,
       type,
       disconnectionOptions,
       structId,

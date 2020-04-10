@@ -1,6 +1,8 @@
-import React, { Fragment, useState, useContext } from "react";
+import React, { Fragment, useContext } from "react";
 
 import { globalContext } from "./../../App";
+
+import { uuidv4 } from "./../../../utils/misc";
 
 let timeouts = [];
 
@@ -18,15 +20,15 @@ export const ConnectionList = props => {
     connectsTo,
     setDisconnectionOptions,
     setConnectionOptions,
-    makingConnection,
-    uuidv4
+    makingConnection
   } = props;
 
-  const { minerva, setStatusText, setStatusMessage } = useContext(
-    globalContext
-  );
-
-  const allRecords = Object.values(minerva.record.records).flat(Infinity);
+  const {
+    minerva,
+    setStatusText,
+    setStatusMessage,
+    setRenderConList
+  } = useContext(globalContext);
 
   // function that just clears the status message
   const t = () => {
@@ -43,14 +45,6 @@ export const ConnectionList = props => {
     // when you click on the structure to connect the above structure to, that structure
     // is located and assigned to the variable below.
     const connectionDestination = minerva.record.findRecordById(id);
-    console.log("being connected, being connected to:", {
-      id,
-      structId
-    });
-    console.log("record being connected, record being connected to:", {
-      itemToConnect,
-      connectionDestination
-    });
 
     // the result here should be two structure updates. the itemToConnect.connectedTo
     // array should contain id, and the connectionDestination.connectedTo array,
@@ -66,12 +60,6 @@ export const ConnectionList = props => {
       return d.id !== id;
     });
 
-    console.log("possible connections (post connection):", possibleConnections);
-    console.log(
-      "possible disconnections (post connection):",
-      possibleDisconnections
-    );
-
     setDisconnectionOptions(possibleDisconnections);
     setConnectionOptions(possibleConnections);
 
@@ -85,14 +73,13 @@ export const ConnectionList = props => {
 
     clearAll();
     timeouts.push(setTimeout(t, 3000));
+
+    setRenderConList(uuidv4());
   };
 
   const handleDisconnect = id => {
-    console.log(id);
     const itemToDisconnect = minerva.record.findRecordById(structId);
     const disconnectionDestination = minerva.record.findRecordById(id);
-
-    console.log(itemToDisconnect, disconnectionDestination);
 
     minerva.disconnectRecord(itemToDisconnect, disconnectionDestination);
 
@@ -103,9 +90,6 @@ export const ConnectionList = props => {
     const possibleConnections = Object.values(connectionOptions).filter(d => {
       return d.id !== id;
     });
-
-    console.log({ possibleConnections, possibleDisconnections });
-    console.log(minerva.record.records);
 
     setDisconnectionOptions(possibleDisconnections);
     setConnectionOptions(possibleConnections);
@@ -120,6 +104,8 @@ export const ConnectionList = props => {
 
     clearAll();
     timeouts.push(setTimeout(t, 3000));
+
+    setRenderConList(uuidv4());
   };
 
   const handleMouseEnter = id => {};
