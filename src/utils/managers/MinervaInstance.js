@@ -261,11 +261,7 @@ export class Minerva {
       );
     }
 
-    console.log(this.record.records);
-
     this.save();
-
-    console.log("record after connection", this.record.records);
 
     this.updateUsageData(
       "structures",
@@ -286,13 +282,6 @@ export class Minerva {
    * @returns {AkashicRecord} the current akashic record
    */
   disconnectFromAll(id) {
-    console.log("id to disconnect from all", id);
-    console.log("current state of records", this.record.records);
-
-    const record = this.record.findRecordById(id);
-
-    console.log("record to disconnect from all", record);
-
     // delete every entry for the specified id in every records connections object
     Object.entries(this.record.records).forEach(([_, v]) => {
       v.forEach(item => delete item.connectedTo[id]);
@@ -347,8 +336,6 @@ export class Minerva {
 
     this.save();
 
-    console.log("record after disconnection", this.record.records);
-
     this.updateRecordUpdatedTimeStamp();
 
     return this.record;
@@ -393,8 +380,6 @@ export class Minerva {
     this.record.resetRecords();
 
     this.windows = this.windows.filter(item => {
-      console.log(item);
-      console.log(item.component.toLowerCase() !== "datastructure");
       return item.component.toLowerCase() !== "datastructure";
     });
 

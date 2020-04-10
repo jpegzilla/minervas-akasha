@@ -29,8 +29,6 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
   const findWindowAtPosition = xy => {
     const allWindows = Object.values(minerva.windows).flat(Infinity);
 
-    console.log(allWindows);
-
     const windowToFind = allWindows.find(
       item => item.position.x === xy && item.position.y === xy
     );
