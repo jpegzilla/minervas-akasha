@@ -28,13 +28,6 @@ export const StructureData = props => {
 
   useEffect(
     () => {
-      console.log("records have changed.", structId);
-    },
-    [renderConList]
-  );
-
-  useEffect(
-    () => {
       const record = minerva.record.records[type].find(r => r.id === structId);
 
       if (!record) return;
