@@ -108,9 +108,6 @@ export const ConnectionList = props => {
     setRenderConList(uuidv4());
   };
 
-  const handleMouseEnter = id => {};
-  const handleMouseLeave = () => {};
-
   return (
     <div className="connection-options-list">
       {makingConnection ? (
@@ -118,10 +115,27 @@ export const ConnectionList = props => {
           <Fragment>
             <p>connection list:</p>
             <ul>
-              {connectionOptions.map((el, i) => {
+              {connectionOptions.map(el => {
+                const record = el;
+
+                const title = `name: ${record.name}\ntype: ${
+                  record.type
+                }\ntags: ${
+                  record.tags.length === 0 ? "none" : record.tags.join(", ")
+                }\ncreated on ${new Date(record.createdAt).toLocaleString(
+                  minerva.settings.dateFormat
+                )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
+                  minerva.settings.dateFormat
+                )}`;
+
                 return (
-                  <li onClick={() => void handleConnect(el.id)} key={el.id}>
-                    {el.name} {`(${i + 1})`} - {el.id.substring(0, 5)}
+                  <li
+                    title={title}
+                    onClick={() => void handleConnect(el.id)}
+                    key={el.id}
+                  >
+                    {`${record.name.substring(0, 25).padEnd(30, ".")}`}
+                    {record.id.substring(0, 5).padStart(8, "0")}
                   </li>
                 );
               })}
@@ -138,15 +152,27 @@ export const ConnectionList = props => {
         <Fragment>
           <p>disconnection list:</p>
           <ul>
-            {Object.values(disconnectionOptions).map((el, i) => {
+            {Object.values(disconnectionOptions).map(el => {
+              const record = minerva.record.findRecordById(el);
+
+              const title = `name: ${record.name}\ntype: ${
+                record.type
+              }\ntags: ${
+                record.tags.length === 0 ? "none" : record.tags.join(", ")
+              }\ncreated on ${new Date(record.createdAt).toLocaleString(
+                minerva.settings.dateFormat
+              )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
+                minerva.settings.dateFormat
+              )}`;
+
               return (
                 <li
-                  onMouseEnter={() => void handleMouseEnter(el)}
-                  onMouseLeave={() => void handleMouseLeave()}
-                  onClick={() => void handleDisconnect(el)}
-                  key={el}
+                  title={title}
+                  onClick={() => void handleDisconnect(record.id)}
+                  key={record.id}
                 >
-                  {`(${i + 1})`} - {el.substring(0, 5)}
+                  {`${record.name.substring(0, 25).padEnd(30, ".")}`}
+                  {record.id.substring(0, 5).padStart(8, "0")}
                 </li>
               );
             })}
