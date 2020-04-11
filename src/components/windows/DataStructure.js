@@ -472,11 +472,6 @@ const DataStructureComponent = props => {
       }
     );
 
-    console.log(
-      `current list of possible connections for ${structId}`,
-      possibleConnections
-    );
-
     // set the ui to indicate that a connection can be made
     setMakingConnection(!makingConnection);
 
