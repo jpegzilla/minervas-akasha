@@ -21,6 +21,10 @@ $main: "IBM Plex Serif", serif
 // $plex: "IBM Plex Mono", monospace
 // $ibarra: "Ibarra Real Nova", serif
 
+// measurements
+
+$dsMaxWidth: 350px
+
 // mixins
 =theme($theme: "dark")
   --text-highlight: #{$pink}
@@ -52,6 +56,20 @@ $main: "IBM Plex Serif", serif
   &:focus
     outline: 1px solid $pink
     transition: outline 0.5s ease
+
+=itemlist
+  ul:not(.color-box ul)
+    list-style-type: none
+
+    li:not(.structure-tag):not(.color-box-item)
+      cursor: pointer
+      padding: 0.25rem 0.5rem
+
+      & li + li
+        margin-top: 0.5rem
+
+      &:hover
+        background-color: transparentize($white, 0.7)
 
 =flexcenter($left: false)
   display: flex
