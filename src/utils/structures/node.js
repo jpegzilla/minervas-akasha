@@ -16,6 +16,6 @@ export class Node extends Structure {
     // a list of structures that this type of structure can connect to.
     this.accepts = ["shard"];
 
-    this.connectsTo = "grimoire";
+    this.connectsTo = ["grimoire", "athenaeum"];
   }
 }

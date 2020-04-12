@@ -17,6 +17,6 @@ export class Grimoire extends Structure {
     // a list of structures that this type of structure can connect to.
     this.accepts = ["shard", "node"];
 
-    this.connectsTo = "athenaeum";
+    this.connectsTo = ["athenaeum"];
   }
 }

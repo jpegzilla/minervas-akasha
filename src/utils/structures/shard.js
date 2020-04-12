@@ -17,7 +17,7 @@ export class Shard extends Structure {
     // a list of structures that this type of structure can connect to.
     this.accepts = [];
 
-    this.connectsTo = "node";
+    this.connectsTo = ["node", "grimoire", "athenaeum"];
   }
 
   addData(data, type) {
