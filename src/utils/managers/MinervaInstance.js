@@ -139,7 +139,7 @@ export class Minerva {
         effect: 100, // volume for sound effects like the typing sound, startup sound
         voice: 100 // volume for minerva's voice (not yet implemented)
       },
-      timeFormat: true, // true sets 12 hour mode, false is 24 hour mode
+      timeFormat: "12hr", // 12hr sets 12 hour mode, 24hr is 24 hour mode
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true, // dictates whether users can see content from other users.
       filters: {

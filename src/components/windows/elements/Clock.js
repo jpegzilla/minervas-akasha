@@ -7,7 +7,7 @@ let timeFormat;
 export const Clock = () => {
   const { minerva } = useContext(globalContext);
 
-  timeFormat = minerva.settings ? minerva.settings.timeFormat : true;
+  timeFormat = minerva.settings ? minerva.settings.timeFormat : "24hr";
 
   const time = () => {
     let hours = new Date().getHours();
@@ -21,7 +21,7 @@ export const Clock = () => {
       .toString()
       .padStart(2, "0");
 
-    if (timeFormat) {
+    if (timeFormat === "12hr") {
       hours = hours % 12;
       hours = hours ? hours : 12;
     }
@@ -47,7 +47,7 @@ export const Clock = () => {
       onClick={e => {
         e.stopPropagation();
 
-        timeFormat = !timeFormat;
+        timeFormat = timeFormat === "12hr" ? "24hr" : "12hr";
 
         minerva.changeSetting({}, "timeFormat", timeFormat);
 
