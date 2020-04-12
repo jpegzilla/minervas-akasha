@@ -34,9 +34,10 @@ _if you want to see more detailed information, dig into `./docs/main` and read t
 
 built with react / `create-react-app`.
 
-1.  clone this repo
-2.  in your clone, run `npm i` and `npm start`
-3.  there you go
+1.  clone this repo.
+2.  compile `/src/main.sass`
+3.  in your clone, run `yarn install` and `yarn start`
+4.  there you go!
 
 <a name="features"></a>
 ## features:
