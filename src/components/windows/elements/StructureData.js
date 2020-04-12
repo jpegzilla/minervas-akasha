@@ -1,6 +1,8 @@
 import React, { Fragment, useState, useContext, useEffect } from "react";
 
 import PropTypes from "prop-types";
+import { uuidv4 } from "./../../../utils/misc";
+import { makeStruct } from "./../../../utils/managers/StructureMap";
 import { globalContext } from "./../../App";
 
 // this component is the data display part of a DataStructure window
@@ -17,7 +19,8 @@ export const StructureData = props => {
     type,
     structId,
     disconnectionOptions,
-    connectionOptions
+    connectionOptions,
+    setWindows
   } = props;
 
   const { minerva, renderConList } = useContext(globalContext);
@@ -28,7 +31,7 @@ export const StructureData = props => {
 
   useEffect(
     () => {
-      const record = minerva.record.records[type].find(r => r.id === structId);
+      const record = minerva.record.findRecordById(structId);
 
       if (!record) return;
 
@@ -69,8 +72,49 @@ export const StructureData = props => {
           // title just to help identify what's in the stored structure
           const title = `name: ${name}\ntype: ${type}\ncreated on ${created}\nupdated on ${updated}\ntags: ${tagString}`;
 
+          // this is to determine what should be displayed in the connection list
+          const record = minerva.record.findRecordById(structId);
+          const connectsTo = record.connectsTo;
+
+          if (rec.type === connectsTo) return false;
+
           return (
-            <li className="datastructure-connection" title={title} key={id}>
+            <li
+              onDoubleClick={e => {
+                e.stopPropagation();
+
+                console.log(rec);
+
+                const handleOpenRecord = item => {
+                  // make sure the window isn't already open
+                  const foundItem = minerva.windows.find(
+                    i =>
+                      i.component === "DataStructure" &&
+                      i.componentProps.structId === item.id
+                  );
+
+                  if (foundItem) return;
+
+                  const itemToOpen = minerva.record.records[item.type].find(
+                    i => i.id === item.id
+                  );
+
+                  const { id, type } = itemToOpen;
+
+                  // move objects like this to structuremap to dry things up
+                  const struct = makeStruct(type, id, minerva, uuidv4);
+
+                  minerva.setWindows([...minerva.windows, struct]);
+
+                  setWindows([...minerva.windows]);
+                };
+
+                handleOpenRecord(rec);
+              }}
+              className="datastructure-connection"
+              title={title}
+              key={id}
+            >
               {name}
             </li>
           );
