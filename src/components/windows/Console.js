@@ -65,7 +65,7 @@ export const Console = props => {
   );
 
   const handleCommand = e => {
-    if (e.repeat || e.which !== 13) return;
+    if (e.repeat || e.key.toLowerCase() !== "enter") return;
     const cmd = command;
 
     // put the previous command into the history
@@ -212,8 +212,8 @@ export const Console = props => {
           autoComplete="new-password"
           onKeyPress={handleCommand}
           onKeyDown={e => {
-            if (e.which === 38) handleUpKey();
-            else if (e.which === 40) handleDownKey();
+            if (e.key.toLowerCase() === "arrowup") handleUpKey();
+            else if (e.key.toLowerCase() === "arrowdown") handleDownKey();
           }}
           onChange={e => setCommand(e.target.value)}
           className={inputState}

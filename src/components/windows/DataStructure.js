@@ -771,67 +771,52 @@ const DataStructureComponent = props => {
                 })}
               </ul>
             </div>
-          </div>
-        )}
-      </header>
-
-      <section className="structure-data">
-        <StructureData
-          currentFileData={currentFileData}
-          showImage={showImage}
-          FileDisplay={FileDisplay}
-          ImageDisplay={ImageDisplay}
-          setShowImage={setShowImage}
-          MetadataDisplay={MetadataDisplay}
-          metadata={metadata}
-          setMetadataDisplay={setMetadataDisplay}
-          type={type}
-          structId={structId}
-          connectionOptions={connectionOptions}
-          disconnectionOptions={disconnectionOptions}
-          render={render}
-        />
-      </section>
-
-      <section className="structure-controls">
-        <div>
-          <input
-            onKeyDown={e => {
-              if (e.which === 13) addName();
-            }}
-            type="text"
-            placeholder="enter a name"
-            ref={nameRef}
-          />
-          <button onClick={addName}>set name</button>
-        </div>
-
-        <div>
-          <input
-            onKeyDown={e => {
-              if (e.which === 13) addTag();
-            }}
-            type="text"
-            placeholder="add custom tag"
-            ref={tagRef}
-          />
-          <button onClick={addTag}>add tag</button>
-        </div>
-
-        <div>
-          <button
-            className="delete-button"
-            onClick={() => setDeletionStarted(true)}
-          >
-            delete record
-          </button>
-          {deletionStarted && (
-            <Fragment>
-              <button onClick={e => onDeleteChoice(e, true)}>confirm</button>
-              <button onClick={e => onDeleteChoice(e, false)}>deny</button>
-            </Fragment>
           )}
-        </div>
+        </header>
+
+        <section className="structure-data">
+          <StructureData
+            currentFileData={currentFileData}
+            showImage={showImage}
+            FileDisplay={FileDisplay}
+            ImageDisplay={ImageDisplay}
+            setShowImage={setShowImage}
+            MetadataDisplay={MetadataDisplay}
+            metadata={metadata}
+            setMetadataDisplay={setMetadataDisplay}
+            type={type}
+            setWindows={setWindows}
+            structId={structId}
+            connectionOptions={connectionOptions}
+            disconnectionOptions={disconnectionOptions}
+            render={render}
+          />
+        </section>
+
+        <section className="structure-controls">
+          <div>
+            <input
+              onKeyDown={e => {
+                if (e.key.toLowerCase() === "enter") addName();
+              }}
+              type="text"
+              placeholder="enter a name"
+              ref={nameRef}
+            />
+            <button onClick={addName}>set name</button>
+          </div>
+
+          <div>
+            <input
+              onKeyDown={e => {
+                if (e.key.toLowerCase() === "enter") addTag();
+              }}
+              type="text"
+              placeholder="add custom tag"
+              ref={tagRef}
+            />
+            <button onClick={addTag}>add tag</button>
+          </div>
 
         <div>
           {type !== "hypostasis" && (
