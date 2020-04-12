@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { globalContext } from "./../App";
 
 import { WindowTypes } from "./WindowTypes";
-import { Notes } from "./elements/Notes";
 
 export const Window = props => {
   const {
@@ -21,12 +20,6 @@ export const Window = props => {
     component,
     componentProps
   } = props;
-
-  // this will be used to apply certain classes only to datastructure windows.
-  // it is also used to determine if notes can be attached to a window.
-  const isDataStructure = component.toLowerCase() === "datastructure";
-
-  const { notes } = isDataStructure ? componentProps : { notes: null };
 
   const { minerva } = useContext(globalContext);
 
@@ -256,6 +249,7 @@ Window.propTypes = {
       connectedTo: PropTypes.object,
       data: PropTypes.exact({
         file: PropTypes.object,
+        notes: PropTypes.string,
         metadata: PropTypes.object,
         dbId: PropTypes.string,
         dbUserId: PropTypes.string
