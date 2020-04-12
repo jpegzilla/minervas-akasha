@@ -33,6 +33,9 @@ yarn-error.log*
 **/*.lock
 *-lock.json
 
+# compiled css
+*.css
+
 # local environment
 .env.local
 
