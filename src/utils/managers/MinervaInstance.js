@@ -146,7 +146,10 @@ export class Minerva {
         crt: true,
         noise: false
       }, // enables / disables graphical filters.
-      dateFormat: "ja-JP" // for formatting dates / times
+      dateFormat: "ja-JP", // for formatting dates / times
+      textEditor: {
+        maxHistoryDepth: 200 // for the text editor's undo / redo functionality
+      }
     };
   }
 
