@@ -121,7 +121,9 @@ export const ConnectionList = props => {
                 const title = `name: ${record.name}\ntype: ${
                   record.type
                 }\ntags: ${
-                  record.tags.length === 0 ? "none" : record.tags.join(", ")
+                  record.tags.length === 0
+                    ? "none"
+                    : record.tags.map(i => i.name).join(", ")
                 }\ncreated on ${new Date(record.createdAt).toLocaleString(
                   minerva.settings.dateFormat
                 )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
@@ -134,7 +136,9 @@ export const ConnectionList = props => {
                     onClick={() => void handleConnect(el.id)}
                     key={el.id}
                   >
-                    {`${record.name.substring(0, 25).padEnd(30, ".")}`}
+                    {`(${record.type.substring(0, 3)}) ${record.name
+                      .substring(0, 22)
+                      .padEnd(30, ".")}`}
                     {record.id.substring(0, 5).padStart(8, "0")}
                   </li>
                 );
@@ -158,7 +162,9 @@ export const ConnectionList = props => {
               const title = `name: ${record.name}\ntype: ${
                 record.type
               }\ntags: ${
-                record.tags.length === 0 ? "none" : record.tags.join(", ")
+                record.tags.length === 0
+                  ? "none"
+                  : record.tags.map(i => i.name).join(", ")
               }\ncreated on ${new Date(record.createdAt).toLocaleString(
                 minerva.settings.dateFormat
               )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
@@ -171,7 +177,9 @@ export const ConnectionList = props => {
                   onClick={() => void handleDisconnect(record.id)}
                   key={record.id}
                 >
-                  {`${record.name.substring(0, 25).padEnd(30, ".")}`}
+                  {`(${record.type.substring(0, 3)}) ${record.name
+                    .substring(0, 22)
+                    .padEnd(30, ".")}`}
                   {record.id.substring(0, 5).padStart(8, "0")}
                 </li>
               );
