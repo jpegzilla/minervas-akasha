@@ -33,8 +33,10 @@ export class Structure {
     // shows what user the structure belongs to.
     this.belongsTo = (options && options.belongsTo) || null;
 
-    // shows the data within the structure in object format, for storage
-    this.data = {};
+    // shows the data within the structure such as notes
+    this.data = (options && options.data) || {
+      notes: ""
+    };
 
     // these color codes are applied to data structures' html representations as css
     // classes, which are used to apply colors to the elements.
