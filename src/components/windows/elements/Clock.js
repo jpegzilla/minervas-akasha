@@ -43,7 +43,7 @@ export const Clock = () => {
 
   return (
     <div
-      title="switch between 24 / 12 hour time"
+      title={`switch between 24 / 12 hour time.\ncurrently: ${timeFormat}`}
       onClick={e => {
         e.stopPropagation();
 
