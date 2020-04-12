@@ -219,6 +219,8 @@ export default class AkashicRecord {
 
     this.updateDate();
 
+    minerva.save();
+
     return this;
   }
 
