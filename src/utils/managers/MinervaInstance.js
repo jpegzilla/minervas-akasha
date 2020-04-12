@@ -1038,6 +1038,8 @@ export class Minerva {
       default:
         break;
     }
+
+    this.save();
   }
 
   /**
