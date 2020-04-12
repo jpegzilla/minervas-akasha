@@ -10,9 +10,12 @@
   $gap: 0.5rem
   $hgap: 0.25rem
   $maxWidth: max-content
-  $maxWidth2: 350px
+  $maxWidth2: $dsMaxWidth
 
   will-change: contents
+
+  .datastructure-header
+    margin-bottom: 0
 
   a
     color: $pink
@@ -23,12 +26,9 @@
 
   display: flex
   flex-direction: column
-  max-width: $maxWidth
 
   // todo: refactor this somehow to use css vars
   background-color: transparentize($black, 0.25)
-  min-width: $w
-  min-height: $h
 
   .structure-header
     max-width: $maxWidth2
@@ -41,10 +41,23 @@
   .structure-content
     height: 100%
     flex-grow: 1
-    padding: 0.25rem $gap $gap $gap
     display: flex
     width: 100%
-    flex-direction: column
+
+    .structure-left-column, .structure-right-column
+      display: flex
+
+    .structure-left-column
+      +itemlist
+
+      padding: 0.5rem $gap $gap $gap
+      flex-direction: column
+      max-width: $maxWidth
+      min-width: $w
+      min-height: $h
+
+    .structure-right-column
+      border-left: 1px solid var(--text-main)
 
     .structure-tag-editor
       $size: 3rem
@@ -197,31 +210,3 @@
 
     &:empty
       margin: 0
-
-  .structure-tag
-    font-size: 1rem
-    border-radius: 4pt
-    width: 100%
-    min-width: max-content
-    display: inline-flex
-    align-items: center
-    user-select: none
-    cursor: pointer
-
-    span
-      &:nth-child(1)
-        padding: 0.15rem 0 0.15rem 0.5rem
-        flex-grow: 1
-
-      &:nth-child(2)
-        margin-left: 0.15rem
-        padding: 0.15rem 0.35rem 0.15rem 0.35rem
-
-        &:hover
-          background-color: $pink
-          color: $white
-
-      display: inline-block
-
-    &:hover
-      background-color: transparentize($white, 0.8)
