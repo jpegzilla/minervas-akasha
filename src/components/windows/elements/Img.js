@@ -24,7 +24,7 @@ const Img = props => {
 
   const imageRef = useRef();
 
-  const { setStatusMessage, resetStatusText, minerva, setWindows } = useContext(
+  const { setStatusMessage, resetStatusText, minerva } = useContext(
     globalContext
   );
 
