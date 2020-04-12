@@ -13,6 +13,7 @@ import Audio from "./elements/Audio";
 import Paragraph from "./elements/Paragraph";
 import Tag from "./elements/Tag";
 import Video from "./elements/Video";
+import { Notes } from "./elements/Notes";
 import { StructureData } from "./elements/StructureData";
 
 import { bytesToSize, uuidv4 } from "./../../utils/misc";
@@ -37,6 +38,7 @@ const DataStructureComponent = props => {
     setWindows,
     droppedFiles
   } = props;
+
   const {
     minerva,
     setStatusMessage,
@@ -120,6 +122,7 @@ const DataStructureComponent = props => {
         tags: [],
         id: structId,
         connectedTo: {},
+        data: { notes: "" },
         colorCode: new Struct().colorCode,
         accepts: new Struct().accepts,
         connectsTo: new Struct().connectsTo,
@@ -127,6 +130,8 @@ const DataStructureComponent = props => {
       });
 
       minerva.addToRecord(structId, structToAdd);
+
+      setInfo(structToAdd);
 
       // in case there is existing file information
       // attached to a record, find it and render it.
@@ -465,12 +470,19 @@ const DataStructureComponent = props => {
     // find all the possible connections, meaning find every structure that this structure
     // 1. can connect to, as defined above
     // 2. is not already connected to.
-    const possibleConnections = minerva.record.records[canConnectTo].filter(
-      item => {
+
+    const possibleConnections = Object.entries(minerva.record.records)
+      .map(([k, v]) => {
+        if (canConnectTo.includes(k)) {
+          return v;
+        } else return false;
+      })
+      .filter(Boolean)
+      .flat(Infinity)
+      .filter(item => {
         if (Object.values(item.connectedTo).includes(structId)) return false;
         else return true;
-      }
-    );
+      });
 
     // set the ui to indicate that a connection can be made
     setMakingConnection(!makingConnection);
@@ -730,46 +742,51 @@ const DataStructureComponent = props => {
 
   return (
     <div className="structure-content">
-      <header className="structure-header">
-        <p>
-          {info.type === info.name ? "untitled data structure" : info.name} -{" "}
-          <span className="structure-type" title={StructureDescriptions[type]}>
-            {type}
-          </span>
-        </p>
-        <ul className="structure-taglist">
-          {info.tags
-            ? info.tags.map((t, i) => {
-                return (
-                  <Tag
-                    t={t}
-                    i={i}
-                    key={`${t.name}-${i}`}
-                    removeTag={removeTag}
-                    editTag={editTag}
-                  />
-                );
-              })
-            : false}
-        </ul>
-
-        {loadingFileData ? <div>loading file data...</div> : false}
-
-        {showTagEditInterface && (
-          <div className="structure-tag-editor">
-            <div className="color-box">
-              <ul>
-                {[...Array(Object.values(ColorCodes).length)].map((_c, i) => {
-                  const [, v] = Object.entries(ColorCodes)[i];
+      <div className="structure-left-column">
+        <header className="structure-header">
+          <p>
+            {info.type === info.name ? "untitled data structure" : info.name} -{" "}
+            <span
+              className="structure-type"
+              title={StructureDescriptions[type]}
+            >
+              {type}
+            </span>
+          </p>
+          <ul className="structure-taglist">
+            {info.tags
+              ? info.tags.map((t, i) => {
                   return (
-                    <li
-                      onClick={() => changeTagColor(v)}
-                      key={`${v}-${i}`}
-                      className={`${v}`}
+                    <Tag
+                      t={t}
+                      i={i}
+                      key={`${t.name}-${i}`}
+                      removeTag={removeTag}
+                      editTag={editTag}
                     />
                   );
-                })}
-              </ul>
+                })
+              : false}
+          </ul>
+
+          {loadingFileData ? <div>loading file data...</div> : false}
+
+          {showTagEditInterface && (
+            <div className="structure-tag-editor">
+              <div className="color-box">
+                <ul>
+                  {[...Array(Object.values(ColorCodes).length)].map((_c, i) => {
+                    const [, v] = Object.entries(ColorCodes)[i];
+                    return (
+                      <li
+                        onClick={() => changeTagColor(v)}
+                        key={`${v}-${i}`}
+                        className={`color-box-item ${v}`}
+                      />
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
           )}
         </header>
@@ -818,38 +835,57 @@ const DataStructureComponent = props => {
             <button onClick={addTag}>add tag</button>
           </div>
 
-        <div>
-          {type !== "hypostasis" && (
-            <button className="connect-button" onClick={handleConnectRecord}>
-              connect record
+          <div>
+            <button
+              className="delete-button"
+              onClick={() => setDeletionStarted(true)}
+            >
+              delete record
             </button>
-          )}
+            {deletionStarted && (
+              <Fragment>
+                <button onClick={e => onDeleteChoice(e, true)}>confirm</button>
+                <button onClick={e => onDeleteChoice(e, false)}>deny</button>
+              </Fragment>
+            )}
+          </div>
 
-          <button className="connect-button" onClick={handleDisconnectRecord}>
-            disconnect record
-          </button>
-        </div>
-      </section>
+          <div>
+            {type !== "hypostasis" && (
+              <button className="connect-button" onClick={handleConnectRecord}>
+                connect record
+              </button>
+            )}
 
-      {(makingConnection || makingDisconnection) && (
-        <ConnectionList
-          connectsTo={new StructureMap[type]().connectsTo}
-          structId={structId}
-          connectionOptions={connectionOptions}
-          disconnectionOptions={disconnectionOptions}
-          setDisconnectionOptions={setDisconnectionOptions}
-          setConnectionOptions={setConnectionOptions}
-          makingConnection={makingConnection}
-          setRender={setRender}
-          uuidv4={uuidv4}
-        />
-      )}
+            <button className="connect-button" onClick={handleDisconnectRecord}>
+              disconnect record
+            </button>
+          </div>
+        </section>
+
+        {(makingConnection || makingDisconnection) && (
+          <ConnectionList
+            connectsTo={new StructureMap[type]().connectsTo}
+            structId={structId}
+            connectionOptions={connectionOptions}
+            disconnectionOptions={disconnectionOptions}
+            setDisconnectionOptions={setDisconnectionOptions}
+            setConnectionOptions={setConnectionOptions}
+            makingConnection={makingConnection}
+            setRender={setRender}
+            uuidv4={uuidv4}
+          />
+        )}
+      </div>
+      <div className="structure-right-column">
+        {Object.keys(info).length > 0 && <Notes id={structId} />}
+      </div>
     </div>
   );
 };
 
 export const DataStructure = React.memo(DataStructureComponent);
 
-DataStructure.propTypes = {
+DataStructureComponent.propTypes = {
   type: PropTypes.string
 };
