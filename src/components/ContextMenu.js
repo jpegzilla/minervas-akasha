@@ -12,7 +12,7 @@ export const ContextMenu = props => {
   // setctxmenuitems may be used in the future if context
   // menu needs to change depending on where it triggers.
   // every item must have an onclick function.
-  const [ctxMenuItems, setCtxMenuItems] = useState([
+  const [ctxMenuItems] = useState([
     {
       title: "example",
       onClick: () => console.log("clicked item 1"),
