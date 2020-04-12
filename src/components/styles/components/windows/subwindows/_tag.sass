@@ -1,6 +1,16 @@
 @import ../../utils/vars
 
 .structure-tag
+  font-size: 1rem
+  border-radius: 4pt
+  width: 100%
+  min-width: max-content
+  display: inline-flex
+  align-items: center
+  user-select: none
+  cursor: pointer
+  overflow: hidden
+
   &.pink
     border: 1px solid $pink
 
@@ -21,3 +31,21 @@
 
   &.yellow
     border: 1px solid $yellow
+
+  span
+    &:nth-child(1)
+      padding: 0.15rem 0 0.15rem 0.5rem
+      flex-grow: 1
+
+    &:nth-child(2)
+      margin-left: 0.15rem
+      padding: 0.15rem 0.35rem 0.15rem 0.35rem
+
+      &:hover
+        background-color: $pink
+        color: $white
+
+    display: inline-block
+
+  &:hover
+    background-color: transparentize($white, 0.8)
