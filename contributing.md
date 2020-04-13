@@ -32,6 +32,8 @@ git merge upstream/master
 7.  make a pr from your branch to my master.
 8.  I will review it and merge it if the change is acceptable. done!
 
+if you added a new feature, create a file in `/docs/main` called `your-feature-name.design.md` that describes the feature. take a look at the existing design docs for examples. this will help me add it to the wiki, and keep the software well-documented
+
 also, it doesn't hurt to talk to me about things you want to add to minerva's akasha. I can easily be contacted on discord at `jpegzilla#6969` or on twitter `@jpegzilla`, or email me.
 
 _\~ more contribution info coming soon\~_
