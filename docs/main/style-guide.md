@@ -1,12 +1,20 @@
 # minerva's akasha code style guide
 
+## commits:
+
+prefer past tense: say 'added new features' rather than 'add new features'. present tense makes no sense if you're describing something you've already done.
+
+after the first line: add as many details as you'd like, reference issues, etc.
+
+emoji: do not use.
+
 ## comments, documentation, ui text, variable / property naming
 
 do not use uppercase letters. exceptions:
 
 -   class names
 -   special constant names ('true' constants like mathematical constants, component names that have to be uppercase in react, etc.)
--   words after the first word in a camel-cased variable name
+-   camel-case variable names
 
 ok:
 ```javascript
@@ -24,6 +32,7 @@ return (<div>hello world</div>)
 ```
 
 **not** ok:
+
 ```javascript
 let Foo = 255
 
@@ -41,6 +50,10 @@ return (<div>Hello World!</div>)
 ## javascript / jsx
 
 use jsdoc comments for utility methods and class methods.
+
+classes: define classes in this order: constructor, then static properties / methods, then instance methods.
+
+imports: import node modules first, then all other things.
 
 as for formatting:
 
