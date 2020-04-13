@@ -1,8 +1,22 @@
 # contributing:
 
+hello! thanks for considering helping me make minerva's akasha better.
+
 minerva's akasha is very well commented and soon to be very well documented. I aim to make it extremely easy to create additions / modifications to this application (given you know javascript / sass / html). once this software reaches beta, I hope that some people will develop useful additions / plugins for it.
 
-if you want to contribute to minerva's akasha, do this 8-step process:
+as of version 0.1, the software hasn't actually been released, so there's not much contributing to be done. I will update this when the software nears a production-ready state.
+
+# submitting feedback and bug reports
+
+in order to submit a bug report, click [here](https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D). I will review the bug report and discuss it with you, and then I can fix it!
+
+in order to give me general feedback, please contact me directly: twitter (@jpegzilla), discord (jpegzilla#6969), and email all work.
+
+# adding features, fixing bugs, etc...
+
+if you want to contribute code to minerva's akasha, first read the [style guide](https://github.com/jpegzilla/minervas-akasha/blob/master/docs/main/style-guide.md).
+
+then, do this 8-step process:
 
 1.  fork this repository and clone the repo onto your computer
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
