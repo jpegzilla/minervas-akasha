@@ -244,6 +244,19 @@ export class Minerva {
     const destType = destination.type;
     const itemType = item.type;
 
+    // if the current record is an athenaeum, a few extra steps must be handled here.
+    if (destType === "hypostasis") {
+      console.log(
+        "the destination is a hypostasis! make sure that the connection is handled correctly."
+      );
+
+      console.log({ item, destination });
+
+      console.log("the connection will not be made.");
+
+      return;
+    }
+
     item.connectedTo[destination.id] = destination.id;
     destination.connectedTo[item.id] = item.id;
 
@@ -259,13 +272,6 @@ export class Minerva {
 
     this.record.records[itemType] = newItemTypeRecords;
     this.record.records[destType] = newDestTypeRecords;
-
-    // if the current record is an athenaeum, a few extra steps must be handled here.
-    if (destType === "hypostasis") {
-      console.log(
-        "the destination is a hypostasis! make sure that the connection is handled correctly."
-      );
-    }
 
     this.save();
 
