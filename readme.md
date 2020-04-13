@@ -93,4 +93,4 @@ _\~ more contribution info coming soon\~_
 
 -   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
-for solved issues see /docs/main/solved-issues.md.
+for solved issues see [https://github.com/jpegzilla/minervas-akasha/blob/master/docs/main/solved-issues.md](/docs/main/solved-issues.md).
