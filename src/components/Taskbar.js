@@ -109,6 +109,7 @@ export const Taskbar = props => {
     // setMenuItems
   ] = useState([
     {
+      id: "logout",
       title: "log out",
       onClick: () => {
         audiomanager.play("c_one");
@@ -120,6 +121,7 @@ export const Taskbar = props => {
       tooltip: "end your current session and return to the login screen."
     },
     {
+      id: "openrecord",
       title: "open record viewer",
       onClick: () => {
         const findWindowAtPosition = xy => {
@@ -160,13 +162,7 @@ export const Taskbar = props => {
       }
     },
     {
-      title: "add new shard",
-      onClick: () => {
-        addStructure("shard");
-      },
-      tooltip: "add a new shard."
-    },
-    {
+      id: "openconsole",
       title: "open console",
       onClick: () => {
         const findWindowAtPosition = xy => {
@@ -210,6 +206,7 @@ export const Taskbar = props => {
       tooltip: "open a command console."
     },
     {
+      id: "submitfeedback",
       title: "submit feedback",
       onClick: () => {
         // const link = document.createElement("a");
@@ -221,6 +218,7 @@ export const Taskbar = props => {
       tooltip: "submit feedback about minerva's akasha."
     },
     {
+      id: "exportdata",
       title: "export user data",
       onClick: () => {
         setStatusMessage({
@@ -238,6 +236,7 @@ export const Taskbar = props => {
       tooltip: "export all user data for the currently logged in user."
     },
     {
+      id: "sendreport",
       title: "submit bug report",
       onClick: () => {
         const link = document.createElement("a");
@@ -258,6 +257,7 @@ export const Taskbar = props => {
     "+ hypostasis"
   ].map(title => {
     return {
+      id: title.split("+ ")[1],
       title,
       onClick: () => {
         const type = title.split("+ ")[1];
@@ -265,8 +265,6 @@ export const Taskbar = props => {
       }
     };
   });
-
-  const [addItemsList] = useState([...addMenuItems]);
 
   useEffect(
     () => {
@@ -322,7 +320,7 @@ export const Taskbar = props => {
                               throw new Error("clicked on nonexistent option");
                             }
                       }
-                      key={uuidv4()}
+                      key={i.id}
                       title={i.tooltip || undefined}
                     >
                       {i.title}
@@ -349,11 +347,9 @@ export const Taskbar = props => {
           id="add-menu"
         >
           <ul>
-            {addItemsList.map(item => {
-              const id = uuidv4();
-
+            {addMenuItems.map(item => {
               return (
-                <li onClick={() => item.onClick()} key={id}>
+                <li onClick={() => item.onClick()} key={item.id}>
                   {item.title}
                 </li>
               );

@@ -360,6 +360,7 @@ export const Home = props => {
                   : item.component || item.stringType
               ] + 1 || 1;
 
+            const key = `${item.title}-window-${item.id}`;
             return (
               <Component
                 item={item}
@@ -376,7 +377,7 @@ export const Home = props => {
                 setWindows={setWindows}
                 windows={windows}
                 className={isActive}
-                key={`${item.title}-window-${item.id}`}
+                key={key}
                 setPosition={setPosition}
                 setActiveWindowId={setActiveWindowId}
                 activeWindowId={activeWindowId}
