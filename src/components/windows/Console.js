@@ -81,7 +81,7 @@ export const Console = props => {
     }
 
     if (cmd === "") {
-      return setLog([...log, { type: "none", text: " " }]);
+      return setLog([...log, { type: "none", text: " ", id: uuidv4() }]);
     }
 
     if (res.message) {
@@ -101,7 +101,7 @@ export const Console = props => {
 
             return setLog([
               ...log,
-              { type: "error", text: "unknown command." }
+              { type: "error", text: "unknown command.", id: uuidv4() }
             ]);
         }
       }
@@ -109,7 +109,10 @@ export const Console = props => {
       if (res.state === "error") {
         audiomanager.play("e_one");
 
-        return setLog([...log, { type: "error", text: res.message }]);
+        return setLog([
+          ...log,
+          { type: "error", text: res.message, id: uuidv4() }
+        ]);
       }
 
       // this will set the command input to a password-style input.
@@ -118,7 +121,12 @@ export const Console = props => {
 
         return setLog([
           ...log,
-          { type: "command", text: res.message, request: res.request }
+          {
+            type: "command",
+            text: res.message,
+            request: res.request,
+            id: uuidv4()
+          }
         ]);
       }
     }
@@ -130,12 +138,15 @@ export const Console = props => {
 
       return setLog([
         ...log,
-        { type: "error", text: `undefined command -> ${cmd}` }
+        { type: "error", text: `undefined command -> ${cmd}`, id: uuidv4() }
       ]);
     }
 
     if (res.state === "update") {
-      setLog([...log, { type: "update", text: `> ${res.message} -> success` }]);
+      setLog([
+        ...log,
+        { type: "update", text: `> ${res.message} -> success`, id: uuidv4() }
+      ]);
     } else {
       // for commands that just return a text response and don't do anything else.
       // for multiline commands, the response will print on multiple lines.
@@ -145,7 +156,7 @@ export const Console = props => {
         if (i > 0) lines.push(line);
       });
 
-      setLog([...log, { type: "command", text: lines }]);
+      setLog([...log, { type: "command", text: lines, id: uuidv4() }]);
     }
   };
 
@@ -171,7 +182,7 @@ export const Console = props => {
       <section ref={cmdLog} className="console-text">
         {log.map((e, i) => {
           return (
-            <div key={uuidv4()} className="console-response">
+            <div key={e.id} className="console-response">
               <span className="command-prefix">
                 {minerva.user.name}
                 @minerva.akasha <span className="console-tag">MNRV</span>
@@ -192,7 +203,9 @@ export const Console = props => {
                 className={`console-${e.type}`}
               >
                 {Array.isArray(e.text)
-                  ? e.text.map(line => <p key={uuidv4()}>{line}</p>)
+                  ? e.text.map(line => {
+                      return <p key={`${e.id}- ${line}`}>{line}</p>;
+                    })
                   : e.text}
               </pre>
             </div>

@@ -1,4 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  Redirect
+} from "react";
 
 import { uuidv4 } from "./../utils/misc";
 import PropTypes from "prop-types";
@@ -24,6 +30,7 @@ export const Home = props => {
   const [activeWindow, setActiveWindow] = useState(null);
   const [activeWindowId, setActiveWindowId] = useState("default");
   const [activeFileData, setActiveFileData] = useState();
+  minerva.setActiveWindowId = setActiveWindowId;
 
   // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows);
@@ -176,13 +183,23 @@ export const Home = props => {
   // empty during normal operation. if that happens, this hook will throw.
   // this should no longer exist in later versions, because minerva's record
   // will be more robust.
+  const [error, setError] = useState(false);
   useEffect(
     () => {
-      if (Object.keys(minerva.record).length < 1 && minerva.get("logged_in")) {
+      if (!minerva.record) {
+        console.log(minerva);
+        console.log("there is something very wrong. minerva has no record.");
+        setError(true);
+        // throw new Error(
+        //   "there is something very wrong. minerva has no record."
+        // );
+        return;
+      } else if (
+        Object.keys(minerva.record).length < 1 &&
+        minerva.get("logged_in")
+      ) {
+        minerva.set("logged_in", false);
         console.warn("minerva has lost her memory!!", minerva);
-        throw new Error(
-          "minerva has no record!! " + JSON.stringify(minerva.record, null, 5)
-        );
       }
 
       // if minerva is okay, then say so -
@@ -272,6 +289,8 @@ export const Home = props => {
   // in the list.
   const componentCounts = {};
 
+  if (error) return <Redirect to="/signup" />;
+
   return (
     <section
       id="window-system"
@@ -341,6 +360,7 @@ export const Home = props => {
                   : item.component || item.stringType
               ] + 1 || 1;
 
+            const key = `${item.title}-window-${item.id}`;
             return (
               <Component
                 item={item}
@@ -357,7 +377,7 @@ export const Home = props => {
                 setWindows={setWindows}
                 windows={windows}
                 className={isActive}
-                key={`${item.title}-window-${item.id}`}
+                key={key}
                 setPosition={setPosition}
                 setActiveWindowId={setActiveWindowId}
                 activeWindowId={activeWindowId}

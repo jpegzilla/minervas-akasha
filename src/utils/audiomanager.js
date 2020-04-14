@@ -2,7 +2,7 @@ import { uuidv4 } from "./misc";
 import { MinervaArchive, Minerva } from "./managers/MinervaInstance";
 
 export default class AudioManager {
-  constructor() {
+  constructor(options) {
     this.ctx = new AudioContext();
 
     // contains sounds loaded via the load function
@@ -12,9 +12,7 @@ export default class AudioManager {
     this.sources = [];
 
     // contains minerva's stored settings or the default ones
-    this.settings = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").settings
-      : Minerva.defaultSettings;
+    this.settings = options ? options.settings : Minerva.defaultSettings;
   }
 
   /**

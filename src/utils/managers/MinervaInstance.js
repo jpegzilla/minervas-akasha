@@ -32,6 +32,7 @@ export class Minerva {
    * @returns {type} Description
    */
   constructor(options, database) {
+    console.log(options, database);
     if (!database instanceof DatabaseInterface)
       throw new TypeError("database must be an instance of DatabaseInterface.");
 
@@ -45,17 +46,16 @@ export class Minerva {
     // minerva's voice synth engine
     this.voice = null;
 
-    this.usageData = {};
-
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
-    this.record = this.user
-      ? AkashicRecord.retrieveAkashicRecord(
-          this.user.id,
-          this.user.name,
-          database
-        )
-      : {};
+    this.record =
+      this.user.id && this.user.name
+        ? AkashicRecord.retrieveAkashicRecord(
+            this.user.id,
+            this.user.name,
+            database
+          )
+        : {};
 
     // open indexedDB instance
     let db = window.indexedDB.open("minerva_db");
@@ -100,16 +100,27 @@ export class Minerva {
     // just to add resilience in case more settings are added in the future - this
     // will allow us to avoid errors if there is an extra setting that wasn't previously
     // stored in localstorage when the app loads
+
+    this.settings = Minerva.defaultSettings;
+
     if (MinervaArchive.get("minerva_store")) {
-      const settings = MinervaArchive.get("minerva_store").settings;
+      const settings = MinervaArchive.get("minerva_store").settings[
+        this.user.id
+      ];
+
+      const usage = MinervaArchive.get("minerva_store").usageData[this.user.id];
 
       const defaultSettings = Minerva.defaultSettings;
 
-      if (Object.keys(settings).length === 0) {
-        this.settings = defaultSettings;
-      } else {
-        this.settings = { ...defaultSettings, ...settings };
-      }
+      if (settings) {
+        if (Object.keys(settings).length === 0) {
+          this.settings = defaultSettings;
+        } else {
+          this.settings = { ...defaultSettings, ...settings };
+        }
+      } else this.settings = defaultSettings;
+
+      this.usageData = usage || {};
     }
 
     // windows is an array of window objects that contain info on the windows contents / position
@@ -391,7 +402,18 @@ export class Minerva {
   exportDataToJsonFile() {
     const t1 = performance.now();
 
-    const mStore = MinervaArchive.get("minerva_store");
+    const store = MinervaArchive.get("minerva_store");
+
+    const mStore = {
+      ...store,
+      usageData: store.usageData[this.user.id],
+      settings: store.settings[this.user.id],
+      records: store.records[this.user.id],
+      windows: store.windows.filter(win => win.belongsTo === this.user.id)
+    };
+
+    console.log("store specifically for this user:", mStore);
+
     const userStore = MinervaArchive.get(this.user.name);
     const db = this.indexedDB;
 
@@ -478,7 +500,9 @@ export class Minerva {
 
               const t2 = performance.now();
 
-              console.log(`exportDataToJsonFile took ${t2 - t1}ms.`);
+              console.log(
+                `exportDataToJsonFile took ${(t2 - t1).toFixed(2)}ms.`
+              );
               resolveAll({ status: "success", link: e });
             });
           });
@@ -517,15 +541,20 @@ export class Minerva {
     if (!user || typeof user !== "object")
       throw new Error("Minerva.login requires a user object.");
 
+    console.log(arguments);
+
+    console.log("logging in!");
     this.user = user;
     this.userId = user.id;
 
     this.usageData = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").usageData
+      ? MinervaArchive.get("minerva_store").usageData[user.id]
       : {};
 
+    console.log(MinervaArchive.get("minerva_store"));
+
     this.settings = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").settings
+      ? MinervaArchive.get("minerva_store").settings[user.id]
       : Minerva.defaultSettings;
 
     this.set(
@@ -565,6 +594,8 @@ export class Minerva {
     MinervaArchive.remove("minervas_akasha");
     // MinervaArchive.remove(user.name);
 
+    console.log("logging out!");
+
     MinervaArchive.set("logged_in", false);
     MinervaArchive.remove(`user:${this.user.id}:token`);
 
@@ -572,7 +603,7 @@ export class Minerva {
     this.record = null;
     this.userId = null;
 
-    this.settings = {};
+    this.settings = Minerva.defaultSettings;
   }
 
   /**
@@ -955,9 +986,18 @@ export class Minerva {
   save() {
     const store = {
       user: this.user,
-      settings: this.settings,
-      storage: this.storage,
-      usageData: this.usageData,
+      settings: MinervaArchive.get("minerva_store")
+        ? {
+            ...MinervaArchive.get("minerva_store").settings,
+            [this.user.id]: this.settings
+          }
+        : { [this.user.id]: this.settings },
+      usageData: MinervaArchive.get("minerva_store")
+        ? {
+            ...MinervaArchive.get("minerva_store").usageData,
+            [this.user.id]: this.usageData
+          }
+        : { [this.user.id]: this.usageData },
       records: MinervaArchive.get("minerva_store")
         ? {
             ...MinervaArchive.get("minerva_store").records,
