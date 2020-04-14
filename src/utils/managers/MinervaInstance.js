@@ -68,7 +68,7 @@ export class Minerva {
     };
 
     db.onsuccess = event => {
-      console.log("indexedDB success.", event);
+      // console.log("indexedDB success.", event);
 
       // this part makes sure that the indexedDB property is set only if
       // the success event that fired was an IDBOpenDBRequest.
@@ -105,11 +105,22 @@ export class Minerva {
 
       const defaultSettings = Minerva.defaultSettings;
 
+<<<<<<< Updated upstream
       if (Object.keys(settings).length === 0) {
         this.settings = defaultSettings;
       } else {
         this.settings = { ...defaultSettings, ...settings };
       }
+=======
+      if (settings) {
+        if (Object.keys(settings).length === 0) {
+          this.settings = defaultSettings;
+        } else {
+          this.settings = { ...defaultSettings, ...settings };
+        }
+      } else this.settings = defaultSettings;
+      this.usageData = usage || {};
+>>>>>>> Stashed changes
     }
 
     // windows is an array of window objects that contain info on the windows contents / position
@@ -521,11 +532,23 @@ export class Minerva {
     this.userId = user.id;
 
     this.usageData = MinervaArchive.get("minerva_store")
+<<<<<<< Updated upstream
       ? MinervaArchive.get("minerva_store").usageData
+=======
+      ? MinervaArchive.get("minerva_store").usageData[user.id]
+        ? MinervaArchive.get("minerva_store").usageData[user.id]
+        : {}
+>>>>>>> Stashed changes
       : {};
 
     this.settings = MinervaArchive.get("minerva_store")
+<<<<<<< Updated upstream
       ? MinervaArchive.get("minerva_store").settings
+=======
+      ? MinervaArchive.get("minerva_store").settings[user.id]
+        ? MinervaArchive.get("minerva_store").settings[user.id]
+        : Minerva.defaultSettings
+>>>>>>> Stashed changes
       : Minerva.defaultSettings;
 
     this.set(
@@ -572,7 +595,12 @@ export class Minerva {
     this.record = null;
     this.userId = null;
 
+<<<<<<< Updated upstream
     this.settings = {};
+=======
+    this.settings = Minerva.defaultSettings;
+    this.usageData = {};
+>>>>>>> Stashed changes
   }
 
   /**
