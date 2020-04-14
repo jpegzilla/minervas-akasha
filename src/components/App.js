@@ -1,4 +1,10 @@
-import React, { useState, useEffect, createContext, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useRef,
+  Fragment
+} from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -224,8 +230,16 @@ export const App = () => {
               )}
 
               <section id="filters">
-                {minerva.settings.filters.noise && <div id="filters-noise" />}
-                {minerva.settings.filters.crt && <div id="crt-overlay" />}
+                {minerva &&
+                  minerva.settings &&
+                  minerva.settings.filters && (
+                    <Fragment>
+                      {minerva.settings.filters.noise && (
+                        <div id="filters-noise" />
+                      )}
+                      {minerva.settings.filters.crt && <div id="crt-overlay" />}
+                    </Fragment>
+                  )}
               </section>
 
               {/* godmessage */}
@@ -238,15 +252,6 @@ export const App = () => {
               {!firstLoad && loggedIn && minerva.user && <Redirect to="/" />}
 
               <Switch>
-                {/* main screen */}
-                <Route
-                  exact
-                  path="/"
-                  render={routeProps => (
-                    <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
-                  )}
-                />
-
                 {/* signup screen */}
                 <Route
                   exact
@@ -267,16 +272,31 @@ export const App = () => {
                 <Route
                   exact
                   path="/login"
-                  render={routeProps => (
-                    <Signup
-                      routeProps={routeProps}
-                      loginScreenInstead={true}
-                      statusMessage={statusMessage}
-                      setStatusMessage={setStatusMessage}
-                      setStatusText={setStatusText}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  )}
+                  render={routeProps => {
+                    return (
+                      !firstLoad && (
+                        <Signup
+                          routeProps={routeProps}
+                          loginScreenInstead={true}
+                          statusMessage={statusMessage}
+                          setStatusMessage={setStatusMessage}
+                          setStatusText={setStatusText}
+                          setLoggedIn={setLoggedIn}
+                        />
+                      )
+                    );
+                  }}
+                />
+
+                {/* main screen */}
+                <Route
+                  exact
+                  path="/"
+                  render={routeProps =>
+                    minerva.record.records && (
+                      <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
+                    )
+                  }
                 />
               </Switch>
 
