@@ -256,32 +256,36 @@ export const App = () => {
                 <Route
                   exact
                   path="/signup"
-                  render={routeProps => (
-                    <Signup
-                      routeProps={routeProps}
-                      loginScreenInstead={false}
-                      statusMessage={statusMessage}
-                      setStatusMessage={setStatusMessage}
-                      setStatusText={setStatusText}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  )}
+                  render={routeProps =>
+                    firstLoad && (
+                      <Signup
+                        routeProps={routeProps}
+                        loginScreenInstead={false}
+                        statusMessage={statusMessage}
+                        setStatusMessage={setStatusMessage}
+                        setStatusText={setStatusText}
+                        setLoggedIn={setLoggedIn}
+                      />
+                    )
+                  }
                 />
 
                 {/* login component */}
                 <Route
                   exact
                   path="/login"
-                  render={routeProps => (
-                    <Signup
-                      routeProps={routeProps}
-                      loginScreenInstead={true}
-                      statusMessage={statusMessage}
-                      setStatusMessage={setStatusMessage}
-                      setStatusText={setStatusText}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  )}
+                  render={routeProps =>
+                    !firstLoad && (
+                      <Signup
+                        routeProps={routeProps}
+                        loginScreenInstead={true}
+                        statusMessage={statusMessage}
+                        setStatusMessage={setStatusMessage}
+                        setStatusText={setStatusText}
+                        setLoggedIn={setLoggedIn}
+                      />
+                    )
+                  }
                 />
 
                 {/* main screen */}
