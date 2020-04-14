@@ -219,7 +219,7 @@ export const Signup = props => {
               // if user doesn't exist after attempting to sign up
               // (which it should not)
               if (!user) {
-                minerva.set(`${newUser.name}${newUser.id}`, newUser);
+                minerva.set(`${newUser.name}`, newUser);
 
                 // create user's minerva instance
                 minerva.login(newUser, true);
@@ -235,14 +235,16 @@ export const Signup = props => {
                 // if user exists in localstorage, warn the user to just go ahead and log in
                 setStatusMessage({
                   display: true,
-                  text: "error: user already exists! please log in.",
+                  text: `that username is taken. if you are ${
+                    newUser.name
+                  }, please log in!`,
                   type: "warning"
                 });
 
                 shakeAnim("warn");
 
                 clearAll();
-                timeouts.push(setTimeout(t, 3000));
+                timeouts.push(setTimeout(t, 6000));
               }
             });
           });

@@ -5,7 +5,7 @@ import { Structure } from "./structure";
 // import { Node } from "./node";
 // import { Hypostasis } from "./hypostasis";
 // import { Athenaeum } from "./athenaeum";
-import { Minerva } from "./../managers/MinervaInstance";
+import { Minerva, MinervaArchive } from "./../managers/MinervaInstance";
 import { validateUUIDv4 } from "./../../utils/misc";
 import DatabaseInterface from "./../managers/Database";
 
@@ -241,23 +241,26 @@ export default class AkashicRecord {
       // retreive record for user with name from database
       console.log("retrieving record using database interface:", dbObject);
     } else {
-      // retrieve from localStorage
-      const user = JSON.parse(Minerva._store[name]);
-      const record = JSON.parse(Minerva._store["minerva_store"]).records[
-        userId
-      ]; // make sure to get the record for the current user
+      try {
+        // retrieve from localStorage
+        const user = MinervaArchive.get(`${name}`);
+        const record = MinervaArchive.get("minerva_store").records[userId]; // make sure to get the record for the current user
 
-      const { dateCreated } = user;
-      const { records } = record;
+        const { dateCreated } = user;
+        const { records } = record;
 
-      return new AkashicRecord(
-        userId,
-        dateCreated,
-        userId,
-        name,
-        records,
-        database
-      );
+        return new AkashicRecord(
+          userId,
+          dateCreated,
+          userId,
+          name,
+          records,
+          database
+        );
+      } catch (err) {
+        console.log(err);
+        return;
+      }
     }
   }
 
