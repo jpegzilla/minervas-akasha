@@ -52,7 +52,7 @@ export const minerva = new Minerva(
   MinervaArchive.get("minerva_store") || {},
   db
 );
-console.log(minerva);
+
 export const minervaVoice = new MinervaVoice(minerva);
 
 minerva.voice = minervaVoice;
@@ -256,36 +256,36 @@ export const App = () => {
                 <Route
                   exact
                   path="/signup"
-                  render={routeProps =>
-                    firstLoad && (
-                      <Signup
-                        routeProps={routeProps}
-                        loginScreenInstead={false}
-                        statusMessage={statusMessage}
-                        setStatusMessage={setStatusMessage}
-                        setStatusText={setStatusText}
-                        setLoggedIn={setLoggedIn}
-                      />
-                    )
-                  }
+                  render={routeProps => (
+                    <Signup
+                      routeProps={routeProps}
+                      loginScreenInstead={false}
+                      statusMessage={statusMessage}
+                      setStatusMessage={setStatusMessage}
+                      setStatusText={setStatusText}
+                      setLoggedIn={setLoggedIn}
+                    />
+                  )}
                 />
 
                 {/* login component */}
                 <Route
                   exact
                   path="/login"
-                  render={routeProps =>
-                    !firstLoad && (
-                      <Signup
-                        routeProps={routeProps}
-                        loginScreenInstead={true}
-                        statusMessage={statusMessage}
-                        setStatusMessage={setStatusMessage}
-                        setStatusText={setStatusText}
-                        setLoggedIn={setLoggedIn}
-                      />
-                    )
-                  }
+                  render={routeProps => {
+                    return (
+                      !firstLoad && (
+                        <Signup
+                          routeProps={routeProps}
+                          loginScreenInstead={true}
+                          statusMessage={statusMessage}
+                          setStatusMessage={setStatusMessage}
+                          setStatusText={setStatusText}
+                          setLoggedIn={setLoggedIn}
+                        />
+                      )
+                    );
+                  }}
                 />
 
                 {/* main screen */}
