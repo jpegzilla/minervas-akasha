@@ -794,8 +794,8 @@ export class Minerva {
             });
 
             req.onsuccess = () => {
-              resolve();
               this.updateIndexedDBUpdatedTimestamp();
+              resolve();
             };
           })
           .catch(err => {
