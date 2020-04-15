@@ -243,20 +243,22 @@ export default class AkashicRecord {
     } else {
       try {
         // retrieve from localStorage
-        const user = MinervaArchive.get(`${name}`);
-        const record = MinervaArchive.get("minerva_store").records[userId]; // make sure to get the record for the current user
+        if (MinervaArchive.get("minerva_store")) {
+          const user = MinervaArchive.get(`${name}`);
+          const record = MinervaArchive.get("minerva_store").records[userId]; // make sure to get the record for the current user
 
-        const { dateCreated } = user;
-        const { records } = record;
+          const { dateCreated } = user;
+          const { records } = record;
 
-        return new AkashicRecord(
-          userId,
-          dateCreated,
-          userId,
-          name,
-          records,
-          database
-        );
+          return new AkashicRecord(
+            userId,
+            dateCreated,
+            userId,
+            name,
+            records,
+            database
+          );
+        }
       } catch (err) {
         console.log(err);
         return;
