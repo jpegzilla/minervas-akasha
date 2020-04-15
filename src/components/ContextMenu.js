@@ -59,37 +59,41 @@ export const ContextMenu = props => {
       id="context-menu-container"
     >
       <header>context menu</header>
-      {ctxMenuItems.map((item, i) => (
-        <div
-          key={uuidv4()}
-          onClick={e => handleItemClicked(e, item, i)}
-          onMouseEnter={() => setSubItems({ display: true, id: i })}
-          onMouseLeave={() => setSubItems({ display: false, id: i })}
-          className="context-menu-item"
-        >
-          {item.title}
-          {/* sub item */}
-          {subItems.id === i &&
-            subItems.display &&
-            item.subItems &&
-            item.subItems.map(item => {
-              return (
-                <div
-                  key={uuidv4()}
-                  onClick={e => {
-                    e.stopPropagation();
-                    item.onClick(e);
-                  }}
-                  className={`context-menu-subitem ${
-                    subItems.display ? "active" : ""
-                  }`}
-                >
-                  {item.title}
-                </div>
-              );
-            })}
-        </div>
-      ))}
+      {ctxMenuItems.map((item, i) => {
+        console.log(item);
+        return (
+          <div
+            key={uuidv4()}
+            onClick={e => handleItemClicked(e, item, i)}
+            onMouseEnter={() => setSubItems({ display: true, id: i })}
+            onMouseLeave={() => setSubItems({ display: false, id: i })}
+            className="context-menu-item"
+          >
+            {item.title}
+
+            {subItems.id === i &&
+              subItems.display &&
+              item.subItems &&
+              item.subItems.map(item => {
+                console.log(item);
+                return (
+                  <div
+                    key={uuidv4()}
+                    onClick={e => {
+                      e.stopPropagation();
+                      item.onClick(e);
+                    }}
+                    className={`context-menu-subitem ${
+                      subItems.display ? "active" : ""
+                    }`}
+                  >
+                    {item.title}
+                  </div>
+                );
+              })}
+          </div>
+        );
+      })}
     </div>
   );
 };
