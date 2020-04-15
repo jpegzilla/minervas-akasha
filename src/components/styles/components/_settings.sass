@@ -18,6 +18,17 @@ $font: $proggy
 
   input
     max-width: 20rem
+    background-color: transparent
+    border: 1px solid var(--text-main)
+    padding: 0.25rem 0.5rem
+    color: var(--text-main)
+    font-family: $font
+    flex-grow: 1
+
+    &::placeholder
+      color: var(--text-main)
+      opacity: 0.5
+      font-family: $font
 
   fieldset
     padding: 0.5rem 0.5rem
