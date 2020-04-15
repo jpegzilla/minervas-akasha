@@ -46,6 +46,12 @@ body
     isolation: isolate
     overflow: hidden
 
+    button, input
+      line-height: 1rem
+
+      &:active, &:focus
+        outline: 1px solid $pink
+
   background-color: var(--bg-main)
   color: var(--text-main)
   isolation: isolate
