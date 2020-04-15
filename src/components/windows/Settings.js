@@ -9,6 +9,16 @@ export const Settings = props => {
 
   useEffect(
     () => {
+      if (isNaN(parseInt(settings.textEditor.maxHistoryDepth))) {
+        setSettings({
+          ...settings,
+          textEditor: {
+            ...settings.textEditor,
+            maxHistoryDepth: 1000
+          }
+        });
+      }
+
       minerva.changeSetting(settings);
       setGlobalVolume(settings);
     },
@@ -166,6 +176,33 @@ export const Settings = props => {
               value={settings.autoplayMedia}
               id="autoplay-settings-off"
               type="checkbox"
+            />
+          </label>
+        </fieldset>
+
+        {/* autoplay settings */}
+        <fieldset className="checkbox-settings">
+          <legend>max history depth</legend>
+
+          <label
+            title="changes the maximum stored undo history for text editors."
+            htmlFor="max-history-depth"
+          >
+            <input
+              onChange={e => {
+                setSettings({
+                  ...settings,
+                  textEditor: {
+                    ...settings.textEditor,
+                    maxHistoryDepth: e.target.value
+                  }
+                });
+              }}
+              min="0"
+              value={settings.textEditor.maxHistoryDepth}
+              id="autoplay-settings-off"
+              type="number"
+              placeholder="amount of entries"
             />
           </label>
         </fieldset>
