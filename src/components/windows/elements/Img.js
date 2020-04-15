@@ -126,6 +126,9 @@ const Img = props => {
         minerva.setWindows([...minerva.windows, newImageViewer]);
 
         minerva.setApplicationWindows(minerva.windows);
+
+        // make the new window the active window
+        minerva.setActiveWindowId(id);
       }
     };
   };

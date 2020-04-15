@@ -40,6 +40,9 @@ export const RecordViewer = props => {
     minerva.setWindows([...minerva.windows, struct]);
 
     setWindows([...minerva.windows]);
+
+    // make the new window the active window
+    minerva.setActiveWindowId(struct.id);
   };
 
   useEffect(

@@ -107,6 +107,8 @@ export const StructureData = props => {
                   minerva.setWindows([...minerva.windows, struct]);
 
                   setWindows([...minerva.windows]);
+
+                  minerva.setActiveWindowId(id);
                 };
 
                 handleOpenRecord(rec);
