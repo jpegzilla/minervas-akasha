@@ -1,5 +1,6 @@
 import add from "./commands/add";
 import help from "./commands/help";
+import listrecords from "./commands/listrecords";
 import resetrecords from "./commands/resetrecords";
 
 export const parseCommand = (command, setWindows, minerva, log) => {
@@ -35,6 +36,8 @@ export const parseCommand = (command, setWindows, minerva, log) => {
       return "that's your name!";
     case "minerva":
       return "that's my name!";
+    case "list records":
+      return listrecords(minerva);
     case "help":
       return help();
     default:
