@@ -13,10 +13,26 @@
     height: 100%
 
     & > * > *
-      padding: 0.5rem
+      padding: $halfGap
 
     header
       border-bottom: 1px solid var(--text-main)
+
+      .record-viewer-tabs
+        ul
+          list-style-type: none
+          display: flex
+
+          li
+            cursor: pointer
+            padding: 0.25rem 0.5rem
+            border: 1px solid var(--text-main)
+
+            &.active
+              border: 1px solid $yellow
+
+          li + li
+            margin-left: $halfGap
 
       div + div
         border-top: 1px solid var(--text-main)
@@ -33,10 +49,14 @@
 
       .record-viewer-records
         display: grid
-        grid-gap: 0.5rem
+        grid-gap: $halfGap
         grid-template-columns: repeat(4, max-content)
+        grid-template-rows: repeat(auto-fill, 1.5rem)
+        grid-auto-flow: row dense
 
         .record-viewer-record
+          +flexcenter
+
           cursor: pointer
           user-select: none
           border: 1px solid var(--text-main)
@@ -44,6 +64,35 @@
 
       .record-viewer-sidebar
         border-right: 1px solid var(--text-main)
+        padding: 0
+
+        .record-viewer-sidebar-container
+          display: flex
+          height: 100%
+
+          .record-viewer-sidebar-info
+            flex-grow: 1
+
+            header
+              padding: $halfGap
+
+            ul
+              list-style-type: none
+
+              li
+                padding: $halfGap
+
+                &:not(:first-child)
+                  border-top: 1px solid var(--text-main)
+
+          .record-viewer-sidebar-info-collapse
+            +flexcenter
+
+            user-select: none
+            padding: 0 0.5rem
+            cursor: pointer
+            height: 100%
+            border-left: 1px solid var(--text-main)
 
     footer
       border-top: 1px solid var(--text-main)
