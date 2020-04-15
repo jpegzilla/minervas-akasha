@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, Fragment } from "react";
 
 import PropTypes from "prop-types";
 
@@ -12,14 +12,19 @@ export const RecordViewer = props => {
   const { minerva } = useContext(globalContext);
 
   const [records, setRecords] = useState(minerva.record.records);
-  const [statusBar, setStatusBar] = useState();
+  const [recordsToShow, setRecordsToShow] = useState(
+    Object.keys(minerva.record.records)
+  );
+  const [statusBar, setStatusBar] = useState({ message: "", item: {} });
 
   const [recordData, setRecordData] = useState({
     records: [],
     length: 0
   });
 
-  const handleOpenRecord = (e, item) => {
+  const allRecords = Object.values(minerva.record.records).flat(Infinity);
+
+  const handleOpenRecord = item => {
     // make sure the window isn't already open
     const foundItem = minerva.windows.find(
       i =>
@@ -52,6 +57,27 @@ export const RecordViewer = props => {
     [minerva.record.records]
   );
 
+  // when the status bar indicates that a record has been selected, show items in the sidebar
+  const [sidebar, setSidebar] = useState({
+    title: "nothing selected",
+    records: []
+  });
+
+  useEffect(
+    () => {
+      const { item } = statusBar;
+
+      if (Object.keys(item).length > 1) {
+        const { connectedTo, name } = item;
+
+        console.log({ title: name, records: Object.keys(connectedTo) });
+
+        setSidebar({ title: name, records: Object.keys(connectedTo) });
+      }
+    },
+    [statusBar]
+  );
+
   useEffect(
     () => {
       let counter = 0;
@@ -71,90 +97,215 @@ export const RecordViewer = props => {
     [records]
   );
 
+  const handleFilterRecords = name => {
+    if (name === "all" || `[["${name}"]]` === JSON.stringify([recordsToShow]))
+      setRecordsToShow([...Object.keys(minerva.record.records)]);
+    else setRecordsToShow([name]);
+  };
+
   return (
     <div
-      onClick={() => void setStatusBar(false)}
+      onClick={() => {
+        setSidebar({ title: "nothing selected", records: {} });
+        setStatusBar({ message: "", item: {} });
+      }}
       className="record-viewer-container"
     >
       <header>
         <div className="record-viewer-navigation">navigation</div>
-        <div className="record-viewer-tabs">tabs</div>
+        <div className="record-viewer-tabs">
+          <ul>
+            {[...Object.keys(minerva.record.records), "all"].map((name, i) => {
+              return (
+                <li
+                  className={`recordviewer-filter${
+                    recordsToShow.length === 1 && recordsToShow.includes(name)
+                      ? " active"
+                      : recordsToShow.length > 1 && name === "all"
+                        ? " active"
+                        : ""
+                  }`}
+                  key={`${name}-${i}`}
+                  onClick={() => void handleFilterRecords(name)}
+                >
+                  {name}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </header>
       <section className="record-viewer-main">
-        <section className="record-viewer-sidebar">
-          <div>sidebar</div>
+        <section
+          onClick={e => void e.stopPropagation()}
+          className="record-viewer-sidebar"
+        >
+          <div className="record-viewer-sidebar-container">
+            <div className="record-viewer-sidebar-info">
+              <header title={sidebar.title}>
+                {sidebar.title.substring(0, 17).padEnd(20, ".")}
+              </header>
+
+              {sidebar.records.length > 0 ? (
+                <ul>
+                  {sidebar.records.map(item => {
+                    const record = minerva.record.findRecordById(item);
+
+                    const title = `name: ${record.name}\ntype: ${
+                      record.type
+                    }\ntags: ${
+                      record.tags.length === 0
+                        ? "none"
+                        : record.tags.map(i => i.name).join(", ")
+                    }\ncreated on ${new Date(record.createdAt).toLocaleString(
+                      minerva.settings.dateFormat
+                    )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
+                      minerva.settings.dateFormat
+                    )}`;
+
+                    return (
+                      <li
+                        onDoubleClick={e => {
+                          e.stopPropagation();
+
+                          const handleOpenRecord = item => {
+                            // make sure the window isn't already open
+                            const foundItem = minerva.windows.find(
+                              i =>
+                                i.component === "DataStructure" &&
+                                i.componentProps.structId === item.id
+                            );
+
+                            if (foundItem) return;
+
+                            const itemToOpen = minerva.record.records[
+                              item.type
+                            ].find(i => i.id === item.id);
+
+                            const { id, type } = itemToOpen;
+
+                            // move objects like this to structuremap to dry things up
+                            const struct = makeStruct(
+                              type,
+                              id,
+                              minerva,
+                              uuidv4
+                            );
+
+                            minerva.setWindows([...minerva.windows, struct]);
+
+                            setWindows([...minerva.windows]);
+
+                            minerva.setActiveWindowId(id);
+                          };
+
+                          handleOpenRecord(record);
+                        }}
+                        title={title}
+                        key={record.id}
+                      >
+                        {`(${record.type.substring(
+                          0,
+                          3
+                        )}) ${record.name.substring(0, 11).padEnd(14, ".")}`}
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                ""
+              )}
+            </div>
+
+            <div className="record-viewer-sidebar-info-collapse">+</div>
+          </div>
         </section>
         <section className="record-viewer-records">
-          {recordData.records.map((item, i) => {
-            // looks sort of like this: {id: uuidv4(), name: "node", data: {...}}
-            const { type, tags, name } = item;
+          {allRecords.some(item => recordsToShow.includes(item.type))
+            ? recordData.records.map((item, i) => {
+                // looks sort of like this: {id: uuidv4(), name: "node", data: {...}}
+                const { type, tags, name } = item;
 
-            const nameToShow =
-              name === type ? type : name.substring(0, 7).padEnd(10, ".");
+                const nameToShow =
+                  name === type
+                    ? type
+                    : `(${type.substring(0, 3)}) ${name
+                        .substring(0, 9)
+                        .padEnd(12, ".")}`;
 
-            // if a type starts with a vowel, use an instead of a when referring to it
-            const aOrAn = ["a", "e", "i", "o", "u", "y"].some(item =>
-              type.startsWith(item)
-            )
-              ? "an"
-              : "a";
-            let tagsToShow;
+                let tagsToShow;
 
-            if (tags.length === 0) {
-              tagsToShow = "none";
-            } else if (tags.length > 3) {
-              tagsToShow =
-                tags
-                  .map(tag => `${tag.name}`)
-                  .slice(0, 3)
-                  .join(", ") + ` + ${tags.length - 3} more`;
-            } else if (tags.length > 0) {
-              tagsToShow = tags.map(tag => `${tag.name}`).join(", ");
-            }
-
-            let message = { title: "no file information" };
-
-            if (item.data) {
-              if (item.data.file) {
-                const { title, humanSize, mime, ext } = item.data.file;
-
-                message = {
-                  title,
-                  humanSize,
-                  mime,
-                  ext
-                };
-              }
-            }
-
-            return (
-              <div
-                key={`type-${i}-record`}
-                onClick={e => {
-                  e.stopPropagation();
-
-                  const m = Object.values(message).join(" ⦚ ");
-
-                  return void setStatusBar({
-                    message: `information: ${m}`
-                  });
-                }}
-                onDoubleClick={e => void handleOpenRecord(e, item)}
-                title={
-                  `${aOrAn} ${type}.
-tags: ${tagsToShow}
-name: ${name}` || "null"
+                if (tags.length === 0) {
+                  tagsToShow = "none";
+                } else if (tags.length > 3) {
+                  tagsToShow =
+                    tags
+                      .map(tag => `${tag.name}`)
+                      .slice(0, 3)
+                      .join(", ") + ` + ${tags.length - 3} more`;
+                } else if (tags.length > 0) {
+                  tagsToShow = tags.map(tag => `${tag.name}`).join(", ");
                 }
-                className="record-viewer-record record-box"
-              >
-                {nameToShow}
-              </div>
-            );
-          })}
+
+                let message = { title: "no file information" };
+
+                if (item.data) {
+                  if (item.data.file) {
+                    const { title, humanSize, mime, ext } = item.data.file;
+
+                    message = {
+                      title,
+                      humanSize,
+                      mime,
+                      ext
+                    };
+                  }
+                }
+                if (type !== "shard") {
+                  const connectionCount = Object.keys(item.connectedTo).length;
+                  message = {
+                    title: `(${type}) ${item.name} - ${connectionCount} ${
+                      connectionCount === 1 ? "record" : "records"
+                    }`
+                  };
+                }
+
+                if (!recordsToShow.includes(item.type)) return false;
+
+                const title = `name: ${name}\ntype: ${type}\ntags: ${tagsToShow}\ncreated on ${new Date(
+                  item.createdAt
+                ).toLocaleString(
+                  minerva.settings.dateFormat
+                )}\nupdated on ${new Date(item.updatedAt).toLocaleString(
+                  minerva.settings.dateFormat
+                )}`;
+
+                return (
+                  <div
+                    key={`type-${i}-record`}
+                    onClick={e => {
+                      e.stopPropagation();
+
+                      const m = Object.values(message).join(" ⦚ ");
+
+                      return void setStatusBar({
+                        message: `information: ${m}`,
+                        item
+                      });
+                    }}
+                    onDoubleClick={() => void handleOpenRecord(item)}
+                    title={title}
+                    className="record-viewer-record record-box"
+                  >
+                    {nameToShow}
+                  </div>
+                );
+              })
+            : "no records to show"}
         </section>
       </section>
       <footer className="record-viewer-footer">
-        {statusBar ? (
+        {statusBar.message.length > 0 ? (
           <div>{statusBar.message}</div>
         ) : (
           <div>record count: {recordData.length}</div>
