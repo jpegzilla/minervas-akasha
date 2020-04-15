@@ -8,24 +8,51 @@
 // "colorcode-purple",
 //  "colorcode-yellow"
 
-.color-box ul
-  .colorcode-pink
-    background-color: $pink
+$size: 2rem
 
-  .colorcode-white
-    background-color: $white
+.color-box
+  +flexcenter
 
-  .colorcode-blue
-    background-color: $blue
+  margin: $halfGap 0 1rem 0
 
-  .colorcode-red
-    background-color: $red
+  li
+    border-radius: 1px
+    flex-grow: 1
+    flex-shrink: 1
+    flex-basis: auto
+    transition: flex-grow 0.1s
 
-  .colorcode-green
-    background-color: $green
+    & + li
+      margin-left: $halfGap
 
-  .colorcode-purple
-    background-color: $purple
+    &:hover
+      transition: flex-grow 0.1s
+      flex-grow: 2
 
-  .colorcode-yellow
-    background-color: $yellow
+  ul
+    list-style-type: none
+    display: flex
+    flex-basis: auto
+    width: 100%
+    height: $size
+
+    .colorcode-pink
+      background-color: $pink
+
+    .colorcode-white
+      background-color: $white
+
+    .colorcode-blue
+      background-color: $blue
+
+    .colorcode-red
+      background-color: $red
+
+    .colorcode-green
+      background-color: $green
+
+    .colorcode-purple
+      background-color: $purple
+
+    .colorcode-yellow
+      background-color: $yellow
