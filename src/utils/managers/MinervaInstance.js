@@ -101,7 +101,9 @@ export class Minerva {
     // will allow us to avoid errors if there is an extra setting that wasn't previously
     // stored in localstorage when the app loads
     if (MinervaArchive.get("minerva_store")) {
-      const settings = MinervaArchive.get("minerva_store").settings;
+      const settings = MinervaArchive.get("minerva_store").settings[
+        this.user.id
+      ];
 
       const defaultSettings = Minerva.defaultSettings;
 
@@ -146,7 +148,7 @@ export class Minerva {
       connections: true, // dictates whether users can see content from other users.
       filters: {
         crt: true,
-        noise: false
+        noise: true
       }, // enables / disables graphical filters.
       dateFormat: "ja-JP", // for formatting dates / times
       textEditor: {
@@ -191,6 +193,11 @@ export class Minerva {
     this.record.addToRecord(id, structure, this);
     this.save();
 
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
+
     return this.record;
   }
 
@@ -211,6 +218,11 @@ export class Minerva {
     this.record.removeFromRecord(id, type, this);
     this.save();
 
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
+
     return this.record;
   }
 
@@ -230,6 +242,11 @@ export class Minerva {
     this.updateRecordUpdatedTimeStamp();
     this.record.editInRecord(id, type, key, value, this);
     this.save();
+
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
 
     return this.record;
   }
@@ -351,6 +368,11 @@ export class Minerva {
     this.save();
 
     this.updateRecordUpdatedTimeStamp();
+
+    this.updateUsageData(
+      "structures",
+      Object.values(this.record.records).flat(Infinity).length
+    );
 
     return this.record;
   }
@@ -818,6 +840,7 @@ export class Minerva {
           "structures",
           Object.values(this.record.records).flat(Infinity).length
         );
+
         this.updateIndexedDBUpdatedTimestamp();
       };
     }
@@ -960,30 +983,42 @@ export class Minerva {
    * @returns {Minerva} the current instance of minerva.
    */
   save() {
-    const store = {
-      user: this.user,
-      settings: MinervaArchive.get("minerva_store")
-        ? {
-            ...MinervaArchive.get("minerva_store").settings,
-            [this.user.id]: this.settings
-          }
-        : { [this.user.id]: this.settings },
-      usageData: MinervaArchive.get("minerva_store")
-        ? {
-            ...MinervaArchive.get("minerva_store").usageData,
-            [this.user.id]: this.usageData
-          }
-        : { [this.user.id]: this.usageData },
-      records: MinervaArchive.get("minerva_store")
-        ? {
-            ...MinervaArchive.get("minerva_store").records,
-            [this.user.id]: this.record
-          }
-        : { [this.user.id]: this.record },
-      windows: this.windows
-    };
+    if (MinervaArchive.get("minerva_store")) {
+      const store = {
+        user: this.user,
+        settings: MinervaArchive.get("minerva_store")
+          ? {
+              ...MinervaArchive.get("minerva_store").settings,
+              [this.user.id]: this.settings
+            }
+          : { [this.user.id]: this.settings },
+        usageData: MinervaArchive.get("minerva_store")
+          ? {
+              ...MinervaArchive.get("minerva_store").usageData,
+              [this.user.id]: this.usageData
+            }
+          : { [this.user.id]: this.usageData },
+        records: MinervaArchive.get("minerva_store")
+          ? {
+              ...MinervaArchive.get("minerva_store").records,
+              [this.user.id]: this.record
+            }
+          : { [this.user.id]: this.record },
+        windows: this.windows
+      };
 
-    MinervaArchive.set("minerva_store", store);
+      MinervaArchive.set("minerva_store", store);
+    } else {
+      const store = {
+        user: this.user,
+        settings: { [this.user.id]: this.settings },
+        usageData: { [this.user.id]: this.usageData },
+        records: { [this.user.id]: this.record },
+        windows: this.windows
+      };
+
+      MinervaArchive.set("minerva_store", store);
+    }
 
     return this;
   }
@@ -1009,8 +1044,8 @@ export class Minerva {
 
     const commitUpdate = (key, updateObject) => {
       console.log(key, updateObject);
-      console.log("today did not have an existing update.", this.usageData);
-      if (!this.usageData[today]) {
+      if (!this.usageData[today] || !this.usageData[today][key]) {
+        console.log("today did not have an existing update.", this.usageData);
         this.usageData = {
           ...this.usageData,
           [today]: {
@@ -1019,7 +1054,10 @@ export class Minerva {
           }
         };
       } else {
-        console.log("today had an existing update.", this.usageData[today]);
+        console.log(
+          "today had an existing update.",
+          this.usageData[today][key]
+        );
         this.usageData = {
           ...this.usageData,
           [today]: {
@@ -1047,7 +1085,7 @@ export class Minerva {
 
       case "structures":
         if (typeof value !== "number")
-          throw new TypeError("uptime value must be a number.");
+          throw new TypeError("structure count value must be a number.");
 
         const structureUpdate = {
           ...baseData,
@@ -1055,6 +1093,18 @@ export class Minerva {
         };
 
         commitUpdate("structures", structureUpdate);
+        break;
+
+      case "data":
+        if (typeof value !== "number")
+          throw new TypeError("dataupdates count value must be a number.");
+
+        const dataUpdate = {
+          ...baseData,
+          dataUpdateCount: value
+        };
+
+        commitUpdate("data", dataUpdate);
         break;
 
       default:
