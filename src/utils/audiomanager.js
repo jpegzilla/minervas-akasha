@@ -1,5 +1,5 @@
 import { uuidv4 } from "./misc";
-import { MinervaArchive, Minerva } from "./managers/MinervaInstance";
+import { Minerva } from "./managers/MinervaInstance";
 
 export default class AudioManager {
   constructor(options) {
