@@ -293,6 +293,8 @@ export const App = () => {
                   exact
                   path="/"
                   render={routeProps =>
+                    minerva &&
+                    minerva.record &&
                     minerva.record.records && (
                       <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
                     )
