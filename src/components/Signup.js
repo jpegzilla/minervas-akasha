@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import { Redirect, Link } from "react-router-dom";
 import { MinervaArchive } from "./../utils/managers/MinervaInstance";
 import PropTypes from "prop-types";
@@ -17,7 +17,7 @@ const text = {
 // I can loop through this array to clear them all.
 let timeouts = [];
 
-export const Signup = props => {
+const SignupComponent = props => {
   const {
     setStatusText,
     setStatusMessage,
@@ -463,7 +463,9 @@ export const Signup = props => {
   );
 };
 
-Signup.propTypes = {
+export const Signup = memo(SignupComponent);
+
+SignupComponent.propTypes = {
   setStatusText: PropTypes.func,
   setStatusMessage: PropTypes.func,
   loginScreenInstead: PropTypes.bool,

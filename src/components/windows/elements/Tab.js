@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 
 import PropTypes from "prop-types";
 
-export const Tab = props => {
+const TabComponent = props => {
   const { w, title, activeWindowId, tabCounts, handleClickItem } = props;
 
   let titleToUse = title,
@@ -15,22 +15,27 @@ export const Tab = props => {
 
   const titleText = `name: ${titleToUse}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase();
 
-  return (
-    <li
-      title={titleText}
-      className={
-        w.id === activeWindowId ? "taskbar-button active" : "taskbar-button"
-      }
-      onClick={e => {
-        handleClickItem(e, w);
-      }}
-    >
-      {`${titleToUse} (${tabCounts})`}
-    </li>
+  return useMemo(
+    () => (
+      <li
+        title={titleText}
+        className={
+          w.id === activeWindowId ? "taskbar-button active" : "taskbar-button"
+        }
+        onClick={e => {
+          handleClickItem(e, w);
+        }}
+      >
+        {`${titleToUse} (${tabCounts})`}
+      </li>
+    ),
+    [w, activeWindowId, tabCounts, handleClickItem, titleText, titleToUse]
   );
 };
 
-Tab.propTypes = {
+export const Tab = memo(TabComponent);
+
+TabComponent.propTypes = {
   w: PropTypes.object,
   title: PropTypes.string,
   activeWindowId: PropTypes.string,

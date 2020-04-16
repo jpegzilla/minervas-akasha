@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext, useEffect } from "react";
+import React, { Fragment, useState, useContext, useEffect, memo } from "react";
 
 import PropTypes from "prop-types";
 import { uuidv4 } from "./../../../utils/misc";
@@ -6,7 +6,7 @@ import { makeStruct } from "./../../../utils/managers/StructureMap";
 import { globalContext } from "./../../App";
 
 // this component is the data display part of a DataStructure window
-export const StructureData = props => {
+const StructureDataComponent = props => {
   const {
     currentFileData,
     showImage,
@@ -22,6 +22,8 @@ export const StructureData = props => {
     connectionOptions,
     setWindows
   } = props;
+
+  // console.log("rerendering structure data");
 
   const { minerva, renderConList } = useContext(globalContext);
 
@@ -42,6 +44,7 @@ export const StructureData = props => {
       setConnections(connectedToObjects);
     },
     [
+      minerva.record,
       renderConList,
       type,
       disconnectionOptions,
@@ -208,7 +211,9 @@ export const StructureData = props => {
     );
 };
 
-StructureData.propTypes = {
+export const StructureData = memo(StructureDataComponent);
+
+StructureDataComponent.propTypes = {
   currentFileData: PropTypes.object,
   showImage: PropTypes.any,
   FileDisplay: PropTypes.any,

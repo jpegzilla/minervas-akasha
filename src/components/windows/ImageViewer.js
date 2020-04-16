@@ -1,12 +1,14 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
+
+import PropTypes from "prop-types";
 
 import { globalContext } from "./../App";
 
 import worker from "./elements/utils/metadataWorker.worker";
 
-export const ImageViewer = props => {
+const ImageViewerComponent = props => {
   const { src, alt, id, mime } = props;
 
   const [source, setSource] = useState();
@@ -131,4 +133,13 @@ export const ImageViewer = props => {
       </div>
     </section>
   );
+};
+
+export const ImageViewer = memo(ImageViewerComponent);
+
+ImageViewerComponent.propTypes = {
+  src: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  alt: PropTypes.string,
+  id: PropTypes.string,
+  mime: PropTypes.string
 };

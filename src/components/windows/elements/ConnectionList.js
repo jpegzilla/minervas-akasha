@@ -1,4 +1,6 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, memo } from "react";
+
+import PropTypes from "prop-types";
 
 import { globalContext } from "./../../App";
 
@@ -12,7 +14,7 @@ const clearAll = () => {
   }
 };
 
-export const ConnectionList = props => {
+const ConnectionListComponent = props => {
   const {
     disconnectionOptions,
     connectionOptions,
@@ -29,6 +31,8 @@ export const ConnectionList = props => {
     setStatusMessage,
     setRenderConList
   } = useContext(globalContext);
+
+  // console.log("rerendering connection list");
 
   // function that just clears the status message
   const t = () => {
@@ -139,7 +143,7 @@ export const ConnectionList = props => {
                     {`(${record.type.substring(0, 3)}) ${record.name
                       .substring(0, 22)
                       .padEnd(30, ".")}`}
-                    {record.id.substring(0, 5).padStart(8, "0")}
+                    {record.id.substring(0, 8)}
                   </li>
                 );
               })}
@@ -180,7 +184,7 @@ export const ConnectionList = props => {
                   {`(${record.type.substring(0, 3)}) ${record.name
                     .substring(0, 22)
                     .padEnd(30, ".")}`}
-                  {record.id.substring(0, 5).padStart(8, "0")}
+                  {record.id.substring(0, 8)}
                 </li>
               );
             })}
@@ -193,4 +197,16 @@ export const ConnectionList = props => {
       )}
     </div>
   );
+};
+
+export const ConnectionList = memo(ConnectionListComponent);
+
+ConnectionListComponent.propTypes = {
+  disconnectionOptions: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  connectionOptions: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
+  structId: PropTypes.string,
+  connectsTo: PropTypes.array,
+  setDisconnectionOptions: PropTypes.func,
+  setConnectionOptions: PropTypes.func,
+  makingConnection: PropTypes.bool
 };

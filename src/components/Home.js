@@ -3,7 +3,8 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  Redirect
+  memo,
+  useMemo
 } from "react";
 
 import { uuidv4 } from "./../utils/misc";
@@ -16,7 +17,7 @@ import { WindowTypes } from "./windows/WindowTypes";
 import { globalContext } from "./App";
 import { hasDatePassed } from "./../utils/dateUtils";
 
-export const Home = props => {
+const HomeComponent = props => {
   const { routeProps } = props;
 
   const {
@@ -183,13 +184,11 @@ export const Home = props => {
   // empty during normal operation. if that happens, this hook will throw.
   // this should no longer exist in later versions, because minerva's record
   // will be more robust.
-  const [error, setError] = useState(false);
   useEffect(
     () => {
       if (!minerva.record) {
         console.log(minerva);
         console.log("there is something very wrong. minerva has no record.");
-        setError(true);
         // throw new Error(
         //   "there is something very wrong. minerva has no record."
         // );
@@ -209,25 +208,6 @@ export const Home = props => {
   );
   // #########################################################
 
-  // this is the function that moves the windows around.
-  const setPosition = (windowId, newPosition) => {
-    if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
-      throw new TypeError("invalid parameters to setPosition");
-
-    const newWindows = windows.map(item => {
-      return item.id === windowId
-        ? {
-            ...item,
-            position: newPosition
-          }
-        : item;
-    });
-
-    minerva.setWindows(newWindows);
-
-    setWindows([...minerva.windows]);
-  };
-
   // this is to keep the windows in state synchronized with minerva
   useEffect(() => minerva.setWindows(windows), [windows, minerva]);
 
@@ -240,44 +220,6 @@ export const Home = props => {
 
   // for performance: maybe send the event to a worker to calculate the position?
   const [wait, setWait] = useState(false);
-  const handleMouseMove = e => {
-    if (!activeWindow) return void false;
-
-    if (activeWindow && !wait) {
-      setWait(true);
-      const { clientX, clientY } = e;
-
-      const onMouseUp = () => {
-        setActiveWindow(null);
-        setActiveWindowId("");
-        document.removeEventListener("mouseup", onMouseUp);
-      };
-
-      document.addEventListener("mouseup", onMouseUp, {
-        once: true,
-        capture: true
-      });
-
-      // the offset is off! fix fix fix.
-      // from the mdn web documentation of raf():
-      // // note: your callback routine must itself call requestAnimationFrame()
-      // // if you want to animate another frame at the next repaint.
-      const moveWindow = () => {
-        setTimeout(() => void setWait(false), 15);
-        setPosition(activeWindowId, {
-          x: clientX - mouseOffset[0],
-          y: clientY - mouseOffset[1]
-        });
-      };
-
-      requestAnimationFrame(() => {
-        // update the window position and immediately request another frame to update again.
-
-        moveWindow();
-        requestAnimationFrame(moveWindow);
-      });
-    }
-  };
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -289,124 +231,209 @@ export const Home = props => {
   // in the list.
   const componentCounts = {};
 
-  if (error) return <Redirect to="/signup" />;
+  return useMemo(
+    () => {
+      const handleDrop = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        setDroppedFiles(e.dataTransfer.files[0]);
+        hideDropZone();
+      };
 
-  return (
-    <section
-      id="window-system"
-      onClick={e => {
-        if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
-          // e.stopPropagation();
-          // e.preventDefault();
-          setMenuOpen(false);
-          setAddMenuOpen(false);
-          setSettingsOpen(false);
+      const handleDragLeave = e => {
+        hideDropZone();
+      };
+
+      const handleDragOver = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        showDropZone();
+      };
+
+      const handleMouseMove = e => {
+        if (!activeWindow) return void false;
+
+        if (activeWindow && !wait) {
+          setWait(true);
+          const { clientX, clientY } = e;
+
+          const onMouseUp = () => {
+            setActiveWindow(null);
+            setActiveWindowId("");
+            document.removeEventListener("mouseup", onMouseUp);
+          };
+
+          document.addEventListener("mouseup", onMouseUp, {
+            once: true,
+            capture: true
+          });
+
+          // the offset is off! fix fix fix.
+          // from the mdn web documentation of raf():
+          // // note: your callback routine must itself call requestAnimationFrame()
+          // // if you want to animate another frame at the next repaint.
+          const moveWindow = () => {
+            setTimeout(() => void setWait(false), 15);
+            setPosition(activeWindowId, {
+              x: clientX - mouseOffset[0],
+              y: clientY - mouseOffset[1]
+            });
+          };
+
+          requestAnimationFrame(() => {
+            // update the window position and immediately request another frame to update again.
+
+            moveWindow();
+            requestAnimationFrame(moveWindow);
+          });
         }
-      }}
-      onMouseMove={handleMouseMove}
-    >
-      <Topbar
-        settingsOpen={settingsOpen}
-        setSettingsOpen={setSettingsOpen}
-        settingsMenuRef={settingsMenuRef}
-      />
-      <section
-        onMouseDown={e => void e.stopPropagation()}
-        className={droppable ? "filedrop active" : "filedrop"}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDragEnter={allowDrag}
-        id="main-container"
-      >
-        {windows.map(item => {
-          if (item.belongsTo === minerva.user.id) {
-            // if item is offscreen, reset.
-            // this should maybe change to use the iselementinviewport utility.
-            if (
-              item.position.x < 0 ||
-              item.position.y < 0 ||
-              item.position.x > window.innerWidth - 50 ||
-              item.position.y > window.innerHeight - 50
-            )
-              item.position = {
-                x: 100,
-                y: 100
-              };
+      };
 
-            // this needs to exist so that the correct component is rendered.
-            // this object must contain every type of component that the home
-            // screen needs to render, becuase it uses a dynamic component
-            // jsx name or whatever it's called. lol
-            const typeMap = WindowTypes;
+      // this is the function that moves the windows around.
+      const setPosition = (windowId, newPosition) => {
+        if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
+          throw new TypeError("invalid parameters to setPosition");
 
-            const Component = typeMap[item.stringType];
+        const newWindows = windows.map(item => {
+          return item.id === windowId
+            ? {
+                ...item,
+                position: newPosition
+              }
+            : item;
+        });
 
-            // flag for active class
-            let isActive = "";
+        minerva.setWindows(newWindows);
 
-            if (item.id === activeWindowId) isActive = "active";
+        setWindows([...minerva.windows]);
+      };
 
-            // used to determine how to count elements being rendered.
-            // counts based on type of component.
-            componentCounts[
-              item.componentProps
-                ? item.componentProps.type
-                : item.component || item.stringType
-            ] =
-              componentCounts[
-                item.componentProps
-                  ? item.componentProps.type
-                  : item.component || item.stringType
-              ] + 1 || 1;
-
-            const key = `${item.title}-window-${item.id}`;
-            return (
-              <Component
-                item={item}
-                num={
+      return (
+        <section
+          id="window-system"
+          onClick={e => {
+            if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
+              // e.stopPropagation();
+              // e.preventDefault();
+              setMenuOpen(false);
+              setAddMenuOpen(false);
+              setSettingsOpen(false);
+            }
+          }}
+          onMouseMove={handleMouseMove}
+        >
+          <Topbar
+            settingsOpen={settingsOpen}
+            setSettingsOpen={setSettingsOpen}
+            settingsMenuRef={settingsMenuRef}
+          />
+          <section
+            onMouseDown={e => void e.stopPropagation()}
+            className={droppable ? "filedrop active" : "filedrop"}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDragEnter={allowDrag}
+            id="main-container"
+          >
+            {windows.map(item => {
+              if (item.belongsTo === minerva.user.id) {
+                // if item is offscreen, reset.
+                // this should maybe change to use the iselementinviewport utility.
+                if (
+                  item.position.x < 0 ||
+                  item.position.y < 0 ||
+                  item.position.x > window.innerWidth - 50 ||
+                  item.position.y > window.innerHeight - 50
+                )
+                  item.position = {
+                    x: 100,
+                    y: 100
+                  };
+                // this needs to exist so that the correct component is rendered.
+                // this object must contain every type of component that the home
+                // screen needs to render, becuase it uses a dynamic component
+                // jsx name or whatever it's called. lol
+                const typeMap = WindowTypes;
+                const Component = typeMap[item.stringType];
+                // flag for active class
+                let isActive = "";
+                if (item.id === activeWindowId) isActive = "active";
+                // used to determine how to count elements being rendered.
+                // counts based on type of component.
+                componentCounts[
+                  item.componentProps
+                    ? item.componentProps.type
+                    : item.component || item.stringType
+                ] =
                   componentCounts[
                     item.componentProps
                       ? item.componentProps.type
                       : item.component || item.stringType
-                  ]
-                }
-                records={minerva.record.records}
-                component={item.component}
-                componentProps={item.componentProps}
-                setWindows={setWindows}
-                windows={windows}
-                className={isActive}
-                key={key}
-                setPosition={setPosition}
-                setActiveWindowId={setActiveWindowId}
-                activeWindowId={activeWindowId}
-                setActiveWindow={setActiveWindow}
-                setMouseOffset={setMouseOffset}
-              />
-            );
-          }
-
-          return false;
-        })}
-      </section>
-      <Taskbar
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        taskBarMenuRef={taskBarMenuRef}
-        activeWindow={activeWindow}
-        setActiveWindow={setActiveWindow}
-        activeWindowId={activeWindowId}
-        setActiveWindowId={setActiveWindowId}
-        windows={windows}
-        setWindows={setWindows}
-        addMenuOpen={addMenuOpen}
-        setAddMenuOpen={setAddMenuOpen}
-      />
-    </section>
+                  ] + 1 || 1;
+                const key = `${item.title}-window-${item.id}`;
+                return (
+                  <Component
+                    item={item}
+                    num={
+                      componentCounts[
+                        item.componentProps
+                          ? item.componentProps.type
+                          : item.component || item.stringType
+                      ]
+                    }
+                    records={minerva.record.records}
+                    component={item.component}
+                    componentProps={item.componentProps}
+                    setWindows={setWindows}
+                    windows={windows}
+                    className={isActive}
+                    key={key}
+                    setPosition={setPosition}
+                    setActiveWindowId={setActiveWindowId}
+                    activeWindowId={activeWindowId}
+                    setActiveWindow={setActiveWindow}
+                    setMouseOffset={setMouseOffset}
+                  />
+                );
+              }
+              return false;
+            })}
+          </section>
+          <Taskbar
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            taskBarMenuRef={taskBarMenuRef}
+            activeWindow={activeWindow}
+            setActiveWindow={setActiveWindow}
+            activeWindowId={activeWindowId}
+            setActiveWindowId={setActiveWindowId}
+            windows={windows}
+            setWindows={setWindows}
+            addMenuOpen={addMenuOpen}
+            setAddMenuOpen={setAddMenuOpen}
+          />
+        </section>
+      );
+    },
+    [
+      menuOpen,
+      settingsOpen,
+      addMenuOpen,
+      droppable,
+      windows,
+      activeWindowId,
+      componentCounts,
+      activeWindow,
+      minerva,
+      mouseOffset,
+      wait
+    ]
   );
 };
 
-Home.propTypes = {
+export const Home = memo(HomeComponent);
+
+HomeComponent.propTypes = {
   routeProps: PropTypes.object
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, memo } from "react";
 
 import { videoTagSchema } from "./utils/mediaTagSchema";
 import { globalContext } from "./../../App";
@@ -111,7 +111,7 @@ const Video = props => {
   );
 };
 
-export default Video;
+export default memo(Video);
 
 Video.propTypes = {
   src: PropTypes.string,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 import { Redirect } from "react-router-dom";
 import { uuidv4 } from "./../utils/misc";
 import { makeStruct } from "../utils/managers/StructureMap";
@@ -27,7 +27,7 @@ const clearAll = () => {
   }
 };
 
-export const Taskbar = props => {
+const TaskbarComponent = props => {
   const {
     setWindows,
     windows,
@@ -209,11 +209,11 @@ export const Taskbar = props => {
       id: "submitfeedback",
       title: "submit feedback",
       onClick: () => {
-        // const link = document.createElement("a");
-        // link.href =
-        //   "https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D";
-        // link.target = "_blank";
-        // link.click();
+        const link = document.createElement("a");
+        link.href =
+          "https://github.com/jpegzilla/minervas-akasha/blob/master/contributing.md#submitting-feedback-and-bug-reports";
+        link.target = "_blank";
+        link.click();
       },
       tooltip: "submit feedback about minerva's akasha."
     },
@@ -401,7 +401,9 @@ export const Taskbar = props => {
   );
 };
 
-Taskbar.propTypes = {
+export const Taskbar = memo(TaskbarComponent);
+
+TaskbarComponent.propTypes = {
   setWindows: PropTypes.func,
   windows: PropTypes.array,
   activeWindow: PropTypes.any,

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, memo, useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { globalContext } from "./../App";
 
 import { WindowTypes } from "./WindowTypes";
 
-export const Window = props => {
+const WindowComponent = props => {
   const {
     windows,
     setActiveWindow,
@@ -32,85 +32,6 @@ export const Window = props => {
   let title = t.replace(/\s/gi, "-");
 
   const { x, y } = position;
-
-  const handleMouseDown = (e, bool) => {
-    // when mouse is down, make sure that the mouse is not clicking on a window control button.
-    if (
-      Array.from(document.querySelectorAll(".window-controls-button")).includes(
-        e.target
-      )
-    )
-      return;
-
-    setActiveWindowId(id);
-
-    // bool is true if mouse is down, false if mouse is up.
-    if (bool) {
-      const rect = e.target.getBoundingClientRect();
-
-      // this is to get the position of the cursor
-      // relative to the element in the window
-      const o = {
-        top: rect.top + document.body.scrollTop,
-        left: rect.left + document.body.scrollLeft
-      };
-
-      // TODO: come back and un hardcode this
-      setMouseOffset([e.clientX - o.left, e.clientY - o.top]);
-
-      // reset offset if mouse is not clicked
-    } else setMouseOffset([0, 0]);
-
-    // set active window title
-    setActiveWindow(bool ? title : "");
-  };
-
-  // handle commands such as minimize and close.
-  // event is only passed in in order to prevent bubbling and any default action.
-  const handleWindowCommand = (e, command) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const { state } = command;
-
-    if (state) {
-      switch (state) {
-        case "minimized":
-          setWindows([
-            ...windows.map(w => {
-              // set state to minimized, or return the existing window object
-              return w.id === id
-                ? {
-                    ...w,
-                    state
-                  }
-                : w;
-            })
-          ]);
-          return;
-        default:
-          throw new Error("something went very wrong");
-      }
-    } else {
-      switch (command) {
-        case "close":
-          minerva.setWindows([
-            ...minerva.windows.filter(w => (w.id === id ? false : true))
-          ]);
-
-          // if there's an id present, then remove the file from the record, because a component
-          // with an id in componentProps is always going to be using indexeddb to store files.
-          if (componentProps.id) {
-            minerva.removeFileFromRecord(id);
-          }
-
-          setWindows([...minerva.windows]);
-          return;
-        default:
-          return;
-      }
-    }
-  };
 
   // handle drag / drop events
   const [droppable, setDroppable] = useState(false);
@@ -156,70 +77,181 @@ export const Window = props => {
     [canDropFiles, droppedFiles, componentProps.droppedFiles]
   );
 
-  return (
-    <div
-      onDragOver={canDropFiles ? handleDragOver : undefined}
-      onDragLeave={canDropFiles ? handleDragLeave : undefined}
-      onDragEnter={canDropFiles ? allowDrag : undefined}
-      onDrop={canDropFiles ? handleDrop : undefined}
-      style={
-        activeWindowId === id
-          ? { transform: `translate3d(${x}px, ${y}px, 0)` }
-          : { transform: `translate3d(${position.x}px, ${position.y}px, 0)` }
-      }
-      id={`${title}-window-${id}`}
-      className={`${title}-window system-window ${className} ${
-        droppable ? "filedrop drop-active" : "filedrop"
-      } window-${state}`}
-      onClick={() => void setActiveWindowId(id)}
-      onMouseUp={e => void handleMouseDown(e, false)}
-    >
-      <header
-        className={`${title}-header`}
-        onMouseDown={e => void handleMouseDown(e, true)}
-        onMouseUp={e => void handleMouseDown(e, false)}
-        onDrag={() => void false}
-      >
-        <span className="window-title-text">{`${componentProps.type ||
-          t} (${num})`}</span>
-        <b />
-        <span className="window-controls">
-          <div
-            className="window-controls-min window-controls-button"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleWindowCommand(e, { state: "minimized" });
-            }}
-          >
-            -
-          </div>
-          <div
-            className="window-controls-close window-controls-button"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleWindowCommand(e, "close");
-            }}
-          >
-            x
-          </div>
-        </span>
-      </header>
-      <section className="window-content">
-        {
-          <Component
-            {...componentProps}
-            handleWindowCommand={handleWindowCommand}
-            records={records}
-            setWindows={setWindows}
-            droppedFiles={droppedFiles}
-          />
+  return useMemo(
+    () => {
+      const handleMouseDown = (e, bool) => {
+        // when mouse is down, make sure that the mouse is not clicking on a window control button.
+        if (
+          Array.from(
+            document.querySelectorAll(".window-controls-button")
+          ).includes(e.target)
+        )
+          return;
+
+        setActiveWindowId(id);
+
+        // bool is true if mouse is down, false if mouse is up.
+        if (bool) {
+          const rect = e.target.getBoundingClientRect();
+
+          // this is to get the position of the cursor
+          // relative to the element in the window
+          const o = {
+            top: rect.top + document.body.scrollTop,
+            left: rect.left + document.body.scrollLeft
+          };
+
+          // TODO: come back and un hardcode this
+          setMouseOffset([e.clientX - o.left, e.clientY - o.top]);
+
+          // reset offset if mouse is not clicked
+        } else setMouseOffset([0, 0]);
+
+        // set active window title
+        setActiveWindow(bool ? title : "");
+      };
+
+      // handle commands such as minimize and close.
+      // event is only passed in in order to prevent bubbling and any default action.
+      const handleWindowCommand = (e, command) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const { state } = command;
+
+        if (state) {
+          switch (state) {
+            case "minimized":
+              setWindows([
+                ...windows.map(w => {
+                  // set state to minimized, or return the existing window object
+                  return w.id === id
+                    ? {
+                        ...w,
+                        state
+                      }
+                    : w;
+                })
+              ]);
+              return;
+            default:
+              throw new Error("something went very wrong");
+          }
+        } else {
+          switch (command) {
+            case "close":
+              minerva.setWindows([
+                ...minerva.windows.filter(w => (w.id === id ? false : true))
+              ]);
+
+              // if there's an id present, then remove the file from the record, because a component
+              // with an id in componentProps is always going to be using indexeddb to store files.
+              if (componentProps.id) {
+                minerva.removeFileFromRecord(id);
+              }
+
+              setWindows([...minerva.windows]);
+              return;
+            default:
+              return;
+          }
         }
-      </section>
-    </div>
+      };
+
+      return (
+        <div
+          onDragOver={canDropFiles ? handleDragOver : undefined}
+          onDragLeave={canDropFiles ? handleDragLeave : undefined}
+          onDragEnter={canDropFiles ? allowDrag : undefined}
+          onDrop={canDropFiles ? handleDrop : undefined}
+          style={
+            activeWindowId === id
+              ? { transform: `translate3d(${x}px, ${y}px, 0)` }
+              : {
+                  transform: `translate3d(${position.x}px, ${position.y}px, 0)`
+                }
+          }
+          id={`${title}-window-${id}`}
+          className={`${title}-window system-window ${className} ${
+            droppable ? "filedrop drop-active" : "filedrop"
+          } window-${state}`}
+          onClick={() => void setActiveWindowId(id)}
+          onMouseUp={e => void handleMouseDown(e, false)}
+        >
+          <header
+            className={`${title}-header`}
+            onMouseDown={e => void handleMouseDown(e, true)}
+            onMouseUp={e => void handleMouseDown(e, false)}
+            onDrag={() => void false}
+          >
+            <span className="window-title-text">{`${componentProps.type ||
+              t} (${num})`}</span>
+            <b />
+            <span className="window-controls">
+              <div
+                className="window-controls-min window-controls-button"
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleWindowCommand(e, { state: "minimized" });
+                }}
+              >
+                -
+              </div>
+              <div
+                className="window-controls-close window-controls-button"
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleWindowCommand(e, "close");
+                }}
+              >
+                x
+              </div>
+            </span>
+          </header>
+          <section className="window-content">
+            {
+              <Component
+                {...componentProps}
+                handleWindowCommand={handleWindowCommand}
+                records={records}
+                setWindows={setWindows}
+                droppedFiles={droppedFiles}
+              />
+            }
+          </section>
+        </div>
+      );
+    },
+    [
+      droppable,
+      droppedFiles,
+      activeWindowId,
+      canDropFiles,
+      className,
+      componentProps,
+      minerva,
+      setActiveWindow,
+      setMouseOffset,
+      windows,
+      id,
+      num,
+      position.x,
+      position.y,
+      records,
+      setActiveWindowId,
+      setWindows,
+      state,
+      t,
+      title,
+      x,
+      y
+    ]
   );
 };
+
+export const Window = memo(WindowComponent);
 
 Window.propTypes = {
   windows: PropTypes.array,

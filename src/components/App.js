@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  createContext,
-  useRef,
-  Fragment,
-  memo
-} from "react";
+import React, { useState, useEffect, createContext, useRef, memo } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -77,6 +70,7 @@ const initialContext = {
 const { Provider } = globalContext;
 
 const AppComponent = () => {
+  console.log("rerendering app component");
   const [windowLoaded, setWindowLoaded] = useState(false);
 
   // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
@@ -208,12 +202,8 @@ const AppComponent = () => {
       contextMenu,
       ContextMenu,
       contextMenuElem,
-      contextMenu,
-      statusMessage,
       setStatusMessage,
-      statusText,
       setStatusText,
-      loggedIn,
       setLoggedIn,
       globalVolume,
       setGlobalVolume,

@@ -5,7 +5,8 @@ import React, {
   useRef,
   useState,
   useContext,
-  Fragment
+  Fragment,
+  memo
 } from "react";
 
 import Img from "./elements/Img";
@@ -884,7 +885,7 @@ const DataStructureComponent = props => {
   );
 };
 
-export const DataStructure = React.memo(DataStructureComponent);
+export const DataStructure = memo(DataStructureComponent);
 
 DataStructureComponent.propTypes = {
   type: PropTypes.string

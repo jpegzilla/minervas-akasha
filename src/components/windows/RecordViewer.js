@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, Fragment } from "react";
+import React, { useState, useEffect, useContext, memo } from "react";
 
 import PropTypes from "prop-types";
 
@@ -7,7 +7,7 @@ import { uuidv4 } from "./../../utils/misc";
 import { globalContext } from "./../App";
 import { makeStruct } from "../../utils/managers/StructureMap";
 
-export const RecordViewer = props => {
+const RecordViewerComponent = props => {
   const { setWindows } = props;
   const { minerva } = useContext(globalContext);
 
@@ -314,6 +314,8 @@ export const RecordViewer = props => {
     </div>
   );
 };
+
+export const RecordViewer = memo(RecordViewerComponent);
 
 RecordViewer.propTypes = {
   setWindows: PropTypes.func

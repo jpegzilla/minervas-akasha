@@ -1,6 +1,6 @@
-import React, { memo, useMemo, Fragment } from "react";
+import React, { Fragment } from "react";
 
-const MainComponent = props => {
+export const Main = props => {
   const {
     ErrorBoundary,
     Provider,
@@ -113,16 +113,14 @@ const MainComponent = props => {
                 path="/login"
                 render={routeProps => {
                   return (
-                    !firstLoad && (
-                      <Signup
-                        routeProps={routeProps}
-                        loginScreenInstead={true}
-                        statusMessage={statusMessage}
-                        setStatusMessage={setStatusMessage}
-                        setStatusText={setStatusText}
-                        setLoggedIn={setLoggedIn}
-                      />
-                    )
+                    <Signup
+                      routeProps={routeProps}
+                      loginScreenInstead={true}
+                      statusMessage={statusMessage}
+                      setStatusMessage={setStatusMessage}
+                      setStatusText={setStatusText}
+                      setLoggedIn={setLoggedIn}
+                    />
                   );
                 }}
               />
@@ -151,5 +149,3 @@ const MainComponent = props => {
     </ErrorBoundary>
   );
 };
-
-export const Main = memo(MainComponent);

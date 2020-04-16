@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, memo } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 
 import worker from "./utils/metadataWorker.worker";
@@ -172,7 +172,7 @@ const Img = props => {
   );
 };
 
-export default Img;
+export default memo(Img);
 
 Img.propTypes = {
   src: PropTypes.string,

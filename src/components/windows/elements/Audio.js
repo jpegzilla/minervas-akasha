@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, memo } from "react";
 import MediaTagReader from "./utils/MediaTagReader";
 import PropTypes from "prop-types";
 
@@ -13,7 +13,8 @@ const Audio = props => {
     humanSize,
     mime,
     setMetadata,
-    setLoadingFileData
+    setLoadingFileData,
+    loadingFileData
   } = props;
 
   const {
@@ -123,7 +124,7 @@ const Audio = props => {
   );
 };
 
-export default Audio;
+export default memo(Audio);
 
 Audio.propTypes = {
   src: PropTypes.string,
