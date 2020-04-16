@@ -9,7 +9,10 @@ const Tag = props => {
     t.name.length > 10 ? t.name.substring(0, 10).padEnd(13, ".") : t.name;
 
   return (
-    <li title={t.name} className={`structure-tag ${t.color}`}>
+    <li
+      title={`${t.name}\nright click to change color.`}
+      className={`structure-tag ${t.color}`}
+    >
       <span
         onContextMenu={e => {
           e.stopPropagation();
