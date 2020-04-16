@@ -3,7 +3,8 @@ import React, {
   useEffect,
   createContext,
   useRef,
-  Fragment
+  Fragment,
+  memo
 } from "react";
 import {
   BrowserRouter as Router,
@@ -18,6 +19,7 @@ import { NoMobile } from "./NoMobile";
 import { Home } from "./Home";
 import { Signup } from "./Signup";
 import { ContextMenu } from "./ContextMenu";
+import { Main } from "./Main";
 
 // utils
 import { hasDatePassed } from "./../utils/dateUtils";
@@ -74,7 +76,7 @@ const initialContext = {
 
 const { Provider } = globalContext;
 
-export const App = () => {
+const AppComponent = () => {
   const [windowLoaded, setWindowLoaded] = useState(false);
 
   // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
@@ -190,127 +192,39 @@ export const App = () => {
   if (windowLoaded) {
     // effects canvases / other graphical elements here / crt filter
     // brightness / color filters / cursor click effects outside switch
-    return (
-      <ErrorBoundary>
-        <Provider
-          value={{
-            ...initialContext,
-            statusMessage,
-            setStatusMessage,
-            statusText,
-            setStatusText,
-            loggedIn,
-            setLoggedIn,
-            globalVolume,
-            setGlobalVolume,
-            resetStatusText,
-            renderConList,
-            setRenderConList
-          }}
-        >
-          <Router>
-            <section
-              // onContextMenu={e => {
-              //   handleContextMenu(e, true);
-              // }}
-              onClick={e => {
-                handleContextMenu(e, false);
-              }}
-            >
-              <section id="status-message">
-                <div className={statusMessage.type}>
-                  <div>{statusText}</div>
-                </div>
-              </section>
-              {contextMenu.display && (
-                <ContextMenu
-                  contextMenuElem={contextMenuElem}
-                  contextMenu={contextMenu}
-                />
-              )}
-
-              <section id="filters">
-                {minerva &&
-                  minerva.settings &&
-                  minerva.settings.filters && (
-                    <Fragment>
-                      {minerva.settings.filters.noise && (
-                        <div id="filters-noise" />
-                      )}
-                      {minerva.settings.filters.crt && <div id="crt-overlay" />}
-                    </Fragment>
-                  )}
-              </section>
-
-              {/* godmessage */}
-              <section id="godmessage" />
-
-              {!loggedIn && firstLoad && <Redirect to="/signup" />}
-
-              {!loggedIn && !firstLoad && <Redirect to="/login" />}
-
-              {!firstLoad && loggedIn && minerva.user && <Redirect to="/" />}
-
-              <Switch>
-                {/* signup screen */}
-                <Route
-                  exact
-                  path="/signup"
-                  render={routeProps => (
-                    <Signup
-                      routeProps={routeProps}
-                      loginScreenInstead={false}
-                      statusMessage={statusMessage}
-                      setStatusMessage={setStatusMessage}
-                      setStatusText={setStatusText}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  )}
-                />
-
-                {/* login component */}
-                <Route
-                  exact
-                  path="/login"
-                  render={routeProps => {
-                    return (
-                      !firstLoad && (
-                        <Signup
-                          routeProps={routeProps}
-                          loginScreenInstead={true}
-                          statusMessage={statusMessage}
-                          setStatusMessage={setStatusMessage}
-                          setStatusText={setStatusText}
-                          setLoggedIn={setLoggedIn}
-                        />
-                      )
-                    );
-                  }}
-                />
-
-                {/* main screen */}
-                <Route
-                  exact
-                  path="/"
-                  render={routeProps =>
-                    minerva &&
-                    minerva.record &&
-                    minerva.record.records && (
-                      <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
-                    )
-                  }
-                />
-              </Switch>
-
-              <section id="effects-canvas">
-                {/* effects canvas */}
-                {/*<canvas ref={fxCanvasElem} />*/}
-              </section>
-            </section>
-          </Router>
-        </Provider>
-      </ErrorBoundary>
-    );
+    const props = {
+      ErrorBoundary,
+      Provider,
+      initialContext,
+      Router,
+      handleContextMenu,
+      statusMessage,
+      loggedIn,
+      firstLoad,
+      minerva,
+      Signup,
+      Home,
+      statusText,
+      contextMenu,
+      ContextMenu,
+      contextMenuElem,
+      contextMenu,
+      statusMessage,
+      setStatusMessage,
+      statusText,
+      setStatusText,
+      loggedIn,
+      setLoggedIn,
+      globalVolume,
+      setGlobalVolume,
+      resetStatusText,
+      renderConList,
+      setRenderConList,
+      Redirect,
+      Switch,
+      Route
+    };
+    return <Main {...props} />;
   }
 
   // for now, if the screen is too small, just show a basic message warning
@@ -326,3 +240,5 @@ export const App = () => {
     </ErrorBoundary>
   );
 };
+
+export const App = memo(AppComponent);
