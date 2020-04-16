@@ -13,8 +13,7 @@ const Audio = props => {
     humanSize,
     mime,
     setMetadata,
-    setLoadingFileData,
-    loadingFileData
+    setLoadingFileData
   } = props;
 
   const {
