@@ -22,7 +22,7 @@ const Settings = props => {
       }
 
       minerva.changeSetting(settings);
-      setGlobalVolume(settings);
+      setGlobalVolume(settings.volume);
     },
     [settings, minerva, setGlobalVolume]
   );
