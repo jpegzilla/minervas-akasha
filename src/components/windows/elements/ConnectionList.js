@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, memo } from "react";
+import React, { Fragment, useContext, memo, useEffect } from "react";
 
 import PropTypes from "prop-types";
 
@@ -29,7 +29,8 @@ const ConnectionListComponent = props => {
     minerva,
     setStatusText,
     setStatusMessage,
-    setRenderConList
+    setRenderConList,
+    renderConList
   } = useContext(globalContext);
 
   // function that just clears the status message
@@ -117,6 +118,40 @@ const ConnectionListComponent = props => {
     setRenderConList(uuidv4());
   };
 
+  // effect that fires when a record's possible connections / disconnections list
+  // needs to be updated
+  useEffect(
+    () => {
+      const item = minerva.record.findRecordById(structId);
+      // find the new possible disconnections, which is everything that the target structure is
+      // still connected to
+      const possibleDisconnections = minerva.record.records[item.type].find(
+        r => r.id === structId
+      ).connectedTo;
+
+      // get the new possible connections, after disconnection
+
+      const canConnectTo = item.connectsTo;
+
+      const possibleConnections = Object.entries(minerva.record.records)
+        .map(([k, v]) => {
+          if (canConnectTo.includes(k)) {
+            return v;
+          } else return false;
+        })
+        .filter(Boolean)
+        .flat(Infinity)
+        .filter(item => {
+          if (Object.values(item.connectedTo).includes(structId)) return false;
+          else return true;
+        });
+
+      setDisconnectionOptions(possibleDisconnections);
+      setConnectionOptions(possibleConnections);
+    },
+    [renderConList]
+  );
+
   return (
     <div className="connection-options-list">
       {makingConnection ? (
@@ -156,8 +191,17 @@ const ConnectionListComponent = props => {
           </Fragment>
         ) : (
           <span>
-            no connections available. please create a {connectsTo} in order to
-            connect this record.
+            no connections available. please create{" "}
+            {connectsTo[0].startsWith("a") ? "an" : "a"}{" "}
+            {connectsTo.length > 1
+              ? connectsTo
+                  .map(
+                    (item, i, a) =>
+                      i === a.length - 1 ? "or " + item : item + ","
+                  )
+                  .join(" ")
+              : connectsTo[0]}{" "}
+            in order to connect this record.
           </span>
         )
       ) : disconnectionOptions &&

@@ -45,7 +45,8 @@ const DataStructure = props => {
     setStatusMessage,
     setStatusText,
     audiomanager,
-    resetStatusText
+    resetStatusText,
+    setRenderConList
   } = useContext(globalContext);
 
   const currentWindow = minerva.windows.find(item => {
@@ -71,7 +72,7 @@ const DataStructure = props => {
   const nameRef = useRef();
 
   const [info, setInfo] = useState(
-    minerva.record.records[type].find(item => item.id === structId) || {}
+    minerva.record.records[type].find(item => item.id === structId) || {} || {}
   );
 
   // watch these to store the visual state of structures in minerva
@@ -119,7 +120,7 @@ const DataStructure = props => {
 
       const Struct = StructureMap[type];
 
-      const structToAdd = new Struct(type, {
+      const structToAdd = new Struct(props.info.name || info.name || type, {
         tags: [],
         id: structId,
         connectedTo: {},
@@ -131,6 +132,8 @@ const DataStructure = props => {
       });
 
       minerva.addToRecord(structId, structToAdd);
+
+      setRenderConList(uuidv4());
 
       setInfo(structToAdd);
 
@@ -525,6 +528,7 @@ const DataStructure = props => {
     if (confirm) {
       // remove the appropriate record from minerva and close the window.
       minerva.removeFromRecord(structId, type);
+      setRenderConList(uuidv4());
       handleWindowCommand(e, "close");
     }
   };
