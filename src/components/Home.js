@@ -11,6 +11,8 @@ import { uuidv4 } from "./../utils/misc";
 import PropTypes from "prop-types";
 import Taskbar from "./Taskbar";
 import Topbar from "./Topbar";
+import { makeStruct } from "../utils/managers/StructureMap";
+import dataStructureFileParser from "./windows/elements/utils/dataStructureFileParser";
 
 import WindowTypes from "./windows/WindowTypes";
 
@@ -25,7 +27,8 @@ const HomeComponent = props => {
     setStatusText,
     setStatusMessage,
     loggedIn,
-    setLoggedIn
+    setLoggedIn,
+    resetStatusText
   } = useContext(globalContext);
 
   const [activeWindow, setActiveWindow] = useState(null);
@@ -92,62 +95,15 @@ const HomeComponent = props => {
     e.preventDefault();
   };
 
-  const handleDrop = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    setDroppedFiles(e.dataTransfer.files[0]);
-    hideDropZone();
-  };
-
-  const handleDragLeave = e => {
-    hideDropZone();
-  };
-
-  const handleDragOver = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    showDropZone();
-  };
-
   useEffect(
     () => {
-      // handle dropped file
-      if (!droppedFiles) return;
-
-      console.log("freshly dropped file:", droppedFiles);
-
-      const f = droppedFiles;
-
-      const fileMime = f.type || "text/plain";
-      const fileExt = f.name.slice(f.name.lastIndexOf("."));
-
-      if (/text/gi.test(fileMime)) {
-        f.text().then(e => {
-          console.log(e);
-          setActiveFileData({
-            text: e,
-            title: f.name,
-            type: f.type,
-            mime: fileMime,
-            size: f.size,
-            ext: fileExt
-          });
-        });
-
-        return;
-      }
-
-      // function for reading images only
-      // const readImg = file => {
-      //   const reader = new FileReader();
-      //
-      //   reader.addEventListener("load", () => {
-      //     const image = new Image();
-      //     // determine what to do with image
-      //   });
-      //
-      //   reader.readAsDataURL(file);
-      // };
+      dataStructureFileParser(
+        droppedFiles,
+        setStatusMessage,
+        resetStatusText,
+        null,
+        setActiveFileData
+      );
     },
     [droppedFiles]
   );
@@ -155,30 +111,22 @@ const HomeComponent = props => {
   // effect that should fire whenever a file is dropped on the desktop
   useEffect(
     () => {
-      if (!activeFileData) return;
-      console.log(activeFileData);
+      if (activeFileData) {
+        console.log(activeFileData);
 
-      const dia = {
-        title: "new file",
-        state: "restored",
-        stringType: "Window",
-        component: "FileDialog",
-        componentProps: activeFileData,
-        belongsTo: minerva.user.id,
-        id: uuidv4(),
-        position: {
-          x: 100,
-          y: 100
-        }
-      };
+        const struct = makeStruct("shard", uuidv4(), minerva, uuidv4, null);
+        console.log(struct);
 
-      minerva.setWindows([...minerva.windows, dia]);
+        minerva.activeFileData = activeFileData;
 
-      setWindows([...minerva.windows]);
+        minerva.setWindows([...minerva.windows, struct]);
+
+        setWindows([...minerva.windows]);
+        // type, id, minerva, uuidv4, name = null
+      }
     },
-    [minerva, activeFileData]
+    [activeFileData, minerva]
   );
-
   // #########################################################
   // DEBUG: this hook is ONLY to watch for minerva's record becoming
   // empty during normal operation. if that happens, this hook will throw.

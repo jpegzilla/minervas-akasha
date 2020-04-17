@@ -19,6 +19,7 @@ export default {
  * @param {string}   id      id of structure (structId)
  * @param {Minerva}  minerva current instance of minerva
  * @param {function} uuidv4  uuid generation function
+ * @param {string}   name    name for the structure
  *
  * @returns {object} created structure
  */
@@ -69,8 +70,6 @@ export const makeStruct = (type, id, minerva, uuidv4, name = null) => {
   } else {
     structObject.componentProps.info = { name: type };
   }
-
-  console.log(structObject);
 
   return structObject;
 };
