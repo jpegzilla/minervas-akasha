@@ -45,8 +45,6 @@ export class Minerva {
     // minerva's voice synth engine
     this.voice = null;
 
-    this.usageData = {};
-
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
     this.record = this.user
@@ -104,6 +102,14 @@ export class Minerva {
       const settings = MinervaArchive.get("minerva_store").settings[
         this.user.id
       ];
+
+      this.usageData = MinervaArchive.get("minerva_store")
+        ? MinervaArchive.get("minerva_store").usageData[this.user.id]
+          ? MinervaArchive.get("minerva_store").usageData[this.user.id]
+          : {}
+        : {};
+
+      // this.usageData = {};
 
       const defaultSettings = Minerva.defaultSettings;
 
@@ -242,11 +248,6 @@ export class Minerva {
     this.updateRecordUpdatedTimeStamp();
     this.record.editInRecord(id, type, key, value, this);
     this.save();
-
-    this.updateUsageData(
-      "structures",
-      Object.values(this.record.records).flat(Infinity).length
-    );
 
     return this.record;
   }
@@ -855,11 +856,6 @@ export class Minerva {
       });
 
       req.onsuccess = () => {
-        this.updateUsageData(
-          "structures",
-          Object.values(this.record.records).flat(Infinity).length
-        );
-
         this.updateIndexedDBUpdatedTimestamp();
       };
     }
@@ -908,10 +904,6 @@ export class Minerva {
 
         requestUpdate.onsuccess = event => {
           // success - the data is updated!
-          this.updateUsageData(
-            "structures",
-            Object.values(this.record.records).flat(Infinity).length
-          );
           this.updateIndexedDBUpdatedTimestamp();
           resolve({ status: "success", event });
         };
@@ -940,10 +932,6 @@ export class Minerva {
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
         this.updateIndexedDBUpdatedTimestamp();
-        this.updateUsageData(
-          "structures",
-          Object.values(this.record.records).flat(Infinity).length
-        );
         resolve();
       };
 
@@ -1071,7 +1059,7 @@ export class Minerva {
     const commitUpdate = (key, updateObject) => {
       console.log(key, updateObject);
       if (!this.usageData[today] || !this.usageData[today][key]) {
-        console.log("today did not have an existing update.", this.usageData);
+        // console.log("today did not have an existing update.", this.usageData);
         this.usageData = {
           ...this.usageData,
           [today]: {
@@ -1080,10 +1068,10 @@ export class Minerva {
           }
         };
       } else {
-        console.log(
-          "today had an existing update.",
-          this.usageData[today][key]
-        );
+        // console.log(
+        //   "today had an existing update.",
+        //   this.usageData[today][key]
+        // );
         this.usageData = {
           ...this.usageData,
           [today]: {
