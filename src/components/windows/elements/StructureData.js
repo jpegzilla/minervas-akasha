@@ -23,8 +23,6 @@ const StructureDataComponent = props => {
     setWindows
   } = props;
 
-  // console.log("rerendering structure data");
-
   const { minerva, renderConList } = useContext(globalContext);
 
   // if the record is one that can contain records (anything that's not a shard)
@@ -84,6 +82,7 @@ const StructureDataComponent = props => {
           return (
             <li
               onDoubleClick={e => {
+                // open the clicked-on record
                 e.stopPropagation();
 
                 console.log(rec);
@@ -104,7 +103,6 @@ const StructureDataComponent = props => {
 
                   const { id, type } = itemToOpen;
 
-                  // move objects like this to structuremap to dry things up
                   const struct = makeStruct(type, id, minerva, uuidv4);
 
                   minerva.setWindows([...minerva.windows, struct]);

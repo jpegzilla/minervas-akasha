@@ -32,8 +32,6 @@ const ConnectionListComponent = props => {
     setRenderConList
   } = useContext(globalContext);
 
-  // console.log("rerendering connection list");
-
   // function that just clears the status message
   const t = () => {
     setStatusText("");
@@ -78,6 +76,8 @@ const ConnectionListComponent = props => {
     clearAll();
     timeouts.push(setTimeout(t, 3000));
 
+    // rerender to connection list, forcing the newly connected-to record to update it's list
+    // of connections
     setRenderConList(uuidv4());
   };
 
@@ -87,10 +87,13 @@ const ConnectionListComponent = props => {
 
     minerva.disconnectRecord(itemToDisconnect, disconnectionDestination);
 
+    // find the new possible disconnections, which is everything that the target structure is
+    // still connected to
     const possibleDisconnections = minerva.record.records[
       itemToDisconnect.type
     ].find(r => r.id === structId).connectedTo;
 
+    // get the new possible connections, after disconnection
     const possibleConnections = Object.values(connectionOptions).filter(d => {
       return d.id !== id;
     });
@@ -109,6 +112,8 @@ const ConnectionListComponent = props => {
     clearAll();
     timeouts.push(setTimeout(t, 3000));
 
+    // rerender to connection list, forcing the disconnected-from record to update it's list
+    // of connections
     setRenderConList(uuidv4());
   };
 

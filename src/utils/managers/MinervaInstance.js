@@ -143,7 +143,7 @@ export class Minerva {
         effect: 100, // volume for sound effects like the typing sound, startup sound
         voice: 100 // volume for minerva's voice (not yet implemented)
       },
-      timeFormat: "12hr", // 12hr sets 12 hour mode, 24hr is 24 hour mode
+      timeFormat: "24hr", // 12hr sets 12 hour mode, 24hr is 24 hour mode (wow!)
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true, // dictates whether users can see content from other users.
       filters: {
@@ -412,6 +412,13 @@ export class Minerva {
     this.save();
   }
 
+  /**
+   * exportDataToJsonFile - export all user data to a json file for the user to
+   * back up their data, or use minerva's akasha on another machine offline.
+   *
+   * @returns {Promise} resolves when a link is created that will allow the user
+   * to download the file, or rejects on any error.
+   */
   exportDataToJsonFile() {
     const t1 = performance.now();
 
@@ -513,8 +520,17 @@ export class Minerva {
     });
   }
 
+  /**
+   * importDataFromJsonFile - takes in a json file, and uses it to construct minerva's
+   * data.
+   *
+   * @returns {type} Description
+   */
   importDataFromJsonFile() {}
 
+  /**
+   * resetRecords - removes all records from minerva, closing all datastructure windows.
+   */
   resetRecords() {
     this.record.resetRecords(this);
 
@@ -587,6 +603,9 @@ export class Minerva {
     this.save();
   }
 
+  /**
+   * logout - removes all user-specific data from minerva's instance.
+   */
   logout() {
     // because the minervas_akasha key is meant to represent the currently
     // logged-in user, this key must be removed on logout.
@@ -1023,6 +1042,13 @@ export class Minerva {
     return this;
   }
 
+  /**
+   * updateUsageData - update usage data for certain types of things, such as structure
+   * usage, or uptime.
+   *
+   * @param {string} type  the data type to be updated (i.e. "structures", "uptime")
+   * @param {any}    value the value of the data type to be updated
+   */
   updateUsageData(type, value) {
     const today = `${new Date()
       .getDate()
@@ -1128,8 +1154,6 @@ export class Minerva {
    *
    * @param {string} key  key of item to set
    * @param {any}    item value of item to set
-   *
-   * @returns {undefined} undefined
    */
   static setSession(key, value) {
     if (!key || !value)
@@ -1144,8 +1168,6 @@ export class Minerva {
    * @static removeSession - remove a session storage item
    *
    * @param {string} key key to remove
-   *
-   * @returns {undefined} undefined
    */
   static removeSession(key) {
     if (!key)
@@ -1169,8 +1191,6 @@ export class Minerva {
 
   /**
    * @static clearSessionStorage - clears session storage
-   *
-   * @returns {undefined} undefined
    */
   static clearSessionStorage() {
     Minerva._session.clear();

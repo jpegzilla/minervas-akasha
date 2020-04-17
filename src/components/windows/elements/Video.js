@@ -37,6 +37,8 @@ const Video = props => {
     () => {
       setError(false);
 
+      // creating a worker instance that will be used to turn the raw video base64
+      // into an object url that will serve as the video source
       const workerInstance = new worker();
 
       workerInstance.postMessage({
@@ -56,6 +58,7 @@ const Video = props => {
     [mime, src, fileInfo]
   );
 
+  // keep the volume set correctly, in sync with global volume
   useEffect(
     () => {
       videoRef.current.volume =

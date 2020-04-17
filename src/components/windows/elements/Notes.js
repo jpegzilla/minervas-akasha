@@ -1,11 +1,4 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-  memo,
-  useMemo
-} from "react";
+import React, { useContext, useState, useEffect, useRef, memo } from "react";
 
 import PropTypes from "prop-types";
 
@@ -24,8 +17,6 @@ const NotesComponent = props => {
   const textArea = useRef();
 
   const { maxHistoryDepth } = minerva.settings.textEditor;
-
-  // console.log("rerendering notes");
 
   useEffect(
     () => {
@@ -93,6 +84,8 @@ const NotesComponent = props => {
 
     switch (key) {
       case "tab":
+        // insert two spaces into the text field at the cursor position, and then
+        // move the cursor directly after the inserted spaces
         e.preventDefault();
         console.log("current textarea value:");
         console.log(e.target.value);
@@ -118,6 +111,8 @@ const NotesComponent = props => {
             setNoteText(
               startToSelectionPosition + "  " + endSelectionToEndOfElement
             );
+
+            // set the new cursor position
           }
         }
 
@@ -125,6 +120,10 @@ const NotesComponent = props => {
 
       case "s":
         if (ctrlKey) {
+          // prevent accidentally hitting save and bringing up the dialog to save the entire
+          // web page. I hit ctrl+s while typing no matter what out of habit, so I put this
+          // in so I can hit save as much as I'd like and not be bothered with the dialog
+          // popping up.
           e.preventDefault();
           return false;
         }

@@ -1,3 +1,5 @@
+// this is the function that's used when a base64-encoded file needs to be
+// converted into an object url.
 export const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];

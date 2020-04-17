@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 const Tag = props => {
   const { editTag, removeTag, i, t } = props;
 
+  // cut down tag names a little bit
   const truncName =
     t.name.length > 10 ? t.name.substring(0, 10).padEnd(13, ".") : t.name;
 

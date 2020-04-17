@@ -41,6 +41,7 @@ const ImageViewerComponent = props => {
 
         minerva.setApplicationWindows([...minerva.windows]);
 
+        // get the file using the id from the data structure
         getWithId(id);
       }
     },
@@ -48,6 +49,8 @@ const ImageViewerComponent = props => {
   );
 
   const getWithId = id => {
+    // find the file using the data structure's id,
+    // and use the retrieved data to construct an object url.
     minerva.findFileInRecord(id).then(res => {
       const workerInstance = new worker();
 
