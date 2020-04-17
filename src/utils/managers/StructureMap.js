@@ -22,9 +22,11 @@ export default {
  *
  * @returns {object} created structure
  */
-export const makeStruct = (type, id, minerva, uuidv4) => {
+export const makeStruct = (type, id, minerva, uuidv4, name = null) => {
   if (!type || !id || !minerva || !uuidv4 || typeof uuidv4 !== "function")
     throw new Error("missing arguments to makeStruct.");
+  if (name !== null && typeof name !== "string")
+    throw new Error("invalid name passed to makeStruct");
 
   const findWindowAtPosition = xy => {
     const allWindows = Object.values(minerva.windows).flat(Infinity);
@@ -50,7 +52,7 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
     componentProps: {
       type,
       structId: id,
-      notes: ""
+      data: { notes: "" }
     },
     belongsTo: minerva.user.id,
     id: uuidv4(),
@@ -59,6 +61,16 @@ export const makeStruct = (type, id, minerva, uuidv4) => {
       y: finalPosition
     }
   };
+
+  if (name) {
+    structObject.componentProps.info = {
+      name
+    };
+  } else {
+    structObject.componentProps.info = { name: type };
+  }
+
+  console.log(structObject);
 
   return structObject;
 };

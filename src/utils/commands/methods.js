@@ -5,9 +5,9 @@ const { REACT_APP_MINERVA_ADMIN_KEY: ADMIN_KEY } = process.env;
 
 // methods that are for use by anyone, including regular users.
 export const UserMethods = {
-  addStructure(type, setWindows, minerva) {
+  addStructure(type, name, setWindows, minerva) {
     // add new window to list
-    const struct = makeStruct(type, uuidv4(), minerva, uuidv4);
+    const struct = makeStruct(type, uuidv4(), minerva, uuidv4, name);
 
     minerva.setWindows([...minerva.windows, struct]);
 
