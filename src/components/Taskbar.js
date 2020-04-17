@@ -116,8 +116,6 @@ const TaskbarComponent = props => {
         const findWindowAtPosition = xy => {
           const allWindows = Object.values(minerva.windows).flat(Infinity);
 
-          console.log(allWindows);
-
           const windowToFind = allWindows.find(
             item => item.position.x === xy && item.position.y === xy
           );
@@ -156,8 +154,6 @@ const TaskbarComponent = props => {
       onClick: () => {
         const findWindowAtPosition = xy => {
           const allWindows = Object.values(minerva.windows).flat(Infinity);
-
-          console.log(allWindows);
 
           const windowToFind = allWindows.find(
             item => item.position.x === xy && item.position.y === xy
