@@ -113,7 +113,7 @@ const AppComponent = () => {
     type: null
   });
 
-  const [renderConList, setRenderConList] = useState();
+  const [renderConList, setRenderConList] = useState("");
 
   // context menu stuff
   const contextMenuElem = useRef(null);
