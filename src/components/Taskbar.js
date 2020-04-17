@@ -4,18 +4,7 @@ import { uuidv4 } from "./../utils/misc";
 import { makeStruct } from "../utils/managers/StructureMap";
 import { globalContext } from "./App";
 
-import { Tab } from "./windows/elements/Tab";
-
-// import { Console } from "./windows/Console";
-// import { Window } from "./windows/Window";
-// import { DataStructure } from "./windows/DataStructure";
-//
-// import { Structure } from "../utils/structures/structure";
-// import { Hypostasis } from "../utils/structures/hypostasis";
-// import { Shard } from "../utils/structures/shard";
-// import { Node } from "../utils/structures/node";
-// import { Grimoire } from "../utils/structures/grimoire";
-// import { Athenaeum } from "../utils/structures/athenaeum";
+import Tab from "./windows/elements/Tab";
 
 import PropTypes from "prop-types";
 
@@ -401,7 +390,7 @@ const TaskbarComponent = props => {
   );
 };
 
-export const Taskbar = memo(TaskbarComponent);
+export default memo(TaskbarComponent);
 
 TaskbarComponent.propTypes = {
   setWindows: PropTypes.func,

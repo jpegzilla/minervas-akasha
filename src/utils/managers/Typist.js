@@ -11,7 +11,7 @@ m.load([{ file: keySound, name: "key" }]);
 /**
  * Typist - class for creating typing animations
  */
-export class Typist {
+export default class Typist {
   constructor(setter, string, delay = 50) {
     this.delay = delay;
     this.setter = setter;

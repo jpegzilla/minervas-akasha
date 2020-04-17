@@ -14,8 +14,8 @@ import Audio from "./elements/Audio";
 import Paragraph from "./elements/Paragraph";
 import Tag from "./elements/Tag";
 import Video from "./elements/Video";
-import { Notes } from "./elements/Notes";
-import { StructureData } from "./elements/StructureData";
+import Notes from "./elements/Notes";
+import StructureData from "./elements/StructureData";
 
 import { bytesToSize, uuidv4 } from "./../../utils/misc";
 import PropTypes from "prop-types";
@@ -25,13 +25,13 @@ import StructureMap, {
 } from "./../../utils/managers/StructureMap";
 import ColorCodes from "../../utils/structures/utils/colorcodes";
 
-import { ConnectionList } from "./elements/ConnectionList";
+import ConnectionList from "./elements/ConnectionList";
 
 import { globalContext } from "./../App";
 
 let timeouts = [];
 
-const DataStructureComponent = props => {
+const DataStructure = props => {
   const {
     type,
     structId,
@@ -885,8 +885,8 @@ const DataStructureComponent = props => {
   );
 };
 
-export const DataStructure = memo(DataStructureComponent);
+export default memo(DataStructure);
 
-DataStructureComponent.propTypes = {
+DataStructure.propTypes = {
   type: PropTypes.string
 };

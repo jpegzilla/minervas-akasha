@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 
 import { globalContext } from "./../App";
 
-import { WindowTypes } from "./WindowTypes";
+import WindowTypes from "./WindowTypes";
 
-const WindowComponent = props => {
+const Window = props => {
   const {
     windows,
     setActiveWindow,
@@ -251,7 +251,7 @@ const WindowComponent = props => {
   );
 };
 
-export const Window = memo(WindowComponent);
+export default memo(Window);
 
 Window.propTypes = {
   windows: PropTypes.array,

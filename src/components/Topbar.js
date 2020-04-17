@@ -1,9 +1,9 @@
 import React, { memo, useMemo } from "react";
 import PropTypes from "prop-types";
 
-import { Clock } from "./windows/elements/Clock";
+import Clock from "./windows/elements/Clock";
 
-import { Settings } from "./windows/Settings";
+import Settings from "./windows/Settings";
 
 export const TopbarComponent = props => {
   const { settingsMenuRef, settingsOpen, setSettingsOpen } = props;
@@ -30,7 +30,7 @@ export const TopbarComponent = props => {
   );
 };
 
-export const Topbar = memo(TopbarComponent);
+export default memo(TopbarComponent);
 
 TopbarComponent.propTypes = {
   settingsOpen: PropTypes.bool,

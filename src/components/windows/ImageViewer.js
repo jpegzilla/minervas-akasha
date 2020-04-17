@@ -8,7 +8,7 @@ import { globalContext } from "./../App";
 
 import worker from "./elements/utils/metadataWorker.worker";
 
-const ImageViewerComponent = props => {
+const ImageViewer = props => {
   const { src, alt, id, mime } = props;
 
   const [source, setSource] = useState();
@@ -138,9 +138,9 @@ const ImageViewerComponent = props => {
   );
 };
 
-export const ImageViewer = memo(ImageViewerComponent);
+export default memo(ImageViewer);
 
-ImageViewerComponent.propTypes = {
+ImageViewer.propTypes = {
   src: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   alt: PropTypes.string,
   id: PropTypes.string,

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const NoMobile = () => {
+export default () => {
   return (
     <section id="nomobile">
       minerva's akasha does not yet exist for your device. if you want to help

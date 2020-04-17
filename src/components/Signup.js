@@ -3,7 +3,7 @@ import { Redirect, Link } from "react-router-dom";
 import { MinervaArchive } from "./../utils/managers/MinervaInstance";
 import PropTypes from "prop-types";
 import { uuidv4 } from "./../utils/misc";
-import { Typist } from "./../utils/managers/Typist";
+import Typist from "./../utils/managers/Typist";
 import { globalContext } from "./App";
 import bcrypt from "bcryptjs";
 
@@ -463,7 +463,7 @@ const SignupComponent = props => {
   );
 };
 
-export const Signup = memo(SignupComponent);
+export default memo(SignupComponent);
 
 SignupComponent.propTypes = {
   setStatusText: PropTypes.func,

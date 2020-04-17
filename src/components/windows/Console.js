@@ -14,7 +14,7 @@ import { parseCommand } from "./../../utils/commandParser";
 import { globalContext } from "./../App";
 import PropTypes from "prop-types";
 
-const ConsoleComponent = props => {
+const Console = props => {
   const { setWindows } = props;
 
   const { minerva, audiomanager } = useContext(globalContext);
@@ -267,7 +267,7 @@ const ConsoleComponent = props => {
   );
 };
 
-export const Console = memo(ConsoleComponent);
+export default memo(Console);
 
 Console.propTypes = {
   windows: PropTypes.array,

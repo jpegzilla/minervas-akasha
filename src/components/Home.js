@@ -9,10 +9,10 @@ import React, {
 
 import { uuidv4 } from "./../utils/misc";
 import PropTypes from "prop-types";
-import { Taskbar } from "./Taskbar";
-import { Topbar } from "./Topbar";
+import Taskbar from "./Taskbar";
+import Topbar from "./Topbar";
 
-import { WindowTypes } from "./windows/WindowTypes";
+import WindowTypes from "./windows/WindowTypes";
 
 import { globalContext } from "./App";
 import { hasDatePassed } from "./../utils/dateUtils";
@@ -432,7 +432,7 @@ const HomeComponent = props => {
   );
 };
 
-export const Home = memo(HomeComponent);
+export default memo(HomeComponent);
 
 HomeComponent.propTypes = {
   routeProps: PropTypes.object

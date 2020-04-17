@@ -7,7 +7,7 @@ import { uuidv4 } from "./../../utils/misc";
 import { globalContext } from "./../App";
 import { makeStruct } from "../../utils/managers/StructureMap";
 
-const RecordViewerComponent = props => {
+const RecordViewer = props => {
   const { setWindows } = props;
   const { minerva } = useContext(globalContext);
 
@@ -315,7 +315,7 @@ const RecordViewerComponent = props => {
   );
 };
 
-export const RecordViewer = memo(RecordViewerComponent);
+export default memo(RecordViewer);
 
 RecordViewer.propTypes = {
   setWindows: PropTypes.func

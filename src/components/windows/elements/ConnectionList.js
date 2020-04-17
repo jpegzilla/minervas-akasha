@@ -204,7 +204,7 @@ const ConnectionListComponent = props => {
   );
 };
 
-export const ConnectionList = memo(ConnectionListComponent);
+export default memo(ConnectionListComponent);
 
 ConnectionListComponent.propTypes = {
   disconnectionOptions: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),

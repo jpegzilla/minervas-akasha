@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { App } from "./components/App";
-import { NoMobile } from "./components/NoMobile";
+import App from "./components/App";
+import NoMobile from "./components/NoMobile";
 import "./components/styles/main.min.css";
 import { mobilecheck } from "./utils/misc";
 import "./components/tasks/setupErrorHandling";

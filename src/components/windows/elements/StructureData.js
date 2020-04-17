@@ -209,7 +209,7 @@ const StructureDataComponent = props => {
     );
 };
 
-export const StructureData = memo(StructureDataComponent);
+export default memo(StructureDataComponent);
 
 StructureDataComponent.propTypes = {
   currentFileData: PropTypes.object,

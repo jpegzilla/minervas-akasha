@@ -4,7 +4,7 @@ import { globalContext } from "./../../App";
 
 let timeFormat;
 
-export const Clock = () => {
+export default () => {
   const { minerva } = useContext(globalContext);
 
   timeFormat = minerva.settings ? minerva.settings.timeFormat : "24hr";

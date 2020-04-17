@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import { globalContext } from "./../App";
 
-const SettingsComponent = props => {
+const Settings = props => {
   const { minerva, setGlobalVolume } = useContext(globalContext);
   const [settings, setSettings] = useState(minerva.settings);
   const { settingsMenuRef } = props;
@@ -290,9 +290,9 @@ const SettingsComponent = props => {
   );
 };
 
-export const Settings = memo(SettingsComponent);
+export default memo(Settings);
 
-SettingsComponent.propTypes = {
+Settings.propTypes = {
   settingsMenuRef: PropTypes.shape({
     current: PropTypes.any
   })

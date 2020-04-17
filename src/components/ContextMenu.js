@@ -3,7 +3,7 @@ import { uuidv4 } from "./../utils/misc";
 
 import PropTypes from "prop-types";
 
-export const ContextMenu = props => {
+const ContextMenu = props => {
   const { contextMenu, contextMenuElem } = props;
   const { x, y } = contextMenu.position;
   const [subItems, setSubItems] = useState({ display: false, id: null });
@@ -97,6 +97,8 @@ export const ContextMenu = props => {
     </div>
   );
 };
+
+export default ContextMenu;
 
 ContextMenu.propTypes = {
   contextMenu: PropTypes.object,

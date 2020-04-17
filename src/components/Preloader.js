@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Typist } from "./../utils/managers/Typist";
+import Typist from "./../utils/managers/Typist";
 import { globalContext } from "./App";
 import PropTypes from "prop-types";
 
@@ -22,14 +22,17 @@ import { setup } from "./tasks/setupSfx";
 // const text = "minerva's akasha.";
 const text = "loading...";
 
-export const Preloader = props => {
+const Preloader = props => {
   const { setWindowLoaded } = props;
   const { audiomanager, minervaVoice } = useContext(globalContext);
 
   const [preloaderText, setPreloaderText] = useState("");
+
+  // this is what makes the panels do their animation
   const [panelsActive, setPanelsActive] = useState(false);
 
-  const [audioLoaded, setAudioLoaded] = useState(false);
+  // when the following three are true, then the preloader is complete
+  const [audioLoaded, setAudioLoaded] = useState(false); // after this one, set panels to active
   const [voiceLoaded, setVoiceLoaded] = useState(false);
   const [winLoaded, setWinLoaded] = useState(false);
 
@@ -74,6 +77,8 @@ export const Preloader = props => {
       });
 
       setup(audiomanager);
+
+      return () => void (window.onload = null);
     },
     [audiomanager, minervaVoice]
   );
@@ -157,6 +162,8 @@ export const Preloader = props => {
     </section>
   );
 };
+
+export default Preloader;
 
 Preloader.propTypes = {
   setWindowLoaded: PropTypes.func

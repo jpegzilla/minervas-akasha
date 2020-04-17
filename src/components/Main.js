@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 
-export const Main = props => {
+import PropTypes from "prop-types";
+
+const Main = props => {
   const {
     ErrorBoundary,
     Provider,
@@ -148,4 +150,42 @@ export const Main = props => {
       </Provider>
     </ErrorBoundary>
   );
+};
+
+export default Main;
+
+Main.propTypes = {
+  ErrorBoundary: PropTypes.func,
+  Provider: PropTypes.object,
+  initialContext: PropTypes.object,
+  Router: PropTypes.func,
+  handleContextMenu: PropTypes.func,
+  statusMessage: PropTypes.object,
+  loggedIn: PropTypes.bool,
+  firstLoad: PropTypes.bool,
+  minerva: PropTypes.object,
+  Signup: PropTypes.object,
+  Home: PropTypes.object,
+  contextMenu: PropTypes.exact({
+    position: PropTypes.exact({ x: PropTypes.number, y: PropTypes.number }),
+    display: PropTypes.bool
+  }),
+  ContextMenu: PropTypes.func,
+  contextMenuElem: PropTypes.object,
+  setStatusMessage: PropTypes.func,
+  statusText: PropTypes.string,
+  setStatusText: PropTypes.func,
+  setLoggedIn: PropTypes.func,
+  globalVolume: PropTypes.exact({
+    master: PropTypes.number,
+    effect: PropTypes.number,
+    voice: PropTypes.number
+  }),
+  setGlobalVolume: PropTypes.func,
+  resetStatusText: PropTypes.func,
+  renderConList: PropTypes.oneOfType([PropTypes.string, prop => prop === null]),
+  setRenderConList: PropTypes.func,
+  Redirect: PropTypes.func,
+  Switch: PropTypes.func,
+  Route: PropTypes.func
 };

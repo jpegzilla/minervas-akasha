@@ -2,9 +2,11 @@ import React from "react";
 
 import PropTypes from "prop-types";
 
-export const FileDialog = props => {
+const FileDialog = props => {
   return <div>hello, this is a file dialog</div>;
 };
+
+export default FileDialog;
 
 FileDialog.propTypes = {
   text: PropTypes.string,

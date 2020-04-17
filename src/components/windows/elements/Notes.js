@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import { globalContext } from "./../../App";
 
-const NotesComponent = props => {
+const Notes = props => {
   const { id } = props;
   const { minerva } = useContext(globalContext);
 
@@ -163,7 +163,7 @@ const NotesComponent = props => {
   );
 };
 
-export const Notes = memo(NotesComponent);
+export default memo(Notes);
 
 Notes.propTypes = {
   id: PropTypes.string

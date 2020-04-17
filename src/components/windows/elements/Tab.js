@@ -33,7 +33,7 @@ const TabComponent = props => {
   );
 };
 
-export const Tab = memo(TabComponent);
+export default memo(TabComponent);
 
 TabComponent.propTypes = {
   w: PropTypes.object,

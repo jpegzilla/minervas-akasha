@@ -7,12 +7,12 @@ import {
 } from "react-router-dom";
 
 // components
-import { Preloader } from "./Preloader";
-import { NoMobile } from "./NoMobile";
-import { Home } from "./Home";
-import { Signup } from "./Signup";
-import { ContextMenu } from "./ContextMenu";
-import { Main } from "./Main";
+import Preloader from "./Preloader";
+import NoMobile from "./NoMobile";
+import Home from "./Home";
+import Signup from "./Signup";
+import ContextMenu from "./ContextMenu";
+import Main from "./Main";
 
 // utils
 import { hasDatePassed } from "./../utils/dateUtils";
@@ -23,7 +23,7 @@ import ErrorBoundary from "./subcomponents/ErrorBoundary";
 // managers
 import { Minerva, MinervaArchive } from "./../utils/managers/MinervaInstance";
 import MinervaVoice from "./../utils/managers/MinervaVoice";
-import { Typist } from "./../utils/managers/Typist";
+import Typist from "./../utils/managers/Typist";
 import DatabaseInterface from "../utils/managers/Database";
 import AkashicRecord from "./../utils/structures/AkashicRecord";
 import AudioManager from "./../utils/audiomanager";
@@ -69,8 +69,7 @@ const initialContext = {
 
 const { Provider } = globalContext;
 
-const AppComponent = () => {
-  console.log("rerendering app component");
+const App = () => {
   const [windowLoaded, setWindowLoaded] = useState(false);
 
   // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
@@ -238,4 +237,4 @@ const AppComponent = () => {
   );
 };
 
-export const App = memo(AppComponent);
+export default memo(App);
