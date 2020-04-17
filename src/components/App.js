@@ -113,6 +113,7 @@ const AppComponent = () => {
     type: null
   });
 
+  // used to force connection lists to rerender
   const [renderConList, setRenderConList] = useState("");
 
   // context menu stuff
@@ -123,12 +124,18 @@ const AppComponent = () => {
     display: false
   });
 
-  const handleContextMenu = (e, hideMenu) => {
+  /**
+   * handleContextMenu - shows the context menu at a certain position
+   *
+   * @param {object} e         the contextmenu event
+   * @param {boolean} showMenu use false to hide the menu, true to show it
+   */
+  const handleContextMenu = (e, showMenu) => {
     e.preventDefault();
 
-    return setContextMenu({
+    setContextMenu({
       position: { x: e.clientX, y: e.clientY },
-      display: hideMenu
+      display: showMenu
     });
   };
 
