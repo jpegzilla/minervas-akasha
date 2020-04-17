@@ -31,6 +31,7 @@ const Main = props => {
     Switch,
     Route
   } = props;
+
   return (
     <ErrorBoundary>
       <Provider
