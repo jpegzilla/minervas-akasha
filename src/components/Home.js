@@ -4,8 +4,7 @@ import React, {
   useEffect,
   useRef,
   memo,
-  useMemo,
-  useReducer
+  useMemo
 } from "react";
 
 import { uuidv4 } from "./../utils/misc";
@@ -32,46 +31,22 @@ const HomeComponent = props => {
     resetStatusText
   } = useContext(globalContext);
 
+  const [activeWindow, setActiveWindow] = useState(null);
+  const [activeWindowId, setActiveWindowId] = useState("default");
+  const [activeFileData, setActiveFileData] = useState();
+  minerva.setActiveWindowId = setActiveWindowId;
+
+  // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows);
   minerva.setApplicationWindows = setWindows;
 
-  const [state, dispatch] = useReducer(homeReducer, {
-    activeWindow: null,
-    activeWindowId: "default",
-    activeFileData: null,
-    droppable: false,
-    droppedFiles: null,
-    mouseOffset: [0, 0],
-    wait: false,
-    menuOpen: false,
-    settingsOpen: false,
-    addMenuOpen: false
-  });
-
-  minerva.setActiveWindowId = id =>
-    dispatch({ type: "activeWindowId", payload: id });
-
-  const {
-    activeWindow,
-    activeWindowId,
-    activeFileData,
-    droppable,
-    droppedFiles,
-    mouseOffset,
-    wait,
-    menuOpen,
-    settingsOpen,
-    addMenuOpen
-  } = state;
-  // dispatch({type:"addMenuOpen", payload: false})
-  // const [addMenuOpen, setAddMenuOpen] = useState(false);
-
-  const taskBarMenuRef = useRef(null);
-  const settingsMenuRef = useRef(null);
-
   // handle drag / drop events
-  const showDropZone = () => dispatch({ type: "droppable", payload: true });
-  const hideDropZone = () => dispatch({ type: "droppable", payload: false });
+  const [droppable, setDroppable] = useState(false);
+
+  const showDropZone = () => setDroppable(true);
+  const hideDropZone = () => setDroppable(false);
+
+  const [droppedFiles, setDroppedFiles] = useState();
 
   useEffect(
     () => {
@@ -127,7 +102,7 @@ const HomeComponent = props => {
         setStatusMessage,
         resetStatusText,
         null,
-        data => dispatch({ type: "activeFileData", payload: data })
+        setActiveFileData
       );
     },
     [droppedFiles]
@@ -184,8 +159,19 @@ const HomeComponent = props => {
   // this is to keep the windows in state synchronized with minerva
   useEffect(() => minerva.setWindows(windows), [windows, minerva]);
 
+  const [mouseOffset, setMouseOffset] = useState([0, 0]);
+  const taskBarMenuRef = useRef(null);
+  const settingsMenuRef = useRef(null);
+
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
+
+  // for performance: maybe send the event to a worker to calculate the position?
+  const [wait, setWait] = useState(false);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [addMenuOpen, setAddMenuOpen] = useState(false);
 
   // object to track how many components there are of a certain type.
   // this is to help react correctly identify components by providing
@@ -198,7 +184,7 @@ const HomeComponent = props => {
       const handleDrop = e => {
         e.stopPropagation();
         e.preventDefault();
-        dispatch({ type: "droppedFiles", payload: e.dataTransfer.files[0] });
+        setDroppedFiles(e.dataTransfer.files[0]);
         hideDropZone();
       };
 
@@ -216,13 +202,12 @@ const HomeComponent = props => {
         if (!activeWindow) return void false;
 
         if (activeWindow && !wait) {
-          dispatch({ type: "wait", payload: true });
+          setWait(true);
           const { clientX, clientY } = e;
 
           const onMouseUp = () => {
-            dispatch({ type: "activeWindow", payload: null });
-            dispatch({ type: "activeWindowId", payload: "" });
-
+            setActiveWindow(null);
+            setActiveWindowId("");
             document.removeEventListener("mouseup", onMouseUp);
           };
 
@@ -236,10 +221,7 @@ const HomeComponent = props => {
           // // note: your callback routine must itself call requestAnimationFrame()
           // // if you want to animate another frame at the next repaint.
           const moveWindow = () => {
-            setTimeout(
-              () => void dispatch({ type: "wait", payload: false }),
-              15
-            );
+            setTimeout(() => void setWait(false), 15);
             setPosition(activeWindowId, {
               x: clientX - mouseOffset[0],
               y: clientY - mouseOffset[1]
@@ -281,18 +263,16 @@ const HomeComponent = props => {
             if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
               // e.stopPropagation();
               // e.preventDefault();
-              dispatch({ type: "menuOpen", payload: false });
-              dispatch({ type: "addMenuOpen", payload: false });
-              dispatch({ type: "settingsOpen", payload: false });
+              setMenuOpen(false);
+              setAddMenuOpen(false);
+              setSettingsOpen(false);
             }
           }}
           onMouseMove={handleMouseMove}
         >
           <Topbar
             settingsOpen={settingsOpen}
-            setSettingsOpen={open =>
-              dispatch({ type: "settingsOpen", payload: open })
-            }
+            setSettingsOpen={setSettingsOpen}
             settingsMenuRef={settingsMenuRef}
           />
           <section
@@ -358,16 +338,10 @@ const HomeComponent = props => {
                     className={isActive}
                     key={key}
                     setPosition={setPosition}
-                    setActiveWindowId={id =>
-                      dispatch({ type: "activeWindowId", payload: id })
-                    }
+                    setActiveWindowId={setActiveWindowId}
                     activeWindowId={activeWindowId}
-                    setActiveWindow={win =>
-                      dispatch({ type: "activeWindow", payload: win })
-                    }
-                    setMouseOffset={offset =>
-                      dispatch({ type: "mouseOffset", payload: offset })
-                    }
+                    setActiveWindow={setActiveWindow}
+                    setMouseOffset={setMouseOffset}
                   />
                 );
               }
@@ -376,24 +350,16 @@ const HomeComponent = props => {
           </section>
           <Taskbar
             menuOpen={menuOpen}
-            setMenuOpen={menuOpen =>
-              dispatch({ type: "menuOpen", payload: menuOpen })
-            }
+            setMenuOpen={setMenuOpen}
             taskBarMenuRef={taskBarMenuRef}
             activeWindow={activeWindow}
-            setActiveWindow={win =>
-              dispatch({ type: "activeWindow", payload: win })
-            }
+            setActiveWindow={setActiveWindow}
             activeWindowId={activeWindowId}
-            setActiveWindowId={id =>
-              dispatch({ type: "activeWindowId", payload: id })
-            }
+            setActiveWindowId={setActiveWindowId}
             windows={windows}
             setWindows={setWindows}
             addMenuOpen={addMenuOpen}
-            setAddMenuOpen={open =>
-              dispatch({ type: "addMenuOpen", payload: open })
-            }
+            setAddMenuOpen={setAddMenuOpen}
           />
         </section>
       );
@@ -415,26 +381,6 @@ const HomeComponent = props => {
 };
 
 export default memo(HomeComponent);
-
-const homeReducer = (state, action) => {
-  const { type, payload } = action;
-
-  switch (type) {
-    case "activeWindow":
-    case "activeWindowId":
-    case "activeFileData":
-    case "droppable":
-    case "droppedFiles":
-    case "mouseOffset":
-    case "menuOpen":
-    case "wait":
-    case "settingsOpen":
-    case "addMenuOpen":
-      return { ...state, [type]: payload };
-    default:
-      return state;
-  }
-};
 
 HomeComponent.propTypes = {
   routeProps: PropTypes.object
