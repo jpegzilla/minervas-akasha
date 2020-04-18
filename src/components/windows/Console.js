@@ -1,11 +1,11 @@
 import React, {
-  useState,
   useEffect,
   useContext,
   useRef,
   useCallback,
   memo,
-  useMemo
+  useMemo,
+  useReducer
 } from "react";
 
 import { uuidv4 } from "./../../utils/misc";
@@ -18,12 +18,22 @@ const Console = props => {
   const { setWindows } = props;
 
   const { minerva, audiomanager } = useContext(globalContext);
-  const [command, setCommand] = useState("");
-  const [inputState, setInputState] = useState("default");
 
-  const [history, setHistory] = useState([]);
-  const [commandIndex, setCommandIndex] = useState(history.length);
-  const [log, setLog] = useState([]);
+  // const [command, setCommand] = useState("");
+  // const [inputState, setInputState] = useState("default");
+  // const [history, setHistory] = useState([]);
+  // const [commandIndex, setCommandIndex] = useState(history.length);
+  // const [log, setLog] = useState([]);
+
+  const [state, dispatch] = useReducer(consoleReducer, {
+    command: "",
+    inputState: "default",
+    history: [],
+    commandIndex: 0,
+    log: []
+  });
+
+  const { command, inputState, history, commandIndex, log } = state;
 
   const input = useRef(null);
   const cmdLog = useRef(null);
@@ -34,9 +44,9 @@ const Console = props => {
 
   useEffect(
     () => {
-      setCommandIndex(history.length);
+      dispatch({ type: "commandIndex", payload: history.length });
     },
-    [history, setCommandIndex]
+    [history]
   );
 
   const lines = [];
@@ -71,20 +81,20 @@ const Console = props => {
         const cmd = command;
 
         // put the previous command into the history
-        setHistory([...history, cmd]);
+        // setHistory([...history, cmd]);
+        dispatch({ type: "history", payload: [...history, cmd] });
 
         const res = parseCommand(cmd, setWindows, minerva, log);
 
-        setCommand("");
-        setInputState("default");
+        dispatch({ type: "command", payload: "" });
+        dispatch({ type: "inputState", payload: "default" });
 
         if (["clr", "clear"].includes(cmd)) {
-          return setLog([]);
+          return dispatch({ type: "log", payload: [] });
         }
 
-        if (cmd === "") {
-          return setLog([...log, { type: "none", text: " ", id: uuidv4() }]);
-        }
+        // don't do anything if the user didn't enter a command
+        if (cmd === "") return;
 
         if (res.message) {
           if (res.action) {
@@ -101,35 +111,44 @@ const Console = props => {
                   res
                 );
 
-                return setLog([
-                  ...log,
-                  { type: "error", text: "unknown command.", id: uuidv4() }
-                ]);
+                return dispatch({
+                  type: "log",
+                  payload: [
+                    ...log,
+                    { type: "error", text: "unknown command.", id: uuidv4() }
+                  ]
+                });
             }
           }
 
           if (res.state === "error") {
             audiomanager.play("e_one");
 
-            return setLog([
-              ...log,
-              { type: "error", text: res.message, id: uuidv4() }
-            ]);
+            return dispatch({
+              type: "log",
+              payload: [
+                ...log,
+                { type: "error", text: res.message, id: uuidv4() }
+              ]
+            });
           }
 
           // this will set the command input to a password-style input.
           if (res.state === "password") {
-            setInputState("password");
+            dispatch({ type: "inputState", payload: "password" });
 
-            return setLog([
-              ...log,
-              {
-                type: "command",
-                text: res.message,
-                request: res.request,
-                id: uuidv4()
-              }
-            ]);
+            return dispatch({
+              type: "log",
+              payload: [
+                ...log,
+                {
+                  type: "command",
+                  text: res.message,
+                  request: res.request,
+                  id: uuidv4()
+                }
+              ]
+            });
           }
         }
 
@@ -138,21 +157,31 @@ const Console = props => {
         if (!res) {
           audiomanager.play("e_one");
 
-          return setLog([
-            ...log,
-            { type: "error", text: `undefined command -> ${cmd}`, id: uuidv4() }
-          ]);
+          return dispatch({
+            type: "log",
+            payload: [
+              ...log,
+              {
+                type: "error",
+                text: `undefined command -> ${cmd}`,
+                id: uuidv4()
+              }
+            ]
+          });
         }
 
         if (res.state === "update") {
-          setLog([
-            ...log,
-            {
-              type: "update",
-              text: `> ${res.message} -> success`,
-              id: uuidv4()
-            }
-          ]);
+          dispatch({
+            type: "log",
+            payload: [
+              ...log,
+              {
+                type: "update",
+                text: `> ${res.message} -> success`,
+                id: uuidv4()
+              }
+            ]
+          });
         } else {
           // for commands that just return a text response and don't do anything else.
           // for multiline commands, the response will print on multiple lines.
@@ -162,7 +191,10 @@ const Console = props => {
             if (i > 0) lines.push(line);
           });
 
-          setLog([...log, { type: "command", text: lines, id: uuidv4() }]);
+          dispatch({
+            type: "log",
+            payload: [...log, { type: "command", text: lines, id: uuidv4() }]
+          });
         }
       };
 
@@ -172,8 +204,8 @@ const Console = props => {
         console.log(lastCommand);
 
         if (lastCommand !== undefined) {
-          setCommandIndex(commandIndex - 1);
-          setCommand(lastCommand);
+          dispatch({ type: "commandIndex", payload: commandIndex - 1 });
+          dispatch({ type: "command", payload: lastCommand });
         }
       };
 
@@ -183,8 +215,8 @@ const Console = props => {
         console.log(nextCommand);
 
         if (nextCommand !== undefined) {
-          setCommandIndex(commandIndex + 1);
-          setCommand(nextCommand);
+          dispatch({ type: "commandIndex", payload: commandIndex + 1 });
+          dispatch({ type: "command", payload: nextCommand });
         }
       };
 
@@ -241,7 +273,9 @@ const Console = props => {
                 if (e.key.toLowerCase() === "arrowup") handleUpKey();
                 else if (e.key.toLowerCase() === "arrowdown") handleDownKey();
               }}
-              onChange={e => setCommand(e.target.value)}
+              onChange={e =>
+                dispatch({ type: "command", payload: e.target.value })
+              }
               className={inputState}
               type={inputState === "password" ? "password" : "text"}
               ref={input}
@@ -268,6 +302,21 @@ const Console = props => {
 };
 
 export default memo(Console);
+
+const consoleReducer = (state, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case "command":
+    case "inputState":
+    case "history":
+    case "commandIndex":
+    case "log":
+      return { ...state, [type]: payload };
+    default:
+      return { ...state };
+  }
+};
 
 Console.propTypes = {
   windows: PropTypes.array,

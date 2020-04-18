@@ -1,6 +1,6 @@
 /* eslint react-hooks/exhaustive-deps: off */
 
-import React, { useState, useEffect, useContext, memo } from "react";
+import React, { useReducer, useEffect, useContext, memo } from "react";
 
 import PropTypes from "prop-types";
 
@@ -11,9 +11,13 @@ import worker from "./elements/utils/metadataWorker.worker";
 const ImageViewer = props => {
   const { src, alt, id, mime } = props;
 
-  const [source, setSource] = useState();
-  const [error, setError] = useState(false);
-  const [found, setFound] = useState(false);
+  const [state, dispatch] = useReducer(imageViewerReducer, {
+    source: null,
+    error: false,
+    found: false
+  });
+
+  const { source, error, found } = state;
 
   const { minerva, setStatusMessage, resetStatusText } = useContext(
     globalContext
@@ -66,7 +70,7 @@ const ImageViewer = props => {
         }
 
         if (typeof message.data === "string") {
-          setSource(message.data);
+          dispatch({ type: "source", payload: message.data });
         }
       };
     });
@@ -83,8 +87,8 @@ const ImageViewer = props => {
           .then(res => res.blob())
           .then(res => {
             if (res) {
-              setSource(src);
-              setFound(true);
+              dispatch({ type: "source", payload: src });
+              dispatch({ type: "found", payload: true });
             }
           })
           .catch(() => {
@@ -126,8 +130,10 @@ const ImageViewer = props => {
               });
 
               setTimeout(resetStatusText, 5000);
-
-              setError(`image format not supported: ${mime}`);
+              dispatch({
+                type: "error",
+                payload: `image format not supported: ${mime}`
+              });
             }}
           />
         ) : (
@@ -139,6 +145,21 @@ const ImageViewer = props => {
 };
 
 export default memo(ImageViewer);
+
+const imageViewerReducer = (state, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case "source":
+      return { ...state, source: payload };
+    case "error":
+      return { ...state, error: payload };
+    case "found":
+      return { ...state, found: payload };
+    default:
+      return { ...state };
+  }
+};
 
 ImageViewer.propTypes = {
   src: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
