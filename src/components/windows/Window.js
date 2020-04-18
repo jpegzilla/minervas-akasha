@@ -33,11 +33,10 @@ const Window = props => {
 
   const { x, y } = position;
 
-  // handle drag / drop events
   const [droppable, setDroppable] = useState(false);
-
   const [droppedFiles, setDroppedFiles] = useState();
 
+  // handle drag / drop events
   const allowDrag = e => {
     e.dataTransfer.dropEffect = "copy";
     e.preventDefault();
