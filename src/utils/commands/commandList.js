@@ -1,7 +1,7 @@
 export const commandDirectory = {
   "> help": "show this list.",
   "> reset records":
-    "permanently remove all data structures. requires confirmation.",
-  "> add [structure type] [name]":
-    "add a new structure of a certain type, with an\n    optional name. acceptable structure types:\r\n\t- shard\r\n\t- node\r\n\t- grimoire\r\n\t- athenaeum\r\n\t- hypostasis"
+    "permanently remove all data structures. requires password. there is\n    no way to recover from this operation unless you exported your data beforehand.",
+  "> add [type] [name]":
+    "add a new structure of a certain type, with an optional name.\n    acceptable structure types:\r\n\tshard\t\tnode\t\tgrimoire\r\n\tathenaeum\thypostasis"
 };
