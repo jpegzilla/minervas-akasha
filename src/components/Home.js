@@ -32,7 +32,6 @@ const HomeComponent = props => {
     resetStatusText
   } = useContext(globalContext);
 
-  // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows);
   minerva.setApplicationWindows = setWindows;
 
