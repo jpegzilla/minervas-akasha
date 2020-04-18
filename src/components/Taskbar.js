@@ -16,7 +16,7 @@ const clearAll = () => {
   }
 };
 
-const TaskbarComponent = props => {
+const Taskbar = props => {
   const {
     setWindows,
     windows,
@@ -30,18 +30,16 @@ const TaskbarComponent = props => {
   } = props;
 
   // if one menu is open, close the other one
-  useEffect(
-    () => {
-      menuOpen && setAddMenuOpen(false);
-    },
-    [menuOpen, setAddMenuOpen]
-  );
 
   useEffect(
     () => {
-      addMenuOpen && setMenuOpen(false);
+      if (addMenuOpen) {
+        setMenuOpen(false);
+      } else if (menuOpen) {
+        setAddMenuOpen(false);
+      }
     },
-    [addMenuOpen, setMenuOpen]
+    [addMenuOpen, setMenuOpen, menuOpen, setAddMenuOpen]
   );
 
   const t = () => {
@@ -386,9 +384,9 @@ const TaskbarComponent = props => {
   );
 };
 
-export default memo(TaskbarComponent);
+export default memo(Taskbar);
 
-TaskbarComponent.propTypes = {
+Taskbar.propTypes = {
   setWindows: PropTypes.func,
   windows: PropTypes.array,
   activeWindow: PropTypes.any,
