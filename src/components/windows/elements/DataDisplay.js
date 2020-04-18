@@ -220,5 +220,16 @@ DataDisplay.propTypes = {
   MetadataDisplay: PropTypes.any,
   metadata: PropTypes.any,
   type: PropTypes.string,
-  structId: PropTypes.string
+  structId: PropTypes.string,
+  disconnectionOptions: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+    PropTypes.bool
+  ]),
+  connectionOptions: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+    PropTypes.bool
+  ]),
+  setWindows: PropTypes.func
 };
