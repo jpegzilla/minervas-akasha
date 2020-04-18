@@ -433,7 +433,7 @@ const homeReducer = (state, action) => {
     case "addMenuOpen":
       return { ...state, [type]: payload };
     default:
-      return;
+      return { ...state };
   }
 };
 
