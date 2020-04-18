@@ -1,5 +1,7 @@
 import { bytesToSize } from "./../../../../utils/misc";
 
+// file parsing has to go on in here. this is the function in which support must
+// be added for new filetypes.
 export default (
   droppedFiles,
   setStatusMessage,
