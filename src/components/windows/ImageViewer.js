@@ -157,7 +157,7 @@ const imageViewerReducer = (state, action) => {
     case "found":
       return { ...state, found: payload };
     default:
-      return { ...state };
+      return state;
   }
 };
 

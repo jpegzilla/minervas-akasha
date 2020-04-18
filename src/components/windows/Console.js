@@ -314,7 +314,7 @@ const consoleReducer = (state, action) => {
     case "log":
       return { ...state, [type]: payload };
     default:
-      return { ...state };
+      return state;
   }
 };
 
