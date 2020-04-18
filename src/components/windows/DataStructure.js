@@ -15,7 +15,7 @@ import Paragraph from "./elements/Paragraph";
 import Tag from "./elements/Tag";
 import Video from "./elements/Video";
 import Notes from "./elements/Notes";
-import StructureData from "./elements/StructureData";
+import DataDisplay from "./elements/DataDisplay";
 import dataStructureFileParser from "./elements/utils/dataStructureFileParser";
 
 import { uuidv4 } from "./../../utils/misc";
@@ -675,7 +675,7 @@ const DataStructure = props => {
         </header>
 
         <section className="structure-data">
-          <StructureData
+          <DataDisplay
             currentFileData={currentFileData}
             showImage={showImage}
             FileDisplay={FileDisplay}

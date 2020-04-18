@@ -6,7 +6,7 @@ import { makeStruct } from "./../../../utils/managers/StructureMap";
 import { globalContext } from "./../../App";
 
 // this component is the data display part of a DataStructure window
-const StructureDataComponent = props => {
+const DataDisplay = props => {
   const {
     currentFileData,
     showImage,
@@ -209,9 +209,9 @@ const StructureDataComponent = props => {
     );
 };
 
-export default memo(StructureDataComponent);
+export default memo(DataDisplay);
 
-StructureDataComponent.propTypes = {
+DataDisplay.propTypes = {
   currentFileData: PropTypes.object,
   showImage: PropTypes.any,
   FileDisplay: PropTypes.any,
