@@ -151,11 +151,9 @@ const imageViewerReducer = (state, action) => {
 
   switch (type) {
     case "source":
-      return { ...state, source: payload };
     case "error":
-      return { ...state, error: payload };
     case "found":
-      return { ...state, found: payload };
+      return { ...state, [type]: payload };
     default:
       return state;
   }
