@@ -93,4 +93,6 @@ _\~ more contribution info coming soon\~_
 
 -   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
+-   on chrome, .ogg files containing only audio are recognized as such. on firefox, .ogg files seem to be automatically given a video mime. I have no idea why this happens or how to fix it, but it is a fairly serious issue. if I know this happens on firefox with .ogg files, what other filetypes have similar problems? what other browsers? I have no clue but the implications of this issue are fairly alarming.
+
 for solved issues see [https://github.com/jpegzilla/minervas-akasha/blob/master/docs/main/solved-issues.md](/docs/main/solved-issues.md).
