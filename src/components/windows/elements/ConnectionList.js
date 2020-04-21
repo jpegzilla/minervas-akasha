@@ -149,7 +149,13 @@ const ConnectionListComponent = props => {
       setDisconnectionOptions(possibleDisconnections);
       setConnectionOptions(possibleConnections);
     },
-    [renderConList]
+    [
+      renderConList,
+      minerva.record,
+      setConnectionOptions,
+      setDisconnectionOptions,
+      structId
+    ]
   );
 
   return (
