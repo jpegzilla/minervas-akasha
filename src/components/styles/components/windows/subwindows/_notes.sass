@@ -3,19 +3,20 @@
   $delay: 0.3s
 
   display: flex
+  max-width: 350px
 
   .notes-sidebar
     +flexcenter
 
     cursor: pointer
     user-select: none
+    width: 2.2rem
 
     span
       writing-mode: vertical-lr
       padding: 0 0.25rem
 
     border-right: 1px solid var(--text-main)
-    transition-delay: 0
 
   &.collapsed
     .notes-sidebar
@@ -33,9 +34,9 @@
       transition: max-width $delay
 
     textarea
-      min-width: $dsMaxWidth
       min-height: 100%
       max-height: 100%
+      min-width: calc(100% - 1px)
       resize: none
       border: none
       padding: 0.5rem
