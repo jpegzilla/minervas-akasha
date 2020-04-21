@@ -32,7 +32,7 @@ const Img = props => {
   const [imageData, setImageData] = useState();
 
   const fileInfo = `title: ${title ||
-    "no title provided"}\nsize: ${humanSize}\ntype: ${mime}`;
+    "no title provided"}\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`;
 
   useEffect(
     () => {
