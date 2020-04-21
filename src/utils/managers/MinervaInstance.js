@@ -57,6 +57,7 @@ export class Minerva {
 
     // open indexedDB instance
     let db = window.indexedDB.open("minerva_db");
+    this.dbReq = db;
 
     // this will be given a value when the database is successfully opened
     this.indexedDB = null;
