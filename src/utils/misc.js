@@ -1,6 +1,55 @@
 /* eslint no-useless-escape: 0 */
 
 /**
+ * isEmpty - checks to see if an object is empty
+ *
+ * @param {object} obj the object to check
+ *
+ * @returns {boolean} true if object is empty, false if not
+ */
+export const isEmpty = obj => {
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+  return true;
+};
+
+/**
+ * throttle - fires a callback *only* every x seconds
+ *
+ * @param {function} callback the callback to trigger
+ * @param {number}   delay    how often the callback should be able to fire
+ *
+ * @returns {function} function that fires the callback
+ */
+export const throttle = (callback, delay) => {
+  let throttleTimeout = null;
+  let storedEvent = null;
+
+  const throttledEventHandler = event => {
+    storedEvent = event;
+
+    const shouldHandleEvent = !throttleTimeout;
+
+    if (shouldHandleEvent) {
+      callback(storedEvent);
+
+      storedEvent = null;
+
+      throttleTimeout = setTimeout(() => {
+        throttleTimeout = null;
+
+        if (storedEvent) {
+          throttledEventHandler(storedEvent);
+        }
+      }, delay);
+    }
+  };
+
+  return throttledEventHandler;
+};
+
+/**
  * secondsToTime - convert seconds to an hh:mm:ss string
  *
  * @param {number} sec number of seconds to convert
