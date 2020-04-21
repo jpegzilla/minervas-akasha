@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import Typist from "./../utils/managers/Typist";
 import { globalContext } from "./App";
 import PropTypes from "prop-types";
@@ -19,17 +19,24 @@ import i_one from "./../assets/audio/computer/intro.wav";
 // tasks
 import { setup } from "./tasks/setupSfx";
 
-// const text = "minerva's akasha.";
-const text = "loading...";
+const text = "minerva's akasha.";
+// const text = "loading...";
+
+let panelsActiveFlag = false;
+let shouldUpdateFlag = true;
+let winLoadedFlag = false;
+
+const setPanelsActive = val => void (panelsActiveFlag = val);
 
 const Preloader = props => {
   const { setWindowLoaded } = props;
-  const { audiomanager, minervaVoice } = useContext(globalContext);
+  const { audiomanager, minervaVoice, minerva } = useContext(globalContext);
+
+  const centerPanel = useRef();
 
   const [preloaderText, setPreloaderText] = useState("");
 
   // this is what makes the panels do their animation
-  const [panelsActive, setPanelsActive] = useState(false);
 
   // when the following three are true, then the preloader is complete
   const [audioLoaded, setAudioLoaded] = useState(false); // after this one, set panels to active
@@ -38,11 +45,61 @@ const Preloader = props => {
 
   const [finished, setFinished] = useState(false);
 
+  // on window load, set winloaded to true. both this and
+  // audioloaded must be true in order to end the preloader.
+
+  window.addEventListener("load", () => {
+    if (shouldUpdateFlag && winLoadedFlag === false) {
+      setWinLoaded(true);
+      winLoadedFlag = true;
+    }
+  });
+
+  if (centerPanel.current && shouldUpdateFlag) {
+    centerPanel.current.addEventListener("animationend", () => {
+      if (
+        winLoaded === true &&
+        finished === true &&
+        voiceLoaded === true &&
+        audioLoaded === true &&
+        shouldUpdateFlag
+      ) {
+        shouldUpdateFlag = false;
+
+        console.log("minerva at loading screen end", minerva);
+
+        setTimeout(() => {
+          setWindowLoaded(true);
+        }, 500);
+      }
+    });
+  }
+
+  if (minerva.dbReq) {
+    minerva.dbReq.addEventListener("success", e => {
+      if (e.target instanceof IDBOpenDBRequest) {
+        if (shouldUpdateFlag) {
+          delete minerva.dbReq;
+          if (!panelsActiveFlag) {
+            setPanelsActive(true);
+          } else {
+            setFinished(true);
+          }
+        }
+      }
+    });
+  }
+
   // scramble the loading screen text.
   useEffect(
     () => {
       let loadingTypist = new Typist(setPreloaderText, text);
-      loadingTypist.scramble(false);
+      loadingTypist.scramble(false).then(() => {
+        setTimeout(() => {
+          let secondTypist = new Typist(setPreloaderText, "loading...");
+          secondTypist.scramble(false);
+        }, 1000);
+      });
 
       // load all audio files
       const files = [
@@ -60,25 +117,44 @@ const Preloader = props => {
       ];
 
       // longest running load time is here. must load all these files
-      audiomanager.load(files).then(() => {
-        setAudioLoaded(true);
-        // setPreloaderText("complete.");
-        // setFinished(true);
-
-        // setTimeout(() => {
-        //   setWindowLoaded(true);
-        // }, 2500);
-      });
+      audiomanager
+        .load(files)
+        .then(() => {
+          setAudioLoaded(true);
+          if (shouldUpdateFlag) {
+            if (!panelsActiveFlag) {
+              setPanelsActive(true);
+            } else {
+              setFinished(true);
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
 
       // this one is shorter
-      minervaVoice.load(minervaVoice.voiceSamples).then(() => {
-        setVoiceLoaded(true);
-        // setPanelsActive(true);
-      });
+      minervaVoice
+        .load(minervaVoice.voiceSamples)
+        .then(() => {
+          setVoiceLoaded(true);
+          if (shouldUpdateFlag) {
+            if (!panelsActiveFlag) {
+              setPanelsActive(true);
+            } else {
+              setFinished(true);
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
 
       setup(audiomanager);
 
-      return () => void (window.onload = null);
+      return () => {
+        console.log("preloader dismounting");
+      };
     },
     [audiomanager, minervaVoice]
   );
@@ -95,25 +171,21 @@ const Preloader = props => {
   //     }, 2400);
   //   }, 5500);
   // }, 2000);
+  //
 
-  // on window load, set winloaded to true. both this and
-  // audioloaded must be true in order to end the preloader.
-  window.onload = () => {
-    setWinLoaded(true);
-    setWindowLoaded(true);
-  };
-
-  // useEffect(
-  //   () => {
-  //     if (finished && voiceLoaded) setWindowLoaded(true);
-  //   },
-  //   [setWindowLoaded, finished, voiceLoaded]
-  // );
+  useEffect(() => {
+    if (panelsActiveFlag) {
+      setTimeout(() => {
+        let complete = new Typist(setPreloaderText, "complete.");
+        complete.scramble(false);
+      }, 4000);
+    }
+  }, []);
 
   return (
     <section
       id="preloader-container"
-      className={panelsActive ? "active" : "inactive"}
+      className={panelsActiveFlag ? "active" : "inactive"}
     >
       <section id="filters">
         <div id="crt-overlay" />
@@ -121,7 +193,9 @@ const Preloader = props => {
 
       <section
         className={
-          panelsActive ? "preloader-background active" : "preloader-background"
+          panelsActiveFlag
+            ? "preloader-background active"
+            : "preloader-background"
         }
       >
         <div />
@@ -129,7 +203,7 @@ const Preloader = props => {
       </section>
       <section
         className={
-          panelsActive
+          panelsActiveFlag
             ? "preloader-middleground active"
             : "preloader-middleground"
         }
@@ -138,7 +212,9 @@ const Preloader = props => {
         <div className="preloader-row-top">{preloaderText}</div>
         <div className="preloader-row-top">{preloaderText}</div>
         <div className="preloader-row-middle">{preloaderText}</div>
-        <div className="preloader-row-middle">{preloaderText}</div>
+        <div ref={centerPanel} className="preloader-row-middle">
+          {preloaderText}
+        </div>
         <div className="preloader-row-middle">{preloaderText}</div>
         <div className="preloader-row-bottom">{preloaderText}</div>
         <div className="preloader-row-bottom">{preloaderText}</div>
@@ -146,12 +222,14 @@ const Preloader = props => {
       </section>
       <section
         className={
-          panelsActive ? "preloader-foreground active" : "preloader-foreground"
+          panelsActiveFlag
+            ? "preloader-foreground active"
+            : "preloader-foreground"
         }
       >
         <div
           className={
-            panelsActive
+            panelsActiveFlag
               ? "loading-indicator-container active"
               : "loading-indicator-container"
           }
