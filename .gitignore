@@ -35,6 +35,7 @@ yarn-error.log*
 
 # compiled css
 *.css
+*.css.map
 
 # local environment
 .env.local
