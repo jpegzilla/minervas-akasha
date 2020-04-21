@@ -46,14 +46,14 @@
 
     .structure-left-column, .structure-right-column
       display: flex
+      max-width: $maxWidth2
 
     .structure-left-column
       +itemlist
 
-      padding: 0.5rem $gap $gap $gap
+      padding: $gap
       flex-direction: column
-      max-width: $maxWidth
-      min-width: $w
+      min-width: calc($maxWidth2 + 1rem)
       min-height: $h
 
     .structure-right-column
@@ -106,7 +106,6 @@
 
   .structure-data
     flex-grow: 1
-    width: 100%
     margin-bottom: 1rem
 
     div
@@ -118,14 +117,14 @@
       overflow-wrap: anywhere
 
     img:not(.image-viewer-image), p, h2
-      max-width: $maxWidth2
+      max-width: 100%
 
     audio, video
       width: 100%
       max-width: $maxWidth2
 
     img
-      min-width: $maxWidth2
+      width: 100%
 
     video
       max-width: 400px
