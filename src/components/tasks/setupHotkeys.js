@@ -13,4 +13,27 @@ export default () => {
   });
 
   [testHotkey].forEach(c => c.start());
+
+  document.addEventListener("keydown", e => {
+    if (e.repeat) return;
+    const key = e.key.toLowerCase();
+    const {
+      ctrlKey,
+      shiftKey
+      // altKey,
+      //metaKey
+    } = e;
+
+    switch (key) {
+      case "c":
+        if (ctrlKey && shiftKey) {
+          e.preventDefault();
+          console.log("command palette opened");
+        }
+
+        return;
+      default:
+        return;
+    }
+  });
 };
