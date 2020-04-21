@@ -160,6 +160,32 @@ export default class AkashicRecord {
   }
 
   /**
+   * findRecordById - find a record in akasha using a uuid, promise-style
+   *
+   * @param {type} id Description
+   *
+   * @returns {type} Description
+   */
+  findRecordByIdAsync(id) {
+    if (!id || !validateUUIDv4(id))
+      throw new Error(
+        "invalid arguments passed to AkashicRecord.findRecordById"
+      );
+
+    return new Promise((resolve, reject) => {
+      try {
+        const allRecs = Object.values(this.records).flat(Infinity);
+
+        const found = allRecs.find(o => o.id === id);
+
+        resolve(found);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  /**
    * removeRecord - remove a record from akasha
    *
    * @param {string} id       unique id for the record to remove
