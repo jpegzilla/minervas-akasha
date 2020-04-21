@@ -7,7 +7,7 @@ import React, {
   useMemo
 } from "react";
 
-import { uuidv4 } from "./../utils/misc";
+import { uuidv4, isEmpty } from "./../utils/misc";
 import PropTypes from "prop-types";
 import Taskbar from "./Taskbar";
 import Topbar from "./Topbar";
@@ -105,7 +105,7 @@ const HomeComponent = props => {
         setActiveFileData
       );
     },
-    [droppedFiles]
+    [droppedFiles, resetStatusText, setStatusMessage]
   );
 
   // effect that should fire whenever a file is dropped on the desktop
@@ -115,7 +115,6 @@ const HomeComponent = props => {
         console.log(activeFileData);
 
         const struct = makeStruct("shard", uuidv4(), minerva, uuidv4, null);
-        console.log(struct);
 
         minerva.activeFileData = activeFileData;
 
@@ -310,24 +309,25 @@ const HomeComponent = props => {
                 // used to determine how to count elements being rendered.
                 // counts based on type of component.
                 componentCounts[
-                  item.componentProps
+                  !isEmpty(item.componentProps)
                     ? item.componentProps.type
-                    : item.component || item.stringType
+                    : item.title || item.component
                 ] =
                   componentCounts[
-                    item.componentProps
+                    !isEmpty(item.componentProps)
                       ? item.componentProps.type
-                      : item.component || item.stringType
+                      : item.title || item.component
                   ] + 1 || 1;
+
                 const key = `${item.title}-window-${item.id}`;
                 return (
                   <Component
                     item={item}
                     num={
                       componentCounts[
-                        item.componentProps
+                        !isEmpty(item.componentProps)
                           ? item.componentProps.type
-                          : item.component || item.stringType
+                          : item.title || item.component
                       ]
                     }
                     records={minerva.record.records}
