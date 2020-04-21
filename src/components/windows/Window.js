@@ -157,6 +157,12 @@ const Window = props => {
         }
       };
 
+      let windowStructid = false;
+
+      if (componentProps.structId) {
+        windowStructid = componentProps.structId.substring(0, 8);
+      }
+
       return (
         <div
           onDragOver={canDropFiles ? handleDragOver : undefined}
@@ -184,7 +190,7 @@ const Window = props => {
             onDrag={() => void false}
           >
             <span className="window-title-text">{`${componentProps.type ||
-              t} (${num})`}</span>
+              t} (${num})${windowStructid ? ` ${windowStructid}` : ""}`}</span>
             <b />
             <span className="window-controls">
               <div
