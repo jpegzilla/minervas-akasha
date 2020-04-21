@@ -146,15 +146,15 @@ export class Minerva {
     return {
       volume: {
         master: 100, // volume for media (videos / audio)
-        effect: 100, // volume for sound effects like the typing sound, startup sound
-        voice: 100 // volume for minerva's voice (not yet implemented)
+        effect: 50, // volume for sound effects like the typing sound, startup sound
+        voice: 70 // volume for minerva's voice (not yet implemented)
       },
       timeFormat: "24hr", // 12hr sets 12 hour mode, 24hr is 24 hour mode (wow!)
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true, // dictates whether users can see content from other users.
       filters: {
-        crt: true,
-        noise: true
+        crt: true, // an animated filter overlay emulating an old crt screen.
+        noise: true // a light noise texture underneath the crt filter.
       }, // enables / disables graphical filters.
       dateFormat: "ja-JP", // for formatting dates / times
       textEditor: {
@@ -390,6 +390,7 @@ export class Minerva {
       throw new TypeError("invalid parameters to minerva.setWindows");
 
     this.windows = array;
+
     this.save();
   }
 
