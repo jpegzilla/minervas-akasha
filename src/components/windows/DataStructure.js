@@ -176,6 +176,7 @@ const DataStructure = props => {
 
   useEffect(
     () => {
+      // parse the file
       dataStructureFileParser(
         droppedFiles,
         setStatusMessage,
@@ -234,7 +235,11 @@ const DataStructure = props => {
                         ...item.componentProps,
                         info: {
                           ...info,
-                          data: { dbId: e.id, dbUserId: e.userId }
+                          data: {
+                            ...item.componentProps.info.data,
+                            dbId: e.id,
+                            dbUserId: e.userId
+                          }
                         }
                       }
                     };
@@ -441,6 +446,8 @@ const DataStructure = props => {
     setWindows([...minerva.windows]);
 
     nameRef.current.value = "";
+
+    setRenderConList(uuidv4());
   };
 
   const [showTagEditInterface, setShowTagEditInterface] = useState(false);
@@ -467,6 +474,8 @@ const DataStructure = props => {
     setInfo({ ...info, tags: newTags });
     setCurrentTag(null);
     setShowTagEditInterface(false);
+
+    setRenderConList(uuidv4());
   };
 
   const addTag = () => {
@@ -499,6 +508,8 @@ const DataStructure = props => {
     });
 
     tagRef.current.value = "";
+
+    setRenderConList(uuidv4());
   };
 
   const removeTag = tag => {
@@ -506,6 +517,8 @@ const DataStructure = props => {
       const newTags = info.tags.filter(item => item.name !== tag.name);
 
       setInfo({ ...info, tags: newTags });
+
+      setRenderConList(uuidv4());
     }
   };
 
@@ -604,18 +617,24 @@ const DataStructure = props => {
           delete xdata.pictureData;
           delete xdata.picture.data;
 
-          minerva.editInRecord(structId, type, "data", {
-            file: { title, humanSize, mime, ext },
-            metadata: xdata
+          minerva.record.findRecordByIdAsync(structId).then(item => {
+            minerva.editInRecord(structId, type, "data", {
+              ...item.data,
+              file: { title, humanSize, mime, ext },
+              metadata: xdata
+            });
           });
 
           setImageDisplay(component);
         } else {
           const { title, humanSize, mime, ext } = currentFileData;
 
-          minerva.editInRecord(structId, type, "data", {
-            file: { title, humanSize, mime, ext },
-            metadata
+          minerva.record.findRecordByIdAsync(structId).then(item => {
+            minerva.editInRecord(structId, type, "data", {
+              ...item.data,
+              file: { title, humanSize, mime, ext },
+              metadata
+            });
           });
         }
       }
