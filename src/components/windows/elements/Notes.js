@@ -45,32 +45,32 @@ const Notes = props => {
     ]
   );
 
-  const getCaretPosition = element => {
-    let caretPosition = 0;
+  const getCursorPosition = element => {
+    let cursorPosition = 0;
 
     if (element.selectionStart || element.selectionStart === 0) {
-      caretPosition = element.selectionStart;
+      cursorPosition = element.selectionStart;
     }
 
-    return caretPosition;
+    return cursorPosition;
   };
 
-  const setCursorPosition = (element, caretPos) => {
-    const elem = element;
-
-    if (elem != null) {
-      if (elem.createTextRange) {
-        const range = elem.createTextRange();
-        range.move("character", caretPos);
-        range.select();
-      } else {
-        if (elem.selectionStart) {
-          elem.focus();
-          elem.setSelectionRange(caretPos, caretPos);
-        } else elem.focus();
-      }
-    }
-  };
+  // const setCursorPosition = (element, cursorPos) => {
+  //   const elem = element;
+  //
+  //   if (elem != null) {
+  //     if (elem.createTextRange) {
+  //       const range = elem.createTextRange();
+  //       range.move("character", cursorPos);
+  //       range.select();
+  //     } else {
+  //       if (elem.selectionStart) {
+  //         elem.focus();
+  //         elem.setSelectionRange(cursorPos, cursorPos);
+  //       } else elem.focus();
+  //     }
+  //   }
+  // };
 
   // make the text editor feel a little better
   const handleKeyDown = e => {
@@ -104,7 +104,7 @@ const Notes = props => {
               el.value.length
             );
 
-            const currentPosition = getCaretPosition(el);
+            const currentPosition = getCursorPosition(el);
 
             console.log(currentPosition);
 
