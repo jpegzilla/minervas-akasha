@@ -85,8 +85,6 @@ const DataDisplay = props => {
                 // open the clicked-on record
                 e.stopPropagation();
 
-                console.log(rec);
-
                 const handleOpenRecord = item => {
                   // make sure the window isn't already open
                   const foundItem = minerva.windows.find(
@@ -95,7 +93,24 @@ const DataDisplay = props => {
                       i.componentProps.structId === item.id
                   );
 
-                  if (foundItem) return;
+                  if (foundItem) {
+                    if (foundItem.state !== "minimized") return;
+                    else {
+                      minerva.setWindows(
+                        minerva.windows.map(window => {
+                          return window.id === foundItem.id
+                            ? { ...window, state: "restored" }
+                            : window;
+                        })
+                      );
+
+                      setWindows([...minerva.windows]);
+
+                      minerva.setActiveWindowId(foundItem.id);
+                    }
+
+                    return;
+                  }
 
                   const itemToOpen = minerva.record.records[item.type].find(
                     i => i.id === item.id

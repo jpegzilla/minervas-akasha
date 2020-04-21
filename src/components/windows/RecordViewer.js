@@ -31,7 +31,24 @@ const RecordViewer = props => {
         i.component === "DataStructure" && i.componentProps.structId === item.id
     );
 
-    if (foundItem) return;
+    if (foundItem) {
+      if (foundItem.state !== "minimized") return;
+      else {
+        minerva.setWindows(
+          minerva.windows.map(window => {
+            return window.id === foundItem.id
+              ? { ...window, state: "restored" }
+              : window;
+          })
+        );
+
+        setWindows([...minerva.windows]);
+
+        minerva.setActiveWindowId(foundItem.id);
+      }
+
+      return;
+    }
 
     const itemToOpen = minerva.record.records[item.type].find(
       i => i.id === item.id
@@ -63,14 +80,13 @@ const RecordViewer = props => {
     records: []
   });
 
+  // show the connected records in the sidebar
   useEffect(
     () => {
       const { item } = statusBar;
 
       if (Object.keys(item).length > 1) {
         const { connectedTo, name } = item;
-
-        console.log({ title: name, records: Object.keys(connectedTo) });
 
         setSidebar({ title: name, records: Object.keys(connectedTo) });
       }
@@ -167,37 +183,6 @@ const RecordViewer = props => {
                       <li
                         onDoubleClick={e => {
                           e.stopPropagation();
-
-                          const handleOpenRecord = item => {
-                            // make sure the window isn't already open
-                            const foundItem = minerva.windows.find(
-                              i =>
-                                i.component === "DataStructure" &&
-                                i.componentProps.structId === item.id
-                            );
-
-                            if (foundItem) return;
-
-                            const itemToOpen = minerva.record.records[
-                              item.type
-                            ].find(i => i.id === item.id);
-
-                            const { id, type } = itemToOpen;
-
-                            // move objects like this to structuremap to dry things up
-                            const struct = makeStruct(
-                              type,
-                              id,
-                              minerva,
-                              uuidv4
-                            );
-
-                            minerva.setWindows([...minerva.windows, struct]);
-
-                            setWindows([...minerva.windows]);
-
-                            minerva.setActiveWindowId(id);
-                          };
 
                           handleOpenRecord(record);
                         }}
