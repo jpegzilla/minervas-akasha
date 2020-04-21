@@ -63,33 +63,37 @@ export default class Typist {
 
     let i = 0;
 
-    const typer = setInterval(() => {
-      const next = i + 1;
+    return new Promise(resolve => {
+      const typer = setInterval(() => {
+        const next = i + 1;
 
-      if (i < this.string.length) {
-        // this is true if we are at the end of the string.
-        const c = this.string.length - 1 === i;
+        if (i < this.string.length) {
+          // this is true if we are at the end of the string.
+          const c = this.string.length - 1 === i;
 
-        if (sound) m.play("key");
+          if (sound) m.play("key");
 
-        // if we are at the end of the string as determined above,
-        // return an empty string to avoid adding a random char at
-        // the end of the typing process. otherwise, return a random
-        // character.
-        const a = c ? "" : getRandomChar(chars);
+          // if we are at the end of the string as determined above,
+          // return an empty string to avoid adding a random char at
+          // the end of the typing process. otherwise, return a random
+          // character.
+          const a = c ? "" : getRandomChar(chars);
 
-        // pass the string up to this point (plus a random char or an
-        // empty string, based on the above two constants) into the
-        // state setter function
-        this.setter(this.string.slice(0, next) + a);
-      }
+          // pass the string up to this point (plus a random char or an
+          // empty string, based on the above two constants) into the
+          // state setter function
+          this.setter(this.string.slice(0, next) + a);
+        }
 
-      if (i === this.string.length) {
-        this.complete = true;
-        clearInterval(typer);
-      }
+        if (i === this.string.length) {
+          this.complete = true;
 
-      i++;
-    }, this.delay);
+          resolve(this.complete);
+          clearInterval(typer);
+        }
+
+        i++;
+      }, this.delay);
+    });
   }
 }
