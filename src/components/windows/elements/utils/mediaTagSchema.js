@@ -146,7 +146,9 @@ export const audioTagSchema = tags => {
 
       // if there are multiple entries for a certain tag, which usually happens when
       // there are multiple artists attached to a file, list them with commas.
-      if (tagSchema[item] instanceof Array) tagSchema[item].join(", ");
+      if (Array.isArray(tagSchema[item])) {
+        tagSchema[item] = tagSchema[item].join(", ");
+      }
     });
   } catch (err) {
     msg.status = "failure";
