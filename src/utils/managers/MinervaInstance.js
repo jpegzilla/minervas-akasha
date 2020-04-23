@@ -155,7 +155,9 @@ export class Minerva {
       connections: true, // dictates whether users can see content from other users.
       filters: {
         crt: true, // an animated filter overlay emulating an old crt screen.
-        noise: true // a light noise texture underneath the crt filter.
+        noise: true, // a light noise texture underneath the crt filter.
+        machine: "MNRV", // name of "machine"
+        syscol: { bg: "black", fg: "white", hl: "pink" } // system colors
       }, // enables / disables graphical filters.
       dateFormat: "ja-JP", // for formatting dates / times
       textEditor: {
