@@ -203,7 +203,13 @@ const ConnectionListComponent = props => {
               ? connectsTo
                   .map(
                     (item, i, a) =>
-                      i === a.length - 1 ? "or " + item : item + ","
+                      a.length > 2
+                        ? i === a.length - 1
+                          ? "or " + item
+                          : item + ","
+                        : i === a.length - 1
+                          ? "or " + item
+                          : item
                   )
                   .join(" ")
               : connectsTo[0]}{" "}
