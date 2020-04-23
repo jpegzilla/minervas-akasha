@@ -190,8 +190,6 @@ const App = () => {
   };
 
   if (windowLoaded) {
-    // effects canvases / other graphical elements here / crt filter
-    // brightness / color filters / cursor click effects outside switch
     const props = {
       ErrorBoundary,
       Provider,
