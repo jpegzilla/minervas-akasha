@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 
 import PropTypes from "prop-types";
 
@@ -31,6 +31,12 @@ const Main = props => {
     Switch,
     Route
   } = props;
+
+  const [filterRefresh, setFilterRefresh] = useState({});
+
+  minerva.setFilterRefresh = setFilterRefresh;
+
+  useEffect(() => {}, [filterRefresh]);
 
   return (
     <ErrorBoundary>
@@ -75,6 +81,7 @@ const Main = props => {
               {minerva &&
                 minerva.settings &&
                 minerva.settings.filters && (
+                  // effects canvases / other graphical elements here / crt filter // brightness / color filters / cursor click effects outside switch
                   <Fragment>
                     {minerva.settings.filters.noise && (
                       <div id="filters-noise" />
