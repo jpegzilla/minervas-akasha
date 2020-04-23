@@ -4,8 +4,7 @@ import React, {
   useRef,
   useCallback,
   memo,
-  useMemo,
-  useReducer
+  useState
 } from "react";
 
 import { uuidv4 } from "./../../utils/misc";
@@ -19,32 +18,25 @@ const Console = props => {
 
   const { minerva, audiomanager } = useContext(globalContext);
 
-  // const [command, setCommand] = useState("");
-  // const [inputState, setInputState] = useState("default");
-  // const [history, setHistory] = useState([]);
-  // const [commandIndex, setCommandIndex] = useState(history.length);
-  // const [log, setLog] = useState([]);
-
-  const [state, dispatch] = useReducer(consoleReducer, {
-    command: "",
-    inputState: "default",
-    history: [],
-    commandIndex: 0,
-    log: []
-  });
-
-  const { command, inputState, history, commandIndex, log } = state;
+  const [command, setCommand] = useState("");
+  const [conCommand, setConCommand] = useState("");
+  const [history, setHistory] = useState([]);
+  const [commandIndex, setCommandIndex] = useState(history.length);
+  const [inputState, setInputState] = useState("default");
+  const [log, setLog] = useState([]);
 
   const input = useRef(null);
   const cmdLog = useRef(null);
 
   useEffect(() => {
-    input.current.focus();
+    if (input.current) {
+      input.current.focus();
+    }
   }, []);
 
   useEffect(
     () => {
-      dispatch({ type: "commandIndex", payload: history.length });
+      setCommandIndex(history.length);
     },
     [history]
   );
@@ -68,255 +60,201 @@ const Console = props => {
   // when the command is programatically updated, move the cursor to the end of the input
   useEffect(
     () => {
+      setCommand(conCommand);
       input.current.selectionStart = input.current.selectionEnd =
         input.current.value.length;
     },
-    [command]
+    [conCommand]
   );
 
-  return useMemo(
-    () => {
-      const handleCommand = e => {
-        if (e.repeat || e.key.toLowerCase() !== "enter") return;
-        const cmd = command;
+  const handleCommand = e => {
+    if (e.repeat || e.key.toLowerCase() !== "enter") {
+      return false;
+    }
 
-        // put the previous command into the history
-        // setHistory([...history, cmd]);
-        dispatch({ type: "history", payload: [...history, cmd] });
+    const cmd = command;
 
-        const res = parseCommand(cmd, setWindows, minerva, log);
+    // put the previous command into the history
+    setHistory([...history, cmd]);
 
-        dispatch({ type: "command", payload: "" });
-        dispatch({ type: "inputState", payload: "default" });
+    const res = parseCommand(cmd, setWindows, minerva, log);
 
-        if (["clr", "clear"].includes(cmd)) {
-          return dispatch({ type: "log", payload: [] });
-        }
+    setCommand("");
+    setInputState("default");
 
-        // don't do anything if the user didn't enter a command
-        if (cmd === "") return;
+    if (["clr", "clear"].includes(cmd)) {
+      return setLog([]);
+    }
 
-        if (res.message) {
-          if (res.action) {
-            const { action } = res;
+    // don't do anything if the user didn't enter a command
+    if (cmd === "") return;
 
-            switch (action) {
-              case "reset records":
-                minerva.resetRecords();
-                break;
+    if (res.message) {
+      if (res.action) {
+        const { action } = res;
 
-              default:
-                console.log(
-                  "action returned from parseCommand was not known. response:",
-                  res
-                );
+        switch (action) {
+          case "reset records":
+            minerva.resetRecords();
+            break;
 
-                return dispatch({
-                  type: "log",
-                  payload: [
-                    ...log,
-                    { type: "error", text: "unknown command.", id: uuidv4() }
-                  ]
-                });
-            }
-          }
+          default:
+            console.log(
+              "action returned from parseCommand was not known. response:",
+              res
+            );
 
-          if (res.state === "error") {
-            audiomanager.play("e_one");
-
-            return dispatch({
-              type: "log",
-              payload: [
-                ...log,
-                { type: "error", text: res.message, id: uuidv4() }
-              ]
-            });
-          }
-
-          // this will set the command input to a password-style input.
-          if (res.state === "password") {
-            dispatch({ type: "inputState", payload: "password" });
-
-            return dispatch({
-              type: "log",
-              payload: [
-                ...log,
-                {
-                  type: "command",
-                  text: res.message,
-                  request: res.request,
-                  id: uuidv4()
-                }
-              ]
-            });
-          }
-        }
-
-        // commandparser will return false if an undefined command is recieved.
-        // play an error sound.
-        if (!res) {
-          audiomanager.play("e_one");
-
-          return dispatch({
-            type: "log",
-            payload: [
+            return setLog([
               ...log,
-              {
-                type: "error",
-                text: `undefined command -> ${cmd}`,
-                id: uuidv4()
-              }
-            ]
-          });
+              { type: "error", text: "unknown command.", id: uuidv4() }
+            ]);
         }
+      }
 
-        if (res.state === "update") {
-          dispatch({
-            type: "log",
-            payload: [
-              ...log,
-              {
-                type: "update",
-                text: `> ${res.message} -> success`,
-                id: uuidv4()
-              }
-            ]
-          });
-        } else {
-          // for commands that just return a text response and don't do anything else.
-          // for multiline commands, the response will print on multiple lines.
-          lines.push(res.split("\n")[0]);
+      if (res.state === "error") {
+        audiomanager.play("e_one");
 
-          res.split("\n").forEach((line, i) => {
-            if (i > 0) lines.push(line);
-          });
+        return setLog([
+          ...log,
+          { type: "error", text: res.message, id: uuidv4() }
+        ]);
+      }
 
-          dispatch({
-            type: "log",
-            payload: [...log, { type: "command", text: lines, id: uuidv4() }]
-          });
+      // this will set the command input to a password-style input.
+      if (res.state === "password") {
+        setInputState("password");
+
+        return setLog([
+          ...log,
+          {
+            type: "command",
+            text: res.message,
+            request: res.request,
+            id: uuidv4()
+          }
+        ]);
+      }
+    }
+
+    // commandparser will return false if an undefined command is recieved.
+    // play an error sound.
+    if (!res) {
+      audiomanager.play("e_one");
+
+      return setLog([
+        ...log,
+        {
+          type: "error",
+          text: `undefined command -> ${cmd}`,
+          id: uuidv4()
         }
-      };
+      ]);
+    }
 
-      const handleUpKey = () => {
-        const lastCommand = history[commandIndex - 1];
-
-        console.log(lastCommand);
-
-        if (lastCommand !== undefined) {
-          dispatch({ type: "commandIndex", payload: commandIndex - 1 });
-          dispatch({ type: "command", payload: lastCommand });
+    if (res.state === "update") {
+      setLog([
+        ...log,
+        {
+          type: "update",
+          text: `> ${res.message} -> success`,
+          id: uuidv4()
         }
-      };
+      ]);
+    } else {
+      // for commands that just return a text response and don't do anything else.
+      // for multiline commands, the response will print on multiple lines.
+      lines.push(res.split("\n")[0]);
 
-      const handleDownKey = () => {
-        const nextCommand = history[commandIndex + 1];
+      res.split("\n").forEach((line, i) => {
+        if (i > 0) lines.push(line);
+      });
 
-        console.log(nextCommand);
+      setLog([...log, { type: "command", text: lines, id: uuidv4() }]);
+    }
+  };
 
-        if (nextCommand !== undefined) {
-          dispatch({ type: "commandIndex", payload: commandIndex + 1 });
-          dispatch({ type: "command", payload: nextCommand });
-        }
-      };
+  const handleUpKey = () => {
+    const lastCommand = history[commandIndex - 1];
 
-      return (
-        <section
-          onClick={() => input.current.focus()}
-          className="window-content"
-        >
-          <section ref={cmdLog} className="console-text">
-            {log.map((e, i) => {
-              return (
-                <div key={e.id} className="console-response">
-                  <span className="command-prefix">
-                    {minerva.user.name}
-                    @minerva.akasha <span className="console-tag">MNRV</span>
-                    &nbsp;
-                    <span className="console-type">
-                      ~!{" "}
-                      {log[i - 1]
-                        ? log[i - 1].text === "enter admin key"
-                          ? "[ password ]"
-                          : history[i]
-                        : history[i]}
-                    </span>
-                  </span>
-                  <pre
-                    onClick={e => void e.stopPropagation()}
-                    onMouseUp={e => void e.stopPropagation()}
-                    onMouseDown={e => void e.stopPropagation()}
-                    className={`console-${e.type}`}
-                  >
-                    {Array.isArray(e.text)
-                      ? e.text.map((line, i) => {
-                          return <p key={`${e.id}-${line}-${i}`}>{line}</p>;
-                        })
-                      : e.text}
-                  </pre>
-                </div>
-              );
-            })}
-          </section>
+    if (lastCommand !== undefined) {
+      setCommandIndex(commandIndex - 1);
+      setConCommand(lastCommand);
+    }
+  };
 
-          <div className="console-input">
-            <span className="command-prefix">
-              {minerva.user.name}
-              @minerva.akasha <span className="console-tag">MNRV</span>
-              &nbsp;
-              <span className="console-type">~!</span>
-            </span>
-            <input
-              autoComplete="new-password"
-              onKeyPress={handleCommand}
-              onKeyDown={e => {
-                if (e.key.toLowerCase() === "arrowup") handleUpKey();
-                else if (e.key.toLowerCase() === "arrowdown") handleDownKey();
-              }}
-              onChange={e =>
-                dispatch({ type: "command", payload: e.target.value })
-              }
-              className={inputState}
-              type={inputState === "password" ? "password" : "text"}
-              ref={input}
-              value={command}
-            />
-          </div>
-        </section>
-      );
-    },
-    [
-      input,
-      cmdLog,
-      log,
-      history,
-      command,
-      inputState,
-      audiomanager,
-      commandIndex,
-      lines,
-      minerva,
-      setWindows
-    ]
+  const handleDownKey = () => {
+    const nextCommand = history[commandIndex + 1];
+
+    if (nextCommand !== undefined) {
+      setCommandIndex(commandIndex + 1);
+      setConCommand(nextCommand);
+    }
+  };
+
+  return (
+    <section onClick={() => input.current.focus()} className="window-content">
+      <section ref={cmdLog} className="console-text">
+        {log.map((e, i) => {
+          return (
+            <div key={e.id} className="console-response">
+              <span className="command-prefix">
+                {minerva.user.name}
+                @minerva.akasha <span className="console-tag">MNRV</span>
+                &nbsp;
+                <span className="console-type">
+                  ~!{" "}
+                  {log[i - 1]
+                    ? log[i - 1].text === "enter admin key"
+                      ? "[ password ]"
+                      : history[i]
+                    : history[i]}
+                </span>
+              </span>
+              <pre
+                onClick={e => void e.stopPropagation()}
+                onMouseUp={e => void e.stopPropagation()}
+                onMouseDown={e => void e.stopPropagation()}
+                className={`console-${e.type}`}
+              >
+                {Array.isArray(e.text)
+                  ? e.text.map((line, i) => {
+                      return <p key={`${e.id}-${line}-${i}`}>{line}</p>;
+                    })
+                  : e.text}
+              </pre>
+            </div>
+          );
+        })}
+      </section>
+
+      <div className="console-input">
+        <span className="command-prefix">
+          {minerva.user.name}
+          @minerva.akasha <span className="console-tag">MNRV</span>
+          &nbsp;
+          <span className="console-type">~!</span>
+        </span>
+        <input
+          autoComplete="new-password"
+          onKeyPress={handleCommand}
+          onKeyDown={e => {
+            if (e.key.toLowerCase() === "arrowup") handleUpKey();
+            else if (e.key.toLowerCase() === "arrowdown") handleDownKey();
+          }}
+          onChange={e => {
+            setCommand(e.target.value);
+          }}
+          className={inputState}
+          type={inputState === "password" ? "password" : "text"}
+          ref={input}
+          value={command}
+        />
+      </div>
+    </section>
   );
 };
 
 export default memo(Console);
-
-const consoleReducer = (state, action) => {
-  const { type, payload } = action;
-
-  switch (type) {
-    case "command":
-    case "inputState":
-    case "history":
-    case "commandIndex":
-    case "log":
-      return { ...state, [type]: payload };
-    default:
-      return state;
-  }
-};
 
 Console.propTypes = {
   windows: PropTypes.array,
