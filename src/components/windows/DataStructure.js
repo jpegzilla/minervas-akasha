@@ -17,16 +17,15 @@ import Video from "./elements/Video";
 import Notes from "./elements/Notes";
 import DataDisplay from "./elements/DataDisplay";
 import dataStructureFileParser from "./elements/utils/dataStructureFileParser";
+import ConnectionList from "./elements/ConnectionList";
 
 import { uuidv4 } from "./../../utils/misc";
-import PropTypes from "prop-types";
-
 import StructureMap, {
   StructureDescriptions
 } from "./../../utils/managers/StructureMap";
-import ColorCodes from "../../utils/structures/utils/colorcodes";
 
-import ConnectionList from "./elements/ConnectionList";
+import ColorCodes from "../../utils/structures/utils/colorcodes";
+import PropTypes from "prop-types";
 
 import { globalContext } from "./../App";
 
@@ -59,8 +58,6 @@ const DataStructure = props => {
   const [activeFileData, setActiveFileData] = useState(
     minerva.activeFileData || null
   );
-
-  // console.log(currentWindo);
 
   const [currentFileData, setCurrentFileData] = useState();
   const [deletionStarted, setDeletionStarted] = useState(false);
@@ -114,7 +111,6 @@ const DataStructure = props => {
   useEffect(
     () => {
       // ...add to record
-      // console.log("adding item to record:", type);
 
       // if the structure already exists, do not add a new one
       const existingRecord = minerva.record.records[type].find(
@@ -129,6 +125,7 @@ const DataStructure = props => {
 
       const Struct = StructureMap[type];
 
+      // create an actual instance of the correct structure to add to the record
       const structToAdd = new Struct(props.info.name || info.name || type, {
         tags: [],
         id: structId,
@@ -139,8 +136,6 @@ const DataStructure = props => {
         connectsTo: new Struct().connectsTo,
         belongsTo: minerva.user.id
       });
-
-      console.log("hello", structToAdd);
 
       minerva.addToRecord(structId, structToAdd);
 
@@ -199,7 +194,7 @@ const DataStructure = props => {
         // if a file is loaded that has an image attached,
         // such as a song with an album cover, the next time a
         // file is loaded that does not have an image, the image
-        // from the last file will remain attached - without this.
+        // from the last file will remain attached - without these two lines:
         setImageDisplay(false);
         setFileDisplay(false);
 
@@ -347,7 +342,6 @@ const DataStructure = props => {
   const [makingDisconnection, setMakingDisconnection] = useState(false);
   const [connectionOptions, setConnectionOptions] = useState(false);
   const [disconnectionOptions, setDisconnectionOptions] = useState(false);
-  const [render, setRender] = useState(() => {});
 
   // handle connecting a record to another record.
   const handleConnectRecord = () => {
@@ -443,10 +437,9 @@ const DataStructure = props => {
     // ...then set the name in the ui.
     setInfo({ ...info, name: nameRef.current.value });
 
-    setWindows([...minerva.windows]);
-
     nameRef.current.value = "";
 
+    // make windows and connection lists rerender
     setRenderConList(uuidv4());
   };
 
@@ -576,7 +569,6 @@ const DataStructure = props => {
         });
 
         minerva.setWindows([...newWindows]);
-
         setWindows([...minerva.windows]);
       }
     },
@@ -614,6 +606,7 @@ const DataStructure = props => {
           const xdata = { ...metadata };
           const { title, humanSize, mime, ext } = currentFileData;
 
+          // delete the unneeded picture data, which is huge and could slow down the website
           delete xdata.pictureData;
           delete xdata.picture.data;
 
@@ -708,7 +701,6 @@ const DataStructure = props => {
             structId={structId}
             connectionOptions={connectionOptions}
             disconnectionOptions={disconnectionOptions}
-            render={render}
           />
         </section>
 
@@ -774,7 +766,6 @@ const DataStructure = props => {
             setDisconnectionOptions={setDisconnectionOptions}
             setConnectionOptions={setConnectionOptions}
             makingConnection={makingConnection}
-            setRender={setRender}
             uuidv4={uuidv4}
           />
         )}
