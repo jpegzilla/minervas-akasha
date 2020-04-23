@@ -187,7 +187,7 @@ const HomeComponent = props => {
         hideDropZone();
       };
 
-      const handleDragLeave = e => {
+      const handleDragLeave = () => {
         hideDropZone();
       };
 
