@@ -1,6 +1,7 @@
 import add from "./commands/add";
 import help from "./commands/help";
 import listrecords from "./commands/listrecords";
+import find from "./commands/find";
 import resetrecords from "./commands/resetrecords";
 
 export const parseCommand = (command, setWindows, minerva, log) => {
@@ -27,7 +28,8 @@ export const parseCommand = (command, setWindows, minerva, log) => {
     resetrecords(command, false);
   }
 
-  if (command.startsWith("add")) return add(command, minerva, setWindows);
+  if (/^add?(\s|$)/gi.test(command)) return add(command, minerva, setWindows);
+  if (/^find?(\s|$)/gi.test(command)) return find(minerva, command);
 
   switch (command) {
     case "hello":
