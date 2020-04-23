@@ -11,18 +11,20 @@ const Settings = props => {
 
   useEffect(
     () => {
+      // if the max history depth is not a number
       if (isNaN(parseInt(settings.textEditor.maxHistoryDepth))) {
         setSettings({
           ...settings,
           textEditor: {
             ...settings.textEditor,
-            maxHistoryDepth: 1000
+            maxHistoryDepth: 200
           }
         });
       }
 
       minerva.changeSetting(settings);
       setGlobalVolume(settings.volume);
+      minerva.setFilterRefresh({});
     },
     [settings, minerva, setGlobalVolume]
   );
