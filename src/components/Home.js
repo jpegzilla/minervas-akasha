@@ -19,7 +19,7 @@ import WindowTypes from "./windows/WindowTypes";
 import { globalContext } from "./App";
 import { hasDatePassed } from "./../utils/dateUtils";
 
-const HomeComponent = props => {
+const Home = props => {
   const { routeProps } = props;
 
   const {
@@ -97,13 +97,17 @@ const HomeComponent = props => {
 
   useEffect(
     () => {
-      dataStructureFileParser(
-        droppedFiles,
-        setStatusMessage,
-        resetStatusText,
-        null,
-        setActiveFileData
-      );
+      if (droppedFiles) {
+        setDroppedFiles();
+
+        dataStructureFileParser(
+          droppedFiles,
+          setStatusMessage,
+          resetStatusText,
+          null,
+          setActiveFileData
+        );
+      }
     },
     [droppedFiles, resetStatusText, setStatusMessage]
   );
@@ -121,7 +125,6 @@ const HomeComponent = props => {
         minerva.setWindows([...minerva.windows, struct]);
 
         setWindows([...minerva.windows]);
-        // type, id, minerva, uuidv4, name = null
       }
     },
     [activeFileData, minerva]
@@ -380,8 +383,8 @@ const HomeComponent = props => {
   );
 };
 
-export default memo(HomeComponent);
+export default memo(Home);
 
-HomeComponent.propTypes = {
+Home.propTypes = {
   routeProps: PropTypes.object
 };
