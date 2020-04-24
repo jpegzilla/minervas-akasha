@@ -5,19 +5,13 @@ import find from "./commands/find";
 import resetrecords from "./commands/resetrecords";
 
 export const parseCommand = (command, setWindows, minerva, log) => {
+  command = command.toLowerCase();
+
   const username = minerva.user.name;
   const lastCommand = [...log].pop() || {};
 
   if (lastCommand.request && lastCommand.request === "confirm") {
     return resetrecords(command, false);
-  }
-
-  // prevent uppercase letters
-  if (command.toLowerCase() !== command) {
-    return {
-      state: "error",
-      message: "no uppercase letters allowed."
-    };
   }
 
   if (["reset records", "reset record"].includes(command)) {
@@ -33,14 +27,19 @@ export const parseCommand = (command, setWindows, minerva, log) => {
 
   switch (command) {
     case "hello":
+    case "hi":
+    case "hey":
       return "hello to you too!";
     case username:
       return "that's your name!";
     case "minerva":
       return "that's my name!";
     case "list records":
+    case "list record":
+    case "ls":
       return listrecords(minerva);
     case "help":
+    case "h":
       return help();
     default:
       return false;
