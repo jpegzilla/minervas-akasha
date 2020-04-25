@@ -181,83 +181,83 @@ const Home = props => {
   // in the list.
   const componentCounts = {};
 
-  const handleDrop = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    setDroppedFiles(e.dataTransfer.files[0]);
-    hideDropZone();
-  };
-
-  const handleDragLeave = () => {
-    hideDropZone();
-  };
-
-  const handleDragOver = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    showDropZone();
-  };
-
-  const handleMouseMove = e => {
-    if (!activeWindow) return void false;
-
-    if (activeWindow && !wait) {
-      setWait(true);
-      const { clientX, clientY } = e;
-
-      const onMouseUp = () => {
-        setActiveWindow(null);
-        setActiveWindowId("");
-        document.removeEventListener("mouseup", onMouseUp);
-      };
-
-      document.addEventListener("mouseup", onMouseUp, {
-        once: true,
-        capture: true
-      });
-
-      // the offset is off! fix fix fix.
-      // from the mdn web documentation of raf():
-      // // note: your callback routine must itself call requestAnimationFrame()
-      // // if you want to animate another frame at the next repaint.
-      const moveWindow = () => {
-        setTimeout(() => void setWait(false), 15);
-        setPosition(activeWindowId, {
-          x: clientX - mouseOffset[0],
-          y: clientY - mouseOffset[1]
-        });
-      };
-
-      requestAnimationFrame(() => {
-        // update the window position and immediately request another frame to update again.
-
-        moveWindow();
-        requestAnimationFrame(moveWindow);
-      });
-    }
-  };
-
-  // this is the function that moves the windows around.
-  const setPosition = (windowId, newPosition) => {
-    if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
-      throw new TypeError("invalid parameters to setPosition");
-
-    const newWindows = windows.map(item => {
-      return item.id === windowId
-        ? {
-            ...item,
-            position: newPosition
-          }
-        : item;
-    });
-
-    minerva.setWindows(newWindows);
-
-    setWindows([...minerva.windows]);
-  };
-
   return useMemo(
     () => {
+      const handleDrop = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        setDroppedFiles(e.dataTransfer.files[0]);
+        hideDropZone();
+      };
+
+      const handleDragLeave = () => {
+        hideDropZone();
+      };
+
+      const handleDragOver = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        showDropZone();
+      };
+
+      const handleMouseMove = e => {
+        if (!activeWindow) return void false;
+
+        if (activeWindow && !wait) {
+          setWait(true);
+          const { clientX, clientY } = e;
+
+          const onMouseUp = () => {
+            setActiveWindow(null);
+            setActiveWindowId("");
+            document.removeEventListener("mouseup", onMouseUp);
+          };
+
+          document.addEventListener("mouseup", onMouseUp, {
+            once: true,
+            capture: true
+          });
+
+          // the offset is off! fix fix fix.
+          // from the mdn web documentation of raf():
+          // // note: your callback routine must itself call requestAnimationFrame()
+          // // if you want to animate another frame at the next repaint.
+          const moveWindow = () => {
+            setTimeout(() => void setWait(false), 15);
+            setPosition(activeWindowId, {
+              x: clientX - mouseOffset[0],
+              y: clientY - mouseOffset[1]
+            });
+          };
+
+          requestAnimationFrame(() => {
+            // update the window position and immediately request another frame to update again.
+
+            moveWindow();
+            requestAnimationFrame(moveWindow);
+          });
+        }
+      };
+
+      // this is the function that moves the windows around.
+      const setPosition = (windowId, newPosition) => {
+        if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
+          throw new TypeError("invalid parameters to setPosition");
+
+        const newWindows = windows.map(item => {
+          return item.id === windowId
+            ? {
+                ...item,
+                position: newPosition
+              }
+            : item;
+        });
+
+        minerva.setWindows(newWindows);
+
+        setWindows([...minerva.windows]);
+      };
+
       return (
         <section
           id="window-system"
