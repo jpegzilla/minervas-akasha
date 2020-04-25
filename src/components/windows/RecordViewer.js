@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useContext, memo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  memo,
+  Fragment,
+  useRef
+} from "react";
 
 import PropTypes from "prop-types";
 
@@ -6,6 +13,7 @@ import { uuidv4 } from "./../../utils/misc";
 
 import { globalContext } from "./../App";
 import { makeStruct } from "../../utils/managers/StructureMap";
+import searchAllRecords from "./../../utils/commands/utils/searchAllRecords";
 
 const RecordViewer = props => {
   const { setWindows } = props;
@@ -23,6 +31,29 @@ const RecordViewer = props => {
   });
 
   const allRecords = Object.values(minerva.record.records).flat(Infinity);
+
+  const searchQuery = useRef();
+  const searchMime = useRef();
+  const searchRecords = () => {
+    const query = searchQuery.current.value;
+    const mime = searchMime.current.value || "any";
+    const type = "any";
+    const usingMimeOption = mime === "any" ? false : true;
+
+    const matches = searchAllRecords(
+      minerva,
+      { query, type, mime },
+      {
+        usingMimeOption,
+        usingTypeOption: false
+      }
+    );
+
+    setRecordData({
+      records: matches.records,
+      length: matches.count
+    });
+  };
 
   const handleOpenRecord = item => {
     // make sure the window isn't already open
@@ -128,7 +159,29 @@ const RecordViewer = props => {
       className="record-viewer-container"
     >
       <header>
-        <div className="record-viewer-navigation">navigation</div>
+        <div className="record-viewer-navigation">
+          <label htmlFor="record-viewer-search-bar" title="search all records">
+            <input
+              type="text"
+              placeholder="search records..."
+              id="record-viewer-search-bar"
+              onChange={searchRecords}
+              ref={searchQuery}
+            />
+          </label>
+          <label
+            htmlFor="record-viewer-search-bar-mime"
+            title="filter search by mime type"
+          >
+            <input
+              type="text"
+              placeholder="filter mime type"
+              id="record-viewer-search-bar-mime"
+              onChange={searchRecords}
+              ref={searchMime}
+            />
+          </label>
+        </div>
         <div className="record-viewer-tabs">
           <ul>
             {[...Object.keys(minerva.record.records), "all"].map((name, i) => {
@@ -163,40 +216,43 @@ const RecordViewer = props => {
               </header>
 
               {sidebar.records.length > 0 ? (
-                <ul>
-                  {sidebar.records.map(item => {
-                    const record = minerva.record.findRecordById(item);
+                <Fragment>
+                  <ul>
+                    <li>record connections:</li>
+                    {sidebar.records.map(item => {
+                      const record = minerva.record.findRecordById(item);
 
-                    const title = `name: ${record.name}\ntype: ${
-                      record.type
-                    }\ntags: ${
-                      record.tags.length === 0
-                        ? "none"
-                        : record.tags.map(i => i.name).join(", ")
-                    }\ncreated on ${new Date(record.createdAt).toLocaleString(
-                      minerva.settings.dateFormat
-                    )}\nupdated on ${new Date(record.updatedAt).toLocaleString(
-                      minerva.settings.dateFormat
-                    )}`;
+                      const title = `name: ${record.name}\ntype: ${
+                        record.type
+                      }\ntags: ${
+                        record.tags.length === 0
+                          ? "none"
+                          : record.tags.map(i => i.name).join(", ")
+                      }\ncreated on ${new Date(record.createdAt).toLocaleString(
+                        minerva.settings.dateFormat
+                      )}\nupdated on ${new Date(
+                        record.updatedAt
+                      ).toLocaleString(minerva.settings.dateFormat)}`;
 
-                    return (
-                      <li
-                        onDoubleClick={e => {
-                          e.stopPropagation();
+                      return (
+                        <li
+                          onDoubleClick={e => {
+                            e.stopPropagation();
 
-                          handleOpenRecord(record);
-                        }}
-                        title={title}
-                        key={record.id}
-                      >
-                        {`(${record.type.substring(
-                          0,
-                          3
-                        )}) ${record.name.substring(0, 11).padEnd(14, ".")}`}
-                      </li>
-                    );
-                  })}
-                </ul>
+                            handleOpenRecord(record);
+                          }}
+                          title={title}
+                          key={record.id}
+                        >
+                          {`(${record.type.substring(
+                            0,
+                            3
+                          )}) ${record.name.substring(0, 11).padEnd(14, ".")}`}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Fragment>
               ) : (
                 ""
               )}
