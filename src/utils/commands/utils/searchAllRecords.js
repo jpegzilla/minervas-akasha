@@ -1,3 +1,15 @@
+/**
+ * searchAllRecords - search minerva's records using a set of parameters.
+ *
+ * @param {object} minerva the current instance of minerva.
+ * @param {object} search  an object containing a type of record to search for, a
+ * mime type, and an optional query string to search with.
+ * @param {object} options an options object containing two booleans: usingMimeOption and
+ * usingTypeOption. these are for the find command in minerva's shell.
+ *
+ * @returns {object} object containing an array of matching records and the amount of records
+ * that were found.
+ */
 export default (minerva, search, options) => {
   const { usingMimeOption, usingTypeOption } = options;
   const { query, type } = search;
