@@ -45,6 +45,10 @@ export class Minerva {
     // minerva's voice synth engine
     this.voice = null;
 
+    // a place to temporarily store files that will need to be used in the near
+    // future while they're not being used.
+    this.temp = {};
+
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
     this.record = this.user
@@ -63,7 +67,7 @@ export class Minerva {
     this.indexedDB = null;
 
     db.onerror = event => {
-      console.warn("error with indexedDB", event.target.errorCode);
+      console.warn("error with indexedDB", event.target.error);
     };
 
     db.onsuccess = event => {
@@ -428,6 +432,17 @@ export class Minerva {
     const t1 = performance.now();
 
     const mStore = MinervaArchive.get("minerva_store");
+
+    // only get data belonging to the current user
+    mStore.windows = mStore.windows.filter(
+      item => item.belongsTo === this.user.id
+    );
+    mStore.records = mStore.records[this.user.id];
+    mStore.settings = mStore.settings[this.user.id];
+    mStore.usageData = mStore.usageData[this.user.id];
+
+    console.log(mStore);
+
     const userStore = MinervaArchive.get(this.user.name);
     const db = this.indexedDB;
 
@@ -446,27 +461,18 @@ export class Minerva {
       reqVals.onerror = err => void reject({ status: "failure", err });
     });
 
-    // promise that resolves when all keys are retrieved from db
-    const promiseKeys = new Promise((resolve, reject) => {
-      const reqKeys = objectStore.getAllKeys();
-
-      reqKeys.onsuccess = e => {
-        resolve({ keys: e.target.result });
-      };
-
-      reqKeys.onerror = err => void reject({ status: "failure", err });
-    });
-
     return new Promise((resolveAll, rejectWithError) => {
       // wait for all values to be retrieved...
-      Promise.all([promiseVals, promiseKeys])
+      promiseVals
         .then(result => {
-          const res = {};
+          const res = { keys: [], values: [] };
           const toExport = {};
 
-          result.forEach(item => {
-            if ("keys" in item) res.keys = item["keys"];
-            if ("values" in item) res.values = item["values"];
+          result.values.forEach(item => {
+            if (item.userId === this.user.id) {
+              res.keys.push(item.id);
+              res.values.push(item);
+            }
           });
 
           res.values.forEach(item => {
@@ -502,10 +508,9 @@ export class Minerva {
 
             finalStringifyWorker.addEventListener("message", e => {
               const dataUrl = e.data;
-
               const dlLink = document.createElement("a");
               dlLink.href = dataUrl;
-              dlLink.download = `${
+              dlLink.download = `minerva_sd_${
                 this.user.name
               }${new Date().toISOString()}.json`;
               dlLink.rel = "noopener noreferrer";
@@ -531,7 +536,132 @@ export class Minerva {
    *
    * @returns {type} Description
    */
-  importDataFromJsonFile() {}
+  importDataFromJsonFile(data) {
+    if (data.minerva_file_header !== "minervas_akasha_alpha") return false;
+
+    console.log("importing data from json file", data);
+
+    const { user, settings, usageData, records, windows } = data.minerva_store;
+
+    const db = data.minerva_db;
+
+    const worker = new exportWorker();
+
+    worker.postMessage({ action: "jsonParse", data: db });
+
+    worker.addEventListener("message", e => {
+      if (e.data) {
+        Object.entries(e.data).forEach(([, v]) => {
+          const transaction = this.indexedDB.transaction(
+            ["minerva_files"],
+            "readwrite"
+          );
+
+          const record = v;
+
+          const objectStore = transaction.objectStore("minerva_files");
+
+          const req = objectStore.put({
+            ...record
+          });
+
+          req.onerror = err => {
+            console.error(err);
+          };
+
+          req.onsuccess = () => {
+            this.updateIndexedDBUpdatedTimestamp();
+
+            const newUser = {
+              dateCreated: user.dateCreated,
+              password: data[`${user.name}${user.id}`].password,
+              id: user.id,
+              name: user.name
+            };
+
+            this.set(`${newUser.name}`, newUser);
+
+            console.log(records);
+
+            this.user = user;
+            this.settings = settings;
+            this.usageData = usageData;
+            this.record.boundTo = records.boundTo;
+            this.record.dateCreated = records.dateCreated;
+            this.record.id = records.id;
+            this.record.name = records.name;
+            this.record.database = records.database;
+            this.record.records = records.records;
+            this.windows = windows;
+
+            this.save();
+            this.setApplicationWindows(this.windows);
+          };
+        });
+      }
+    });
+  }
+
+  makeConfirmBox(options, data) {
+    const { confirm, deny, message } = options;
+
+    // store data in temp to be used later
+    this.temp.importData = data;
+
+    const findWindowAtPosition = xy => {
+      const allWindows = Object.values(this.windows).flat(Infinity);
+
+      const windowToFind = allWindows.find(
+        item => item.position.x === xy && item.position.y === xy
+      );
+
+      return windowToFind || false;
+    };
+
+    let finalPosition = 100;
+
+    while (findWindowAtPosition(finalPosition)) {
+      finalPosition += 10;
+    }
+
+    const id = uuidv4();
+
+    const closeImportDialog = () => {
+      console.log("denied.");
+
+      delete this.temp.importData;
+
+      this.setWindows([
+        ...this.windows.filter(w => (w.id === id ? false : true))
+      ]);
+
+      this.setApplicationWindows(this.windows);
+    };
+
+    const denyFunc = deny || closeImportDialog;
+
+    const confirmBoxObject = {
+      title: "confirmbox",
+      state: "restored",
+      stringType: "Window",
+      component: "ConfirmBox",
+      componentProps: {
+        confirm,
+        deny: denyFunc,
+        message
+      },
+      belongsTo: this.user.id,
+      id,
+      position: {
+        x: finalPosition,
+        y: finalPosition
+      }
+    };
+
+    this.setWindows([...this.windows, confirmBoxObject]);
+
+    this.setApplicationWindows(this.windows);
+  }
 
   /**
    * resetRecords - removes all records from minerva, closing all datastructure windows.

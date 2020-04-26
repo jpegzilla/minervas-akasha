@@ -27,8 +27,24 @@ self.addEventListener("message", e => {
       reader.readAsDataURL(blob);
       break;
     case "parse":
+      const parser = new FileReader();
+
+      parser.addEventListener("load", e => {
+        const json = e.target.result;
+
+        const object = JSON.parse(json);
+
+        self.postMessage(object);
+      });
+
+      parser.readAsText(data);
+
+      break;
+
+    case "jsonParse":
+      self.postMessage(JSON.parse(data));
       break;
     default:
-      throw new Error("unknown action passed to compressionWorker.");
+      throw new Error("unknown action passed to exportWorker.");
   }
 });

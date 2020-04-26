@@ -12,7 +12,10 @@ import PropTypes from "prop-types";
 import Taskbar from "./Taskbar";
 import Topbar from "./Topbar";
 import { makeStruct } from "../utils/managers/StructureMap";
+import { Minerva } from "../utils/managers/MinervaInstance";
 import dataStructureFileParser from "./windows/elements/utils/dataStructureFileParser";
+
+import exportWorker from "./../utils/managers/workers/exportWorker.worker";
 
 import WindowTypes from "./windows/WindowTypes";
 
@@ -98,18 +101,60 @@ const Home = props => {
   useEffect(
     () => {
       if (droppedFiles) {
-        setDroppedFiles();
+        // detect if file is a minerva's akasha save file
+        console.log(droppedFiles);
+        const { name, type } = droppedFiles;
+        if (name.startsWith("minerva_sd_") || type === "application/json") {
+          const worker = new exportWorker();
 
-        dataStructureFileParser(
-          droppedFiles,
-          setStatusMessage,
-          resetStatusText,
-          null,
-          setActiveFileData
-        );
+          worker.postMessage({ data: droppedFiles, action: "parse" });
+
+          worker.addEventListener("message", e => {
+            console.log(e);
+            if (e.data) {
+              if (e.data.minerva_file_header === Minerva.fileHeader) {
+                setDroppedFiles();
+
+                minerva.makeConfirmBox(
+                  {
+                    confirm: () => {
+                      console.log("confirmed.");
+                      minerva.importDataFromJsonFile(e.data);
+                    },
+                    message:
+                      "this will overwrite all your data, replacing it with the data in this file. are you sure you'd like to continue? this operation cannot be reversed."
+                  },
+                  e.data
+                );
+
+                return;
+              } else {
+                setDroppedFiles();
+
+                dataStructureFileParser(
+                  droppedFiles,
+                  setStatusMessage,
+                  resetStatusText,
+                  null,
+                  setActiveFileData
+                );
+              }
+            }
+          });
+        } else {
+          setDroppedFiles();
+
+          dataStructureFileParser(
+            droppedFiles,
+            setStatusMessage,
+            resetStatusText,
+            null,
+            setActiveFileData
+          );
+        }
       }
     },
-    [droppedFiles, resetStatusText, setStatusMessage]
+    [droppedFiles, resetStatusText, setStatusMessage, minerva]
   );
 
   // effect that should fire whenever a file is dropped on the desktop
