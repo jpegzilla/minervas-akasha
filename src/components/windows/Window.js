@@ -219,6 +219,7 @@ const Window = props => {
             {
               <Component
                 {...componentProps}
+                id={id}
                 handleWindowCommand={handleWindowCommand}
                 records={records}
                 setWindows={setWindows}

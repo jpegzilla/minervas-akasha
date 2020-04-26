@@ -16,7 +16,8 @@ import { makeStruct } from "../../utils/managers/StructureMap";
 import searchAllRecords from "./../../utils/commands/utils/searchAllRecords";
 
 const RecordViewer = props => {
-  const { setWindows } = props;
+  const { setWindows, id } = props;
+
   const { minerva } = useContext(globalContext);
 
   const [records, setRecords] = useState(minerva.record.records);
@@ -160,23 +161,26 @@ const RecordViewer = props => {
     >
       <header>
         <div className="record-viewer-navigation">
-          <label htmlFor="record-viewer-search-bar" title="search all records">
+          <label
+            htmlFor={`record-viewer-search-bar-${id}`}
+            title="search all records"
+          >
             <input
               type="text"
               placeholder="search records..."
-              id="record-viewer-search-bar"
+              id={`record-viewer-search-bar-${id}`}
               onChange={searchRecords}
               ref={searchQuery}
             />
           </label>
           <label
-            htmlFor="record-viewer-search-bar-mime"
+            htmlFor={`record-viewer-search-bar-mime-${id}`}
             title="filter search by mime type"
           >
             <input
               type="text"
               placeholder="filter mime type"
-              id="record-viewer-search-bar-mime"
+              id={`record-viewer-search-bar-mime-${id}`}
               onChange={searchRecords}
               ref={searchMime}
             />
