@@ -118,6 +118,7 @@ const DataStructure = props => {
       );
 
       if (existingRecord) {
+        console.log(existingRecord);
         // here's where I check for filedisplay, metadatadisplay, etc. and set their hooks
         setInfo(existingRecord);
         return;
@@ -130,7 +131,6 @@ const DataStructure = props => {
         tags: [],
         id: structId,
         connectedTo: {},
-        data: { notes: "" },
         colorCode: new Struct().colorCode,
         accepts: new Struct().accepts,
         connectsTo: new Struct().connectsTo,
@@ -146,6 +146,7 @@ const DataStructure = props => {
       // in case there is existing file information
       // attached to a record, find it and render it.
       minerva.findFileInRecord(structId).then(e => {
+        console.log(structId, e);
         if (e)
           if (e.file) {
             console.log(
