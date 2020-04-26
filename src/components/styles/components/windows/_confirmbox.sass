@@ -1,0 +1,22 @@
+.confirm-box-container
+  display: flex
+  max-width: 18rem
+
+  button
+    background-color: transparent
+    cursor: pointer
+    font-family: $font
+    color: var(--text-main)
+    border: 1px solid var(--text-main)
+    padding: 0.25rem 0.5rem
+    line-height: 1rem
+
+    &:active, &:focus
+      outline: 1px solid $pink
+
+    &:hover
+      background-color: var(--text-main)
+      color: var(--bg-main)
+
+  button + button
+    margin-left: $gap
