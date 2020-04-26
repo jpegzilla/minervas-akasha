@@ -15,7 +15,3 @@ if (observingPerf) {
     entryTypes: ["longtask"]
   });
 }
-
-window.onunload = () => {
-  window.localStorage.setItem("shut_down", new Date().toISOString());
-};
