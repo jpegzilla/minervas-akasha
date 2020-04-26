@@ -138,6 +138,15 @@ const App = () => {
     });
   };
 
+  // remove all confirm boxes on unload
+  window.onunload = () => {
+    minerva.setWindows(
+      minerva.windows.filter(item => item.component !== "ConfirmBox")
+    );
+
+    window.localStorage.setItem("shut_down", new Date().toISOString());
+  };
+
   // set up hotkey listeners on initial load, as well as type out the status text
   useEffect(() => {
     setupHotkeys();
