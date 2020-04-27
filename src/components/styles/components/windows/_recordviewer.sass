@@ -1,5 +1,4 @@
 @import ../utils/vars
-@import subwindows/recordviewer_inputs
 
 .record-viewer-window
   background-color: transparentize($black, 0.15)
@@ -85,8 +84,11 @@
               li
                 padding: $halfGap
 
-                &:not(:first-child)
+                & + li
                   border-top: 1px solid var(--text-main)
+
+                &:last-child
+                  border-bottom: 1px solid var(--text-main)
 
           .record-viewer-sidebar-info-collapse
             +flexcenter
@@ -99,3 +101,24 @@
 
     footer
       border-top: 1px solid var(--text-main)
+
+  input
+    padding: 0.5rem
+    font-size: 1rem
+    border-radius: 1px
+
+    &:focus
+      outline: 1px solid $pink
+      transition: outline 0.5s ease
+
+  input::placeholder, input
+    font-family: $font
+
+  input
+    transition: border-color 0.5s ease
+    background-color: transparent
+    border: 1px solid $white
+    color: $white
+
+  label + label
+    margin-left: 0.5rem
