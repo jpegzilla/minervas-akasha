@@ -92,7 +92,8 @@ export default (minerva, command) => {
       createdAt,
       updatedAt,
       connectedTo,
-      foundInObject
+      foundInObject,
+      type: recType
     } = record;
 
     // create the results string
@@ -100,18 +101,20 @@ export default (minerva, command) => {
       Object.entries(foundInObject)
         .map(([k, v]) => (v ? k : false))
         .filter(Boolean)
-        .map(
-          (item, i, a) =>
-            a.length > 2
+        .map((item, i, a) => {
+          if (item === "type") item = `type (${type})`;
+          if (item === "mime") item = `type (${record.data.file.mime})`;
+
+          return a.length > 2
+            ? i === a.length - 1
+              ? "and " + item
+              : item + ","
+            : a.length !== 1
               ? i === a.length - 1
                 ? "and " + item
-                : item + ","
-              : a.length !== 1
-                ? i === a.length - 1
-                  ? "and " + item
-                  : item
                 : item
-        )
+              : item;
+        })
         .join(" ") + ".";
 
     const created = new Date(createdAt).toLocaleString(
@@ -124,7 +127,7 @@ export default (minerva, command) => {
     recordMessage += `\n  ${i + 1}   name: ${name} (${id.substring(
       0,
       8
-    )})\n      created at: ${created}\n      updated: ${updated}\n      connected to ${
+    )})\n      created at: ${created}\n      type: ${recType}\n      updated: ${updated}\n      connected to ${
       Object.keys(connectedTo).length
     } ${
       Object.keys(connectedTo).length === 1 ? "record" : "records"
