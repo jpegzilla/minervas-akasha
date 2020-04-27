@@ -57,6 +57,8 @@ const webAudioAPI = () => {
 };
 
 export const checkSupports = async () => {
+  let errors = [];
+
   const checkPrivateMode = await privateMode();
 
   if (!checkPrivateMode) {
@@ -74,8 +76,6 @@ export const checkSupports = async () => {
     localStorage,
     html5
   ];
-
-  let errors = [];
 
   toCheck.forEach(item => {
     try {
