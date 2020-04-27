@@ -159,10 +159,10 @@ export class Minerva {
       connections: true, // dictates whether users can see content from other users.
       filters: {
         crt: true, // an animated filter overlay emulating an old crt screen.
-        noise: true, // a light noise texture underneath the crt filter.
-        machine: "MNRV", // name of "machine"
-        syscol: { bg: "black", fg: "white", hl: "pink" } // system colors
+        noise: true // a light noise texture underneath the crt filter.
       }, // enables / disables graphical filters.
+      syscol: { bg: "black", fg: "white", hl: "pink" }, // system colors
+      machine: "MNRV", // name of "machine"
       dateFormat: "ja-JP", // for formatting dates / times
       textEditor: {
         maxHistoryDepth: 200 // for the text editor's undo / redo functionality
