@@ -1,3 +1,11 @@
+import isPrivateMode from "./isPrivateMode";
+
+const privateMode = () => {
+  return new Promise((resolve, reject) => {
+    isPrivateMode().then(res => (res ? resolve() : reject()));
+  });
+};
+
 const html5 = () => {
   if (typeof document.createElement("canvas").getContext === "function")
     return true;
@@ -48,7 +56,16 @@ const webAudioAPI = () => {
   }
 };
 
-export const checkSupports = () => {
+export const checkSupports = async () => {
+  const checkPrivateMode = await privateMode();
+
+  if (!checkPrivateMode) {
+    errors.push({
+      message:
+        "warning! this software will not behave as intended in private or incognito mode."
+    });
+  }
+
   const toCheck = [
     composedPath,
     webAudioAPI,
