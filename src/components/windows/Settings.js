@@ -223,7 +223,7 @@ const Settings = props => {
               htmlFor="filter-crt-settings-off"
             >
               <span className="checkbox-settings-label">
-                {settings.filters.crt ? "crt filter on" : "crt filter off"}{" "}
+                {settings.filters.crt ? "crt filter on" : "crt filter off"}
               </span>
               <span
                 className={`${
@@ -258,7 +258,7 @@ const Settings = props => {
               <span className="checkbox-settings-label">
                 {settings.filters.noise
                   ? "noise filter on"
-                  : "noise filter off"}{" "}
+                  : "noise filter off"}
               </span>
               <span
                 className={`${
