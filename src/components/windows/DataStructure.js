@@ -64,7 +64,7 @@ const DataStructure = props => {
   const [FileDisplay, setFileDisplay] = useState(false);
   const [ImageDisplay, setImageDisplay] = useState(false);
   const [MetadataDisplay, setMetadataDisplay] = useState(
-    currentWindow.componentProps.MetadataDisplay === false ? false : true
+    currentWindow.componentProps.MetadataDisplay
   );
 
   const [loadingFileData, setLoadingFileData] = useState(false);
@@ -93,7 +93,7 @@ const DataStructure = props => {
               ...item,
               componentProps: {
                 ...item.componentProps,
-                MetadataDisplay: MetadataDisplay ? true : false,
+                MetadataDisplay,
                 ImageDisplay: showImage
               }
             };
