@@ -9,10 +9,8 @@ import WindowTypes from "./WindowTypes";
 const Window = props => {
   const {
     windows,
-    setActiveWindow,
     setActiveWindowId,
     item,
-    activeWindowId,
     setWindows,
     className,
     num,
@@ -76,36 +74,37 @@ const Window = props => {
     [canDropFiles, droppedFiles, componentProps.droppedFiles]
   );
 
-  // this is the function that moves the windows around.
-  const setPosition = (windowId, newPosition) => {
-    if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e))) {
-      throw new TypeError("invalid parameters to setPosition");
-    }
-
-    const newWindows = windows.map(item => {
-      return item.id === windowId
-        ? {
-            ...item,
-            position: newPosition
-          }
-        : item;
-    });
-
-    minerva.setWindows(newWindows);
-
-    setWindows([...minerva.windows]);
-  };
-
-  const handleStop = (e, data) => {
-    console.log(e, data);
-
-    const { x, y } = data;
-
-    setPosition(id, { x, y });
-  };
-
   return useMemo(
     () => {
+      // this is the function that updates the windows' positions in minerva
+      const setPosition = (windowId, newPosition) => {
+        if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e))) {
+          throw new TypeError("invalid parameters to setPosition");
+        }
+
+        const newWindows = windows.map(item => {
+          return item.id === windowId
+            ? {
+                ...item,
+                position: newPosition
+              }
+            : item;
+        });
+
+        minerva.setWindows(newWindows);
+
+        setWindows([...minerva.windows]);
+      };
+
+      // updates window position in minerva when a window is done being dragged
+      const handleStop = (e, data) => {
+        console.log(e, data);
+
+        const { x, y } = data;
+
+        setPosition(id, { x, y });
+      };
+
       // handle commands such as minimize and close.
       // event is only passed in in order to prevent bubbling and any default action.
       const handleWindowCommand = (e, command) => {
@@ -159,17 +158,6 @@ const Window = props => {
         windowStructid = componentProps.structId.substring(0, 8);
       }
 
-      const style = {};
-      // activeWindowId === id
-      //   ? // ? { transform: `translate3d(${x}px, ${y}px, 0)` }
-      //     // : {
-      //     //     transform: `translate3d(${position.x}px, ${position.y}px, 0)`
-      //     //   };
-      //     { transform: `translate3d(${currentX}px, ${currentY}px, 0)` }
-      //   : {
-      //       transform: `translate3d(${currentX}px, ${currentY}px, 0)`
-      //     };
-
       return (
         <Draggable
           handle={".drag-handle"}
@@ -182,7 +170,6 @@ const Window = props => {
             onDragLeave={canDropFiles ? handleDragLeave : undefined}
             onDragEnter={canDropFiles ? allowDrag : undefined}
             onDrop={canDropFiles ? handleDrop : undefined}
-            style={style}
             id={`${title}-window-${id}`}
             className={`${title}-window system-window ${className} ${
               droppable ? "filedrop drop-active" : "filedrop"
@@ -243,17 +230,13 @@ const Window = props => {
     [
       droppable,
       droppedFiles,
-      activeWindowId,
       canDropFiles,
       className,
       componentProps,
       minerva,
-      setActiveWindow,
       windows,
       id,
       num,
-      position.x,
-      position.y,
       records,
       setActiveWindowId,
       setWindows,
@@ -270,11 +253,9 @@ export default memo(Window);
 
 Window.propTypes = {
   windows: PropTypes.array,
-  setActiveWindow: PropTypes.func,
   setActiveWindowId: PropTypes.func,
   item: PropTypes.object,
   setMouseOffset: PropTypes.func,
-  activeWindowId: PropTypes.string,
   setWindows: PropTypes.func,
   className: PropTypes.string,
   num: PropTypes.number,
