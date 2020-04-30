@@ -1,3 +1,4 @@
+/* eslint no-useless-escape: off */
 import React, {
   useState,
   useContext,
@@ -206,15 +207,11 @@ const Home = props => {
   // this is to keep the windows in state synchronized with minerva
   useEffect(() => minerva.setWindows(windows), [windows, minerva]);
 
-  const [mouseOffset, setMouseOffset] = useState([0, 0]);
   const taskBarMenuRef = useRef(null);
   const settingsMenuRef = useRef(null);
 
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
-
-  // for performance: maybe send the event to a worker to calculate the position?
-  const [wait, setWait] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -245,64 +242,6 @@ const Home = props => {
         showDropZone();
       };
 
-      const handleMouseMove = e => {
-        if (!activeWindow) return void false;
-
-        if (activeWindow && !wait) {
-          setWait(true);
-          const { clientX, clientY } = e;
-
-          const onMouseUp = () => {
-            setActiveWindow(null);
-            setActiveWindowId("");
-            document.removeEventListener("mouseup", onMouseUp);
-          };
-
-          document.addEventListener("mouseup", onMouseUp, {
-            once: true,
-            capture: true
-          });
-
-          // the offset is off! fix fix fix.
-          // from the mdn web documentation of raf():
-          // // note: your callback routine must itself call requestAnimationFrame()
-          // // if you want to animate another frame at the next repaint.
-          const moveWindow = () => {
-            setTimeout(() => void setWait(false), 15);
-            setPosition(activeWindowId, {
-              x: clientX - mouseOffset[0],
-              y: clientY - mouseOffset[1]
-            });
-          };
-
-          requestAnimationFrame(() => {
-            // update the window position and immediately request another frame to update again.
-
-            moveWindow();
-            requestAnimationFrame(moveWindow);
-          });
-        }
-      };
-
-      // this is the function that moves the windows around.
-      const setPosition = (windowId, newPosition) => {
-        if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e)))
-          throw new TypeError("invalid parameters to setPosition");
-
-        const newWindows = windows.map(item => {
-          return item.id === windowId
-            ? {
-                ...item,
-                position: newPosition
-              }
-            : item;
-        });
-
-        minerva.setWindows(newWindows);
-
-        setWindows([...minerva.windows]);
-      };
-
       return (
         <section
           id="window-system"
@@ -315,7 +254,6 @@ const Home = props => {
               setSettingsOpen(false);
             }
           }}
-          onMouseMove={handleMouseMove}
         >
           <Topbar
             settingsOpen={settingsOpen}
@@ -385,11 +323,9 @@ const Home = props => {
                     windows={windows}
                     className={isActive}
                     key={key}
-                    setPosition={setPosition}
                     setActiveWindowId={setActiveWindowId}
                     activeWindowId={activeWindowId}
                     setActiveWindow={setActiveWindow}
-                    setMouseOffset={setMouseOffset}
                   />
                 );
               }
@@ -421,9 +357,7 @@ const Home = props => {
       activeWindowId,
       componentCounts,
       activeWindow,
-      minerva,
-      mouseOffset,
-      wait
+      minerva
     ]
   );
 };
