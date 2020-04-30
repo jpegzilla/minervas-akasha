@@ -1,3 +1,4 @@
+/* eslint no-useless-escape: off */
 /**
  * Lightweight script to detect whether the browser is running in Private mode.
  * @returns {Promise<boolean>}
