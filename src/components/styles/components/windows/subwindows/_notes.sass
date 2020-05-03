@@ -4,25 +4,28 @@
 
   display: flex
   max-width: 350px
+  color: var(--bg-main)
 
   .notes-sidebar
     +flexcenter
 
     cursor: pointer
     user-select: none
-    width: 2.2rem
+    background-color: var(--text-main)
+    border: 1px solid var(--bg-main)
 
     span
       writing-mode: vertical-lr
-      padding: 0 0.25rem
-
-    border-right: 1px solid var(--text-main)
+      padding: 0
 
   &.collapsed
     .notes-sidebar
-      border-width: 0
+      // border-width: 0
 
       // transition-delay: $delay
+
+    // 1.3125rem = 21px at 16px root font size
+    width: 1.3125rem
 
   .notes-content
     width: $dsMaxWidth
