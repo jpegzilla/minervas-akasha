@@ -186,3 +186,51 @@
 
     &:empty
       margin: 0
+
+  .structure-taglist-long
+    list-style-type: none
+    width: 100%
+    line-height: 1rem
+    margin: 1rem 0
+    display: grid
+    grid-gap: $gap
+    grid-row-gap: $gap
+    grid-template-columns: repeat(1000000, auto)
+    grid-auto-flow: row
+    overflow-x: scroll
+
+    // scrollbar-width: none
+    position: relative
+
+    &::after, &::before
+      color: transparent
+
+    &::after
+      // unicode non-breaking space content
+      content: "."
+      font-size: 1rem
+      width: 2rem
+      z-index: 2
+      position: fixed
+      right: calc(1.3125rem + 1px)
+      pointer-events: none
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
+      padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
+
+    &::before
+      // unicode non-breaking space content
+      content: "."
+      font-size: 1rem
+      width: 2rem
+      z-index: 2
+      position: fixed
+      left: 0
+      pointer-events: none
+      background-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
+      padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
+
+    &::-webkit-scrollbar
+      display: none
+
+    &:empty
+      margin: 0
