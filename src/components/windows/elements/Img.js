@@ -10,6 +10,9 @@ import { b64toBlob } from "./utils/mediaUtils";
 import PropTypes from "prop-types";
 import { globalContext } from "./../../App";
 
+// makes sure that the element doesn't repeatedly have to recreate object urls
+const imageDataCache = {};
+
 // read metadata
 const Img = props => {
   const {
@@ -37,8 +40,19 @@ const Img = props => {
   useEffect(
     () => {
       setError(false);
+      if (imageDataCache.title && imageDataCache.size) {
+        if (
+          imageDataCache.title === title &&
+          imageDataCache.size === humanSize &&
+          imageDataCache.url
+        ) {
+          return;
+        }
+      }
 
       const data = URL.createObjectURL(b64toBlob(src.split(",")[1], mime));
+
+      imageDataCache.url = data;
 
       setImageData(data);
     },
@@ -47,6 +61,15 @@ const Img = props => {
 
   const altOnLoad = e => {
     const { naturalHeight, naturalWidth } = e.target;
+
+    if (imageDataCache.title && imageDataCache.size) {
+      if (imageDataCache.title === title && imageDataCache.size === humanSize) {
+        return;
+      }
+    }
+
+    imageDataCache.title = title;
+    imageDataCache.size = humanSize;
 
     const reader = new MediaTagReader(src);
     reader.getFullImageInfo(mime).then(res => {
