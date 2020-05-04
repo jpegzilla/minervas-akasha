@@ -56,7 +56,7 @@ const Img = props => {
 
       setImageData(data);
     },
-    [mime, src, fileInfo]
+    [mime, src, fileInfo, humanSize, title]
   );
 
   const altOnLoad = e => {
@@ -126,7 +126,7 @@ const Img = props => {
         }
 
         const newImageViewer = {
-          title: `image viewer - ${humanSize} [${mime}] image.`,
+          title: "image viewer",
           state: "restored",
           stringType: "Window",
           component: "ImageViewer",
@@ -134,7 +134,8 @@ const Img = props => {
             src: message.data,
             alt: fileInfo,
             id,
-            mime
+            mime,
+            humanSize
           },
           belongsTo: minerva.user.id,
           id,
