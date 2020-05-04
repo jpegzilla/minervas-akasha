@@ -1,15 +1,17 @@
-@import subwindows/colorbox
-@import subwindows/tag
-@import subwindows/notes
+@use "sass:color"
+@use subwindows/colorbox
+@use subwindows/tag
+@use subwindows/notes
+@use ../utils/vars.sass
 
 .datastructure-window
   $w: 10vw
   $h: 40vh
-  $font: $proggy
+  $font: vars.$proggy
   $gap: 0.5rem
   $hgap: 0.25rem
   $maxWidth: max-content
-  $maxWidth2: $dsMaxWidth
+  $maxWidth2: vars.$dsMaxWidth
 
   will-change: contents
 
@@ -17,7 +19,7 @@
     margin-bottom: 0
 
   a
-    color: $pink
+    color: vars.$pink
 
   .image-error
     max-width: $maxWidth2
@@ -27,7 +29,7 @@
   flex-direction: column
 
   // todo: refactor this somehow to use css vars
-  background-color: transparentize($black, 0.25)
+  background-color: color.adjust(vars.$black, $alpha: -0.25)
 
   .structure-header
     max-width: $maxWidth2
@@ -48,7 +50,7 @@
       max-width: $maxWidth2
 
     .structure-left-column
-      +itemlist
+      +vars.itemlist
 
       padding: $gap
       flex-direction: column
@@ -60,7 +62,7 @@
 
   .structure-type
     font-style: italic
-    border: 1px solid $pink
+    border: 1px solid vars.$pink
     padding: 0.15rem 0.25rem
     border-radius: 4px
     user-select: none
@@ -69,12 +71,12 @@
     line-height: 1rem
 
     &:active, &:focus
-      outline: 1px solid $pink
+      outline: 1px solid vars.$pink
 
   button
     $opacity: 0.3
 
-    +flexcenter
+    +vars.flexcenter
 
     width: 100%
     background-color: transparent
@@ -95,17 +97,17 @@
       padding: 0
 
     &.confirm-button span
-      background-color: $success
-      color: $dark
+      background-color: vars.$success
+      color: vars.$dark
 
       &:hover
-        background-color: transparentize($success, $opacity)
+        background-color: color.adjust(vars.$success, $alpha: -$opacity)
 
     &.deny-button span, &.delete-button span
-      background-color: $red
+      background-color: vars.$red
 
       &:hover
-        background-color: transparentize($red, $opacity)
+        background-color: color.adjust(vars.$red, $alpha: -$opacity)
 
   button + button
     margin-left: $gap

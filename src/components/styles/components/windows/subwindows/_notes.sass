@@ -1,3 +1,5 @@
+@use ../../utils/vars.sass
+
 .notes-container
   $gap: 0.5rem
   $delay: 0.3s
@@ -7,7 +9,7 @@
   color: var(--bg-main)
 
   .notes-sidebar
-    +flexcenter
+    +vars.flexcenter
 
     cursor: pointer
     user-select: none
@@ -26,8 +28,8 @@
     min-width: 1.3125rem
 
   .notes-content
-    width: $dsMaxWidth
-    max-width: $dsMaxWidth
+    width: vars.$dsMaxWidth
+    max-width: vars.$dsMaxWidth
 
     // transition: max-width $delay
     overflow: hidden

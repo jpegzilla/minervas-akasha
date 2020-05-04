@@ -1,6 +1,9 @@
-@import inputs
+@use inputs
+@use ./utils/vars.sass
+@use "signup"
 
-$font: $proggy
+
+signup.$font: vars.$proggy
 
 #window-system
   display: flex
@@ -26,7 +29,7 @@ $font: $proggy
     z-index: 1
 
     &.active
-      border: 2px dotted $pink
+      border: 2px dotted vars.$pink
       position: relative
 
       &::after
@@ -35,7 +38,7 @@ $font: $proggy
         content: "+ drop to add file"
         height: 100%
         width: 100%
-        font-family: $proggy
+        font-family: vars.$proggy
         font-size: 2rem
         color: var(--text-main)
         background-color: var(--bg-main)

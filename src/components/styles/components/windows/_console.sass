@@ -1,14 +1,21 @@
-$font: $proggy
-$background: var(--bg-main)
-$color: var(--text-main)
-$consolebackground: $darkblue
+@use "sass:color"
+@use ../utils/vars.sass
+@use "../contextmenu"
+@use "../inputs"
+@use "../signup"
+
+
+signup.$font: vars.$proggy
+inputs.$background: var(--bg-main)
+contextmenu.$color: var(--text-main)
+$consolebackground: vars.$darkblue
 
 .console-window
   display: flex
-  font-family: $font
-  border: 1px solid $color
+  font-family: signup.$font
+  border: 1px solid contextmenu.$color
   border-radius: 2px
-  background-color: transparentize($consolebackground, 0.2)
+  background-color: color.adjust($consolebackground, $alpha: -0.2)
 
   .console-header
     margin-bottom: 0
@@ -27,7 +34,7 @@ $consolebackground: $darkblue
     margin-top: 1rem
     flex-grow: 1
     flex-basis: 30vh
-    color: $color
+    color: contextmenu.$color
     padding: 1rem
     display: flex
     flex-direction: column
@@ -41,7 +48,7 @@ $consolebackground: $darkblue
       text-overflow: ellipsis
 
     pre
-      font-family: $font
+      font-family: signup.$font
       line-height: 1.4
       margin-left: 1rem
 
@@ -52,29 +59,29 @@ $consolebackground: $darkblue
     margin-top: 1rem
 
   .console-input
-    +flexcenter(true)
+    +vars.flexcenter(true)
 
     padding: 0 1rem
     margin-bottom: 0.5rem
     width: 100%
 
   .console-tag
-    color: $success
+    color: vars.$success
 
   .command-prefix
-    color: $pink
+    color: vars.$pink
 
   .console-type
-    color: $fail
+    color: vars.$fail
 
   .console-error
-    color: $fail
+    color: vars.$fail
 
   .console-command
-    color: $success
+    color: vars.$success
 
   input
-    +input
+    +vars.input
 
     padding-left: 0.5rem
     flex-grow: 1

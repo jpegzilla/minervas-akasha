@@ -1,12 +1,17 @@
-$font: $proggy
-$background: $black
-$color: $white
+@use ./utils/vars.sass
+@use "inputs"
+@use "signup"
+
+
+signup.$font: vars.$proggy
+inputs.$background: vars.$black
+$color: vars.$white
 
 #context-menu-container
   position: absolute
   display: flex
-  font-family: $font
-  background-color: $background
+  font-family: signup.$font
+  background-color: inputs.$background
   color: $color
   border: 1px solid $color
   z-index: 9
@@ -25,13 +30,13 @@ $color: $white
 
   .context-menu-item
     display: block
-    background-color: $background
+    background-color: inputs.$background
     cursor: pointer
     position: relative
 
     &:hover
-      background-color: $white
-      color: $black
+      background-color: vars.$white
+      color: vars.$black
 
     .context-menu-subitem
       display: none
@@ -41,12 +46,12 @@ $color: $white
         position: absolute
         top: -1px
         left: 100%
-        color: $white
-        background-color: $background
+        color: vars.$white
+        background-color: inputs.$background
         cursor: pointer
         border: 1px solid $color
         padding: 0.25rem 0.5rem
 
         &:hover
-          color: $black
-          background-color: $white
+          color: vars.$black
+          background-color: vars.$white

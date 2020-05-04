@@ -1,8 +1,10 @@
-#nomobile
-  +flexcenter
+@use ./utils/vars.sass
 
-  background-color: $black
-  color: $white
+#nomobile
+  +vars.flexcenter
+
+  background-color: vars.$black
+  color: vars.$white
   height: 100vh
   width: 100vw
   position: absolute
@@ -10,4 +12,4 @@
   left: 0
   overflow: hidden
   pointer-events: none
-  font-family: $proggy
+  font-family: vars.$proggy

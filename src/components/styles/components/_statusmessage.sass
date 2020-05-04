@@ -1,3 +1,5 @@
+@use ./utils/vars.sass
+
 #status-message
   position: absolute
   bottom: 10vh
@@ -16,27 +18,27 @@
     transition: border-color 0.2s ease, opacity 0.3s ease
     pointer-events: none
     user-select: none
-    background-color: $black
-    border: 1px solid $white
+    background-color: vars.$black
+    border: 1px solid vars.$white
     font-size: 1rem
 
     &.success, &.fail, &.warning, &.error
       opacity: 1
       transition: border-color 0.3s ease, opacity 0.3s ease 0.3s
-      color: $white
+      color: vars.$white
 
     &.success
-      border-color: $success
+      border-color: vars.$success
 
     &.fail, &.error
-      border-color: $fail
+      border-color: vars.$fail
 
     &.warning
-      border-color: $warning
+      border-color: vars.$warning
 
     div
       color: currentcolor
-      font-family: $pixel
+      font-family: vars.$pixel
 
       &::before
         content: "> "

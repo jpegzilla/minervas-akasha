@@ -1,4 +1,4 @@
-@import ../../utils/vars
+@use ../../utils/vars
 
 // "colorcode-pink",
 //  "colorcode-white",
@@ -11,9 +11,9 @@
 $size: 2rem
 
 .color-box
-  +flexcenter
+  +vars.flexcenter
 
-  margin: $halfGap 0 1rem 0
+  margin: vars.$halfGap 0 1rem 0
 
   li
     border-radius: 1px
@@ -23,7 +23,7 @@ $size: 2rem
     transition: flex-grow 0.1s
 
     & + li
-      margin-left: $halfGap
+      margin-left: vars.$halfGap
 
     &:hover
       transition: flex-grow 0.1s
@@ -37,22 +37,22 @@ $size: 2rem
     height: $size
 
     .colorcode-pink
-      background-color: $pink
+      background-color: vars.$pink
 
     .colorcode-white
-      background-color: $white
+      background-color: vars.$white
 
     .colorcode-blue
-      background-color: $blue
+      background-color: vars.$blue
 
     .colorcode-red
-      background-color: $red
+      background-color: vars.$red
 
     .colorcode-green
-      background-color: $green
+      background-color: vars.$green
 
     .colorcode-purple
-      background-color: $purple
+      background-color: vars.$purple
 
     .colorcode-yellow
-      background-color: $yellow
+      background-color: vars.$yellow

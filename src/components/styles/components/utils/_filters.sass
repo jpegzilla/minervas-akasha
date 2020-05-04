@@ -1,4 +1,5 @@
-@import vars
+@use "sass:color"
+@use vars
 
 #filters
   // to turn off all filters, set display to none
@@ -32,10 +33,10 @@
       left: 0
       bottom: 0
       right: 0
-      box-shadow: inset 0px 0px 50vw 10rem transparentize(black, 0.5)
+      box-shadow: inset 0px 0px 50vw 10rem color.adjust(black, $alpha: -0.5)
 
   #filters-brightness
-    background-color: $black
+    background-color: vars.$black
     opacity: 0
 
   #filters-red

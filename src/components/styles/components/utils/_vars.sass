@@ -1,3 +1,4 @@
+@use "sass:color"
 $black: #111111
 $white: #fefefe
 $pink: #df0971
@@ -33,12 +34,12 @@ $halfGap: 0.5rem
 
   @if $theme == "light"
     --bg-main: #{$white}
-    --bg-main-halfop: #{transparentize($white, 0.5)}
+    --bg-main-halfop: #{color.adjust($white, $alpha: -0.5)}
     --text-main: #{$black}
     --hl-main: #{$black}
   @else if $theme == "dark"
     --bg-main: #{$black}
-    --bg-main-halfop: #{transparentize($black, 0.5)}
+    --bg-main-halfop: #{color.adjust($black, $alpha: -0.5)}
     --text-main: #{$white}
     --hl-main: #{$white}
 
@@ -71,7 +72,7 @@ $halfGap: 0.5rem
         margin-top: 0.5rem
 
       &:hover
-        background-color: transparentize($white, 0.7)
+        background-color: color.adjust($white, $alpha: -0.7)
 
 =flexcenter($left: false)
   display: flex

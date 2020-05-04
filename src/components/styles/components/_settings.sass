@@ -1,15 +1,20 @@
-$font: $proggy
+@use "sass:color"
+@use ./utils/vars.sass
+@use "signup"
+
+
+signup.$font: vars.$proggy
 
 #settings-menu
   color: var(--text-main)
-  font-family: $font
+  font-family: signup.$font
   position: absolute
   top: 100%
   left: -1px
   border: 1px solid var(--text-main)
   padding: 1rem
   font-size: 1rem
-  background-color: transparentize($black, 0.15)
+  background-color: color.adjust(vars.$black, $alpha: -0.15)
 
   *:not(input), &
     width: max-content
@@ -20,13 +25,13 @@ $font: $proggy
     border: 1px solid var(--text-main)
     padding: 0.25rem 0.5rem
     color: var(--text-main)
-    font-family: $font
+    font-family: signup.$font
     flex-grow: 1
 
     &::placeholder
       color: var(--text-main)
       opacity: 0.5
-      font-family: $font
+      font-family: signup.$font
 
   fieldset
     padding: 0.5rem 0.5rem
@@ -37,7 +42,7 @@ $font: $proggy
 
   .checkbox-settings
     label
-      +flexcenter
+      +vars.flexcenter
 
       display: block
       cursor: pointer
@@ -46,12 +51,12 @@ $font: $proggy
       margin-right: 0.5rem
 
     .checkbox-settings-checkbox
-      +flexcenter
+      +vars.flexcenter
 
       display: inline-flex
       height: 0.5rem
       width: 0.5rem
-      background-color: $white
+      background-color: vars.$white
       border-radius: 1px
       filter: invert(0)
 
@@ -59,13 +64,13 @@ $font: $proggy
         height: 80%
         width: 80%
         display: inline
-        background: $white
+        background: vars.$white
         flex-grow: 0
         border-radius: 1px
 
       &.active
         b
-          background-color: $black
+          background-color: vars.$black
 
     input[type=checkbox]
       left: -9999px

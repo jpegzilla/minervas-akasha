@@ -1,3 +1,6 @@
+@use "sass:color"
+@use ../../utils/vars.sass
+
 .structure-tag
   font-size: 1rem
   border-radius: 4pt
@@ -10,33 +13,33 @@
   overflow: hidden
 
   &.pink
-    border: 1px solid $pink
-    background-color: transparentize($pink, 0.5)
+    border: 1px solid vars.$pink
+    background-color: color.adjust(vars.$pink, $alpha: -0.5)
 
   &.white
-    border: 1px solid $white
-    color: $white
-    background-color: transparentize($white, 0.7)
+    border: 1px solid vars.$white
+    color: vars.$white
+    background-color: color.adjust(vars.$white, $alpha: -0.7)
 
   &.blue
-    border: 1px solid $blue
-    background-color: transparentize($blue, 0.5)
+    border: 1px solid vars.$blue
+    background-color: color.adjust(vars.$blue, $alpha: -0.5)
 
   &.red
-    border: 1px solid $red
-    background-color: transparentize($red, 0.5)
+    border: 1px solid vars.$red
+    background-color: color.adjust(vars.$red, $alpha: -0.5)
 
   &.green
-    border: 1px solid $green
-    background-color: transparentize($green, 0.5)
+    border: 1px solid vars.$green
+    background-color: color.adjust(vars.$green, $alpha: -0.5)
 
   &.purple
-    border: 1px solid $purple
-    background-color: transparentize($purple, 0.5)
+    border: 1px solid vars.$purple
+    background-color: color.adjust(vars.$purple, $alpha: -0.5)
 
   &.yellow
-    border: 1px solid $yellow
-    background-color: transparentize($yellow, 0.5)
+    border: 1px solid vars.$yellow
+    background-color: color.adjust(vars.$yellow, $alpha: -0.5)
 
   span
     &:nth-child(1)
@@ -48,10 +51,10 @@
       padding: 0.15rem 0.35rem 0.15rem 0.35rem
 
       &:hover
-        background-color: $pink
-        color: $white
+        background-color: vars.$pink
+        color: vars.$white
 
     display: inline-block
 
   &:hover
-    background-color: transparentize($white, 0.8)
+    background-color: color.adjust(vars.$white, $alpha: -0.8)

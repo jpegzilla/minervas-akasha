@@ -1,5 +1,10 @@
+@use "sass:color"
+@use ../utils/vars.sass
+@use "../signup"
+
+
 .record-viewer-window
-  background-color: transparentize($black, 0.15)
+  background-color: color.adjust(vars.$black, $alpha: -0.15)
 
   .record-viewer-header
     margin-bottom: 0
@@ -11,7 +16,7 @@
     height: 100%
 
     & > * > *
-      padding: $halfGap
+      padding: vars.$halfGap
 
     header
       border-bottom: 1px solid var(--text-main)
@@ -27,10 +32,10 @@
             border: 1px solid var(--text-main)
 
             &.active
-              border: 1px solid $yellow
+              border: 1px solid vars.$yellow
 
           li + li
-            margin-left: $halfGap
+            margin-left: vars.$halfGap
 
       div + div
         border-top: 1px solid var(--text-main)
@@ -49,13 +54,13 @@
         // the width that the records area would have with the maximum column count
         min-width: 29rem
         display: grid
-        grid-gap: $halfGap
+        grid-gap: vars.$halfGap
         grid-template-columns: repeat(3, max-content)
         grid-template-rows: repeat(auto-fill, 1.5rem)
         grid-auto-flow: row dense
 
         .record-viewer-record
-          +flexcenter
+          +vars.flexcenter
 
           cursor: pointer
           user-select: none
@@ -74,13 +79,13 @@
             flex-grow: 1
 
             header
-              padding: $halfGap
+              padding: vars.$halfGap
 
             ul
               list-style-type: none
 
               li
-                padding: $halfGap
+                padding: vars.$halfGap
 
                 & + li
                   border-top: 1px solid var(--text-main)
@@ -89,7 +94,7 @@
                   border-bottom: 1px solid var(--text-main)
 
           .record-viewer-sidebar-info-collapse
-            +flexcenter
+            +vars.flexcenter
 
             user-select: none
             padding: 0 0.5rem
@@ -106,17 +111,17 @@
     border-radius: 1px
 
     &:focus
-      outline: 1px solid $pink
+      outline: 1px solid vars.$pink
       transition: outline 0.5s ease
 
   input::placeholder, input
-    font-family: $font
+    font-family: signup.$font
 
   input
     transition: border-color 0.5s ease
     background-color: transparent
-    border: 1px solid $white
-    color: $white
+    border: 1px solid vars.$white
+    color: vars.$white
 
   label + label
     margin-left: 0.5rem

@@ -1,3 +1,5 @@
+@use "vars"
+
 @keyframes pulse
   from
     opacity: 0
@@ -103,13 +105,13 @@ $shake: 5px
 
 @keyframes colortunnel
   from
-    border-color: $white
+    border-color: vars.$white
 
   10%
-    border-color: $pink
+    border-color: vars.$pink
 
   12%
-    border-color: $white
+    border-color: vars.$white
 
 @keyframes flicker
   0%

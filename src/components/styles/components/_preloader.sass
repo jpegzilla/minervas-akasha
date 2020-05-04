@@ -1,3 +1,6 @@
+@use "sass:math"
+@use ./utils/vars.sass
+
 #preloader-container
   height: 100vh
   width: 100vw
@@ -18,7 +21,7 @@
     top: 0
 
   .preloader-background
-    +flexcenter
+    +vars.flexcenter
 
     flex-direction: column
     z-index: 0
@@ -51,8 +54,8 @@
     &.active
       div
         transition: color 0.3s ease
-        background-color: $white
-        color: $black
+        background-color: vars.$white
+        color: vars.$black
 
         // transition: background-color 0.3s ease, opacity 0.4s ease 0.85s
         opacity: 1
@@ -60,22 +63,22 @@
       @for $i from 1 through 9
         & div:nth-child(#{$i})
           transition: background-color 0.3s ease #{$i * 0.05}s
-          animation: flickerout 0.3s ease #{random(5) * $i * 0.07 + 2}s forwards
+          animation: flickerout 0.3s ease #{math.random(5) * $i * 0.07 + 2}s forwards
 
           @if $i == 5
             animation: flickerout 0.25s ease 6s forwards
 
     div
-      +flexcenter
+      +vars.flexcenter
 
-      font-family: $pixel
+      font-family: vars.$pixel
       opacity: 1
-      background-color: $black
+      background-color: vars.$black
       transition: background-color 0.3s ease
 
       &
-        border-right: 1px solid $black
-        border-bottom: 1px solid $black
+        border-right: 1px solid vars.$black
+        border-bottom: 1px solid vars.$black
         transition: border-color 0.3s ease-out
 
       // top row
@@ -101,8 +104,8 @@
 
   .preloader-foreground
     padding: 3rem
-    color: $white
-    font-family: $pixel
+    color: vars.$white
+    font-family: vars.$pixel
     font-size: 3rem
     transition: color 0.3s ease
 
@@ -124,11 +127,11 @@
 
       height: $size
       width: $size
-      border: 2px solid $pink
+      border: 2px solid vars.$pink
       animation: pulse 0.25s ease infinite alternate
 
     &.active
-      color: $black
+      color: vars.$black
       transition: color 0.3s ease
 
     z-index: 2

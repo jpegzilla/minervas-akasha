@@ -1,42 +1,42 @@
 // compile main
 
 // utils
-@import ./components/utils/fontImports
-@import ./components/utils/defaults
-@import ./components/utils/vars
-@import ./components/utils/anims
-@import ./components/utils/colorcodes
-@import ./components/utils/filters
-@import ./components/utils/fx
+@use ./components/utils/fontImports
+@use ./components/utils/defaults
+@use ./components/utils/vars
+@use ./components/utils/anims
+@use ./components/utils/colorcodes
+@use ./components/utils/filters
+@use ./components/utils/fx
 
 // components
-@import ./components/preloader
-@import ./components/signup
-@import ./components/statusmessage
-@import ./components/home
-@import ./components/contextmenu
-@import ./components/taskbar
-@import ./components/topbar
-@import ./components/filedrop
-@import ./components/nomobile
-@import ./components/settings
+@use ./components/preloader
+@use ./components/signup
+@use ./components/statusmessage
+@use ./components/home
+@use ./components/contextmenu
+@use ./components/taskbar
+@use ./components/topbar
+@use ./components/filedrop
+@use ./components/nomobile
+@use ./components/settings
 
 // windows
-@import ./components/windows/window
-@import ./components/windows/recordviewer
-@import ./components/windows/console
-@import ./components/windows/datastructure
-@import ./components/windows/imageviewer
-@import ./components/windows/connectionoptions
+@use ./components/windows/window
+@use ./components/windows/recordviewer
+@use ./components/windows/console
+@use ./components/windows/datastructure
+@use ./components/windows/imageviewer
+@use ./components/windows/connectionoptions
 
 \:root
-  +theme("dark")
+  +vars.theme("dark")
 
 \:root.light
-  +theme("light")
+  +vars.theme("light")
 
 \::selection
-  background-color: $pink
+  background-color: vars.$pink
 
 body
   main
@@ -50,7 +50,7 @@ body
       line-height: 1rem
 
       &:active, &:focus
-        outline: 1px solid $pink
+        outline: 1px solid vars.$pink
 
   background-color: var(--bg-main)
   color: var(--text-main)
