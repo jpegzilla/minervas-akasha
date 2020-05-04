@@ -1,3 +1,5 @@
+/* eslint no-restricted-globals: off */
+
 self.addEventListener("message", e => {
   const { data, action } = e.data;
 
