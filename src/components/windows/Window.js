@@ -169,8 +169,10 @@ const Window = props => {
             onDragEnter={canDropFiles ? allowDrag : undefined}
             onDrop={canDropFiles ? handleDrop : undefined}
             id={`${title}-window-${id}`}
-            className={`${title}-window system-window ${className} ${
-              droppable ? "filedrop drop-active" : "filedrop"
+            className={`${title}-window system-window${
+              className ? ` ${className}` : ""
+            }${
+              droppable ? " filedrop drop-active" : " filedrop"
             } window-${state}`}
             onClick={() => void setActiveWindowId(id)}
             onMouseDown={() => void setActiveWindowId(id)}
