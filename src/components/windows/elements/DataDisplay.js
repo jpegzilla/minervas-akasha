@@ -148,7 +148,7 @@ const DataDisplay = props => {
   // the imagedisplay comes into play when a file has an image attached to it. this
   // usually occurs with audio files that have album covers embedded in them.
   // metadata display is all of the metadata about the file.
-  else
+  else {
     return (
       <Fragment>
         <header>
@@ -156,27 +156,35 @@ const DataDisplay = props => {
             ? currentFileData.title
             : type === "shard" && "no current file data"}
         </header>
-        {FileDisplay && currentFileData ? <div>{FileDisplay}</div> : false}
-        {FileDisplay && ImageDisplay ? (
-          showImage ? (
+        {FileDisplay && currentFileData ? (
+          /image/.test(currentFileData.type) ? (
             <div className="structure-data-meta-display">
               <p>
-                {ImageDisplay ? ImageDisplay : "cannot display image."}
-                <span onClick={() => setShowImage(false)}>
-                  click to hide image
+                <picture style={{ display: showImage ? "block" : "none" }}>
+                  {FileDisplay ? FileDisplay : "cannot display image."}
+                </picture>
+                <span onClick={() => setShowImage(!showImage)}>
+                  {showImage ? "click to hide image" : "click to show image"}
                 </span>
               </p>
             </div>
           ) : (
-            <div
-              className="structure-data-meta-display"
-              onClick={() => setShowImage(true)}
-            >
-              <span>
-                {ImageDisplay ? "click to show image" : "no image to show."}
-              </span>
-            </div>
+            <div className="file-display-default">{FileDisplay}</div>
           )
+        ) : (
+          false
+        )}
+        {FileDisplay && ImageDisplay ? (
+          <div className="structure-data-meta-display">
+            <p>
+              <picture style={{ display: showImage ? "block" : "none" }}>
+                {ImageDisplay ? ImageDisplay : "cannot display image."}
+              </picture>
+              <span onClick={() => setShowImage(!showImage)}>
+                {showImage ? "click to hide image" : "click to show image"}
+              </span>
+            </p>
+          </div>
         ) : (
           false
         )}
@@ -222,6 +230,7 @@ const DataDisplay = props => {
         )}
       </Fragment>
     );
+  }
 };
 
 export default memo(DataDisplay);
