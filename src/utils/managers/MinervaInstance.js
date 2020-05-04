@@ -99,6 +99,8 @@ export class Minerva {
       objectStore.createIndex("id", "id", { unique: true });
     };
 
+    this.windows = [];
+
     // if there's already settings in storage, combine them with the default settings
     // just to add resilience in case more settings are added in the future - this
     // will allow us to avoid errors if there is an extra setting that wasn't previously
@@ -111,8 +113,8 @@ export class Minerva {
       this.windows = MinervaArchive.get("minerva_store")
         ? MinervaArchive.get("minerva_store").windows[this.user.id]
           ? MinervaArchive.get("minerva_store").windows[this.user.id]
-          : {}
-        : {};
+          : []
+        : [];
 
       this.usageData = MinervaArchive.get("minerva_store")
         ? MinervaArchive.get("minerva_store").usageData[this.user.id]
@@ -1164,7 +1166,7 @@ export class Minerva {
         settings: { [this.user.id]: this.settings },
         usageData: { [this.user.id]: this.usageData },
         records: { [this.user.id]: this.record },
-        windows: this.windows
+        windows: { [this.user.id]: this.windows }
       };
 
       MinervaArchive.set("minerva_store", store);
