@@ -731,17 +731,28 @@ const DataStructure = props => {
           </div>
 
           <div>
-            <button
-              className="delete-button"
-              onClick={() => setDeletionStarted(true)}
-            >
-              delete record
-            </button>
-            {deletionStarted && (
+            {deletionStarted ? (
               <Fragment>
-                <button onClick={e => onDeleteChoice(e, true)}>confirm</button>
-                <button onClick={e => onDeleteChoice(e, false)}>deny</button>
+                <button
+                  className="confirm-button"
+                  onClick={e => onDeleteChoice(e, true)}
+                >
+                  <span>confirm</span>
+                </button>
+                <button
+                  className="deny-button"
+                  onClick={e => onDeleteChoice(e, false)}
+                >
+                  <span>deny</span>
+                </button>
               </Fragment>
+            ) : (
+              <button
+                className="delete-button"
+                onClick={() => setDeletionStarted(true)}
+              >
+                <span>delete record</span>
+              </button>
             )}
           </div>
 

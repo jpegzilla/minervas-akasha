@@ -52,7 +52,7 @@
 
       padding: $gap
       flex-direction: column
-      min-width: calc($maxWidth2 + 1rem)
+      min-width: calc(#{$maxWidth2} + 1rem)
       min-height: $h
 
     .structure-right-column
@@ -72,6 +72,11 @@
       outline: 1px solid $pink
 
   button
+    $opacity: 0.3
+
+    +flexcenter
+
+    width: 100%
     background-color: transparent
     cursor: pointer
     font-family: $font
@@ -79,13 +84,28 @@
     border: 1px solid var(--text-main)
     padding: 0.25rem 0.5rem
 
-    &:hover
-      background-color: var(--text-main)
-      color: var(--bg-main)
+    span
+      border: 1px solid var(--bg-main)
+      padding: 0.25rem 0.5rem
+      display: block
+      height: 100%
+      width: 100%
 
-      &.delete-button
-        background-color: $pink
-        color: $white
+    &.confirm-button, &.deny-button, &.delete-button
+      padding: 0
+
+    &.confirm-button span
+      background-color: $success
+      color: $dark
+
+      &:hover
+        background-color: transparentize($success, $opacity)
+
+    &.deny-button span, &.delete-button span
+      background-color: $red
+
+      &:hover
+        background-color: transparentize($red, $opacity)
 
   button + button
     margin-left: $gap
@@ -106,6 +126,8 @@
   .structure-data
     flex-grow: 1
     margin-bottom: 1rem
+
+    // min-width: 21.875rem
 
     div
       min-width: 100%
@@ -133,6 +155,7 @@
       padding: 0.5rem 0
       border-top: 1px solid var(--text-main)
       border-bottom: 1px solid var(--text-main)
+      min-width: 20.875rem
 
       img
         margin-bottom: 0.25rem
