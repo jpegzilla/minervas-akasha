@@ -58,8 +58,7 @@ const Notes = props => {
   return (
     <section className={`notes-container${collapsed ? " collapsed" : ""}`}>
       <div
-        onClick={e => {
-          e.stopPropagation();
+        onClick={() => {
           setCollapsed(!collapsed);
         }}
         className="notes-sidebar"
