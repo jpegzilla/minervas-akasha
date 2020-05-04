@@ -118,7 +118,6 @@ const DataStructure = props => {
       );
 
       if (existingRecord) {
-        console.log(existingRecord);
         // here's where I check for filedisplay, metadatadisplay, etc. and set their hooks
         setInfo(existingRecord);
         return;
