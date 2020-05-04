@@ -96,10 +96,8 @@ const Window = props => {
         setWindows([...minerva.windows]);
       };
 
-      // updates window position in minerva when a window is done being dragged
-      const handleStop = (e, data) => {
-        console.log(e, data);
-
+      // updates window position in minerva when a window is done being dragged.
+      const handleStop = (_, data) => {
         const { x, y } = data;
 
         setPosition(id, { x, y });
