@@ -13,6 +13,7 @@
     user-select: none
     background-color: var(--text-main)
     border: 1px solid var(--bg-main)
+    width: 1.3125rem
 
     span
       writing-mode: vertical-lr
@@ -20,12 +21,9 @@
 
   &.collapsed
     .notes-sidebar
-      // border-width: 0
-
-      // transition-delay: $delay
 
     // 1.3125rem = 21px at 16px root font size
-    width: 1.3125rem
+    min-width: 1.3125rem
 
   .notes-content
     width: $dsMaxWidth
