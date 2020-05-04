@@ -3,7 +3,7 @@
  * this is specifically for when a user wishes to log in and access their data on another
  * device. the user receives their key, and then uses it on the new device.
  */
-class DeviceKey {
+export default class DeviceKey {
   constructor(string) {
     this.rawInput = string;
     this.input = string.split("-");
