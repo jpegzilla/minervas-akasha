@@ -108,6 +108,12 @@ export class Minerva {
         this.user.id
       ];
 
+      this.windows = MinervaArchive.get("minerva_store")
+        ? MinervaArchive.get("minerva_store").windows[this.user.id]
+          ? MinervaArchive.get("minerva_store").windows[this.user.id]
+          : {}
+        : {};
+
       this.usageData = MinervaArchive.get("minerva_store")
         ? MinervaArchive.get("minerva_store").usageData[this.user.id]
           ? MinervaArchive.get("minerva_store").usageData[this.user.id]
@@ -128,9 +134,6 @@ export class Minerva {
     }
 
     // windows is an array of window objects that contain info on the windows contents / position
-    this.windows = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").windows
-      : [];
 
     // this should always be an instance of databaseinterface
     this.database = database;
@@ -434,7 +437,7 @@ export class Minerva {
     const mStore = MinervaArchive.get("minerva_store");
 
     // only get data belonging to the current user
-    mStore.windows = mStore.windows.filter(
+    mStore.windows = mStore.windows[this.user.id].filter(
       item => item.belongsTo === this.user.id
     );
     mStore.records = mStore.records[this.user.id];
@@ -1145,7 +1148,13 @@ export class Minerva {
               [this.user.id]: this.record
             }
           : { [this.user.id]: this.record },
-        windows: this.windows
+        // windows: this.windows
+        windows: MinervaArchive.get("minerva_store")
+          ? {
+              ...MinervaArchive.get("minerva_store").windows,
+              [this.user.id]: this.windows
+            }
+          : { [this.user.id]: this.windows }
       };
 
       MinervaArchive.set("minerva_store", store);
