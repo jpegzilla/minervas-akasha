@@ -1,5 +1,5 @@
 @use "sass:math"
-@use ./utils/vars.sass
+@use "./utils/vars"
 
 #preloader-container
   height: 100vh
@@ -86,13 +86,13 @@
         &:nth-child(3)
           border-right: none
 
-      &.preloader-row-top.active
+      // &.preloader-row-top.active
 
       &.preloader-row-middle
         &:nth-child(6)
           border-right: none
 
-      &.preloader-row-middle.active
+      // &.preloader-row-middle.active
 
       &.preloader-row-bottom
         border-bottom: none
@@ -100,7 +100,7 @@
         &:nth-child(9)
           border-right: none
 
-      &.preloader-row-bottom.active
+      // &.preloader-row-bottom.active
 
   .preloader-foreground
     padding: 3rem

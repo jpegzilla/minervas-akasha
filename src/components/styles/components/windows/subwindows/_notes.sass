@@ -1,4 +1,4 @@
-@use ../../utils/vars.sass
+@use "../../utils/vars"
 
 .notes-container
   $gap: 0.5rem
@@ -23,9 +23,8 @@
 
   &.collapsed
     .notes-sidebar
-
+      min-width: 1.3125rem
     // 1.3125rem = 21px at 16px root font size
-    min-width: 1.3125rem
 
   .notes-content
     width: vars.$dsMaxWidth
