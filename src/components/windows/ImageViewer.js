@@ -9,7 +9,7 @@ import { globalContext } from "./../App";
 import worker from "./elements/utils/metadataWorker.worker";
 
 const ImageViewer = props => {
-  const { src, alt, id, mime } = props;
+  const { src, alt, id, mime, humanSize } = props;
 
   const [state, dispatch] = useReducer(imageViewerReducer, {
     source: null,
@@ -113,7 +113,10 @@ const ImageViewer = props => {
     </span>
   ) : (
     <section className="image-viewer-window">
-      <header className="image-viewer-window-controls">controls</header>
+      <header className="image-viewer-window-controls">
+        <p>{`image viewer - ${humanSize} [${mime}] image.`}</p>
+        <div>controls</div>
+      </header>
       <div>
         {source ? (
           <img
