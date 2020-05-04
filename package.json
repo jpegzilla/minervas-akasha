@@ -9,6 +9,7 @@
     "exif-js": "^2.3.0",
     "jsmediatags": "^3.9.3",
     "music-metadata-browser": "^2.0.5",
+    "node-sass": "^4.14.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -18,6 +19,8 @@
     "workerize-loader": "^1.1.0"
   },
   "scripts": {
+    "style:watch:min": "sass --watch --style=compressed ./src/components/styles/main.sass:./src/components/styles/main.min.css",
+    "style:watch": "sass --watch --style=expanded ./src/components/styles/main.sass:./src/components/styles/main.css",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "mocha --require @babel/register --require ./test/helpers/helpers.js --require ./test/helpers/dom.js --require ignore-styles -b -c './test/*.test.js'",
