@@ -4,7 +4,7 @@ export default (e, options) => {
     textArea,
     textHistory,
     historyIndex,
-    setHistoryIndex,
+    // setHistoryIndex,
     runAfterUpdate
   } = options;
 
