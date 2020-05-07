@@ -21,7 +21,7 @@ import { hasDatePassed } from "./../utils/dateUtils";
 import ErrorBoundary from "./subcomponents/ErrorBoundary";
 
 // managers
-import { Minerva, MinervaArchive } from "./../utils/managers/MinervaInstance";
+import { Minerva, MinervaArchive } from "./../utils/managers/Minerva";
 import MinervaVoice from "./../utils/managers/MinervaVoice";
 import Typist from "./../utils/managers/Typist";
 import DatabaseInterface from "../utils/managers/Database";

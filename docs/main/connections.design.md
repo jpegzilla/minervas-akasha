@@ -3,7 +3,7 @@
 -   feature name: structure connections
 -   start date: 2020.04.02
 -   source locations:
-    -   `/src/utils/managers/MinervaInstance.js`
+    -   `/src/utils/managers/Minerva.js`
     -   `/src/utils/structures/AkashicReocrd.js`
     -   `/src/components/DataStructure.js`
     -   `/src/components/windows/StructureData.js`

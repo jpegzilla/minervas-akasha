@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import Taskbar from "./Taskbar";
 import Topbar from "./Topbar";
 import { makeStruct } from "../utils/managers/StructureMap";
-import { Minerva } from "../utils/managers/MinervaInstance";
+import { Minerva } from "../utils/managers/Minerva";
 import dataStructureFileParser from "./windows/elements/utils/dataStructureFileParser";
 
 import exportWorker from "./../utils/managers/workers/exportWorker.worker";

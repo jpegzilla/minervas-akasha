@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import { Redirect, Link } from "react-router-dom";
-import { MinervaArchive } from "./../utils/managers/MinervaInstance";
+import { MinervaArchive } from "./../utils/managers/Minerva";
 import PropTypes from "prop-types";
 import { uuidv4 } from "./../utils/misc";
 import Typist from "./../utils/managers/Typist";

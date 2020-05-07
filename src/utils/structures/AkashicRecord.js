@@ -5,7 +5,7 @@ import { Structure } from "./structure";
 // import { Node } from "./node";
 // import { Hypostasis } from "./hypostasis";
 // import { Athenaeum } from "./athenaeum";
-import { MinervaArchive } from "./../managers/MinervaInstance";
+import { MinervaArchive } from "./../managers/Minerva";
 import { validateUUIDv4 } from "./../../utils/misc";
 import DatabaseInterface from "./../managers/Database";
 
