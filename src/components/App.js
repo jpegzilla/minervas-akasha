@@ -15,7 +15,7 @@ import ContextMenu from "./ContextMenu";
 import Main from "./Main";
 
 // utils
-import { hasDatePassed } from "./../utils/dateUtils";
+import { hasDatePassed, naturalDate } from "./../utils/dateUtils";
 
 // error boundary
 import ErrorBoundary from "./subcomponents/ErrorBoundary";
@@ -89,6 +89,18 @@ const App = () => {
   let loginExpired = true;
 
   if (minerva.user && minerva.user.id) {
+    if (minerva.get(`user:${minerva.user.id}:token`) === null) {
+      minerva.set(
+        `user:${minerva.user.id}:token`,
+        {
+          expires: naturalDate("1 month from now")
+        },
+        "user"
+      );
+
+      loginExpired = false;
+    }
+
     loginExpired = minerva.get(`user:${minerva.user.id}:token`)
       ? hasDatePassed(minerva.get(`user:${minerva.user.id}:token`).expires)
       : false;
@@ -140,9 +152,17 @@ const App = () => {
 
   // remove all confirm boxes on unload
   window.onunload = () => {
-    minerva.setWindows(
-      minerva.windows.filter(item => item.component !== "ConfirmBox")
-    );
+    if (
+      MinervaArchive.get("minerva_store") &&
+      MinervaArchive.get(minerva.user.name)
+    ) {
+      console.log("user store exists, we're good to go");
+      minerva.setWindows(
+        minerva.windows.filter(item => item.component !== "ConfirmBox")
+      );
+    }
+
+    console.log(localStorage);
 
     MinervaArchive.set("shut_down", new Date().toISOString());
   };
