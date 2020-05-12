@@ -53,7 +53,7 @@ export const makeStruct = (type, id, minerva, uuidv4, name = null) => {
     componentProps: {
       type,
       structId: id,
-      data: { notes: "" }
+      data: { notes: "", extra: {} }
     },
     belongsTo: minerva.user.id,
     id: uuidv4(),
