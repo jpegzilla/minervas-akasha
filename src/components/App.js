@@ -144,7 +144,7 @@ const App = () => {
       minerva.windows.filter(item => item.component !== "ConfirmBox")
     );
 
-    window.localStorage.setItem("shut_down", new Date().toISOString());
+    MinervaArchive.set("shut_down", new Date().toISOString());
   };
 
   // set up hotkey listeners on initial load, as well as type out the status text
