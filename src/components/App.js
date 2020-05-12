@@ -53,7 +53,7 @@ export const minervaVoice = new MinervaVoice(minerva);
 minerva.voice = minervaVoice;
 
 // Minerva.clearStorage();
-Minerva.clearSessionStorage();
+// Minerva.clearSessionStorage();
 
 export const globalContext = createContext(null);
 
