@@ -20,7 +20,6 @@ import i_one from "./../assets/audio/computer/intro.wav";
 import { setup } from "./tasks/setupSfx";
 
 const text = "minerva's akasha.";
-// const text = "loading...";
 
 let panelsActiveFlag = false;
 let shouldUpdateFlag = true;
