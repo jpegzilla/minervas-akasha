@@ -49,6 +49,7 @@ const DataStructure = props => {
     setRenderConList
   } = useContext(globalContext);
 
+  // the window that currently contains this structure
   const currentWindow = minerva.windows.find(item => {
     return item.componentProps.structId === structId;
   });
@@ -59,16 +60,27 @@ const DataStructure = props => {
     minerva.activeFileData || null
   );
 
+  // will contain any file data that's loaded into the structure.
   const [currentFileData, setCurrentFileData] = useState();
+
+  // true when the user clicks the delete button.
   const [deletionStarted, setDeletionStarted] = useState(false);
+
+  // polymorphic values that are false if information is not present, and contain data
+  // if a file is present.
   const [FileDisplay, setFileDisplay] = useState(false);
   const [ImageDisplay, setImageDisplay] = useState(false);
   const [MetadataDisplay, setMetadataDisplay] = useState(
     currentWindow.componentProps.MetadataDisplay
   );
 
+  // true when a file is loading, false when not.
   const [loadingFileData, setLoadingFileData] = useState(false);
+
+  // contains any metadata pertaining to the file.
   const [metadata, setMetadata] = useState(null);
+
+  // used to determine whether an image associated with a file should be collapsed or not.
   const [showImage, setShowImage] = useState(
     currentWindow.componentProps.ImageDisplay === false ? false : true
   );
