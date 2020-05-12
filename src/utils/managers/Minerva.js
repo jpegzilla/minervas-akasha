@@ -55,7 +55,7 @@ export class Minerva {
           this.user.id,
           this.user.name,
           database
-        )
+        ) || {}
       : {};
 
     // open indexedDB instance
