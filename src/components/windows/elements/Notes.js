@@ -19,6 +19,12 @@ const Notes = props => {
   const [textHistory, setTextHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(textHistory.length);
 
+  // anything that is provided by the user, such as a date, and any custom
+  // metadata provided by the user.
+  // const [extra, setExtra] = useState(record.data.extra);
+
+  // console.log(extra);
+
   const textArea = useRef();
 
   const { maxHistoryDepth } = minerva.settings.textEditor;
