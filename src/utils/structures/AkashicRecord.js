@@ -285,10 +285,20 @@ export default class AkashicRecord {
             records,
             database
           );
-        }
+        } else throw Error("missing storage.");
       } catch (err) {
-        console.log(err);
-        return;
+        console.group("FATAL: MISSING ITEMS IN STORAGE.");
+        // if the localStorage data is missing critical parts, oh well, start over.
+        // for now, this is the intended behavior to deal with incomplete data.
+        console.error(err);
+
+        MinervaArchive.remove("minerva_store");
+        MinervaArchive.remove(`${name}`);
+        MinervaArchive.remove(`user:${userId}:token`);
+
+        window.location.reload();
+
+        console.groupEnd();
       }
     }
   }
