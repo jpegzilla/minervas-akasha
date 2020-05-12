@@ -34,8 +34,6 @@ export class Minerva {
   constructor(options, database) {
     if (!database instanceof DatabaseInterface)
       throw new TypeError("database must be an instance of DatabaseInterface.");
-    console.log("MINERVA HAS BEEN INSTANTIATED.");
-    console.trace(options);
     if (options.user && !validateUUIDv4(options.user.id))
       throw new Error(
         `user was created with an invalid user id: ${options.user.id}`
@@ -836,7 +834,6 @@ export class Minerva {
    * if using the database, returns a promise.
    */
   set(key, value, type, database = false) {
-    console.trace("setting", key, "to", value, type);
     if (key === undefined)
       throw new Error("invalid arguments passed to Minerva.set.");
 
@@ -1131,8 +1128,6 @@ export class Minerva {
    * @returns {Minerva} the current instance of minerva.
    */
   save() {
-    console.log("SAVING");
-    console.trace(this);
     if (MinervaArchive.get("minerva_store")) {
       const store = {
         user: this.user,
@@ -1468,14 +1463,20 @@ export class MinervaArchive {
   }
 
   static set(key, item) {
-    console.trace(key, item);
-    if (key === undefined || item === undefined)
+    try {
+      if (key === undefined || item === undefined)
+        throw new Error(
+          "MinervaArchive.set must be called with both a key and a value."
+        );
+
+      Minerva._store.setItem(key, JSON.stringify(item));
+
+      return Minerva._store;
+    } catch (err) {
+      console.error(err);
       throw new Error(
-        "MinervaArchive.set must be called with both a key and a value."
+        `an error occurred while trying to update localStorage: ${err}`
       );
-
-    Minerva._store.setItem(key, JSON.stringify(item));
-
-    return Minerva._store;
+    }
   }
 }

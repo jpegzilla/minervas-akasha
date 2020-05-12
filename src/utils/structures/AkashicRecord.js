@@ -263,7 +263,7 @@ export default class AkashicRecord {
    * @returns {AkashicRecord} a new instance of an AkashicRecord.
    */
   static retrieveAkashicRecord(userId, name, dbObject, database = false) {
-    console.trace(userId, name);
+    if ([userId, name].includes(undefined)) return;
     if (database) {
       // retreive record for user with name from database
       console.log("retrieving record using database interface:", dbObject);
