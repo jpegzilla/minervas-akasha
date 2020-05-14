@@ -163,7 +163,7 @@ const ConnectionListComponent = props => {
       {makingConnection ? (
         connectionOptions && connectionOptions.length !== 0 ? (
           <Fragment>
-            <p>connection list:</p>
+            <p>potential connection list:</p>
             <ul>
               {connectionOptions.map(el => {
                 const record = el;
@@ -219,7 +219,7 @@ const ConnectionListComponent = props => {
       ) : disconnectionOptions &&
       Object.values(disconnectionOptions).length !== 0 ? (
         <Fragment>
-          <p>disconnection list:</p>
+          <p>already connected to:</p>
           <ul>
             {Object.values(disconnectionOptions).map(el => {
               const record = minerva.record.findRecordById(el);
