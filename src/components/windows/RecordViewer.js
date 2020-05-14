@@ -209,10 +209,7 @@ const RecordViewer = props => {
         </div>
       </header>
       <section className="record-viewer-main">
-        <section
-          onClick={e => void e.stopPropagation()}
-          className="record-viewer-sidebar"
-        >
+        <section className="record-viewer-sidebar">
           <div className="record-viewer-sidebar-container">
             <div className="record-viewer-sidebar-info">
               <header title={sidebar.title}>
