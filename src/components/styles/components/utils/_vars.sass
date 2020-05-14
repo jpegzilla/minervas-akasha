@@ -60,19 +60,49 @@ $halfGap: 0.5rem
     outline: 1px solid $pink
     transition: outline 0.5s ease
 
-=itemlist
-  ul:not(.color-box ul)
-    list-style-type: none
+=itemheader($select-off: true)
+    border: 1px solid var(--text-main)
+    margin-bottom: $halfGap
 
-    li:not(.structure-tag):not(.color-box-item)
-      cursor: pointer
+    @if $select-off
+      user-select: none
+
+    span
+      display: block
+
+    div, span
+      color: var(--bg-main)
+      background-color: var(--text-main)
+      border: 1px solid var(--bg-main)
       padding: 0.25rem 0.5rem
 
-      & li + li
+=itemlist($border-color: false, $clickable: false)
+
+  ul:not(.color-box-list):not(.structure-taglist)
+    list-style-type: none
+
+    li
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
+      padding: 0.15rem 0.25rem
+
+      @if $clickable
+        cursor: pointer
+
+      @if $border-color
+        border-left: 2px solid $border-color
+        padding-left: 0.5rem
+        background-color: color.adjust($border-color, $alpha: -0.85)
+
+      & + li
         margin-top: 0.5rem
 
       &:hover
-        background-color: color.adjust($white, $alpha: -0.7)
+        background-color: color.adjust($white, $alpha: -0.5)
+
+    & + span
+      margin-top: 0.5rem
 
 =flexcenter($left: false)
   display: flex
