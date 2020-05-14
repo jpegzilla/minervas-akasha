@@ -156,13 +156,11 @@ const App = () => {
       MinervaArchive.get("minerva_store") &&
       MinervaArchive.get(minerva.user.name)
     ) {
-      console.log("user store exists, we're good to go");
+      // user data exists and is well-formed, remove confirm boxes
       minerva.setWindows(
         minerva.windows.filter(item => item.component !== "ConfirmBox")
       );
     }
-
-    console.log(localStorage);
 
     MinervaArchive.set("shut_down", new Date().toISOString());
   };
