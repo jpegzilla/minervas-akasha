@@ -29,19 +29,6 @@ const Taskbar = props => {
     setAddMenuOpen
   } = props;
 
-  // if one menu is open, close the other one
-
-  useEffect(
-    () => {
-      if (addMenuOpen) {
-        setMenuOpen(false);
-      } else if (menuOpen) {
-        setAddMenuOpen(false);
-      }
-    },
-    [addMenuOpen, setMenuOpen, menuOpen, setAddMenuOpen]
-  );
-
   const t = () => {
     setStatusText("");
     setStatusMessage({ display: false, text: "", type: null });
@@ -83,12 +70,16 @@ const Taskbar = props => {
     setActiveWindowId(item.id);
   };
 
+  // if one menu is open, close the other one
+
   const openMenu = () => {
     setMenuOpen(!menuOpen);
+    setAddMenuOpen(false);
   };
 
   const openAdd = () => {
     setAddMenuOpen(!addMenuOpen);
+    setMenuOpen(false);
   };
 
   const [
