@@ -20,7 +20,9 @@
   },
   "scripts": {
     "style:watch:min": "sass --watch --style=compressed ./src/components/styles/main.sass:./src/components/styles/main.min.css",
+    "swm": "sass --watch --style=compressed ./src/components/styles/main.sass:./src/components/styles/main.min.css",
     "style:watch": "sass --watch --style=expanded ./src/components/styles/main.sass:./src/components/styles/main.css",
+    "sw": "sass --watch --style=expanded ./src/components/styles/main.sass:./src/components/styles/main.css",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "mocha --require @babel/register --require ./test/helpers/helpers.js --require ./test/helpers/dom.js --require ignore-styles -b -c './test/*.test.js'",
