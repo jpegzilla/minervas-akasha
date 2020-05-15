@@ -280,7 +280,8 @@ Window.propTypes = {
         notes: PropTypes.string,
         metadata: PropTypes.object,
         dbId: PropTypes.string,
-        dbUserId: PropTypes.string
+        dbUserId: PropTypes.string,
+        extra: PropTypes.object
       }),
       name: PropTypes.string,
       tags: PropTypes.arrayOf(PropTypes.object)
