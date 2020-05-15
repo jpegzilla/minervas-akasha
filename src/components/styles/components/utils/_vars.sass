@@ -67,16 +67,16 @@ $halfGap: 0.5rem
     @if $select-off
       user-select: none
 
-    span
+    span:not(.dont-resize)
       display: block
 
-    div, span
+    div:not(.dont-resize), span:not(.dont-resize)
       color: var(--bg-main)
       background-color: var(--text-main)
       border: 1px solid var(--bg-main)
       padding: 0.25rem 0.5rem
 
-=itemlist($border-color: false, $clickable: false)
+=itemlist($border-color: false, $clickable: false, $padding: true)
 
   ul:not(.color-box-list):not(.structure-taglist)
     list-style-type: none
@@ -85,7 +85,9 @@ $halfGap: 0.5rem
       overflow: hidden
       white-space: nowrap
       text-overflow: ellipsis
-      padding: 0.15rem 0.25rem
+
+      @if $padding
+        padding: 0.15rem 0.25rem
 
       @if $clickable
         cursor: pointer
