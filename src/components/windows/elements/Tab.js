@@ -26,7 +26,7 @@ const TabComponent = props => {
           handleClickItem(e, w);
         }}
       >
-        {`${titleToUse} (${tabCounts})`}
+        <span>{`${titleToUse} (${tabCounts})`}</span>
       </li>
     ),
     [w, activeWindowId, tabCounts, handleClickItem, titleText, titleToUse]
