@@ -1,7 +1,10 @@
 @use "../utils/vars"
 
 .connection-options-list
-  +vars.itemlist
+  @include vars.itemlist(vars.$white, true)
 
-  margin-top: 1rem
+  margin-top: vars.$halfGap
   max-width: 350px
+
+  p
+    margin-bottom: vars.$halfGap
