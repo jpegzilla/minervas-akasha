@@ -84,6 +84,9 @@ const DataStructure = props => {
   const [showImage, setShowImage] = useState(
     currentWindow.componentProps.ImageDisplay === false ? false : true
   );
+  const [showData, setShowData] = useState(
+    currentWindow.componentProps.showData === false ? false : true
+  );
 
   const tagRef = useRef();
   const nameRef = useRef();
@@ -106,7 +109,8 @@ const DataStructure = props => {
               componentProps: {
                 ...item.componentProps,
                 MetadataDisplay,
-                ImageDisplay: showImage
+                ImageDisplay: showImage,
+                showData
               }
             };
           }
@@ -116,7 +120,7 @@ const DataStructure = props => {
 
       minerva.setWindows([...newWindows]);
     },
-    [minerva, structId, MetadataDisplay, showImage, ImageDisplay]
+    [minerva, structId, showData, MetadataDisplay, showImage, ImageDisplay]
   );
 
   // add to minerva's record when first loading new data structure
@@ -652,12 +656,23 @@ const DataStructure = props => {
       <div className="structure-left-column">
         <header className="structure-header">
           <p>
-            {info.type === info.name ? "untitled data structure" : info.name} -{" "}
             <span
-              className="structure-type"
-              title={StructureDescriptions[type]}
+              title={
+                info.type === info.name ? "untitled data structure" : info.name
+              }
             >
-              {type}
+              {info.type === info.name
+                ? "untitled data structure"
+                : info.name.length > 30
+                  ? info.name.substring(0, 30).padEnd(31, "…")
+                  : info.name}{" "}
+              -{" "}
+              <span
+                className="structure-type"
+                title={StructureDescriptions[type]}
+              >
+                {type}
+              </span>
             </span>
           </p>
           <ul className="structure-taglist">
@@ -681,7 +696,7 @@ const DataStructure = props => {
           {showTagEditInterface && (
             <div className="structure-tag-editor">
               <div className="color-box">
-                <ul>
+                <ul className="color-box-list">
                   {[...Array(Object.values(ColorCodes).length)].map((_c, i) => {
                     const [, v] = Object.entries(ColorCodes)[i];
                     return (
@@ -705,6 +720,8 @@ const DataStructure = props => {
             FileDisplay={FileDisplay}
             ImageDisplay={ImageDisplay}
             setShowImage={setShowImage}
+            showData={showData}
+            setShowData={setShowData}
             MetadataDisplay={MetadataDisplay}
             metadata={metadata}
             setMetadataDisplay={setMetadataDisplay}
