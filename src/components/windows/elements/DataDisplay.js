@@ -13,6 +13,8 @@ const DataDisplay = props => {
     FileDisplay,
     ImageDisplay,
     setShowImage,
+    setShowData,
+    showData,
     MetadataDisplay,
     metadata,
     setMetadataDisplay,
@@ -56,88 +58,93 @@ const DataDisplay = props => {
   // that is not meant to contain files, but a list of stored structures.
   if (type !== "shard") {
     return connections ? (
-      <ul className="datastructure-connection-list">
-        {connections.map(rec => {
-          const { id, tags, name, createdAt, updatedAt, type } = rec;
+      <div className="datastructure-connection-list-container">
+        <header>
+          <div>{`connections to this ${type}:`}</div>
+        </header>
+        <ul className="datastructure-connection-list">
+          {connections.map(rec => {
+            const { id, tags, name, createdAt, updatedAt, type } = rec;
 
-          const created = new Date(createdAt).toLocaleDateString(
-            minerva.settings.dateFormat
-          );
+            const created = new Date(createdAt).toLocaleDateString(
+              minerva.settings.dateFormat
+            );
 
-          const updated = new Date(updatedAt).toLocaleDateString(
-            minerva.settings.dateFormat
-          );
+            const updated = new Date(updatedAt).toLocaleDateString(
+              minerva.settings.dateFormat
+            );
 
-          const tagString = tags.map(t => t.name).join(", ");
+            const tagString = tags.map(t => t.name).join(", ");
 
-          // title just to help identify what's in the stored structure
-          const title = `name: ${name}\ntype: ${type}\ncreated on ${created}\nupdated on ${updated}\ntags: ${tagString}`;
+            // title just to help identify what's in the stored structure
+            const title = `name: ${name}\ntype: ${type}\ncreated on ${created}\nupdated on ${updated}\ntags: ${tagString}`;
 
-          // this is to determine what should be displayed in the connection list
-          const record = minerva.record.findRecordById(structId);
-          const connectsTo = record.connectsTo;
+            // this is to determine what should be displayed in the connection list
+            const record = minerva.record.findRecordById(structId);
+            const connectsTo = record.connectsTo;
 
-          if (rec.type === connectsTo) return false;
+            if (rec.type === connectsTo) return false;
 
-          return (
-            <li
-              onDoubleClick={e => {
-                // open the clicked-on record
-                e.stopPropagation();
+            return (
+              <li
+                onDoubleClick={e => {
+                  // open the clicked-on record
+                  e.stopPropagation();
 
-                const handleOpenRecord = item => {
-                  // make sure the window isn't already open
-                  const foundItem = minerva.windows.find(
-                    i =>
-                      i.component === "DataStructure" &&
-                      i.componentProps.structId === item.id
-                  );
+                  const handleOpenRecord = item => {
+                    // make sure the window isn't already open
+                    const foundItem = minerva.windows.find(
+                      i =>
+                        i.component === "DataStructure" &&
+                        i.componentProps.structId === item.id
+                    );
 
-                  if (foundItem) {
-                    if (foundItem.state !== "minimized") return;
-                    else {
-                      minerva.setWindows(
-                        minerva.windows.map(window => {
-                          return window.id === foundItem.id
-                            ? { ...window, state: "restored" }
-                            : window;
-                        })
-                      );
+                    if (foundItem) {
+                      if (foundItem.state !== "minimized") return;
+                      else {
+                        minerva.setWindows(
+                          minerva.windows.map(window => {
+                            return window.id === foundItem.id
+                              ? { ...window, state: "restored" }
+                              : window;
+                          })
+                        );
 
-                      setWindows([...minerva.windows]);
+                        setWindows([...minerva.windows]);
 
-                      minerva.setActiveWindowId(foundItem.id);
+                        minerva.setActiveWindowId(foundItem.id);
+                      }
+
+                      return;
                     }
 
-                    return;
-                  }
+                    const itemToOpen = minerva.record.records[item.type].find(
+                      i => i.id === item.id
+                    );
 
-                  const itemToOpen = minerva.record.records[item.type].find(
-                    i => i.id === item.id
-                  );
+                    const { id, type } = itemToOpen;
 
-                  const { id, type } = itemToOpen;
+                    const struct = makeStruct(type, id, minerva, uuidv4);
 
-                  const struct = makeStruct(type, id, minerva, uuidv4);
+                    minerva.setWindows([...minerva.windows, struct]);
 
-                  minerva.setWindows([...minerva.windows, struct]);
+                    setWindows([...minerva.windows]);
 
-                  setWindows([...minerva.windows]);
+                    minerva.setActiveWindowId(id);
+                  };
 
-                  minerva.setActiveWindowId(id);
-                };
-
-                handleOpenRecord(rec);
-              }}
-              className="datastructure-connection"
-              title={title}
-              key={id}
-            >
-              {name}
-            </li>
-          );
-        })}
-      </ul>
+                  handleOpenRecord(rec);
+                }}
+                className="datastructure-connection"
+                title={title}
+                key={id}
+              >
+                {name}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     ) : (
       "no records"
     );
@@ -152,38 +159,38 @@ const DataDisplay = props => {
     return (
       <Fragment>
         <header>
-          {currentFileData
-            ? currentFileData.title
-            : type === "shard" && "no current file data"}
+          <div>
+            {currentFileData
+              ? currentFileData.title
+              : type === "shard" && "no current file data"}
+          </div>
         </header>
         {FileDisplay && currentFileData ? (
-          /image/.test(currentFileData.type) ? (
-            <div className="structure-data-meta-display">
-              <p>
-                <picture style={{ display: showImage ? "block" : "none" }}>
-                  {FileDisplay ? FileDisplay : "cannot display image."}
-                </picture>
-                <span onClick={() => setShowImage(!showImage)}>
-                  {showImage ? "click to hide image" : "click to show image"}
-                </span>
-              </p>
+          <div className="structure-data-meta-display">
+            <div>
+              <picture style={{ display: showData ? "block" : "none" }}>
+                {FileDisplay ? FileDisplay : "cannot display file."}
+              </picture>
+              <span onClick={() => setShowData(!showData)}>
+                {showData
+                  ? `click to hide ${currentFileData.type.split("/")[0]}`
+                  : `click to show ${currentFileData.type.split("/")[0]}`}
+              </span>
             </div>
-          ) : (
-            <div className="file-display-default">{FileDisplay}</div>
-          )
+          </div>
         ) : (
           false
         )}
         {FileDisplay && ImageDisplay ? (
           <div className="structure-data-meta-display">
-            <p>
+            <div>
               <picture style={{ display: showImage ? "block" : "none" }}>
                 {ImageDisplay ? ImageDisplay : "cannot display image."}
               </picture>
               <span onClick={() => setShowImage(!showImage)}>
                 {showImage ? "click to hide image" : "click to show image"}
               </span>
-            </p>
+            </div>
           </div>
         ) : (
           false
@@ -202,16 +209,24 @@ const DataDisplay = props => {
                       if (["picture", "pictureData", "pictureSize"].includes(k))
                         return false;
 
+                      const value =
+                        metadata[k].length > 30
+                          ? metadata[k]
+                              .toString()
+                              .substring(0, 36)
+                              .padEnd(37, "…")
+                          : metadata[k];
+
                       return (
                         <li title={`${k}: ${metadata[k]}`} key={`${k}-${i}`}>
-                          {k}: {metadata[k]}
+                          {k}: {value}
                         </li>
                       );
                     })}
                   </ul>
-                  <span onClick={() => setMetadataDisplay(false)}>
-                    click to hide metadata
-                  </span>
+                  <div onClick={() => setMetadataDisplay(false)}>
+                    <span>click to hide metadata</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -220,9 +235,11 @@ const DataDisplay = props => {
               className="structure-data-meta-display"
               onClick={() => setMetadataDisplay(true)}
             >
-              <span>
-                {metadata ? "click to show metadata" : "no file metadata"}
-              </span>
+              <div>
+                <span>
+                  {metadata ? "click to show metadata" : "no file metadata"}
+                </span>
+              </div>
             </div>
           )
         ) : (
