@@ -9,4 +9,4 @@ export const setup = ctx => {
   //
   //   ctx.play("k_one");
   // });
-};
+}

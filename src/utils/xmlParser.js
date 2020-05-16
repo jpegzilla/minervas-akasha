@@ -7,8 +7,8 @@ export class XMLParser {
    * @returns {undefined}
    */
   constructor(path) {
-    this.path = path;
-    this.document = null;
+    this.path = path
+    this.document = null
   }
 
   /**
@@ -18,16 +18,16 @@ export class XMLParser {
    *
    * @returns {document} parsed xml document
    */
-  async parse(type = "text/xml") {
-    const f = await fetch(this.path);
+  async parse(type = 'text/xml') {
+    const f = await fetch(this.path)
 
-    const res = await f.text();
+    const res = await f.text()
 
-    const parsed = new DOMParser().parseFromString(res, type);
+    const parsed = new DOMParser().parseFromString(res, type)
 
-    this.document = parsed;
+    this.document = parsed
 
-    return parsed;
+    return parsed
   }
 
   /**
@@ -39,17 +39,17 @@ export class XMLParser {
    * @returns {array} array of retrieved elements
    */
   parseItem(item, props) {
-    const things = {};
+    const things = {}
 
-    const tempItem = item;
+    const tempItem = item
 
     props.forEach(prop => {
-      const o = tempItem.getElementsByTagName(prop);
+      const o = tempItem.getElementsByTagName(prop)
 
-      things[prop] = Array.from(o);
-    });
+      things[prop] = Array.from(o)
+    })
 
-    return things;
+    return things
   }
 
   /**
@@ -60,10 +60,10 @@ export class XMLParser {
    * @returns {array} array of all tags matching a string
    */
   getAllTags(tag) {
-    if (!this.document) throw new Error("invalid document provided");
+    if (!this.document) throw new Error('invalid document provided')
 
-    const allItems = this.document.getElementsByTagName(tag);
+    const allItems = this.document.getElementsByTagName(tag)
 
-    return Array.from(allItems);
+    return Array.from(allItems)
   }
 }

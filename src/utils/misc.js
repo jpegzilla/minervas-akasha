@@ -1,6 +1,6 @@
 /* eslint no-useless-escape: 0 */
 
-export const cjkRegex = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/gim;
+export const cjkRegex = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/gim
 
 /**
  * isEmpty - checks to see if an object is empty
@@ -11,10 +11,10 @@ export const cjkRegex = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u
  */
 export const isEmpty = obj => {
   for (let key in obj) {
-    if (obj.hasOwnProperty(key)) return false;
+    if (obj.hasOwnProperty(key)) return false
   }
-  return true;
-};
+  return true
+}
 
 /**
  * throttle - fires a callback *only* every x seconds
@@ -25,31 +25,31 @@ export const isEmpty = obj => {
  * @returns {function} function that fires the callback
  */
 export const throttle = (callback, delay) => {
-  let throttleTimeout = null;
-  let storedEvent = null;
+  let throttleTimeout = null
+  let storedEvent = null
 
   const throttledEventHandler = event => {
-    storedEvent = event;
+    storedEvent = event
 
-    const shouldHandleEvent = !throttleTimeout;
+    const shouldHandleEvent = !throttleTimeout
 
     if (shouldHandleEvent) {
-      callback(storedEvent);
+      callback(storedEvent)
 
-      storedEvent = null;
+      storedEvent = null
 
       throttleTimeout = setTimeout(() => {
-        throttleTimeout = null;
+        throttleTimeout = null
 
         if (storedEvent) {
-          throttledEventHandler(storedEvent);
+          throttledEventHandler(storedEvent)
         }
-      }, delay);
+      }, delay)
     }
-  };
+  }
 
-  return throttledEventHandler;
-};
+  return throttledEventHandler
+}
 
 /**
  * secondsToTime - convert seconds to an hh:mm:ss string
@@ -59,19 +59,19 @@ export const throttle = (callback, delay) => {
  * @returns {string} an hh:mm:ss string
  */
 export const secondsToTime = sec => {
-  let totalSeconds = sec;
+  let totalSeconds = sec
 
-  let hours = Math.floor(totalSeconds / 3600);
-  totalSeconds %= 3600;
-  let minutes = Math.floor(totalSeconds / 60);
-  let seconds = totalSeconds % 60;
+  let hours = Math.floor(totalSeconds / 3600)
+  totalSeconds %= 3600
+  let minutes = Math.floor(totalSeconds / 60)
+  let seconds = totalSeconds % 60
 
-  minutes = String(minutes).padStart(2, "0");
-  hours = String(hours).padStart(2, "0");
-  seconds = String(seconds).padStart(2, "0");
+  minutes = String(minutes).padStart(2, '0')
+  hours = String(hours).padStart(2, '0')
+  seconds = String(seconds).padStart(2, '0')
 
-  return `${hours}:${minutes}:${seconds}`;
-};
+  return `${hours}:${minutes}:${seconds}`
+}
 
 /**
  * bytesToSize - convert a number in bytes to a size with a unit
@@ -81,14 +81,14 @@ export const secondsToTime = sec => {
  * @returns {string} size with unit
  */
 export const bytesToSize = bytes => {
-  const sizes = ["bytes", "kb", "mb", "gb", "tb"];
+  const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb']
 
-  if (parseInt(bytes) === 0) return "0 bytes";
+  if (parseInt(bytes) === 0) return '0 bytes'
 
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
 
-  return `${Math.round(bytes / Math.pow(1024, i), 2)}${sizes[i]}`;
-};
+  return `${Math.round(bytes / Math.pow(1024, i), 2)}${sizes[i]}`
+}
 
 /**
  * str2ab - converts a string to an array buffer.
@@ -98,13 +98,13 @@ export const bytesToSize = bytes => {
  * @returns {ArrayBuffer} a buffer created from the string.
  */
 export const str2ab = str => {
-  const buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  const bufView = new Uint16Array(buf);
+  const buf = new ArrayBuffer(str.length * 2) // 2 bytes for each char
+  const bufView = new Uint16Array(buf)
 
-  for (let i = 0; i < str.length; i++) bufView[i] = str.charCodeAt(i);
+  for (let i = 0; i < str.length; i++) bufView[i] = str.charCodeAt(i)
 
-  return buf;
-};
+  return buf
+}
 
 /**
  * getRandomInt - get a random integer from within a range
@@ -115,10 +115,10 @@ export const str2ab = str => {
  * @returns {number} a random number within the provided range
  */
 export const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-};
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min)) + min //The maximum is exclusive and the minimum is inclusive
+}
 
 /**
  * getRandomFloat - get a random number from within a range
@@ -129,8 +129,8 @@ export const getRandomInt = (min, max) => {
  * @returns {number} a random number within the provided range
  */
 export const getRandomFloat = (min, max) => {
-  return Math.random() * (max - min) + min;
-};
+  return Math.random() * (max - min) + min
+}
 
 /**
  * isElementInViewport - determines whether an element is in the viewport
@@ -140,15 +140,15 @@ export const getRandomFloat = (min, max) => {
  * @returns {boolean} true if element is in view, false if not
  */
 export const isElementInViewport = el => {
-  const rect = el.getBoundingClientRect();
+  const rect = el.getBoundingClientRect()
   return (
     rect.top >= 0 &&
     rect.left >= 0 &&
     rect.bottom <=
       (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
-};
+  )
+}
 
 /**
  * uuidv4 - generate a universally unique identifier under the version four spec
@@ -156,12 +156,12 @@ export const isElementInViewport = el => {
  * @returns {string} a valid uuidv4
  */
 export const uuidv4 = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     let r = (Math.random() * 16) | 0,
-      v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
+      v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
 
 /**
  * validateUUIDv4 - validate a uuidv4 for minerva's purposes.
@@ -171,10 +171,10 @@ export const uuidv4 = () => {
  * @returns {boolean} true if valid, false otherwise.
  */
 export const validateUUIDv4 = id => {
-  const uuidV4Regex = /^(?:[a-zA-Z0-9]{8}-(?:[a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12})$/gi;
+  const uuidV4Regex = /^(?:[a-zA-Z0-9]{8}-(?:[a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12})$/gi
 
-  return uuidV4Regex.test(id);
-};
+  return uuidV4Regex.test(id)
+}
 
 /**
  * stringSort - sort array by strings, alphabetically
@@ -187,13 +187,12 @@ export const validateUUIDv4 = id => {
  */
 export const stringSort = (arr, asc, prop) => {
   if (prop)
-    return arr.sort(
-      (a, b) =>
-        asc ? a[prop].localeCompare(b[prop]) : b[prop].localeCompare(a[prop])
-    );
+    return arr.sort((a, b) =>
+      asc ? a[prop].localeCompare(b[prop]) : b[prop].localeCompare(a[prop])
+    )
   else
-    return arr.sort((a, b) => (asc ? a.localeCompare(b) : b.localeCompare(a)));
-};
+    return arr.sort((a, b) => (asc ? a.localeCompare(b) : b.localeCompare(a)))
+}
 
 /**
  * mobilecheck - checks to see if the current device is a mobile device
@@ -202,7 +201,7 @@ export const stringSort = (arr, asc, prop) => {
  */
 export const mobilecheck = () => {
   let a = !1,
-    b = navigator.userAgent || navigator.vendor || window.opera;
+    b = navigator.userAgent || navigator.vendor || window.opera
   if (
     /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
       b
@@ -211,6 +210,6 @@ export const mobilecheck = () => {
       b.substr(0, 4)
     )
   )
-    a = !0;
-  return a;
-};
+    a = !0
+  return a
+}

@@ -64,44 +64,44 @@ const utils = {
   },
 
   arraysEqual: function(a, b) {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) return false;
+    if (a === b) return true
+    if (a == null || b == null) return false
+    if (a.length !== b.length) return false
 
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+    return true
   }
-};
+}
 
 export default class cheatcode {
   constructor(code, callback, delay = 1000) {
     // format / argument checks
-    if (!code) throw new Error("a cheatcode argument is required!");
-    if (typeof code !== "object" && typeof code !== "string")
-      throw new Error("a cheatcode must be an array or a string!");
-    if (!callback) throw new Error("a callback argument is required!");
+    if (!code) throw new Error('a cheatcode argument is required!')
+    if (typeof code !== 'object' && typeof code !== 'string')
+      throw new Error('a cheatcode must be an array or a string!')
+    if (!callback) throw new Error('a callback argument is required!')
 
     // set up the cheatcode in the required format
     const formatCode = code => {
-      let newString = [];
+      let newString = []
       switch (typeof code) {
-        case "object": // if the cheatcode is provided as an array
+        case 'object': // if the cheatcode is provided as an array
           code.forEach(c => {
             if (Object.keys(utils.keymap).indexOf(c) >= 0) {
               newString.push(
                 Object.entries(utils.keymap)[
                   Object.keys(utils.keymap).indexOf(c)
                 ][1]
-              );
-            } else newString.push(c);
+              )
+            } else newString.push(c)
 
-            code = newString;
-          });
-          break;
-        case "string": // if the code provided is a string
+            code = newString
+          })
+          break
+        case 'string': // if the code provided is a string
           code
-            .replace(/\s*/gi, "")
-            .split(",")
+            .replace(/\s*/gi, '')
+            .split(',')
             .forEach(c => {
               // for each element in the code, check if there is a corresponding key
               // code in the keymap object
@@ -110,62 +110,62 @@ export default class cheatcode {
                   Object.entries(utils.keymap)[
                     Object.keys(utils.keymap).indexOf(c)
                   ][1]
-                );
-              } else newString.push(c);
+                )
+              } else newString.push(c)
 
-              code = newString;
-            });
+              code = newString
+            })
 
-          break;
+          break
 
         default:
-          throw new TypeError("invalid type provided to cheatcode.");
+          throw new TypeError('invalid type provided to cheatcode.')
       }
 
-      return code;
-    };
+      return code
+    }
 
-    this.cheatcode = formatCode(code);
+    this.cheatcode = formatCode(code)
 
-    this.delay = delay;
+    this.delay = delay
 
-    this.progress = [];
+    this.progress = []
 
-    if (typeof callback !== "function")
-      throw new Error("callback argument must be of type function!");
+    if (typeof callback !== 'function')
+      throw new Error('callback argument must be of type function!')
 
-    this.callback = callback;
+    this.callback = callback
   }
 
   // method for listening for the key combo
   start() {
-    let timeout;
+    let timeout
 
     const handleKeyDown = function(e) {
       // set the current progress in entering the cheatcode
-      this.progress.push(e.which);
+      this.progress.push(e.which)
 
       // clear the progress in the cheat code
       const clearStorage = () => {
-        this.progress = [];
-        clearTimeout(timeout);
-      };
+        this.progress = []
+        clearTimeout(timeout)
+      }
 
       // check to see if the correct code has been entered
       // if they have, fire the callback provided to the class
       if (utils.arraysEqual(this.progress, this.cheatcode)) {
-        clearStorage();
-        this.callback.apply(this);
+        clearStorage()
+        this.callback.apply(this)
       }
 
       // clear the timeout so that it can reset every time a key is pressed
-      clearTimeout(timeout);
+      clearTimeout(timeout)
 
       // set a new timeout so the user has time to finish entering the code
-      timeout = setTimeout(clearStorage, this.delay);
-    };
+      timeout = setTimeout(clearStorage, this.delay)
+    }
 
     // add the event listener to the window
-    window.addEventListener("keydown", handleKeyDown.bind(this));
+    window.addEventListener('keydown', handleKeyDown.bind(this))
   }
 }

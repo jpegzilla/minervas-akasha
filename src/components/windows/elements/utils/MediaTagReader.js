@@ -1,11 +1,11 @@
-import jsmediatags from "jsmediatags";
-import * as musicMetadata from "music-metadata-browser";
-import { audioTagSchema, imageTagSchema } from "./mediaTagSchema";
-import EXIF from "exif-js";
+import jsmediatags from 'jsmediatags'
+import * as musicMetadata from 'music-metadata-browser'
+import { audioTagSchema, imageTagSchema } from './mediaTagSchema'
+import EXIF from 'exif-js'
 
 export default class MediaTagReader {
   constructor(mediaString) {
-    this.mediaString = mediaString;
+    this.mediaString = mediaString
   }
 
   /**
@@ -21,30 +21,30 @@ export default class MediaTagReader {
    */
   async dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
-    const byteString = atob(dataURI.split(",")[1]);
+    const byteString = atob(dataURI.split(',')[1])
 
     // separate out the mime component
     const mimeString = dataURI
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0];
+      .split(',')[0]
+      .split(':')[1]
+      .split(';')[0]
 
     // write the bytes of the string to an ArrayBuffer
-    const ab = new ArrayBuffer(byteString.length);
+    const ab = new ArrayBuffer(byteString.length)
 
     // create a view into the buffer
-    const ia = new Uint8Array(ab);
+    const ia = new Uint8Array(ab)
 
     // set the bytes of the buffer to the correct values
     for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+      ia[i] = byteString.charCodeAt(i)
     }
 
     // write the ArrayBuffer to a blob, and you're done
-    const blob = new Blob([ab], { type: mimeString });
-    const buf = await blob.arrayBuffer();
+    const blob = new Blob([ab], { type: mimeString })
+    const buf = await blob.arrayBuffer()
 
-    return { blob, buffer: buf };
+    return { blob, buffer: buf }
   }
 
   /**
@@ -56,7 +56,7 @@ export default class MediaTagReader {
    * rejects on error.
    */
   getFullAudioInfo(mime) {
-    const { mediaString } = this;
+    const { mediaString } = this
     // fix this so that whatever lib is used to pull tags, the resulting tags
     // are formatted in identically structured objects
 
@@ -66,33 +66,33 @@ export default class MediaTagReader {
           // console.log("reading a file with type", mime);
           // console.log("buffer is:", res.blob);
 
-          const parseWithJSMedia = [/mp3/gi, /image/gi, /video/gi];
+          const parseWithJSMedia = [/mp3/gi, /image/gi, /video/gi]
 
           if (parseWithJSMedia.some(e => e.test(mime))) {
             jsmediatags.read(res.blob, {
               onSuccess: meta => {
                 audioTagSchema(meta).then(res => {
-                  resolve({ status: "success", metadata: res });
-                });
+                  resolve({ status: 'success', metadata: res })
+                })
               },
               onError: err => {
-                console.log(err);
+                console.log(err)
               }
-            });
+            })
           } else {
             // use this mainly for ogg / flac support
             musicMetadata.parseBlob(res.blob).then(meta => {
               audioTagSchema(meta).then(res => {
-                resolve({ status: "success", metadata: res });
-              });
-            });
+                resolve({ status: 'success', metadata: res })
+              })
+            })
           }
         })
         .catch(err => {
-          console.log(err);
-          reject({ status: "failure", message: err });
-        });
-    });
+          console.log(err)
+          reject({ status: 'failure', message: err })
+        })
+    })
   }
 
   /**
@@ -104,7 +104,7 @@ export default class MediaTagReader {
    * rejects on error.
    */
   getFullImageInfo() {
-    const { mediaString } = this;
+    const { mediaString } = this
     // fix this so that whatever lib is used to pull tags, the resulting tags
     // are formatted in identically structured objects
 
@@ -115,23 +115,23 @@ export default class MediaTagReader {
           // console.log("buffer is:", res.blob);
 
           EXIF.getData(res.blob, function() {
-            const tags = {};
+            const tags = {}
 
             // make sure everything is in correct case
             for (const [k, v] of Object.entries(this.exifdata)) {
-              tags[k.toString().toLowerCase()] = v.toString().toLowerCase();
+              tags[k.toString().toLowerCase()] = v.toString().toLowerCase()
             }
 
             imageTagSchema(tags).then(res => {
-              resolve(res);
-            });
-          });
+              resolve(res)
+            })
+          })
         })
         .catch(err => {
-          console.log(err);
-          reject({ status: "failure", message: err });
-        });
-    });
+          console.log(err)
+          reject({ status: 'failure', message: err })
+        })
+    })
   }
 
   /**
@@ -143,14 +143,14 @@ export default class MediaTagReader {
    * @returns {string} base64 encoded string.
    */
   static arrayBufferToBase64(buffer) {
-    let binary = "";
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
+    let binary = ''
+    const bytes = new Uint8Array(buffer)
+    const len = bytes.byteLength
 
     for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      binary += String.fromCharCode(bytes[i])
     }
 
-    return window.btoa(binary);
+    return window.btoa(binary)
   }
 }

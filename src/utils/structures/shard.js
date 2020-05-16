@@ -1,4 +1,4 @@
-import { Structure } from "./structure";
+import { Structure } from './structure'
 
 /**
  * Shard - the smallest normal data structure.
@@ -6,21 +6,21 @@ import { Structure } from "./structure";
  */
 export class Shard extends Structure {
   constructor(name, options) {
-    super(name, options);
+    super(name, options)
 
     // used to determine whether two structures can be connected. structures can only
     // connect to smaller structures.
-    this.type = "shard";
+    this.type = 'shard'
 
-    this.data = {};
+    this.data = {}
 
     // a list of structures that this type of structure can connect to.
-    this.accepts = [];
+    this.accepts = []
 
-    this.connectsTo = ["node", "grimoire", "athenaeum"];
+    this.connectsTo = ['node', 'grimoire', 'athenaeum']
   }
 
   addData(data, type) {
-    this.data[type] = data;
+    this.data[type] = data
   }
 }

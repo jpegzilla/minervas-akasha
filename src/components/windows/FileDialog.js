@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 const FileDialog = props => {
-  return <div>hello, this is a file dialog</div>;
-};
+  return <div>hello, this is a file dialog</div>
+}
 
-export default FileDialog;
+export default FileDialog
 
 FileDialog.propTypes = {
   text: PropTypes.string,
@@ -14,4 +14,4 @@ FileDialog.propTypes = {
   type: PropTypes.string,
   mime: PropTypes.string,
   size: PropTypes.number
-};
+}

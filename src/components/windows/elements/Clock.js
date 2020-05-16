@@ -1,62 +1,61 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react'
 
-import { globalContext } from "./../../App";
+import { globalContext } from './../../App'
 
-let timeFormat;
+let timeFormat
 
 export default () => {
-  const { minerva } = useContext(globalContext);
+  const { minerva } = useContext(globalContext)
 
-  timeFormat = minerva.settings ? minerva.settings.timeFormat : "24hr";
+  timeFormat = minerva.settings ? minerva.settings.timeFormat : '24hr'
 
   const time = () => {
-    let hours = new Date().getHours();
+    let hours = new Date().getHours()
 
     let minutes = new Date()
       .getMinutes()
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0')
     const seconds = new Date()
       .getSeconds()
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0')
 
-    if (timeFormat === "12hr") {
-      hours = hours % 12;
-      hours = hours ? hours : 12;
+    if (timeFormat === '12hr') {
+      hours = hours % 12
+      hours = hours ? hours : 12
     }
 
-    return `${hours.toString().padStart(2, "0")}:${minutes}:${seconds}`;
-  };
+    return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`
+  }
 
-  const [currentTime, setCurrentTime] = useState(time);
+  const [currentTime, setCurrentTime] = useState(time)
 
   const updateTime = () => {
-    setCurrentTime(time);
-  };
+    setCurrentTime(time)
+  }
 
-  setInterval(updateTime, 1000);
+  setInterval(updateTime, 1000)
 
   useEffect(() => {
-    return () => clearInterval(updateTime);
-  });
+    return () => clearInterval(updateTime)
+  })
 
   return (
     <div
       title={`switch between 24 / 12 hour time.\ncurrently: ${timeFormat}`}
       onClick={e => {
-        e.stopPropagation();
+        e.stopPropagation()
 
-        timeFormat = timeFormat === "12hr" ? "24hr" : "12hr";
+        timeFormat = timeFormat === '12hr' ? '24hr' : '12hr'
 
-        minerva.changeSetting({}, "timeFormat", timeFormat);
+        minerva.changeSetting({}, 'timeFormat', timeFormat)
 
-        setCurrentTime(time);
+        setCurrentTime(time)
       }}
-      className="taskbar-button"
-      id="topbar-clock"
-    >
+      className='taskbar-button'
+      id='topbar-clock'>
       {currentTime}
     </div>
-  );
-};
+  )
+}

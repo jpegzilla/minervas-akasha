@@ -7,29 +7,29 @@ import React, {
   useContext,
   Fragment,
   memo
-} from "react";
+} from 'react'
 
-import Img from "./elements/Img";
-import Audio from "./elements/Audio";
-import Paragraph from "./elements/Paragraph";
-import Tag from "./elements/Tag";
-import Video from "./elements/Video";
-import Notes from "./elements/Notes";
-import DataDisplay from "./elements/DataDisplay";
-import dataStructureFileParser from "./elements/utils/dataStructureFileParser";
-import ConnectionList from "./elements/ConnectionList";
+import Img from './elements/Img'
+import Audio from './elements/Audio'
+import Paragraph from './elements/Paragraph'
+import Tag from './elements/Tag'
+import Video from './elements/Video'
+import Notes from './elements/Notes'
+import DataDisplay from './elements/DataDisplay'
+import dataStructureFileParser from './elements/utils/dataStructureFileParser'
+import ConnectionList from './elements/ConnectionList'
 
-import { uuidv4 } from "./../../utils/misc";
+import { uuidv4 } from './../../utils/misc'
 import StructureMap, {
   StructureDescriptions
-} from "./../../utils/managers/StructureMap";
+} from './../../utils/managers/StructureMap'
 
-import ColorCodes from "../../utils/structures/utils/colorcodes";
-import PropTypes from "prop-types";
+import ColorCodes from '../../utils/structures/utils/colorcodes'
+import PropTypes from 'prop-types'
 
-import { globalContext } from "./../App";
+import { globalContext } from './../App'
 
-let timeouts = [];
+const timeouts = []
 
 const DataStructure = props => {
   const {
@@ -38,7 +38,7 @@ const DataStructure = props => {
     handleWindowCommand,
     setWindows,
     droppedFiles
-  } = props;
+  } = props
 
   const {
     minerva,
@@ -47,322 +47,307 @@ const DataStructure = props => {
     audiomanager,
     resetStatusText,
     setRenderConList
-  } = useContext(globalContext);
+  } = useContext(globalContext)
 
   // the window that currently contains this structure
   const currentWindow = minerva.windows.find(item => {
-    return item.componentProps.structId === structId;
-  });
+    return item.componentProps.structId === structId
+  })
 
   // if minerva is holding file data, use it here. this happens when a file is loaded
   // by being dragged into the desktop
   const [activeFileData, setActiveFileData] = useState(
     minerva.activeFileData || null
-  );
+  )
 
   // will contain any file data that's loaded into the structure.
-  const [currentFileData, setCurrentFileData] = useState();
+  const [currentFileData, setCurrentFileData] = useState()
 
   // true when the user clicks the delete button.
-  const [deletionStarted, setDeletionStarted] = useState(false);
+  const [deletionStarted, setDeletionStarted] = useState(false)
 
   // polymorphic values that are false if information is not present, and contain data
   // if a file is present.
-  const [FileDisplay, setFileDisplay] = useState(false);
-  const [ImageDisplay, setImageDisplay] = useState(false);
+  const [FileDisplay, setFileDisplay] = useState(false)
+  const [ImageDisplay, setImageDisplay] = useState(false)
   const [MetadataDisplay, setMetadataDisplay] = useState(
     currentWindow.componentProps.MetadataDisplay
-  );
+  )
 
   // true when a file is loading, false when not.
-  const [loadingFileData, setLoadingFileData] = useState(false);
+  const [loadingFileData, setLoadingFileData] = useState(false)
 
   // contains any metadata pertaining to the file.
-  const [metadata, setMetadata] = useState(null);
+  const [metadata, setMetadata] = useState(null)
 
   // used to determine whether an image associated with a file should be collapsed or not.
   const [showImage, setShowImage] = useState(
-    currentWindow.componentProps.ImageDisplay === false ? false : true
-  );
+    currentWindow.componentProps.ImageDisplay !== false
+  )
   const [showData, setShowData] = useState(
-    currentWindow.componentProps.showData === false ? false : true
-  );
+    currentWindow.componentProps.showData !== false
+  )
 
-  const tagRef = useRef();
-  const nameRef = useRef();
+  const tagRef = useRef()
+  const nameRef = useRef()
 
   const [info, setInfo] = useState(
     minerva.record.records[type].find(item => item.id === structId) || {} || {}
-  );
+  )
 
   // watch these to store the visual state of structures in minerva
-  useEffect(
-    () => {
-      const newWindows = minerva.windows.map(item => {
-        if (item.componentProps) {
-          if (
-            item.componentProps.info &&
-            item.componentProps.structId === structId
-          ) {
-            return {
-              ...item,
-              componentProps: {
-                ...item.componentProps,
-                MetadataDisplay,
-                ImageDisplay: showImage,
-                showData
-              }
-            };
+  useEffect(() => {
+    const newWindows = minerva.windows.map(item => {
+      if (item.componentProps) {
+        if (
+          item.componentProps.info &&
+          item.componentProps.structId === structId
+        ) {
+          return {
+            ...item,
+            componentProps: {
+              ...item.componentProps,
+              MetadataDisplay,
+              ImageDisplay: showImage,
+              showData
+            }
           }
         }
-        return item;
-      });
+      }
+      return item
+    })
 
-      minerva.setWindows([...newWindows]);
-    },
-    [minerva, structId, showData, MetadataDisplay, showImage, ImageDisplay]
-  );
+    minerva.setWindows([...newWindows])
+  }, [minerva, structId, showData, MetadataDisplay, showImage, ImageDisplay])
 
   // add to minerva's record when first loading new data structure
-  useEffect(
-    () => {
-      // ...add to record
+  useEffect(() => {
+    // ...add to record
 
-      // if the structure already exists, do not add a new one
-      const existingRecord = minerva.record.records[type].find(
-        item => item.id === structId
-      );
+    // if the structure already exists, do not add a new one
+    const existingRecord = minerva.record.records[type].find(
+      item => item.id === structId
+    )
 
-      if (existingRecord) {
-        // here's where I check for filedisplay, metadatadisplay, etc. and set their hooks
-        setInfo(existingRecord);
-        return;
-      }
+    if (existingRecord) {
+      // here's where I check for filedisplay, metadatadisplay, etc. and set their hooks
+      setInfo(existingRecord)
+      return
+    }
 
-      const Struct = StructureMap[type];
+    const Struct = StructureMap[type]
 
-      // create an actual instance of the correct structure to add to the record
-      const structToAdd = new Struct(props.info.name || info.name || type, {
-        tags: [],
-        id: structId,
-        connectedTo: {},
-        colorCode: new Struct().colorCode,
-        accepts: new Struct().accepts,
-        connectsTo: new Struct().connectsTo,
-        belongsTo: minerva.user.id
-      });
+    // create an actual instance of the correct structure to add to the record
+    const structToAdd = new Struct(props.info.name || info.name || type, {
+      tags: [],
+      id: structId,
+      connectedTo: {},
+      colorCode: new Struct().colorCode,
+      accepts: new Struct().accepts,
+      connectsTo: new Struct().connectsTo,
+      belongsTo: minerva.user.id
+    })
 
-      minerva.addToRecord(structId, structToAdd);
+    minerva.addToRecord(structId, structToAdd)
 
-      setRenderConList(uuidv4());
+    setRenderConList(uuidv4())
 
-      setInfo(structToAdd);
+    setInfo(structToAdd)
 
-      // in case there is existing file information
-      // attached to a record, find it and render it.
-      minerva.findFileInRecord(structId).then(e => {
-        console.log(structId, e);
-        if (e)
-          if (e.file) {
-            console.log(
-              `found a file for record ${structId}, attaching it.`,
-              e.file
-            );
+    // in case there is existing file information
+    // attached to a record, find it and render it.
+    minerva.findFileInRecord(structId).then(e => {
+      console.log(structId, e)
+      if (e)
+        if (e.file) {
+          console.log(
+            `found a file for record ${structId}, attaching it.`,
+            e.file
+          )
 
-            setLoadingFileData(true);
+          setLoadingFileData(true)
 
-            // if there's an image to show, display it.
-            if (/image/gi.test(e.file.type)) {
-              setFileDisplay(e.file);
-            }
-
-            setCurrentFileData(e.file);
+          // if there's an image to show, display it.
+          if (/image/gi.test(e.file.type)) {
+            setFileDisplay(e.file)
           }
-      });
 
-      setWindows([...minerva.windows]);
-    },
-    [structId, minerva, setWindows, type]
-  );
+          setCurrentFileData(e.file)
+        }
+    })
 
-  useEffect(
-    () => {
-      // parse the file
-      dataStructureFileParser(
-        droppedFiles,
-        setStatusMessage,
-        resetStatusText,
-        setLoadingFileData,
-        setActiveFileData
-      );
-    },
-    [droppedFiles]
-  );
+    setWindows([...minerva.windows])
+  }, [structId, minerva, setWindows, type])
 
-  useEffect(
-    () => {
-      if (activeFileData) {
-        console.log("current active file data", activeFileData);
+  useEffect(() => {
+    // parse the file
+    dataStructureFileParser(
+      droppedFiles,
+      setStatusMessage,
+      resetStatusText,
+      setLoadingFileData,
+      setActiveFileData
+    )
+  }, [droppedFiles])
 
-        minerva.activeFileData = null; // remove the file data from minerva, she doesn't need it
+  useEffect(() => {
+    if (activeFileData) {
+      console.log('current active file data', activeFileData)
 
-        // the image display and metadata needs to reset here.
-        // if a file is loaded that has an image attached,
-        // such as a song with an album cover, the next time a
-        // file is loaded that does not have an image, the image
-        // from the last file will remain attached - without these two lines:
-        setImageDisplay(false);
-        setFileDisplay(false);
+      minerva.activeFileData = null // remove the file data from minerva, she doesn't need it
 
-        // when new file data is detected, minerva will immediately add the file to the record
-        minerva.addFileToRecord(structId, activeFileData, { type });
-      }
+      // the image display and metadata needs to reset here.
+      // if a file is loaded that has an image attached,
+      // such as a song with an album cover, the next time a
+      // file is loaded that does not have an image, the image
+      // from the last file will remain attached - without these two lines:
+      setImageDisplay(false)
+      setFileDisplay(false)
 
-      // when active file data changes, make sure that the structure ui
-      // updates to show the new file data.
-      minerva.findFileInRecord(structId).then(e => {
-        if (e)
-          if (e.file) {
-            setLoadingFileData(true);
+      // when new file data is detected, minerva will immediately add the file to the record
+      minerva.addFileToRecord(structId, activeFileData, { type })
+    }
 
-            console.log(
-              `found a file for record ${structId}, attaching it.`,
-              e.file
-            );
+    // when active file data changes, make sure that the structure ui
+    // updates to show the new file data.
+    minerva.findFileInRecord(structId).then(e => {
+      if (e)
+        if (e.file) {
+          setLoadingFileData(true)
 
-            // if a structure has info attached to it (tags, etc.), then add that
-            // info object into the structure's window object inside the window
-            // array. data such as the database id and user id are also inserted.
-            if (info) {
-              const newWindows = minerva.windows.map(item => {
-                if (item.componentProps)
-                  if (
-                    item.componentProps.info &&
-                    item.componentProps.structId === structId
-                  ) {
-                    return {
-                      ...item,
-                      componentProps: {
-                        ...item.componentProps,
-                        info: {
-                          ...info,
-                          data: {
-                            ...item.componentProps.info.data,
-                            dbId: e.id,
-                            dbUserId: e.userId
-                          }
+          console.log(
+            `found a file for record ${structId}, attaching it.`,
+            e.file
+          )
+
+          // if a structure has info attached to it (tags, etc.), then add that
+          // info object into the structure's window object inside the window
+          // array. data such as the database id and user id are also inserted.
+          if (info) {
+            const newWindows = minerva.windows.map(item => {
+              if (item.componentProps)
+                if (
+                  item.componentProps.info &&
+                  item.componentProps.structId === structId
+                ) {
+                  return {
+                    ...item,
+                    componentProps: {
+                      ...item.componentProps,
+                      info: {
+                        ...info,
+                        data: {
+                          ...item.componentProps.info.data,
+                          dbId: e.id,
+                          dbUserId: e.userId
                         }
                       }
-                    };
+                    }
                   }
+                }
 
-                return item;
-              });
+              return item
+            })
 
-              // this code 'commits' the new window object and rerenders the windows
-              minerva.setWindows([...newWindows]);
-              setWindows([...minerva.windows]);
-            }
-            setCurrentFileData(e.file);
+            // this code 'commits' the new window object and rerenders the windows
+            minerva.setWindows([...newWindows])
+            setWindows([...minerva.windows])
           }
-      });
-    },
-    [activeFileData, minerva, structId, type]
-  );
+          setCurrentFileData(e.file)
+        }
+    })
+  }, [activeFileData, minerva, structId, type])
 
   // fires when a file is correctly retrieved.
-  useEffect(
-    () => {
-      if (currentFileData) {
-        const { data, title, humanSize, mime } = currentFileData;
+  useEffect(() => {
+    if (currentFileData) {
+      const { data, title, humanSize, mime } = currentFileData
 
-        let type;
+      let type
 
-        // here I test to figure out what type of file I'm trying to process.
-        // currently only audio, video, images, and text are supported.
-        if (/audio/gi.test(currentFileData.type)) {
-          type = (
-            <Audio
-              src={data}
-              title={title}
-              humanSize={humanSize}
-              mime={mime}
-              setMetadata={setMetadata}
-              setLoadingFileData={setLoadingFileData}
-            />
-          );
-        }
-
-        if (/video/gi.test(currentFileData.type)) {
-          type = (
-            <Video
-              src={data}
-              title={title}
-              humanSize={humanSize}
-              mime={mime}
-              setMetadata={setMetadata}
-              setLoadingFileData={setLoadingFileData}
-            />
-          );
-        }
-
-        if (/image/gi.test(currentFileData.type)) {
-          type = (
-            <Img
-              src={data}
-              title={title}
-              humanSize={humanSize}
-              mime={mime}
-              setMetadata={setMetadata}
-              setLoadingFileData={setLoadingFileData}
-            />
-          );
-        }
-
-        if (/text/gi.test(currentFileData.type)) {
-          type = (
-            <Paragraph
-              fullText={currentFileData.data}
-              showText={currentFileData.data.substring(0, 300) + "…"}
-              title={title}
-              humanSize={humanSize}
-              mime={mime}
-              setMetadata={setMetadata}
-            />
-          );
-        }
-
-        // this will set the file display to the correct element created above based on
-        // the file's type.
-        setFileDisplay(type);
+      // here I test to figure out what type of file I'm trying to process.
+      // currently only audio, video, images, and text are supported.
+      if (/audio/gi.test(currentFileData.type)) {
+        type = (
+          <Audio
+            src={data}
+            title={title}
+            humanSize={humanSize}
+            mime={mime}
+            setMetadata={setMetadata}
+            setLoadingFileData={setLoadingFileData}
+          />
+        )
       }
-    },
-    [currentFileData]
-  );
+
+      if (/video/gi.test(currentFileData.type)) {
+        type = (
+          <Video
+            src={data}
+            title={title}
+            humanSize={humanSize}
+            mime={mime}
+            setMetadata={setMetadata}
+            setLoadingFileData={setLoadingFileData}
+          />
+        )
+      }
+
+      if (/image/gi.test(currentFileData.type)) {
+        type = (
+          <Img
+            src={data}
+            title={title}
+            humanSize={humanSize}
+            mime={mime}
+            setMetadata={setMetadata}
+            setLoadingFileData={setLoadingFileData}
+          />
+        )
+      }
+
+      if (/text/gi.test(currentFileData.type)) {
+        type = (
+          <Paragraph
+            fullText={currentFileData.data}
+            showText={currentFileData.data.substring(0, 300) + '…'}
+            title={title}
+            humanSize={humanSize}
+            mime={mime}
+            setMetadata={setMetadata}
+          />
+        )
+      }
+
+      // this will set the file display to the correct element created above based on
+      // the file's type.
+      setFileDisplay(type)
+    }
+  }, [currentFileData])
 
   // function that just clears the status message
   const t = () => {
-    setStatusText("");
-    setStatusMessage({ display: false, text: "", type: null });
-  };
+    setStatusText('')
+    setStatusMessage({ display: false, text: '', type: null })
+  }
 
   // function to clear all running timeouts belonging to this component
   const clearAll = () => {
     for (let i = 0; i < timeouts.length; i++) {
-      clearTimeout(timeouts[i]);
+      clearTimeout(timeouts[i])
     }
-  };
+  }
 
   // when the user wants to connect a record to another one
-  const [makingConnection, setMakingConnection] = useState(false);
-  const [makingDisconnection, setMakingDisconnection] = useState(false);
-  const [connectionOptions, setConnectionOptions] = useState(false);
-  const [disconnectionOptions, setDisconnectionOptions] = useState(false);
+  const [makingConnection, setMakingConnection] = useState(false)
+  const [makingDisconnection, setMakingDisconnection] = useState(false)
+  const [connectionOptions, setConnectionOptions] = useState(false)
+  const [disconnectionOptions, setDisconnectionOptions] = useState(false)
 
   // handle connecting a record to another record.
   const handleConnectRecord = () => {
     // find out what the record can actually connect to. all connections are bidirectional
-    const canConnectTo = new StructureMap[type]().connectsTo;
+    const canConnectTo = new StructureMap[type]().connectsTo
 
     // find all the possible connections, meaning find every structure that this structure
     // 1. can connect to, as defined above
@@ -371,25 +356,25 @@ const DataStructure = props => {
     const possibleConnections = Object.entries(minerva.record.records)
       .map(([k, v]) => {
         if (canConnectTo.includes(k)) {
-          return v;
-        } else return false;
+          return v
+        } else return false
       })
       .filter(Boolean)
       .flat(Infinity)
       .filter(item => {
-        if (Object.values(item.connectedTo).includes(structId)) return false;
-        else return true;
-      });
+        if (Object.values(item.connectedTo).includes(structId)) return false
+        else return true
+      })
 
     // set the ui to indicate that a connection can be made
-    setMakingConnection(!makingConnection);
+    setMakingConnection(!makingConnection)
 
     // hide the disconnection menu if it's showing
-    setMakingDisconnection(false);
+    setMakingDisconnection(false)
 
     // set the list of connection options as determined above.
-    setConnectionOptions(possibleConnections);
-  };
+    setConnectionOptions(possibleConnections)
+  }
 
   // when a user wants to disconnect a record from its parent.
   const handleDisconnectRecord = () => {
@@ -398,284 +383,273 @@ const DataStructure = props => {
     // the ids of the structures that can be disconnected.
     const currentRecord = minerva.record.records[type].find(
       r => r.id === structId
-    );
+    )
 
     // find what the record is connected to
-    const possibleDisconnections = currentRecord.connectedTo;
+    const possibleDisconnections = currentRecord.connectedTo
 
     // set the ui to indicate that a disconnection can be made
-    setMakingDisconnection(!makingDisconnection);
+    setMakingDisconnection(!makingDisconnection)
 
     // hide the connection ui if it's showing
-    setMakingConnection(false);
+    setMakingConnection(false)
 
     // set the disconnections array to the possible disconnection options.
-    setDisconnectionOptions(possibleDisconnections);
-  };
+    setDisconnectionOptions(possibleDisconnections)
+  }
 
   // when user clicks confirm or deny, this is the function that handles the choice
   // to delete or not delete the structure.
   const onDeleteChoice = (e, confirm) => {
-    setDeletionStarted(false);
+    setDeletionStarted(false)
 
     if (confirm) {
       // remove the appropriate record from minerva and close the window.
-      minerva.removeFromRecord(structId, type);
-      setRenderConList(uuidv4());
-      handleWindowCommand(e, "close");
+      minerva.removeFromRecord(structId, type)
+      setRenderConList(uuidv4())
+      handleWindowCommand(e, 'close')
     }
-  };
+  }
 
   // this function names the structure.
   const addName = () => {
-    let errorMessage;
+    let errorMessage
 
-    if (!nameRef.current.value) errorMessage = "cannot set empty name.";
+    if (!nameRef.current.value) errorMessage = 'cannot set empty name.'
 
     if (errorMessage) {
       setStatusMessage({
         display: true,
         text: errorMessage,
-        type: "fail"
-      });
+        type: 'fail'
+      })
 
-      audiomanager.play("e_one");
+      audiomanager.play('e_one')
 
-      clearAll();
-      timeouts.push(setTimeout(t, 3000));
+      clearAll()
+      timeouts.push(setTimeout(t, 3000))
 
-      return;
+      return
     }
 
     // update the name in minerva's record...
-    minerva.editInRecord(structId, type, "name", nameRef.current.value);
+    minerva.editInRecord(structId, type, 'name', nameRef.current.value)
 
     // ...then set the name in the ui.
-    setInfo({ ...info, name: nameRef.current.value });
+    setInfo({ ...info, name: nameRef.current.value })
 
-    nameRef.current.value = "";
+    nameRef.current.value = ''
 
     // make windows and connection lists rerender
-    setRenderConList(uuidv4());
-  };
+    setRenderConList(uuidv4())
+  }
 
-  const [showTagEditInterface, setShowTagEditInterface] = useState(false);
-  const [currentTag, setCurrentTag] = useState();
+  const [showTagEditInterface, setShowTagEditInterface] = useState(false)
+  const [currentTag, setCurrentTag] = useState()
 
   // show the tag editing interface when a tag is right clicked,
   // or hide it if it's already showing.
   const editTag = tag => {
-    setCurrentTag(tag);
-    setShowTagEditInterface(!showTagEditInterface);
-  };
+    setCurrentTag(tag)
+    setShowTagEditInterface(!showTagEditInterface)
+  }
 
   // change the tag color to whatever color the user clicks.
   const changeTagColor = color => {
     const colorCode = Object.entries(ColorCodes).find(
       item => color === item[1]
-    )[0];
+    )[0]
 
     const newTags = info.tags.map(item => {
-      if (item.name === currentTag.name) return { ...item, color: colorCode };
-      return item;
-    });
+      if (item.name === currentTag.name) return { ...item, color: colorCode }
+      return item
+    })
 
-    setInfo({ ...info, tags: newTags });
-    setCurrentTag(null);
-    setShowTagEditInterface(false);
+    setInfo({ ...info, tags: newTags })
+    setCurrentTag(null)
+    setShowTagEditInterface(false)
 
-    setRenderConList(uuidv4());
-  };
+    setRenderConList(uuidv4())
+  }
 
   const addTag = () => {
-    const newTag = { name: tagRef.current.value, color: "white" };
+    const newTag = { name: tagRef.current.value, color: 'white' }
 
-    let errorMessage;
+    let errorMessage
 
     if (info.tags && info.tags.some(e => e.name === newTag.name))
-      errorMessage = "cannot add duplicate tag.";
-    if (!newTag.name) errorMessage = "cannot add empty tags.";
+      errorMessage = 'cannot add duplicate tag.'
+    if (!newTag.name) errorMessage = 'cannot add empty tags.'
 
     if (errorMessage) {
       setStatusMessage({
         display: true,
         text: errorMessage,
-        type: "fail"
-      });
+        type: 'fail'
+      })
 
-      audiomanager.play("e_one");
+      audiomanager.play('e_one')
 
-      clearAll();
-      timeouts.push(setTimeout(t, 3000));
+      clearAll()
+      timeouts.push(setTimeout(t, 3000))
 
-      return;
+      return
     }
 
     setInfo({
       ...info,
       tags: info.tags ? [...info.tags, newTag] : [newTag]
-    });
+    })
 
-    tagRef.current.value = "";
+    tagRef.current.value = ''
 
-    setRenderConList(uuidv4());
-  };
+    setRenderConList(uuidv4())
+  }
 
   const removeTag = tag => {
     if (info.tags) {
-      const newTags = info.tags.filter(item => item.name !== tag.name);
+      const newTags = info.tags.filter(item => item.name !== tag.name)
 
-      setInfo({ ...info, tags: newTags });
+      setInfo({ ...info, tags: newTags })
 
-      setRenderConList(uuidv4());
+      setRenderConList(uuidv4())
     }
-  };
+  }
 
   // this effect watches the tags array and updates minerva's record
   // whenever it changes. this prevents the two from ever desyncing.
-  useEffect(
-    () => {
-      if (info.tags) {
-        if (info) {
-          const newWindows = minerva.windows.map(item => {
-            if (item.componentProps)
-              if (
-                item.componentProps.info &&
-                item.componentProps.structId === structId
-              ) {
-                return {
-                  ...item,
-                  componentProps: {
-                    ...item.componentProps,
-                    info: {
-                      ...info,
-                      tags: [...info.tags]
-                    }
-                  }
-                };
-              }
-            return item;
-          });
-
-          minerva.setWindows([...newWindows]);
-          setWindows([...minerva.windows]);
-        }
-
-        minerva.editInRecord(structId, type, "tags", info.tags);
-
-        setWindows([...minerva.windows]);
-      }
-    },
-    [info.tags, minerva, type, setWindows, structId]
-  );
-
-  useEffect(
-    () => {
-      if (info && minerva.windows) {
+  useEffect(() => {
+    if (info.tags) {
+      if (info) {
         const newWindows = minerva.windows.map(item => {
           if (item.componentProps)
-            if (item.componentProps.structId === structId) {
+            if (
+              item.componentProps.info &&
+              item.componentProps.structId === structId
+            ) {
               return {
                 ...item,
-                componentProps: { ...item.componentProps, info }
-              };
+                componentProps: {
+                  ...item.componentProps,
+                  info: {
+                    ...info,
+                    tags: [...info.tags]
+                  }
+                }
+              }
             }
+          return item
+        })
 
-          return item;
-        });
-
-        minerva.setWindows([...newWindows]);
-        setWindows([...minerva.windows]);
+        minerva.setWindows([...newWindows])
+        setWindows([...minerva.windows])
       }
-    },
-    [info, structId, minerva, setWindows]
-  );
 
-  useEffect(
-    () => {
-      if (metadata) {
-        if (
-          metadata.pictureData &&
-          metadata.pictureSize &&
-          metadata.picture.data &&
-          metadata.picture.format
-        ) {
-          const f = {
-            data: metadata.pictureData,
-            title: metadata.picture.description,
-            humanSize: metadata.pictureSize,
-            mime: metadata.picture.format
-          };
+      minerva.editInRecord(structId, type, 'tags', info.tags)
 
-          const component = (
-            <Img
-              src={f.data}
-              title={f.title}
-              humanSize={f.humanSize}
-              mime={f.mime}
-              setMetadata={setMetadata}
-              onLoad={() => void false}
-              setLoadingFileData={setLoadingFileData}
-            />
-          );
+      setWindows([...minerva.windows])
+    }
+  }, [info.tags, minerva, type, setWindows, structId])
 
-          const xdata = { ...metadata };
-          const { title, humanSize, mime, ext } = currentFileData;
+  useEffect(() => {
+    if (info && minerva.windows) {
+      const newWindows = minerva.windows.map(item => {
+        if (item.componentProps)
+          if (item.componentProps.structId === structId) {
+            return {
+              ...item,
+              componentProps: { ...item.componentProps, info }
+            }
+          }
 
-          // delete the unneeded picture data, which is huge and could slow down the website
-          delete xdata.pictureData;
-          delete xdata.picture.data;
+        return item
+      })
 
-          minerva.record.findRecordByIdAsync(structId).then(item => {
-            minerva.editInRecord(structId, type, "data", {
-              ...item.data,
-              file: { title, humanSize, mime, ext },
-              metadata: xdata
-            });
-          });
+      minerva.setWindows([...newWindows])
+      setWindows([...minerva.windows])
+    }
+  }, [info, structId, minerva, setWindows])
 
-          setImageDisplay(component);
-        } else {
-          const { title, humanSize, mime, ext } = currentFileData;
-
-          minerva.record.findRecordByIdAsync(structId).then(item => {
-            minerva.editInRecord(structId, type, "data", {
-              ...item.data,
-              file: { title, humanSize, mime, ext },
-              metadata
-            });
-          });
+  useEffect(() => {
+    if (metadata) {
+      if (
+        metadata.pictureData &&
+        metadata.pictureSize &&
+        metadata.picture.data &&
+        metadata.picture.format
+      ) {
+        const f = {
+          data: metadata.pictureData,
+          title: metadata.picture.description,
+          humanSize: metadata.pictureSize,
+          mime: metadata.picture.format
         }
+
+        const component = (
+          <Img
+            src={f.data}
+            title={f.title}
+            humanSize={f.humanSize}
+            mime={f.mime}
+            setMetadata={setMetadata}
+            onLoad={() => void false}
+            setLoadingFileData={setLoadingFileData}
+          />
+        )
+
+        const xdata = { ...metadata }
+        const { title, humanSize, mime, ext } = currentFileData
+
+        // delete the unneeded picture data, which is huge and could slow down the website
+        delete xdata.pictureData
+        delete xdata.picture.data
+
+        minerva.record.findRecordByIdAsync(structId).then(item => {
+          minerva.editInRecord(structId, type, 'data', {
+            ...item.data,
+            file: { title, humanSize, mime, ext },
+            metadata: xdata
+          })
+        })
+
+        setImageDisplay(component)
+      } else {
+        const { title, humanSize, mime, ext } = currentFileData
+
+        minerva.record.findRecordByIdAsync(structId).then(item => {
+          minerva.editInRecord(structId, type, 'data', {
+            ...item.data,
+            file: { title, humanSize, mime, ext },
+            metadata
+          })
+        })
       }
-    },
-    [metadata]
-  );
+    }
+  }, [metadata])
 
   return (
-    <div className="structure-content">
-      <div className="structure-left-column">
-        <header className="structure-header">
+    <div className='structure-content'>
+      <div className='structure-left-column'>
+        <header className='structure-header'>
           <p>
             <span
               title={
-                info.type === info.name ? "untitled data structure" : info.name
-              }
-            >
+                info.type === info.name ? 'untitled data structure' : info.name
+              }>
               {info.type === info.name
-                ? "untitled data structure"
+                ? 'untitled data structure'
                 : info.name.length > 30
-                  ? info.name.substring(0, 30).padEnd(31, "…")
-                  : info.name}{" "}
-              -{" "}
+                ? info.name.substring(0, 30).padEnd(31, '…')
+                : info.name}{' '}
+              -{' '}
               <span
-                className="structure-type"
-                title={StructureDescriptions[type]}
-              >
+                className='structure-type'
+                title={StructureDescriptions[type]}>
                 {type}
               </span>
             </span>
           </p>
-          <ul className="structure-taglist">
+          <ul className='structure-taglist'>
             {info.tags
               ? info.tags.map((t, i) => {
                   return (
@@ -686,7 +660,7 @@ const DataStructure = props => {
                       removeTag={removeTag}
                       editTag={editTag}
                     />
-                  );
+                  )
                 })
               : false}
           </ul>
@@ -694,18 +668,18 @@ const DataStructure = props => {
           {loadingFileData ? <div>loading file data...</div> : false}
 
           {showTagEditInterface && (
-            <div className="structure-tag-editor">
-              <div className="color-box">
-                <ul className="color-box-list">
+            <div className='structure-tag-editor'>
+              <div className='color-box'>
+                <ul className='color-box-list'>
                   {[...Array(Object.values(ColorCodes).length)].map((_c, i) => {
-                    const [, v] = Object.entries(ColorCodes)[i];
+                    const [, v] = Object.entries(ColorCodes)[i]
                     return (
                       <li
                         onClick={() => changeTagColor(v)}
                         key={`${v}-${i}`}
                         className={`color-box-item ${v}`}
                       />
-                    );
+                    )
                   })}
                 </ul>
               </div>
@@ -713,7 +687,7 @@ const DataStructure = props => {
           )}
         </header>
 
-        <section className="structure-data">
+        <section className='structure-data'>
           <DataDisplay
             currentFileData={currentFileData}
             showImage={showImage}
@@ -733,14 +707,14 @@ const DataStructure = props => {
           />
         </section>
 
-        <section className="structure-controls">
+        <section className='structure-controls'>
           <div>
             <input
               onKeyDown={e => {
-                if (e.key.toLowerCase() === "enter") addName();
+                if (e.key.toLowerCase() === 'enter') addName()
               }}
-              type="text"
-              placeholder="enter a name"
+              type='text'
+              placeholder='enter a name'
               ref={nameRef}
             />
             <button onClick={addName}>set name</button>
@@ -749,10 +723,10 @@ const DataStructure = props => {
           <div>
             <input
               onKeyDown={e => {
-                if (e.key.toLowerCase() === "enter") addTag();
+                if (e.key.toLowerCase() === 'enter') addTag()
               }}
-              type="text"
-              placeholder="add custom tag"
+              type='text'
+              placeholder='add custom tag'
               ref={tagRef}
             />
             <button onClick={addTag}>add tag</button>
@@ -762,36 +736,33 @@ const DataStructure = props => {
             {deletionStarted ? (
               <Fragment>
                 <button
-                  className="confirm-button"
-                  onClick={e => onDeleteChoice(e, true)}
-                >
+                  className='confirm-button'
+                  onClick={e => onDeleteChoice(e, true)}>
                   <span>confirm</span>
                 </button>
                 <button
-                  className="deny-button"
-                  onClick={e => onDeleteChoice(e, false)}
-                >
+                  className='deny-button'
+                  onClick={e => onDeleteChoice(e, false)}>
                   <span>deny</span>
                 </button>
               </Fragment>
             ) : (
               <button
-                className="delete-button"
-                onClick={() => setDeletionStarted(true)}
-              >
+                className='delete-button'
+                onClick={() => setDeletionStarted(true)}>
                 <span>delete record</span>
               </button>
             )}
           </div>
 
           <div>
-            {type !== "hypostasis" && (
-              <button className="connect-button" onClick={handleConnectRecord}>
+            {type !== 'hypostasis' && (
+              <button className='connect-button' onClick={handleConnectRecord}>
                 connect record
               </button>
             )}
 
-            <button className="connect-button" onClick={handleDisconnectRecord}>
+            <button className='connect-button' onClick={handleDisconnectRecord}>
               disconnect record
             </button>
           </div>
@@ -810,15 +781,15 @@ const DataStructure = props => {
           />
         )}
       </div>
-      <div className="structure-right-column">
+      <div className='structure-right-column'>
         {Object.keys(info).length > 0 && <Notes id={structId} />}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default memo(DataStructure);
+export default memo(DataStructure)
 
 DataStructure.propTypes = {
   type: PropTypes.string
-};
+}

@@ -1,12 +1,12 @@
-import AkashicRecord from "./../structures/AkashicRecord";
-import DatabaseInterface from "./Database";
-import { uuidv4, validateUUIDv4 } from "./../misc";
-import { naturalDate } from "./../dateUtils";
+import AkashicRecord from './../structures/AkashicRecord'
+import DatabaseInterface from './Database'
+import { uuidv4, validateUUIDv4 } from './../misc'
+import { naturalDate } from './../dateUtils'
 
-import worker from "./workers/compressionWorker.worker";
-import exportWorker from "./workers/exportWorker.worker";
+import worker from './workers/compressionWorker.worker'
+import exportWorker from './workers/exportWorker.worker'
 
-const workerInstance = worker();
+const workerInstance = worker()
 
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
@@ -33,20 +33,20 @@ export class Minerva {
    */
   constructor(options, database) {
     if (!database instanceof DatabaseInterface)
-      throw new TypeError("database must be an instance of DatabaseInterface.");
+      throw new TypeError('database must be an instance of DatabaseInterface.')
     if (options.user && !validateUUIDv4(options.user.id))
       throw new Error(
         `user was created with an invalid user id: ${options.user.id}`
-      );
+      )
 
-    this.user = { ...options.user, password: "" } || null;
+    this.user = { ...options.user, password: '' } || null
 
     // minerva's voice synth engine
-    this.voice = null;
+    this.voice = null
 
     // a place to temporarily store files (that will need to be used in the near
     // future) while they're not being used.
-    this.temp = {};
+    this.temp = {}
 
     // if a user exists already, get their record. otherwise, the record is
     // an empty object.
@@ -56,18 +56,18 @@ export class Minerva {
           this.user.name,
           database
         ) || {}
-      : {};
+      : {}
 
     // open indexedDB instance
-    let db = window.indexedDB.open("minerva_db");
-    this.dbReq = db;
+    let db = window.indexedDB.open('minerva_db')
+    this.dbReq = db
 
     // this will be given a value when the database is successfully opened
-    this.indexedDB = null;
+    this.indexedDB = null
 
     db.onerror = event => {
-      console.warn("error with indexedDB", event.target.error);
-    };
+      console.warn('error with indexedDB', event.target.error)
+    }
 
     db.onsuccess = event => {
       // console.log("indexedDB success.", event);
@@ -75,80 +75,80 @@ export class Minerva {
       // this part makes sure that the indexedDB property is set only if
       // the success event that fired was an IDBOpenDBRequest.
       if (event.target instanceof IDBOpenDBRequest) {
-        this.indexedDB = event.target.result;
+        this.indexedDB = event.target.result
       }
-    };
+    }
 
     // if a version is specified that is higher than the existing version
     db.onupgradeneeded = event => {
-      console.log("running database upgrade");
+      console.log('running database upgrade')
 
-      const db = event.target.result;
+      const db = event.target.result
 
       // create object store with keypath of id. keypath will cause
       // the object store to use that key as a unique index.
-      const objectStore = db.createObjectStore("minerva_files", {
-        keyPath: "id"
-      });
+      const objectStore = db.createObjectStore('minerva_files', {
+        keyPath: 'id'
+      })
 
       // names can contain duplicates, but can be used to search the database
-      objectStore.createIndex("name", "name", { unique: false });
+      objectStore.createIndex('name', 'name', { unique: false })
 
       // an index to search documents by name. must be unique
-      objectStore.createIndex("id", "id", { unique: true });
-    };
+      objectStore.createIndex('id', 'id', { unique: true })
+    }
 
-    this.windows = [];
+    this.windows = []
 
     // if there's already settings in storage, combine them with the default settings
     // just to add resilience in case more settings are added in the future - this
     // will allow us to avoid errors if there is an extra setting that wasn't previously
     // stored in localstorage when the app loads
-    if (MinervaArchive.get("minerva_store")) {
-      const settings = MinervaArchive.get("minerva_store").settings[
+    if (MinervaArchive.get('minerva_store')) {
+      const settings = MinervaArchive.get('minerva_store').settings[
         this.user.id
-      ];
+      ]
 
-      this.windows = MinervaArchive.get("minerva_store")
-        ? MinervaArchive.get("minerva_store").windows[this.user.id]
-          ? MinervaArchive.get("minerva_store").windows[this.user.id]
+      this.windows = MinervaArchive.get('minerva_store')
+        ? MinervaArchive.get('minerva_store').windows[this.user.id]
+          ? MinervaArchive.get('minerva_store').windows[this.user.id]
           : []
-        : [];
+        : []
 
-      this.usageData = MinervaArchive.get("minerva_store")
-        ? MinervaArchive.get("minerva_store").usageData[this.user.id]
-          ? MinervaArchive.get("minerva_store").usageData[this.user.id]
+      this.usageData = MinervaArchive.get('minerva_store')
+        ? MinervaArchive.get('minerva_store').usageData[this.user.id]
+          ? MinervaArchive.get('minerva_store').usageData[this.user.id]
           : {}
-        : {};
+        : {}
 
       // this.usageData = {};
 
-      const defaultSettings = Minerva.defaultSettings;
+      const defaultSettings = Minerva.defaultSettings
 
       if (settings) {
         if (Object.keys(settings).length === 0) {
-          this.settings = defaultSettings;
+          this.settings = defaultSettings
         } else {
-          this.settings = { ...defaultSettings, ...settings };
+          this.settings = { ...defaultSettings, ...settings }
         }
-      } else this.settings = defaultSettings;
+      } else this.settings = defaultSettings
     }
 
     // windows is an array of window objects that contain info on the windows contents / position
 
     // this should always be an instance of databaseinterface
-    this.database = database;
+    this.database = database
 
     // userId that's the same as user.id. not sure what this would be for yet
-    this.userId = options.user ? options.user.id : null;
+    this.userId = options.user ? options.user.id : null
 
     // records last update date
-    this.recordUpdated = 0;
+    this.recordUpdated = 0
     // and indexeddb last update date
-    this.indexedDBUpdated = new Date().toISOString();
+    this.indexedDBUpdated = new Date().toISOString()
   }
 
-  static fileHeader = "minervas_akasha_alpha";
+  static fileHeader = 'minervas_akasha_alpha'
 
   // this is the single source of truth for the default application settings
   static get defaultSettings() {
@@ -158,20 +158,20 @@ export class Minerva {
         effect: 50, // volume for sound effects like the typing sound, startup sound
         voice: 70 // volume for minerva's voice (not yet implemented)
       },
-      timeFormat: "24hr", // 12hr sets 12 hour mode, 24hr is 24 hour mode (wow!)
+      timeFormat: '24hr', // 12hr sets 12 hour mode, 24hr is 24 hour mode (wow!)
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true, // dictates whether users can see content from other users.
       filters: {
         crt: true, // an animated filter overlay emulating an old crt screen.
         noise: true // a light noise texture underneath the crt filter.
       }, // enables / disables graphical filters.
-      syscol: { bg: "black", fg: "white", hl: "pink" }, // system colors
-      machine: "MNRV", // name of "machine"
-      dateFormat: "ja-JP", // for formatting dates / times
+      syscol: { bg: 'black', fg: 'white', hl: 'pink' }, // system colors
+      machine: 'MNRV', // name of "machine"
+      dateFormat: 'ja-JP', // for formatting dates / times
       textEditor: {
         maxHistoryDepth: 200 // for the text editor's undo / redo functionality
       }
-    };
+    }
   }
 
   /**
@@ -180,7 +180,7 @@ export class Minerva {
    * @returns {AkashicRecord} the current akashic record
    */
   updateIndexedDBUpdatedTimestamp() {
-    this.indexedDBUpdated = new Date().toISOString();
+    this.indexedDBUpdated = new Date().toISOString()
   }
 
   /**
@@ -189,9 +189,9 @@ export class Minerva {
    * @returns {AkashicRecord} the current akashic record
    */
   updateRecordUpdatedTimeStamp() {
-    this.recordUpdated = new Date().toISOString();
+    this.recordUpdated = new Date().toISOString()
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -204,18 +204,18 @@ export class Minerva {
    */
   addToRecord(id, structure) {
     if (!id || !validateUUIDv4(id) || !structure)
-      throw new Error("missing arguments to addToRecord.");
+      throw new Error('missing arguments to addToRecord.')
 
-    this.updateRecordUpdatedTimeStamp();
-    this.record.addToRecord(id, structure, this);
-    this.save();
+    this.updateRecordUpdatedTimeStamp()
+    this.record.addToRecord(id, structure, this)
+    this.save()
 
     this.updateUsageData(
-      "structures",
+      'structures',
       Object.values(this.record.records).flat(Infinity).length
-    );
+    )
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -229,18 +229,18 @@ export class Minerva {
    */
   removeFromRecord(id, type) {
     if (!id || !validateUUIDv4(id) || !type)
-      throw new Error("invalid arguments to Minerva.removeFromRecord.");
+      throw new Error('invalid arguments to Minerva.removeFromRecord.')
 
-    this.updateRecordUpdatedTimeStamp();
-    this.record.removeFromRecord(id, type, this);
-    this.save();
+    this.updateRecordUpdatedTimeStamp()
+    this.record.removeFromRecord(id, type, this)
+    this.save()
 
     this.updateUsageData(
-      "structures",
+      'structures',
       Object.values(this.record.records).flat(Infinity).length
-    );
+    )
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -254,13 +254,13 @@ export class Minerva {
    */
   editInRecord(id, type, key, value) {
     if (!key || !validateUUIDv4(id) || !type || !value)
-      throw new Error("invalid arguments to Minerva.editInRecord.");
+      throw new Error('invalid arguments to Minerva.editInRecord.')
 
-    this.updateRecordUpdatedTimeStamp();
-    this.record.editInRecord(id, type, key, value, this);
-    this.save();
+    this.updateRecordUpdatedTimeStamp()
+    this.record.editInRecord(id, type, key, value, this)
+    this.save()
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -272,48 +272,48 @@ export class Minerva {
    * @returns {AkashicRecord} the current akashic record
    */
   connectRecord(item, destination) {
-    const destType = destination.type;
-    const itemType = item.type;
+    const destType = destination.type
+    const itemType = item.type
 
     // if the current record is an athenaeum, a few extra steps must be handled here.
-    if (destType === "hypostasis") {
+    if (destType === 'hypostasis') {
       console.log(
-        "the destination is a hypostasis! make sure that the connection is handled correctly."
-      );
+        'the destination is a hypostasis! make sure that the connection is handled correctly.'
+      )
 
-      console.log({ item, destination });
+      console.log({ item, destination })
 
-      console.log("the connection will not be made.");
+      console.log('the connection will not be made.')
 
-      return;
+      return
     }
 
-    item.connectedTo[destination.id] = destination.id;
-    destination.connectedTo[item.id] = item.id;
+    item.connectedTo[destination.id] = destination.id
+    destination.connectedTo[item.id] = item.id
 
     // add the newly connected record to the records of item's type
     const newItemTypeRecords = this.record.records[itemType].map(r => {
-      return r.id === item.id ? item : r;
-    });
+      return r.id === item.id ? item : r
+    })
 
     // add the newly connected record to the records of destination's type
     const newDestTypeRecords = this.record.records[destType].map(r => {
-      return r.id === destination.id ? destination : r;
-    });
+      return r.id === destination.id ? destination : r
+    })
 
-    this.record.records[itemType] = newItemTypeRecords;
-    this.record.records[destType] = newDestTypeRecords;
+    this.record.records[itemType] = newItemTypeRecords
+    this.record.records[destType] = newDestTypeRecords
 
-    this.save();
+    this.save()
 
     this.updateUsageData(
-      "structures",
+      'structures',
       Object.values(this.record.records).flat(Infinity).length
-    );
+    )
 
-    this.updateRecordUpdatedTimeStamp();
+    this.updateRecordUpdatedTimeStamp()
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -327,15 +327,15 @@ export class Minerva {
   disconnectFromAll(id) {
     // delete every entry for the specified id in every records connections object
     Object.entries(this.record.records).forEach(([_, v]) => {
-      v.forEach(item => delete item.connectedTo[id]);
-    });
+      v.forEach(item => delete item.connectedTo[id])
+    })
 
     this.updateUsageData(
-      "structures",
+      'structures',
       Object.values(this.record.records).flat(Infinity).length
-    );
+    )
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -347,46 +347,46 @@ export class Minerva {
    * @returns {AkashicRecord} the current akashic record
    */
   disconnectRecord(item, destination) {
-    const destType = destination.type;
-    const itemType = item.type;
+    const destType = destination.type
+    const itemType = item.type
 
     const newItemTypeRecords = this.record.records[itemType].map(record => {
       // if this is the item I'm trying to disconnect, delete the
       // corresponding connectedTo entry
       if (record.id === item.id) {
-        const r = record;
-        delete r.connectedTo[destination.id];
+        const r = record
+        delete r.connectedTo[destination.id]
 
-        return r;
+        return r
       }
-      return record;
-    });
+      return record
+    })
 
     // do the same thing as above, but in the other 'direction'
     const newDestTypeRecords = this.record.records[destType].map(record => {
       if (record.id === destination.id) {
-        const r = record;
-        delete r.connectedTo[item.id];
+        const r = record
+        delete r.connectedTo[item.id]
 
-        return r;
+        return r
       }
-      return record;
-    });
+      return record
+    })
 
     // set the records of the correct types to the newly formed arrays
-    this.record.records[itemType] = newItemTypeRecords;
-    this.record.records[destType] = newDestTypeRecords;
+    this.record.records[itemType] = newItemTypeRecords
+    this.record.records[destType] = newDestTypeRecords
 
-    this.save();
+    this.save()
 
-    this.updateRecordUpdatedTimeStamp();
+    this.updateRecordUpdatedTimeStamp()
 
     this.updateUsageData(
-      "structures",
+      'structures',
       Object.values(this.record.records).flat(Infinity).length
-    );
+    )
 
-    return this.record;
+    return this.record
   }
 
   /**
@@ -398,11 +398,11 @@ export class Minerva {
    */
   setWindows(array) {
     if (!array || !Array.isArray(array))
-      throw new TypeError("invalid parameters to minerva.setWindows");
+      throw new TypeError('invalid parameters to minerva.setWindows')
 
-    this.windows = array;
+    this.windows = array
 
-    this.save();
+    this.save()
   }
 
   /**
@@ -413,16 +413,16 @@ export class Minerva {
    * @returns {undefined} void
    */
   changeSetting(settings, key, value) {
-    if (!settings || typeof settings !== "object")
-      throw new TypeError("invalid parameters to minerva.changeSetting");
+    if (!settings || typeof settings !== 'object')
+      throw new TypeError('invalid parameters to minerva.changeSetting')
 
     if (key && value !== undefined) {
-      this.settings[key] = value;
-      return void this.save();
+      this.settings[key] = value
+      return void this.save()
     }
 
-    this.settings = settings;
-    this.save();
+    this.settings = settings
+    this.save()
   }
 
   /**
@@ -433,105 +433,105 @@ export class Minerva {
    * to download the file, or rejects on any error.
    */
   exportDataToJsonFile() {
-    const t1 = performance.now();
+    const t1 = performance.now()
 
-    const mStore = MinervaArchive.get("minerva_store");
+    const mStore = MinervaArchive.get('minerva_store')
 
     // only get data belonging to the current user
     mStore.windows = mStore.windows[this.user.id].filter(
       item => item.belongsTo === this.user.id
-    );
-    mStore.records = mStore.records[this.user.id];
-    mStore.settings = mStore.settings[this.user.id];
-    mStore.usageData = mStore.usageData[this.user.id];
+    )
+    mStore.records = mStore.records[this.user.id]
+    mStore.settings = mStore.settings[this.user.id]
+    mStore.usageData = mStore.usageData[this.user.id]
 
-    console.log(mStore);
+    console.log(mStore)
 
-    const userStore = MinervaArchive.get(this.user.name);
-    const db = this.indexedDB;
+    const userStore = MinervaArchive.get(this.user.name)
+    const db = this.indexedDB
 
-    const transaction = db.transaction(["minerva_files"], "readonly");
+    const transaction = db.transaction(['minerva_files'], 'readonly')
 
-    const objectStore = transaction.objectStore("minerva_files");
+    const objectStore = transaction.objectStore('minerva_files')
 
     // promise that resolves when all values are retrieved from db
     const promiseVals = new Promise((resolve, reject) => {
-      const reqVals = objectStore.getAll();
+      const reqVals = objectStore.getAll()
 
       reqVals.onsuccess = e => {
-        resolve({ values: e.target.result });
-      };
+        resolve({ values: e.target.result })
+      }
 
-      reqVals.onerror = err => void reject({ status: "failure", err });
-    });
+      reqVals.onerror = err => void reject({ status: 'failure', err })
+    })
 
     return new Promise((resolveAll, rejectWithError) => {
       // wait for all values to be retrieved...
       promiseVals
         .then(result => {
-          const res = { keys: [], values: [] };
-          const toExport = {};
+          const res = { keys: [], values: [] }
+          const toExport = {}
 
           result.values.forEach(item => {
             if (item.userId === this.user.id) {
-              res.keys.push(item.id);
-              res.values.push(item);
+              res.keys.push(item.id)
+              res.values.push(item)
             }
-          });
+          })
 
           res.values.forEach(item => {
-            if (res.keys.includes(item.id)) toExport[item.id] = item;
+            if (res.keys.includes(item.id)) toExport[item.id] = item
             else
               rejectWithError(
                 new Error({
                   message:
-                    "malformed indexedDB object encountered. you should literally never ever see this error.",
+                    'malformed indexedDB object encountered. you should literally never ever see this error.',
                   items: res
                 })
-              );
-          });
+              )
+          })
 
-          const workerInstance = new exportWorker();
+          const workerInstance = new exportWorker()
 
-          workerInstance.postMessage({ data: toExport, action: "stringify" });
+          workerInstance.postMessage({ data: toExport, action: 'stringify' })
 
-          workerInstance.addEventListener("message", e => {
+          workerInstance.addEventListener('message', e => {
             const exportObject = {
               minerva_file_header: Minerva.fileHeader,
               minerva_store: mStore,
               [`${this.user.name}${this.user.id}`]: userStore,
               minerva_db: e.data.minerva_db
-            };
+            }
 
-            const finalStringifyWorker = new exportWorker();
+            const finalStringifyWorker = new exportWorker()
 
             finalStringifyWorker.postMessage({
               data: exportObject,
-              action: "stringifyandblob"
-            });
+              action: 'stringifyandblob'
+            })
 
-            finalStringifyWorker.addEventListener("message", e => {
-              const dataUrl = e.data;
-              const dlLink = document.createElement("a");
-              dlLink.href = dataUrl;
+            finalStringifyWorker.addEventListener('message', e => {
+              const dataUrl = e.data
+              const dlLink = document.createElement('a')
+              dlLink.href = dataUrl
               dlLink.download = `minerva_sd_${
                 this.user.name
-              }${new Date().toISOString()}.json`;
-              dlLink.rel = "noopener noreferrer";
+              }${new Date().toISOString()}.json`
+              dlLink.rel = 'noopener noreferrer'
 
-              dlLink.click();
+              dlLink.click()
 
-              const t2 = performance.now();
+              const t2 = performance.now()
 
-              console.log(`exportDataToJsonFile took ${t2 - t1}ms.`);
-              resolveAll({ status: "success", link: e });
-            });
-          });
+              console.log(`exportDataToJsonFile took ${t2 - t1}ms.`)
+              resolveAll({ status: 'success', link: e })
+            })
+          })
         })
         .catch(err => {
-          console.log("error in catch in exportDataToJsonFile", err);
-        });
-    });
+          console.log('error in catch in exportDataToJsonFile', err)
+        })
+    })
   }
 
   /**
@@ -541,114 +541,114 @@ export class Minerva {
    * @returns {type} Description
    */
   importDataFromJsonFile(data) {
-    if (data.minerva_file_header !== "minervas_akasha_alpha") return false;
+    if (data.minerva_file_header !== 'minervas_akasha_alpha') return false
 
-    console.log("importing data from json file", data);
+    console.log('importing data from json file', data)
 
-    const { user, settings, usageData, records, windows } = data.minerva_store;
+    const { user, settings, usageData, records, windows } = data.minerva_store
 
-    const db = data.minerva_db;
+    const db = data.minerva_db
 
-    const worker = new exportWorker();
+    const worker = new exportWorker()
 
-    worker.postMessage({ action: "jsonParse", data: db });
+    worker.postMessage({ action: 'jsonParse', data: db })
 
-    worker.addEventListener("message", e => {
+    worker.addEventListener('message', e => {
       if (e.data) {
         Object.entries(e.data).forEach(([, v]) => {
           const transaction = this.indexedDB.transaction(
-            ["minerva_files"],
-            "readwrite"
-          );
+            ['minerva_files'],
+            'readwrite'
+          )
 
-          const record = v;
+          const record = v
 
-          const objectStore = transaction.objectStore("minerva_files");
+          const objectStore = transaction.objectStore('minerva_files')
 
           const req = objectStore.put({
             ...record
-          });
+          })
 
           req.onerror = err => {
-            console.error(err);
-          };
+            console.error(err)
+          }
 
           req.onsuccess = () => {
-            this.updateIndexedDBUpdatedTimestamp();
+            this.updateIndexedDBUpdatedTimestamp()
 
             const newUser = {
               dateCreated: user.dateCreated,
               password: data[`${user.name}${user.id}`].password,
               id: user.id,
               name: user.name
-            };
+            }
 
-            this.set(`${newUser.name}`, newUser);
+            this.set(`${newUser.name}`, newUser)
 
-            console.log(records);
+            console.log(records)
 
-            this.user = user;
-            this.settings = settings;
-            this.usageData = usageData;
-            this.record.boundTo = records.boundTo;
-            this.record.dateCreated = records.dateCreated;
-            this.record.id = records.id;
-            this.record.name = records.name;
-            this.record.database = records.database;
-            this.record.records = records.records;
-            this.windows = windows;
+            this.user = user
+            this.settings = settings
+            this.usageData = usageData
+            this.record.boundTo = records.boundTo
+            this.record.dateCreated = records.dateCreated
+            this.record.id = records.id
+            this.record.name = records.name
+            this.record.database = records.database
+            this.record.records = records.records
+            this.windows = windows
 
-            this.save();
-            this.setApplicationWindows(this.windows);
-          };
-        });
+            this.save()
+            this.setApplicationWindows(this.windows)
+          }
+        })
       }
-    });
+    })
   }
 
   makeConfirmBox(options, data) {
-    const { confirm, deny, message } = options;
+    const { confirm, deny, message } = options
 
     // store data in temp to be used later
-    this.temp.importData = data;
+    this.temp.importData = data
 
     const findWindowAtPosition = xy => {
-      const allWindows = Object.values(this.windows).flat(Infinity);
+      const allWindows = Object.values(this.windows).flat(Infinity)
 
       const windowToFind = allWindows.find(
         item => item.position.x === xy && item.position.y === xy
-      );
+      )
 
-      return windowToFind || false;
-    };
-
-    let finalPosition = 100;
-
-    while (findWindowAtPosition(finalPosition)) {
-      finalPosition += 10;
+      return windowToFind || false
     }
 
-    const id = uuidv4();
+    let finalPosition = 100
+
+    while (findWindowAtPosition(finalPosition)) {
+      finalPosition += 10
+    }
+
+    const id = uuidv4()
 
     const closeImportDialog = () => {
-      console.log("denied.");
+      console.log('denied.')
 
-      delete this.temp.importData;
+      delete this.temp.importData
 
       this.setWindows([
         ...this.windows.filter(w => (w.id === id ? false : true))
-      ]);
+      ])
 
-      this.setApplicationWindows(this.windows);
-    };
+      this.setApplicationWindows(this.windows)
+    }
 
-    const denyFunc = deny || closeImportDialog;
+    const denyFunc = deny || closeImportDialog
 
     const confirmBoxObject = {
-      title: "confirmbox",
-      state: "restored",
-      stringType: "Window",
-      component: "ConfirmBox",
+      title: 'confirmbox',
+      state: 'restored',
+      stringType: 'Window',
+      component: 'ConfirmBox',
       componentProps: {
         confirm,
         deny: denyFunc,
@@ -660,26 +660,26 @@ export class Minerva {
         x: finalPosition,
         y: finalPosition
       }
-    };
+    }
 
-    this.setWindows([...this.windows, confirmBoxObject]);
+    this.setWindows([...this.windows, confirmBoxObject])
 
-    this.setApplicationWindows(this.windows);
+    this.setApplicationWindows(this.windows)
   }
 
   /**
    * resetRecords - removes all records from minerva, closing all datastructure windows.
    */
   resetRecords() {
-    this.record.resetRecords(this);
+    this.record.resetRecords(this)
 
     this.windows = this.windows.filter(item => {
-      return item.component.toLowerCase() !== "datastructure";
-    });
+      return item.component.toLowerCase() !== 'datastructure'
+    })
 
-    this.setApplicationWindows([...this.windows]);
+    this.setApplicationWindows([...this.windows])
 
-    this.save();
+    this.save()
   }
 
   /**
@@ -693,31 +693,31 @@ export class Minerva {
    * @returns {undefined} void
    */
   login(user, newUser = false, database = false) {
-    if (!user || typeof user !== "object")
-      throw new Error("Minerva.login requires a user object.");
+    if (!user || typeof user !== 'object')
+      throw new Error('Minerva.login requires a user object.')
 
-    this.user = user;
-    this.userId = user.id;
+    this.user = user
+    this.userId = user.id
 
-    this.usageData = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").usageData[user.id]
-        ? MinervaArchive.get("minerva_store").usageData[user.id]
+    this.usageData = MinervaArchive.get('minerva_store')
+      ? MinervaArchive.get('minerva_store').usageData[user.id]
+        ? MinervaArchive.get('minerva_store').usageData[user.id]
         : {}
-      : {};
+      : {}
 
-    this.settings = MinervaArchive.get("minerva_store")
-      ? MinervaArchive.get("minerva_store").settings[user.id]
-        ? MinervaArchive.get("minerva_store").settings[user.id]
+    this.settings = MinervaArchive.get('minerva_store')
+      ? MinervaArchive.get('minerva_store').settings[user.id]
+        ? MinervaArchive.get('minerva_store').settings[user.id]
         : Minerva.defaultSettings
-      : Minerva.defaultSettings;
+      : Minerva.defaultSettings
 
     this.set(
       `user:${user.id}:token`,
       {
-        expires: naturalDate("1 month from now")
+        expires: naturalDate('1 month from now')
       },
-      "user"
-    );
+      'user'
+    )
 
     // if it's a new user, make them a brand new record.
     if (newUser) {
@@ -728,7 +728,7 @@ export class Minerva {
         user.name,
         user.records,
         this.database
-      );
+      )
     } else {
       // if not a new user, get their record information
       // using the record's retrieval method.
@@ -736,10 +736,10 @@ export class Minerva {
         user.id,
         user.name,
         database
-      );
+      )
     }
 
-    this.save();
+    this.save()
   }
 
   /**
@@ -748,18 +748,18 @@ export class Minerva {
   logout() {
     // because the minervas_akasha key is meant to represent the currently
     // logged-in user, this key must be removed on logout.
-    MinervaArchive.remove("minervas_akasha");
+    MinervaArchive.remove('minervas_akasha')
     // MinervaArchive.remove(user.name);
 
-    MinervaArchive.set("logged_in", false);
-    MinervaArchive.remove(`user:${this.user.id}:token`);
+    MinervaArchive.set('logged_in', false)
+    MinervaArchive.remove(`user:${this.user.id}:token`)
 
-    this.user = null;
-    this.record = null;
-    this.userId = null;
+    this.user = null
+    this.record = null
+    this.userId = null
 
-    this.settings = Minerva.defaultSettings;
-    this.usageData = {};
+    this.settings = Minerva.defaultSettings
+    this.usageData = {}
   }
 
   /**
@@ -773,7 +773,7 @@ export class Minerva {
    * or resolves false if user is not found.
    */
   search(user, database = false) {
-    if (!user) throw new Error("Minerva.get requires a user object.");
+    if (!user) throw new Error('Minerva.get requires a user object.')
 
     if (database) {
       // search in database
@@ -783,9 +783,9 @@ export class Minerva {
     // on login attempt: search(user).then(() => do login stuff)
     return new Promise((resolve, _reject) => {
       if (this.get(user.name)) {
-        resolve(this.get(user.name));
-      } else resolve(false);
-    });
+        resolve(this.get(user.name))
+      } else resolve(false)
+    })
   }
 
   /**
@@ -800,25 +800,25 @@ export class Minerva {
    * with the database
    */
   get(key, database) {
-    if (!key) throw new Error("Minerva.get requires a key.");
+    if (!key) throw new Error('Minerva.get requires a key.')
 
     // type is only for searching in the database
     if (database) {
-      const { type } = database;
+      const { type } = database
       return new Promise((resolve, reject) => {
         this.database
           .find(key, type)
           .then(res => {
-            if (!res) reject({ status: "failure", message: "nothing found" });
-            else resolve(res);
+            if (!res) reject({ status: 'failure', message: 'nothing found' })
+            else resolve(res)
           })
           .catch(err => {
-            reject({ status: "failure", message: err });
-          });
-      });
+            reject({ status: 'failure', message: err })
+          })
+      })
     }
 
-    return JSON.parse(Minerva._store.getItem(key));
+    return JSON.parse(Minerva._store.getItem(key))
   }
 
   /**
@@ -835,7 +835,7 @@ export class Minerva {
    */
   set(key, value, type, database = false) {
     if (key === undefined)
-      throw new Error("invalid arguments passed to Minerva.set.");
+      throw new Error('invalid arguments passed to Minerva.set.')
 
     if (database) {
       // add to database
@@ -848,22 +848,22 @@ export class Minerva {
               .then(res => {
                 if (!res)
                   reject({
-                    status: "failure",
-                    message: "setting value failed"
-                  });
-                else resolve(res);
+                    status: 'failure',
+                    message: 'setting value failed'
+                  })
+                else resolve(res)
               })
               .catch(err => {
-                reject({ status: "failure", message: err });
-              });
+                reject({ status: 'failure', message: err })
+              })
           }
-        });
-      });
+        })
+      })
     }
 
-    Minerva._store.setItem(key, JSON.stringify(value));
+    Minerva._store.setItem(key, JSON.stringify(value))
 
-    return Minerva._store;
+    return Minerva._store
   }
 
   // compression / decompression methods
@@ -882,18 +882,18 @@ export class Minerva {
         // this part takes a long time and is causing the ui
         // to lag when compressing / decompressing a large file
         workerInstance.postMessage({
-          action: "compress",
+          action: 'compress',
           toCompress: base64String
-        });
+        })
 
         workerInstance.onmessage = message => {
-          resolve(message.data);
-        };
+          resolve(message.data)
+        }
       } catch (err) {
-        console.warn(err);
-        reject(err);
+        console.warn(err)
+        reject(err)
       }
-    });
+    })
   }
 
   /**
@@ -911,18 +911,18 @@ export class Minerva {
         // block the main thread while waiting for the worker
         // to finish decompressing the file
         workerInstance.postMessage({
-          action: "decompress",
+          action: 'decompress',
           toDecompress: data
-        });
+        })
 
         workerInstance.onmessage = message => {
-          resolve(message.data);
-        };
+          resolve(message.data)
+        }
       } catch (err) {
-        console.warn(err);
-        reject(err);
+        console.warn(err)
+        reject(err)
       }
-    });
+    })
   }
 
   /**
@@ -937,17 +937,17 @@ export class Minerva {
    */
   addFileToRecord(id, file, structure, compress = false) {
     if (!id || !validateUUIDv4(id) || !file || !structure)
-      throw new Error("invalid arguments passed to Minerva.addFileToRecord.");
+      throw new Error('invalid arguments passed to Minerva.addFileToRecord.')
 
     // take this.records and store them in the database
     const transaction = this.indexedDB.transaction(
-      ["minerva_files"],
-      "readwrite"
-    );
+      ['minerva_files'],
+      'readwrite'
+    )
 
-    const { type } = structure;
+    const { type } = structure
 
-    const objectStore = transaction.objectStore("minerva_files");
+    const objectStore = transaction.objectStore('minerva_files')
 
     if (compress) {
       return new Promise((resolve, reject) => {
@@ -956,34 +956,34 @@ export class Minerva {
           .then(res => {
             // take this.records and store them in the database
             const transaction = this.indexedDB.transaction(
-              ["minerva_files"],
-              "readwrite"
-            );
+              ['minerva_files'],
+              'readwrite'
+            )
 
-            const { type } = structure;
+            const { type } = structure
 
-            const objectStore = transaction.objectStore("minerva_files");
+            const objectStore = transaction.objectStore('minerva_files')
 
             const req = objectStore.put({
               id,
               userId: this.user.id,
               file: { ...file, data: res },
               type,
-              fileType: "audio",
-              compressed: "lzutf8"
-            });
+              fileType: 'audio',
+              compressed: 'lzutf8'
+            })
 
             req.onsuccess = () => {
-              this.updateIndexedDBUpdatedTimestamp();
-              resolve();
-            };
+              this.updateIndexedDBUpdatedTimestamp()
+              resolve()
+            }
           })
           .catch(err => {
-            console.log("error in lzCompress:", err);
+            console.log('error in lzCompress:', err)
 
-            reject({ status: "failure", message: err });
-          });
-      });
+            reject({ status: 'failure', message: err })
+          })
+      })
     } else {
       // otherwise just store immediately
       const req = objectStore.put({
@@ -991,11 +991,11 @@ export class Minerva {
         userId: this.user.id,
         file,
         type
-      });
+      })
 
       req.onsuccess = () => {
-        this.updateIndexedDBUpdatedTimestamp();
-      };
+        this.updateIndexedDBUpdatedTimestamp()
+      }
     }
   }
 
@@ -1010,43 +1010,41 @@ export class Minerva {
    */
   updateFileInRecord(id, key, value) {
     if (!id || !validateUUIDv4(id) || !key || !value)
-      throw new Error(
-        "invalid arguments passed to Minerva.updateFileInRecord."
-      );
+      throw new Error('invalid arguments passed to Minerva.updateFileInRecord.')
 
     const objectStore = this.indexedDB
-      .transaction(["minerva_files"], "readwrite")
-      .objectStore("minerva_files");
+      .transaction(['minerva_files'], 'readwrite')
+      .objectStore('minerva_files')
 
-    const request = objectStore.get(id);
+    const request = objectStore.get(id)
 
     return new Promise((resolve, reject) => {
       request.onerror = event => {
-        reject({ status: "error", event });
-      };
+        reject({ status: 'error', event })
+      }
 
       request.onsuccess = event => {
         // get the old value that we want to update
-        const data = event.target.result;
+        const data = event.target.result
 
         // update the value(s) in the object that you want to change
-        data[key] = value;
+        data[key] = value
 
         // put this updated object back into the database.
-        const requestUpdate = objectStore.put(data);
+        const requestUpdate = objectStore.put(data)
 
         requestUpdate.onerror = event => {
           // do something with the error
-          reject({ status: "error", event });
-        };
+          reject({ status: 'error', event })
+        }
 
         requestUpdate.onsuccess = event => {
           // success - the data is updated!
-          this.updateIndexedDBUpdatedTimestamp();
-          resolve({ status: "success", event });
-        };
-      };
-    });
+          this.updateIndexedDBUpdatedTimestamp()
+          resolve({ status: 'success', event })
+        }
+      }
+    })
   }
 
   /**
@@ -1060,23 +1058,23 @@ export class Minerva {
    */
   removeFileFromRecord(id) {
     if (!id || !validateUUIDv4(id))
-      throw new Error("invalid id passed to Minerva.removeFileFromRecord.");
+      throw new Error('invalid id passed to Minerva.removeFileFromRecord.')
 
     const request = this.indexedDB
-      .transaction(["minerva_files"], "readwrite")
-      .objectStore("minerva_files")
-      .delete(id);
+      .transaction(['minerva_files'], 'readwrite')
+      .objectStore('minerva_files')
+      .delete(id)
 
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
-        this.updateIndexedDBUpdatedTimestamp();
-        resolve();
-      };
+        this.updateIndexedDBUpdatedTimestamp()
+        resolve()
+      }
 
       request.onerror = e => {
-        reject(e);
-      };
-    });
+        reject(e)
+      }
+    })
   }
 
   /**
@@ -1089,11 +1087,11 @@ export class Minerva {
    */
   findFileInRecord(id) {
     if (!id || !validateUUIDv4(id))
-      throw new Error("invalid id passed to Minerva.findFileInRecord.");
+      throw new Error('invalid id passed to Minerva.findFileInRecord.')
 
-    const transaction = this.indexedDB.transaction(["minerva_files"]);
-    const objectStore = transaction.objectStore("minerva_files");
-    const request = objectStore.get(id);
+    const transaction = this.indexedDB.transaction(['minerva_files'])
+    const objectStore = transaction.objectStore('minerva_files')
+    const request = objectStore.get(id)
 
     return new Promise((resolve, reject) => {
       request.onsuccess = event => {
@@ -1105,20 +1103,20 @@ export class Minerva {
               const fileInformation = {
                 ...event.target.result,
                 file: { ...event.target.result.file, data: res }
-              };
+              }
 
-              resolve(fileInformation);
-            });
+              resolve(fileInformation)
+            })
           } else {
-            resolve(event.target.result);
+            resolve(event.target.result)
           }
         }
-      };
+      }
 
       request.onerror = e => {
-        reject(e);
-      };
-    });
+        reject(e)
+      }
+    })
   }
 
   /**
@@ -1128,37 +1126,37 @@ export class Minerva {
    * @returns {Minerva} the current instance of minerva.
    */
   save() {
-    if (MinervaArchive.get("minerva_store")) {
+    if (MinervaArchive.get('minerva_store')) {
       const store = {
         user: this.user,
-        settings: MinervaArchive.get("minerva_store")
+        settings: MinervaArchive.get('minerva_store')
           ? {
-              ...MinervaArchive.get("minerva_store").settings,
+              ...MinervaArchive.get('minerva_store').settings,
               [this.user.id]: this.settings
             }
           : { [this.user.id]: this.settings },
-        usageData: MinervaArchive.get("minerva_store")
+        usageData: MinervaArchive.get('minerva_store')
           ? {
-              ...MinervaArchive.get("minerva_store").usageData,
+              ...MinervaArchive.get('minerva_store').usageData,
               [this.user.id]: this.usageData
             }
           : { [this.user.id]: this.usageData },
-        records: MinervaArchive.get("minerva_store")
+        records: MinervaArchive.get('minerva_store')
           ? {
-              ...MinervaArchive.get("minerva_store").records,
+              ...MinervaArchive.get('minerva_store').records,
               [this.user.id]: this.record
             }
           : { [this.user.id]: this.record },
         // windows: this.windows
-        windows: MinervaArchive.get("minerva_store")
+        windows: MinervaArchive.get('minerva_store')
           ? {
-              ...MinervaArchive.get("minerva_store").windows,
+              ...MinervaArchive.get('minerva_store').windows,
               [this.user.id]: this.windows
             }
           : { [this.user.id]: this.windows }
-      };
+      }
 
-      MinervaArchive.set("minerva_store", store);
+      MinervaArchive.set('minerva_store', store)
     } else {
       const store = {
         user: this.user,
@@ -1166,12 +1164,12 @@ export class Minerva {
         usageData: { [this.user.id]: this.usageData },
         records: { [this.user.id]: this.record },
         windows: { [this.user.id]: this.windows }
-      };
+      }
 
-      MinervaArchive.set("minerva_store", store);
+      MinervaArchive.set('minerva_store', store)
     }
 
-    return this;
+    return this
   }
 
   /**
@@ -1185,23 +1183,23 @@ export class Minerva {
     const today = `${new Date()
       .getDate()
       .toString()
-      .padStart(2, "0")}-${new Date().getMonth() +
-      1}-${new Date().getFullYear()}`;
+      .padStart(2, '0')}-${new Date().getMonth() +
+      1}-${new Date().getFullYear()}`
 
     const timeOfUpdate = `${new Date()
       .getHours()
       .toString()
-      .padStart(2, "0")}:${new Date()
+      .padStart(2, '0')}:${new Date()
       .getMinutes()
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, '0')}`
 
     const baseData = {
       time: timeOfUpdate
-    };
+    }
 
     const commitUpdate = (key, updateObject) => {
-      console.log(key, updateObject);
+      console.log(key, updateObject)
       if (!this.usageData[today] || !this.usageData[today][key]) {
         // console.log("today did not have an existing update.", this.usageData);
         this.usageData = {
@@ -1210,7 +1208,7 @@ export class Minerva {
             ...this.usageData[today],
             [key]: [updateObject]
           }
-        };
+        }
       } else {
         // console.log(
         //   "today had an existing update.",
@@ -1222,54 +1220,54 @@ export class Minerva {
             ...this.usageData[today],
             [key]: [...this.usageData[today][key], updateObject]
           }
-        };
+        }
       }
 
-      this.save();
-    };
+      this.save()
+    }
 
     switch (type) {
-      case "uptime":
-        if (typeof value !== "number")
-          throw new TypeError("uptime value must be a number.");
+      case 'uptime':
+        if (typeof value !== 'number')
+          throw new TypeError('uptime value must be a number.')
 
         const uptimeUpdate = {
           ...baseData,
           uptime: value
-        };
+        }
 
-        commitUpdate("uptime", uptimeUpdate);
-        break;
+        commitUpdate('uptime', uptimeUpdate)
+        break
 
-      case "structures":
-        if (typeof value !== "number")
-          throw new TypeError("structure count value must be a number.");
+      case 'structures':
+        if (typeof value !== 'number')
+          throw new TypeError('structure count value must be a number.')
 
         const structureUpdate = {
           ...baseData,
           structureCount: value
-        };
+        }
 
-        commitUpdate("structures", structureUpdate);
-        break;
+        commitUpdate('structures', structureUpdate)
+        break
 
-      case "data":
-        if (typeof value !== "number")
-          throw new TypeError("dataupdates count value must be a number.");
+      case 'data':
+        if (typeof value !== 'number')
+          throw new TypeError('dataupdates count value must be a number.')
 
         const dataUpdate = {
           ...baseData,
           dataUpdateCount: value
-        };
+        }
 
-        commitUpdate("data", dataUpdate);
-        break;
+        commitUpdate('data', dataUpdate)
+        break
 
       default:
-        break;
+        break
     }
 
-    this.save();
+    this.save()
   }
 
   /**
@@ -1278,7 +1276,7 @@ export class Minerva {
    * @returns {object} the contents of minerva's localstorage archive
    */
   load() {
-    return JSON.parse(MinervaArchive.get("minerva_store"));
+    return JSON.parse(MinervaArchive.get('minerva_store'))
   }
 
   /**
@@ -1290,10 +1288,10 @@ export class Minerva {
   static setSession(key, value) {
     if (!key || !value)
       throw new Error(
-        "Minerva.setSession must be called with a key and a value."
-      );
+        'Minerva.setSession must be called with a key and a value.'
+      )
 
-    Minerva._session.setItem(key, JSON.stringify(value));
+    Minerva._session.setItem(key, JSON.stringify(value))
   }
 
   /**
@@ -1303,9 +1301,9 @@ export class Minerva {
    */
   static removeSession(key) {
     if (!key)
-      throw new Error("Minerva.removeSession must be called with a key.");
+      throw new Error('Minerva.removeSession must be called with a key.')
 
-    Minerva._session.removeItem(key);
+    Minerva._session.removeItem(key)
   }
 
   /**
@@ -1316,16 +1314,16 @@ export class Minerva {
    * @returns {object} the value of the key
    */
   static getSession(key) {
-    if (!key) throw new Error("Minerva.getSession must be called with a key.");
+    if (!key) throw new Error('Minerva.getSession must be called with a key.')
 
-    return JSON.parse(Minerva._session.getItem(key));
+    return JSON.parse(Minerva._session.getItem(key))
   }
 
   /**
    * @static clearSessionStorage - clears session storage
    */
   static clearSessionStorage() {
-    Minerva._session.clear();
+    Minerva._session.clear()
   }
 
   /**
@@ -1337,12 +1335,12 @@ export class Minerva {
    */
   static getCookie(key) {
     if (key === undefined)
-      throw new Error("getCookie must be called with a key.");
+      throw new Error('getCookie must be called with a key.')
 
     return document.cookie
-      .split(";")
-      .map(item => ({ [item.split("=")[0].trim()]: item.split("=")[1].trim() }))
-      .find(item => Object.keys(item)[0] === key)[key];
+      .split(';')
+      .map(item => ({ [item.split('=')[0].trim()]: item.split('=')[1].trim() }))
+      .find(item => Object.keys(item)[0] === key)[key]
   }
 
   /**
@@ -1354,11 +1352,11 @@ export class Minerva {
    */
   static removeCookie(key) {
     if (key === undefined)
-      throw new Error("removeCookie must be called with a key.");
+      throw new Error('removeCookie must be called with a key.')
 
-    document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`
 
-    return document.cookie;
+    return document.cookie
   }
 
   /**
@@ -1377,24 +1375,22 @@ export class Minerva {
    */
   static setCookie(key, value, maxage, expires, secure, samesite) {
     if (maxage !== undefined && expires !== undefined) {
-      throw new TypeError("maxage / expires cannot be undefined.");
+      throw new TypeError('maxage / expires cannot be undefined.')
     }
 
     if (key === undefined || value === undefined) {
-      throw new Error("setCookie must be called with a key and a value.");
+      throw new Error('setCookie must be called with a key and a value.')
     }
 
-    if (typeof samesite === "string" && !["lax", "strict"].includes(samesite)) {
-      throw new SyntaxError(
-        "samesite must be set to either 'lax' or 'strict'."
-      );
+    if (typeof samesite === 'string' && !['lax', 'strict'].includes(samesite)) {
+      throw new SyntaxError("samesite must be set to either 'lax' or 'strict'.")
     }
 
     document.cookie = `${key}=${value};max-age=${maxage}${
-      expires ? `;expires=${expires}` : ""
-    }${secure ? `;secure` : ""}${samesite ? `;samesite=${samesite}` : ""}`;
+      expires ? `;expires=${expires}` : ''
+    }${secure ? `;secure` : ''}${samesite ? `;samesite=${samesite}` : ''}`
 
-    return document.cookie;
+    return document.cookie
   }
 
   /**
@@ -1412,23 +1408,23 @@ export class Minerva {
    */
   remove(key, item, database = false, type) {
     if (!key || (database && !type && !item))
-      throw new Error("invalid arguments to Minerva.remove.");
+      throw new Error('invalid arguments to Minerva.remove.')
 
     if (database)
       return new Promise((resolve, reject) => {
         this.database
           .delete(this.database.collections[type], item.id)
           .then(res => {
-            resolve(res);
+            resolve(res)
           })
           .catch(err => {
-            reject({ status: "failure", message: err });
-          });
-      });
+            reject({ status: 'failure', message: err })
+          })
+      })
 
-    Minerva._store.removeItem(key);
+    Minerva._store.removeItem(key)
 
-    return Minerva._store;
+    return Minerva._store
   }
 
   /**
@@ -1437,11 +1433,11 @@ export class Minerva {
    * @returns {undefined} undefined
    */
   static clearStorage() {
-    return Minerva._store.clear();
+    return Minerva._store.clear()
   }
 
-  static _store = window.localStorage;
-  static _session = window.sessionStorage;
+  static _store = window.localStorage
+  static _session = window.sessionStorage
 }
 
 /**
@@ -1450,33 +1446,33 @@ export class Minerva {
 export class MinervaArchive {
   static get(key) {
     if (key === undefined)
-      throw new Error("MinervaArchive.get must be called with a key.");
+      throw new Error('MinervaArchive.get must be called with a key.')
 
-    return JSON.parse(Minerva._store.getItem(key));
+    return JSON.parse(Minerva._store.getItem(key))
   }
 
   static remove(key) {
     if (key === undefined)
-      throw new Error("MinervaArchive.remove must be called with a key.");
+      throw new Error('MinervaArchive.remove must be called with a key.')
 
-    return Minerva._store.removeItem(key);
+    return Minerva._store.removeItem(key)
   }
 
   static set(key, item) {
     try {
       if (key === undefined || item === undefined)
         throw new Error(
-          "MinervaArchive.set must be called with both a key and a value."
-        );
+          'MinervaArchive.set must be called with both a key and a value.'
+        )
 
-      Minerva._store.setItem(key, JSON.stringify(item));
+      Minerva._store.setItem(key, JSON.stringify(item))
 
-      return Minerva._store;
+      return Minerva._store
     } catch (err) {
-      console.error(err);
+      console.error(err)
       throw new Error(
         `an error occurred while trying to update localStorage: ${err}`
-      );
+      )
     }
   }
 }

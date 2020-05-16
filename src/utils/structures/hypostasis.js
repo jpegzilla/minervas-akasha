@@ -1,5 +1,5 @@
-import { Structure } from "./structure";
-import { Athenaeum } from "./athenaeum";
+import { Structure } from './structure'
+import { Athenaeum } from './athenaeum'
 
 // the most complex data structure, this is meant to reflect existing athenea and allow similar,
 // but not entirely identical collections of information to exist. it also allows for information
@@ -16,35 +16,35 @@ import { Athenaeum } from "./athenaeum";
  */
 export class Hypostasis extends Structure {
   constructor(name, options) {
-    super(name, options);
+    super(name, options)
 
-    this.type = "hypostasis";
+    this.type = 'hypostasis'
 
-    this.name = name;
+    this.name = name
 
-    this.accepts = ["athenaeum"];
+    this.accepts = ['athenaeum']
 
-    this.connectsTo = [];
+    this.connectsTo = []
 
-    this.reflections = {};
+    this.reflections = {}
   }
 
   addReflection(ath, subname) {
     if (!ath instanceof Athenaeum)
-      throw new SyntaxError("currently, only athenea can be reflected.");
+      throw new SyntaxError('currently, only athenea can be reflected.')
 
     if (subname in this.reflections) {
       // warn user that they're about to overwrite something
     }
 
-    this.reflections[subname] = { name: `${this.name}.${subname}`, ath };
+    this.reflections[subname] = { name: `${this.name}.${subname}`, ath }
   }
 
   removeReflection(subname) {
-    if (subname in this.reflections) delete this.reflections[subname];
+    if (subname in this.reflections) delete this.reflections[subname]
   }
 
   getReflection(subname) {
-    if (subname in this.reflections) return this.reflections[subname];
+    if (subname in this.reflections) return this.reflections[subname]
   }
 }

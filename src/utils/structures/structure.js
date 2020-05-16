@@ -1,5 +1,5 @@
-import { uuidv4 } from "./../misc";
-import ColorCodes from "./utils/colorcodes";
+import { uuidv4 } from './../misc'
+import ColorCodes from './utils/colorcodes'
 
 /**
  * Structure - main structure class from which other substructures are extended
@@ -17,43 +17,43 @@ export class Structure {
   constructor(name, options) {
     // tags can be added by the user to describe the structure, and sort and group
     // different structures. you can also sort by tags.
-    this.tags = (options && options.tags) || [];
+    this.tags = (options && options.tags) || []
 
     // used to search for the structure and display a name.
-    this.name = name;
+    this.name = name
 
     // used to internally to identify structures. used in the connections arrays.
-    this.id = (options && options.id) || uuidv4();
+    this.id = (options && options.id) || uuidv4()
 
     // shows what structures this structure is connected to. connections are all
     // directional, since connections can only be made from larger types of
     // structures to smaller types.
-    this.connectedTo = (options && options.connectedTo) || {};
+    this.connectedTo = (options && options.connectedTo) || {}
 
     // shows what user the structure belongs to.
-    this.belongsTo = (options && options.belongsTo) || null;
+    this.belongsTo = (options && options.belongsTo) || null
 
     // shows the data within the structure such as notes
     this.data = (options && options.data) || {
-      notes: ""
-    };
+      notes: ''
+    }
 
     // these color codes are applied to data structures' html representations as css
     // classes, which are used to apply colors to the elements.
-    this.colorCode = (options && options.colorCode) || ColorCodes.white;
+    this.colorCode = (options && options.colorCode) || ColorCodes.white
 
     // the inputs that each structure connects to are defined on the child classes
-    this.accepts = (options && options.accepts) || [];
+    this.accepts = (options && options.accepts) || []
 
-    this.connectsTo = (options && options.connectsTo) || null;
+    this.connectsTo = (options && options.connectsTo) || null
 
-    this.createdAt = new Date().toISOString();
+    this.createdAt = new Date().toISOString()
 
-    this.updatedAt = new Date().toISOString();
+    this.updatedAt = new Date().toISOString()
   }
 
   updateTimeStamp() {
-    this.updatedAt = new Date().toISOString();
+    this.updatedAt = new Date().toISOString()
   }
 
   /**
@@ -66,20 +66,20 @@ export class Structure {
    */
   addTag(name, color) {
     if (!(color in ColorCodes))
-      throw new SyntaxError("invalid color passed to addTag");
+      throw new SyntaxError('invalid color passed to addTag')
 
     if (this.tags.find(e => e.name === name))
-      throw new SyntaxError("tag already exsists.");
+      throw new SyntaxError('tag already exsists.')
 
     const tag = {
       name,
       id: uuidv4(),
       color: ColorCodes[color]
-    };
+    }
 
-    this.tags.push(tag);
+    this.tags.push(tag)
 
-    this.updateTimeStamp();
+    this.updateTimeStamp()
   }
 
   /**
@@ -90,12 +90,12 @@ export class Structure {
    * @returns {Structure} the current instance of the structure
    */
   removeTag(name) {
-    this.tags.filter(e => e.name !== name);
+    this.tags.filter(e => e.name !== name)
 
-    this.createdAt = new Date().toISOString();
-    this.updateTimeStamp();
+    this.createdAt = new Date().toISOString()
+    this.updateTimeStamp()
 
-    return this;
+    return this
   }
 
   /**
@@ -107,13 +107,13 @@ export class Structure {
    */
   changeColor(color) {
     if (!(color in ColorCodes))
-      throw new SyntaxError("invalid color passed to changeColor");
+      throw new SyntaxError('invalid color passed to changeColor')
 
-    this.colorCode = ColorCodes[color];
+    this.colorCode = ColorCodes[color]
 
-    this.updateTimeStamp();
+    this.updateTimeStamp()
 
-    return this;
+    return this
   }
 
   /**
@@ -122,31 +122,31 @@ export class Structure {
    * @returns {Structure} the current instance of the structure
    */
   reset() {
-    this.connectedTo = [];
-    this.tags = [];
-    this.colorCode = ColorCodes.white;
-    this.updateTimeStamp();
+    this.connectedTo = []
+    this.tags = []
+    this.colorCode = ColorCodes.white
+    this.updateTimeStamp()
 
-    return this;
+    return this
   }
 
   connect(node) {
     if (!this.accepts.every(e => node instanceof e))
-      throw new SyntaxError("invalid argument to connect.");
+      throw new SyntaxError('invalid argument to connect.')
 
-    this.connectedTo.push(node);
+    this.connectedTo.push(node)
 
-    this.data[node.constructor.id] = node.data;
+    this.data[node.constructor.id] = node.data
 
-    this.updateTimeStamp();
+    this.updateTimeStamp()
   }
 
   disconnect(node) {
     if (!this.accepts.every(e => node instanceof e))
-      throw new SyntaxError("invalid argument to disconnect.");
+      throw new SyntaxError('invalid argument to disconnect.')
 
-    this.connectedTo.filter(e => e.id !== node.id);
+    this.connectedTo.filter(e => e.id !== node.id)
 
-    this.updateTimeStamp();
+    this.updateTimeStamp()
   }
 }

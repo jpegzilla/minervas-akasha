@@ -6,11 +6,11 @@ import React, {
   createElement,
   cloneElement,
   Children
-} from "react";
+} from 'react'
 
 // turns a component into a draggable box
 const Drag = props => {
-  const { children } = props;
+  const { children } = props
 
-  return;
-};
+  return
+}

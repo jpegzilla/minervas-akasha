@@ -1,10 +1,10 @@
-import Console from "./Console";
-import DataStructure from "./DataStructure";
-import FileDialog from "./FileDialog";
-import RecordViewer from "./RecordViewer";
-import ImageViewer from "./ImageViewer";
-import ConfirmBox from "./ConfirmBox";
-import Window from "./Window";
+import Console from './Console'
+import DataStructure from './DataStructure'
+import FileDialog from './FileDialog'
+import RecordViewer from './RecordViewer'
+import ImageViewer from './ImageViewer'
+import ConfirmBox from './ConfirmBox'
+import Window from './Window'
 
 export default {
   Console: Console,
@@ -14,4 +14,4 @@ export default {
   ImageViewer: ImageViewer,
   ConfirmBox: ConfirmBox,
   Window: Window
-};
+}

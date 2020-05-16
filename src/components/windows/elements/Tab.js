@@ -1,39 +1,38 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 const TabComponent = props => {
-  const { w, title, activeWindowId, tabCounts, handleClickItem } = props;
+  const { w, title, activeWindowId, tabCounts, handleClickItem } = props
 
   let titleToUse = title,
-    typeToUse = w.componentProps.type || w.component;
+    typeToUse = w.componentProps.type || w.component
 
   if (w.componentProps) {
     if (w.componentProps.info)
-      if (w.componentProps.info.name) titleToUse = w.componentProps.info.name;
+      if (w.componentProps.info.name) titleToUse = w.componentProps.info.name
   }
 
-  const titleText = `name: ${titleToUse}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase();
+  const titleText = `name: ${titleToUse}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase()
 
   return useMemo(
     () => (
       <li
         title={titleText}
         className={
-          w.id === activeWindowId ? "taskbar-button active" : "taskbar-button"
+          w.id === activeWindowId ? 'taskbar-button active' : 'taskbar-button'
         }
         onClick={e => {
-          handleClickItem(e, w);
-        }}
-      >
+          handleClickItem(e, w)
+        }}>
         <span>{`${titleToUse} (${tabCounts})`}</span>
       </li>
     ),
     [w, activeWindowId, tabCounts, handleClickItem, titleText, titleToUse]
-  );
-};
+  )
+}
 
-export default memo(TabComponent);
+export default memo(TabComponent)
 
 TabComponent.propTypes = {
   w: PropTypes.object,
@@ -41,4 +40,4 @@ TabComponent.propTypes = {
   activeWindowId: PropTypes.string,
   tabCounts: PropTypes.number,
   handleClickItem: PropTypes.func
-};
+}

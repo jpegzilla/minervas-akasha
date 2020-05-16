@@ -32,9 +32,11 @@
   background-color: color.adjust(vars.$black, $alpha: -0.25)
 
   .structure-header
+
     max-width: $maxWidth2
 
     p
+      margin-bottom: vars.$halfGap
       font-weight: normal
       font-size: 1rem
       line-height: 1.42
@@ -61,11 +63,11 @@
       border-left: 1px solid var(--text-main)
 
   .structure-type
-    font-style: italic
-    border: 1px solid vars.$pink
+    border-left: 2px solid vars.$pink
     padding: 0.15rem 0.25rem
-    border-radius: 4px
-    user-select: none
+    // border-radius: 4px
+    background-color: color.adjust(vars.$white, $alpha: -0.85)
+    color: var(--text-main)
 
   button, input
     line-height: 1rem
@@ -109,9 +111,6 @@
       &:hover
         background-color: color.adjust(vars.$red, $alpha: -$opacity)
 
-  button + button
-    margin-left: $gap
-
   input
     background-color: transparent
     border: 1px solid var(--text-main)
@@ -127,15 +126,20 @@
 
   .structure-data
     flex-grow: 1
-    margin-bottom: 1rem
 
-    // min-width: 21.875rem
+    .datastructure-connection-list-container
+      header
+        @include vars.itemheader(true)
+
+      @include vars.itemlist(vars.$white, true)
 
     div
       min-width: 100%
 
     header
-      margin-bottom: 1rem
+      @include vars.itemheader(false)
+
+      margin-bottom: vars.$halfGap
       max-width: $maxWidth2
       overflow-wrap: anywhere
 
@@ -148,60 +152,52 @@
 
     img
       width: 100%
+      display: block
+      margin-bottom: 1px
 
     video
       max-width: 400px
 
     .structure-data-meta-display
-      margin-top: 0.5rem
       padding: 0.5rem 0
       border-top: 1px solid var(--text-main)
-      border-bottom: 1px solid var(--text-main)
       min-width: 20.875rem
 
-      img
-        margin-bottom: 0.25rem
+      ul
+        margin-bottom: vars.$halfGap
 
-      span
+      div
+        @include vars.itemheader
+
         cursor: pointer
-        display: block
-        padding: 0.25rem 0.5rem
-        background-color: var(--text-main)
-        color: var(--bg-main)
+        margin-bottom: 0
 
     .structure-metadata
-      margin-top: 1rem
+      @include vars.itemlist(vars.$white, false, true)
+
       max-width: $maxWidth2
 
-      ul
-        list-style-type: none
-
-        li
-          overflow: hidden
-          white-space: nowrap
-          text-overflow: ellipsis
-
-        & + span
-          margin-top: 0.5rem
-
   .structure-controls
-    display: flex
+    display: grid
     flex-direction: column
+    grid-gap: vars.$halfGap
 
     div
-      display: flex
+      display: grid
+      grid-template-columns: 1fr 1fr
+      grid-gap: vars.$halfGap
 
-    input + button
-      margin-left: $gap
+      input, button
+        height: min-content
 
-    div + div
-      margin-top: $gap
+      .delete-button
+        grid-column: span 2
 
   .structure-taglist
     list-style-type: none
     width: 100%
     line-height: 1rem
-    margin: 1rem 0
+    margin: vars.$halfGap 0
     display: grid
     grid-gap: $gap
     grid-row-gap: $gap

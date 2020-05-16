@@ -1,15 +1,15 @@
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect } from 'react'
 
 export default () => {
-  const afterPaintRef = useRef();
+  const afterPaintRef = useRef()
 
   useLayoutEffect(() => {
     if (afterPaintRef.current) {
-      afterPaintRef.current();
-      afterPaintRef.current = null;
+      afterPaintRef.current()
+      afterPaintRef.current = null
     }
-  });
+  })
 
-  const runAfterUpdate = fn => void (afterPaintRef.current = fn);
-  return runAfterUpdate;
-};
+  const runAfterUpdate = fn => void (afterPaintRef.current = fn)
+  return runAfterUpdate
+}

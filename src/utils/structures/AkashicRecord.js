@@ -1,15 +1,15 @@
-import { uuidv4 } from "./../misc";
-import { Structure } from "./structure";
+import { uuidv4 } from './../misc'
+import { Structure } from './structure'
 // import { Shard } from "./shard";
 // import { Grimoire } from "./grimoire";
 // import { Node } from "./node";
 // import { Hypostasis } from "./hypostasis";
 // import { Athenaeum } from "./athenaeum";
-import { MinervaArchive } from "./../managers/Minerva";
-import { validateUUIDv4 } from "./../../utils/misc";
-import DatabaseInterface from "./../managers/Database";
+import { MinervaArchive } from './../managers/Minerva'
+import { validateUUIDv4 } from './../../utils/misc'
+import DatabaseInterface from './../managers/Database'
 
-import StructureMap from "./../managers/StructureMap";
+import StructureMap from './../managers/StructureMap'
 
 // the master structure, meant to represent a user's entire record library when working
 // within the tool. bound to user id and is created for every new user.
@@ -24,15 +24,15 @@ export default class AkashicRecord {
   constructor(userId, dateCreated, id, name, records, database) {
     if (!database instanceof DatabaseInterface)
       throw new TypeError(
-        "database passed to AkashicRecord must be an instance of DatabaseInterface."
-      );
+        'database passed to AkashicRecord must be an instance of DatabaseInterface.'
+      )
 
-    this.boundTo = userId;
-    this.dateCreated = dateCreated || new Date().toISOString();
-    this.id = id || uuidv4();
-    this.name = name;
-    this.database = database;
-    this.lastUpdate = new Date().toISOString();
+    this.boundTo = userId
+    this.dateCreated = dateCreated || new Date().toISOString()
+    this.id = id || uuidv4()
+    this.name = name
+    this.database = database
+    this.lastUpdate = new Date().toISOString()
 
     // contains all of the data structures in an akashic record.
     this.records = records || {
@@ -41,26 +41,26 @@ export default class AkashicRecord {
       grimoire: [],
       node: [],
       shard: []
-    };
+    }
   }
 
   // for keeping track of the last time the record was updated.
   // can be useful for certain functionality, but may also be
   // interesting to a user.
   updateDate() {
-    this.lastUpdate = new Date().toISOString();
+    this.lastUpdate = new Date().toISOString()
   }
 
   // mainly for development purposes. empties all records.
   resetRecords(minerva) {
     // just needs id, type, minerva
     Object.entries(this.records).forEach(([k, v]) => {
-      const type = k;
+      const type = k
 
       v.forEach(item => {
-        this.removeFromRecord(item.id, type, minerva);
-      });
-    });
+        this.removeFromRecord(item.id, type, minerva)
+      })
+    })
 
     this.records = {
       hypostasis: [],
@@ -68,16 +68,16 @@ export default class AkashicRecord {
       grimoire: [],
       node: [],
       shard: []
-    };
+    }
 
-    this.updateDate();
+    this.updateDate()
   }
 
   setBoundTo(userId) {
-    this.boundTo = userId;
+    this.boundTo = userId
 
-    this.updateDate();
-    return this;
+    this.updateDate()
+    return this
   }
 
   // how should I handle storing data structures in the record? should I store ids
@@ -96,7 +96,7 @@ export default class AkashicRecord {
    */
   addToRecord(id, structure, minerva) {
     if (!structure instanceof Structure)
-      throw new TypeError(`${structure} is not a proper structure.`);
+      throw new TypeError(`${structure} is not a proper structure.`)
 
     const {
       type,
@@ -110,7 +110,7 @@ export default class AkashicRecord {
       createdAt,
       updatedAt,
       connectsTo
-    } = structure;
+    } = structure
 
     const newTypeRecords = [
       ...this.records[type],
@@ -128,15 +128,15 @@ export default class AkashicRecord {
         updatedAt,
         connectsTo
       }
-    ];
+    ]
 
-    this.records = { ...this.records, [type]: newTypeRecords };
+    this.records = { ...this.records, [type]: newTypeRecords }
 
-    minerva.record = this;
+    minerva.record = this
 
-    this.updateDate();
+    this.updateDate()
 
-    return this;
+    return this
   }
 
   /**
@@ -149,14 +149,14 @@ export default class AkashicRecord {
   findRecordById(id) {
     if (!id || !validateUUIDv4(id))
       throw new Error(
-        "invalid arguments passed to AkashicRecord.findRecordById"
-      );
+        'invalid arguments passed to AkashicRecord.findRecordById'
+      )
 
-    const allRecs = Object.values(this.records).flat(Infinity);
+    const allRecs = Object.values(this.records).flat(Infinity)
 
-    const found = allRecs.find(o => o.id === id);
+    const found = allRecs.find(o => o.id === id)
 
-    return found;
+    return found
   }
 
   /**
@@ -169,20 +169,20 @@ export default class AkashicRecord {
   findRecordByIdAsync(id) {
     if (!id || !validateUUIDv4(id))
       throw new Error(
-        "invalid arguments passed to AkashicRecord.findRecordById"
-      );
+        'invalid arguments passed to AkashicRecord.findRecordById'
+      )
 
     return new Promise((resolve, reject) => {
       try {
-        const allRecs = Object.values(this.records).flat(Infinity);
+        const allRecs = Object.values(this.records).flat(Infinity)
 
-        const found = allRecs.find(o => o.id === id);
+        const found = allRecs.find(o => o.id === id)
 
-        resolve(found);
+        resolve(found)
       } catch (err) {
-        reject(err);
+        reject(err)
       }
-    });
+    })
   }
 
   /**
@@ -196,22 +196,22 @@ export default class AkashicRecord {
    */
   removeFromRecord(id, type, minerva) {
     if (!StructureMap[type] instanceof Structure)
-      throw new TypeError(`${id} is not a proper structure.`);
+      throw new TypeError(`${id} is not a proper structure.`)
 
     // first, disconnect the record from all the records it's connected to
-    minerva.disconnectFromAll(id);
+    minerva.disconnectFromAll(id)
 
     // then, remove it from its record array
-    const newTypeRecords = this.records[type].filter(item => id !== item.id);
+    const newTypeRecords = this.records[type].filter(item => id !== item.id)
 
-    this.records = { ...this.records, [type]: newTypeRecords };
+    this.records = { ...this.records, [type]: newTypeRecords }
 
     // remove all files from the record
     minerva.removeFileFromRecord(id).then(() => {
-      minerva.record = this;
-      console.log(minerva.record);
-      this.updateDate();
-    });
+      minerva.record = this
+      console.log(minerva.record)
+      this.updateDate()
+    })
   }
 
   /**
@@ -226,28 +226,28 @@ export default class AkashicRecord {
    */
   editInRecord(id, type, key, value, minerva) {
     if (!id || !type || !key || !value || !minerva)
-      throw new SyntaxError("editRecord missing params");
+      throw new SyntaxError('editRecord missing params')
     if (!StructureMap[type] instanceof Structure)
-      throw new TypeError(`${id} is not a proper structure.`);
+      throw new TypeError(`${id} is not a proper structure.`)
 
     const newTypeRecords = this.records[type].map(item => {
       if (item.id === id) {
-        item[key] = value;
-        item.updatedAt = new Date().toISOString();
+        item[key] = value
+        item.updatedAt = new Date().toISOString()
       }
 
-      return item;
-    });
+      return item
+    })
 
-    this.records = { ...this.records, [type]: newTypeRecords };
+    this.records = { ...this.records, [type]: newTypeRecords }
 
-    minerva.record = this;
+    minerva.record = this
 
-    this.updateDate();
+    this.updateDate()
 
-    minerva.save();
+    minerva.save()
 
-    return this;
+    return this
   }
 
   /**
@@ -263,19 +263,19 @@ export default class AkashicRecord {
    * @returns {AkashicRecord} a new instance of an AkashicRecord.
    */
   static retrieveAkashicRecord(userId, name, dbObject, database = false) {
-    if ([userId, name].includes(undefined)) return;
+    if ([userId, name].includes(undefined)) return
     if (database) {
       // retreive record for user with name from database
-      console.log("retrieving record using database interface:", dbObject);
+      console.log('retrieving record using database interface:', dbObject)
     } else {
       try {
         // retrieve from localStorage
-        if (MinervaArchive.get("minerva_store")) {
-          const user = MinervaArchive.get(`${name}`);
-          const record = MinervaArchive.get("minerva_store").records[userId]; // make sure to get the record for the current user
+        if (MinervaArchive.get('minerva_store')) {
+          const user = MinervaArchive.get(`${name}`)
+          const record = MinervaArchive.get('minerva_store').records[userId] // make sure to get the record for the current user
 
-          const { dateCreated } = user;
-          const { records } = record;
+          const { dateCreated } = user
+          const { records } = record
 
           return new AkashicRecord(
             userId,
@@ -284,21 +284,21 @@ export default class AkashicRecord {
             name,
             records,
             database
-          );
-        } else throw Error("missing storage.");
+          )
+        } else throw Error('missing storage.')
       } catch (err) {
-        console.group("FATAL: MISSING ITEMS IN STORAGE.");
+        console.group('FATAL: MISSING ITEMS IN STORAGE.')
         // if the localStorage data is missing critical parts, oh well, start over.
         // for now, this is the intended behavior to deal with incomplete data.
-        console.error(err);
+        console.error(err)
 
-        MinervaArchive.remove("minerva_store");
-        MinervaArchive.remove(`${name}`);
-        MinervaArchive.remove(`user:${userId}:token`);
+        MinervaArchive.remove('minerva_store')
+        MinervaArchive.remove(`${name}`)
+        MinervaArchive.remove(`user:${userId}:token`)
 
-        window.location.reload();
+        window.location.reload()
 
-        console.groupEnd();
+        console.groupEnd()
       }
     }
   }
@@ -309,20 +309,18 @@ export default class AkashicRecord {
   static setAkashicRecord(userId, dateCreated, id, name, records) {
     if (!userId || !dateCreated || !id || !name || !records)
       throw new SyntaxError(
-        "setAkashicRecord requires all arguments: userId, dateCreated, id, name, records."
-      );
+        'setAkashicRecord requires all arguments: userId, dateCreated, id, name, records.'
+      )
 
     if (
-      typeof records !== "object" ||
-      [id, name, dateCreated, userId].some(e => typeof e !== "string")
+      typeof records !== 'object' ||
+      [id, name, dateCreated, userId].some(e => typeof e !== 'string')
     )
-      throw new TypeError(
-        "invalid parameter types passed to setAkashicRecord."
-      );
+      throw new TypeError('invalid parameter types passed to setAkashicRecord.')
 
     if (Object.values(records).some(e => !Array.isArray(e)))
-      throw new TypeError("records passed to setAkashicRecord are malformed.");
+      throw new TypeError('records passed to setAkashicRecord are malformed.')
 
-    return new this(userId, dateCreated, id, name, records);
+    return new this(userId, dateCreated, id, name, records)
   }
 }

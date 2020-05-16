@@ -1,12 +1,19 @@
 @use "../../utils/vars"
+@use 'sass:color'
 
 .notes-container
   $gap: 0.5rem
   $delay: 0.3s
 
+  background-color: var(--bg-main)
+
+  header
+    @include vars.itemheader
+
   display: flex
   max-width: 350px
   color: var(--bg-main)
+  display: flex
 
   .notes-sidebar
     +vars.flexcenter
@@ -29,21 +36,85 @@
   .notes-content
     width: vars.$dsMaxWidth
     max-width: vars.$dsMaxWidth
-
-    // transition: max-width $delay
     overflow: hidden
+    display: flex
+    flex-direction: column
+    padding: 1px // check this out!!
+    border-left: 1px solid var(--text-main)
 
     &.collapsed
       max-width: 0
+      padding: 0
+      border-left: none
 
-      // transition: max-width $delay
+    .notes-content-notepad
+      flex-grow: 1
+      padding: vars.$halfGap
+      padding-bottom: 0
+      display: flex
+      flex-direction: column
 
-    textarea
-      min-height: 100%
-      max-height: 100%
-      min-width: calc(100% - 1px)
-      resize: none
-      border: none
-      padding: 0.5rem
-      background-color: var(--bg-main)
-      color: var(--text-main)
+      textarea
+        display: block
+        flex-grow: 1
+        min-width: calc(100% - 1px)
+        border: none
+        resize: none
+        padding: vars.$halfGap 0.25rem
+        background-color: var(--bg-main)
+        color: var(--text-main)
+        scrollbar-width: none
+        border-top: 1px solid var(--text-main)
+        border-bottom: 1px solid var(--text-main)
+
+        &:active, &:focus
+          outline: 1px solid vars.$pink
+
+        &::-webkit-scrollbar
+          display: none
+
+    .notes-content-metadata
+      margin-top: vars.$halfGap
+      color: var(--bg-main)
+      padding: vars.$halfGap
+      padding-top: 0
+      padding-bottom: 0
+
+      & > div
+        margin-bottom: vars.$halfGap
+
+        form
+          display: grid
+          grid-gap: vars.$halfGap
+          grid-template-columns: repeat(2, 1fr)
+          grid-template-rows: 1fr 1fr
+
+        button
+          grid-column: span 2
+          background-color: color.adjust(vars.$purple, $alpha: -0.5)
+
+      .custom-metadata-list
+        @include vars.itemlist(vars.$white, false, false)
+
+        li
+          color: var(--text-main)
+          display: flex
+
+          .metadata-val
+            color: vars.$yellow
+
+          & > span
+            &:nth-child(1)
+              padding: 0.15rem 0 0.15rem 0.5rem
+              flex-grow: 1
+
+            &:nth-child(2)
+              cursor: pointer
+              margin-left: 0.15rem
+              padding: 0.15rem 0.5rem
+
+              &:hover
+                background-color: vars.$pink
+                color: vars.$white
+
+            display: inline-block

@@ -1,7 +1,7 @@
-import { MinervaMethods } from "./methods";
+import { MinervaMethods } from './methods'
 
 export default (command, confirm = true) => {
-  if (!confirm) return MinervaMethods.verifyUser(confirm, command);
+  if (!confirm) return MinervaMethods.verifyUser(confirm, command)
 
-  return MinervaMethods.verifyUser(confirm, null);
-};
+  return MinervaMethods.verifyUser(confirm, null)
+}

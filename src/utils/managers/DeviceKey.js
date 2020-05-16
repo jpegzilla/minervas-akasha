@@ -5,10 +5,10 @@
  */
 export default class DeviceKey {
   constructor(string) {
-    this.rawInput = string;
-    this.input = string.split("-");
-    this.nodash = string.replace(/-/gim, "");
-    this.codes = DeviceKey.generateSync(this.nodash);
+    this.rawInput = string
+    this.input = string.split('-')
+    this.nodash = string.replace(/-/gim, '')
+    this.codes = DeviceKey.generateSync(this.nodash)
   }
 
   /**
@@ -20,25 +20,25 @@ export default class DeviceKey {
    * @returns {string} a completed device key.
    */
   static shuffle(arr, factor = 0.25) {
-    if (factor > 1) factor = 1;
-    if (factor <= 0) factor = 0.15;
+    if (factor > 1) factor = 1
+    if (factor <= 0) factor = 0.15
 
-    factor = factor.toFixed(2);
+    factor = factor.toFixed(2)
 
     let curr = arr.length,
       temp,
-      r;
+      r
 
     while (curr > 0) {
-      r = Math.floor(factor * curr);
-      curr--;
+      r = Math.floor(factor * curr)
+      curr--
 
-      temp = arr[curr];
-      arr[curr] = arr[r];
-      arr[r] = temp;
+      temp = arr[curr]
+      arr[curr] = arr[r]
+      arr[r] = temp
     }
 
-    return `${arr.join("-")}.FAC${factor}`;
+    return `${arr.join('-')}.FAC${factor}`
   }
 
   /**
@@ -53,16 +53,16 @@ export default class DeviceKey {
     return new Promise((resolve, reject) => {
       try {
         const codes = [...Array(6)].map((_item, i, a) => {
-          return DeviceKey.shuffle(from.match(/.{1,4}/gim), i / a.length);
-        });
+          return DeviceKey.shuffle(from.match(/.{1,4}/gim), i / a.length)
+        })
 
-        this.output = codes;
+        this.output = codes
 
-        resolve(codes);
+        resolve(codes)
       } catch (err) {
-        reject(err);
+        reject(err)
       }
-    });
+    })
   }
 
   /**
@@ -77,14 +77,14 @@ export default class DeviceKey {
   static generateSync(from, callback) {
     try {
       const codes = [...Array(6)].map((_item, i, a) => {
-        return DeviceKey.shuffle(from.match(/.{1,4}/gim), i / a.length);
-      });
+        return DeviceKey.shuffle(from.match(/.{1,4}/gim), i / a.length)
+      })
 
-      this.output = codes;
+      this.output = codes
 
-      callback(codes);
+      callback(codes)
     } catch (err) {
-      throw err;
+      throw err
     }
   }
 
@@ -100,18 +100,18 @@ export default class DeviceKey {
   static verify(key, userId) {
     return new Promise((resolve, reject) => {
       try {
-        const fac = key.split(/.FAC/)[1];
+        const fac = key.split(/.FAC/)[1]
 
         const compTo = DeviceKey.shuffle(
-          userId.replace(/-/gim, "").match(/.{1,4}/gim),
+          userId.replace(/-/gim, '').match(/.{1,4}/gim),
           fac
-        );
+        )
 
-        resolve(key === compTo);
+        resolve(key === compTo)
       } catch (err) {
-        reject(err);
+        reject(err)
       }
-    });
+    })
   }
 
   /**
@@ -126,16 +126,16 @@ export default class DeviceKey {
    */
   static verifySync(key, userId, callback) {
     try {
-      const fac = key.split(/.FAC/)[1];
+      const fac = key.split(/.FAC/)[1]
 
       const compTo = DeviceKey.shuffle(
-        userId.replace(/-/gim, "").match(/.{1,4}/gim),
+        userId.replace(/-/gim, '').match(/.{1,4}/gim),
         fac
-      );
+      )
 
-      callback(key === compTo);
+      callback(key === compTo)
     } catch (err) {
-      throw err;
+      throw err
     }
   }
 }

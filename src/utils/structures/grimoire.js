@@ -1,4 +1,4 @@
-import { Structure } from "./structure";
+import { Structure } from './structure'
 // import { Node } from "./node";
 // import { Shard } from "./shard";
 
@@ -8,15 +8,15 @@ import { Structure } from "./structure";
  */
 export class Grimoire extends Structure {
   constructor(name, options) {
-    super(name, options);
+    super(name, options)
 
     // used to determine whether two structures can be connected. structures can only
     // connect to smaller structures.
-    this.type = "grimoire";
+    this.type = 'grimoire'
 
     // a list of structures that this type of structure can connect to.
-    this.accepts = ["shard", "node"];
+    this.accepts = ['shard', 'node']
 
-    this.connectsTo = ["athenaeum"];
+    this.connectsTo = ['athenaeum']
   }
 }

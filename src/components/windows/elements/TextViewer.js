@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react'
 
 export default props => {
-  return <section>text viewer here</section>;
-};
+  return <section>text viewer here</section>
+}

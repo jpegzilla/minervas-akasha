@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 const Main = props => {
   const {
@@ -30,13 +30,13 @@ const Main = props => {
     Redirect,
     Switch,
     Route
-  } = props;
+  } = props
 
-  const [filterRefresh, setFilterRefresh] = useState({});
+  const [filterRefresh, setFilterRefresh] = useState({})
 
-  minerva.setFilterRefresh = setFilterRefresh;
+  minerva.setFilterRefresh = setFilterRefresh
 
-  useEffect(() => {}, [filterRefresh]);
+  useEffect(() => {}, [filterRefresh])
 
   return (
     <ErrorBoundary>
@@ -54,18 +54,16 @@ const Main = props => {
           resetStatusText,
           renderConList,
           setRenderConList
-        }}
-      >
+        }}>
         <Router>
           <section
             // onContextMenu={e => {
             //   handleContextMenu(e, true);
             // }}
             onClick={e => {
-              handleContextMenu(e, false);
-            }}
-          >
-            <section id="status-message">
+              handleContextMenu(e, false)
+            }}>
+            <section id='status-message'>
               <div className={statusMessage.type}>
                 <div>{statusText}</div>
               </div>
@@ -77,34 +75,30 @@ const Main = props => {
               />
             )}
 
-            <section id="filters">
-              {minerva &&
-                minerva.settings &&
-                minerva.settings.filters && (
-                  // effects canvases / other graphical elements here / crt filter // brightness / color filters / cursor click effects outside switch
-                  <Fragment>
-                    {minerva.settings.filters.noise && (
-                      <div id="filters-noise" />
-                    )}
-                    {minerva.settings.filters.crt && <div id="crt-overlay" />}
-                  </Fragment>
-                )}
+            <section id='filters'>
+              {minerva && minerva.settings && minerva.settings.filters && (
+                // effects canvases / other graphical elements here / crt filter // brightness / color filters / cursor click effects outside switch
+                <Fragment>
+                  {minerva.settings.filters.noise && <div id='filters-noise' />}
+                  {minerva.settings.filters.crt && <div id='crt-overlay' />}
+                </Fragment>
+              )}
             </section>
 
             {/* godmessage */}
-            <section id="godmessage" />
+            <section id='godmessage' />
 
-            {!loggedIn && firstLoad && <Redirect to="/signup" />}
+            {!loggedIn && firstLoad && <Redirect to='/signup' />}
 
-            {!loggedIn && !firstLoad && <Redirect to="/login" />}
+            {!loggedIn && !firstLoad && <Redirect to='/login' />}
 
-            {!firstLoad && loggedIn && minerva.user && <Redirect to="/" />}
+            {!firstLoad && loggedIn && minerva.user && <Redirect to='/' />}
 
             <Switch>
               {/* signup screen */}
               <Route
                 exact
-                path="/signup"
+                path='/signup'
                 render={routeProps => (
                   <Signup
                     routeProps={routeProps}
@@ -120,7 +114,7 @@ const Main = props => {
               {/* login component */}
               <Route
                 exact
-                path="/login"
+                path='/login'
                 render={routeProps => {
                   return (
                     <Signup
@@ -131,14 +125,14 @@ const Main = props => {
                       setStatusText={setStatusText}
                       setLoggedIn={setLoggedIn}
                     />
-                  );
+                  )
                 }}
               />
 
               {/* main screen */}
               <Route
                 exact
-                path="/"
+                path='/'
                 render={routeProps =>
                   minerva &&
                   minerva.record &&
@@ -149,7 +143,7 @@ const Main = props => {
               />
             </Switch>
 
-            <section id="effects-canvas">
+            <section id='effects-canvas'>
               {/* effects canvas */}
               {/*<canvas ref={fxCanvasElem} />*/}
             </section>
@@ -157,10 +151,10 @@ const Main = props => {
         </Router>
       </Provider>
     </ErrorBoundary>
-  );
-};
+  )
+}
 
-export default Main;
+export default Main
 
 Main.propTypes = {
   ErrorBoundary: PropTypes.func,
@@ -196,4 +190,4 @@ Main.propTypes = {
   Redirect: PropTypes.func,
   Switch: PropTypes.func,
   Route: PropTypes.func
-};
+}

@@ -1,33 +1,33 @@
 /* eslint no-restricted-globals: off */
 
-import * as LZUTF8 from "./lzutf8.min";
+import * as LZUTF8 from './lzutf8.min'
 
-self.addEventListener("message", message => {
-  if (message.data === "ping") {
-    self.postMessage("pong");
+self.addEventListener('message', message => {
+  if (message.data === 'ping') {
+    self.postMessage('pong')
   }
 
   if (message.data.action) {
-    let response;
+    let response
 
     switch (message.data.action) {
-      case "compress":
+      case 'compress':
         response = LZUTF8.compress(message.data.toCompress, {
-          outputEncoding: "StorageBinaryString"
-        });
+          outputEncoding: 'StorageBinaryString'
+        })
 
-        break;
+        break
 
-      case "decompress":
+      case 'decompress':
         response = LZUTF8.decompress(message.data.toDecompress, {
-          inputEncoding: "StorageBinaryString"
-        });
-        break;
+          inputEncoding: 'StorageBinaryString'
+        })
+        break
 
       default:
-        throw new Error("unknown action passed to compressionWorker.");
+        throw new Error('unknown action passed to compressionWorker.')
     }
 
-    self.postMessage(response);
+    self.postMessage(response)
   }
-});
+})
