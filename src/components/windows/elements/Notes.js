@@ -83,8 +83,8 @@ const Notes = props => {
       extra: newExtra
     })
 
-    setCustomMetadata({ key: '', value: '' })
     setCustomMetadataObject(newExtra)
+    setCustomMetadata({ key: '', value: '' })
   }
 
   // function that just clears the status message
@@ -104,34 +104,37 @@ const Notes = props => {
 
   const { maxHistoryDepth } = minerva.settings.textEditor
 
-  useEffect(() => {
-    if (textHistory.length > maxHistoryDepth) {
-      // remove the oldest element from the history
-      // if history is too large
-      textHistory.shift()
-      setTextHistory([...textHistory])
+  useEffect(
+    () => {
+      if (textHistory.length > maxHistoryDepth) {
+        // remove the oldest element from the history
+        // if history is too large
+        textHistory.shift()
+        setTextHistory([...textHistory])
 
-      // set the position in history to the end of the history array, thus losing
-      // the old 'future' in the history if the user was undoing things
-      setHistoryIndex(textHistory.length)
-    }
+        // set the position in history to the end of the history array, thus losing
+        // the old 'future' in the history if the user was undoing things
+        setHistoryIndex(textHistory.length)
+      }
 
-    minerva.record.editInRecord(
-      id,
+      minerva.record.editInRecord(
+        id,
+        record.type,
+        'data',
+        { ...record.data, notes: noteText },
+        minerva
+      )
+    },
+    [
+      noteText,
+      minerva,
+      record.data,
       record.type,
-      'data',
-      { ...record.data, notes: noteText },
-      minerva
-    )
-  }, [
-    noteText,
-    minerva,
-    record.data,
-    record.type,
-    id,
-    maxHistoryDepth,
-    textHistory
-  ])
+      id,
+      maxHistoryDepth,
+      textHistory
+    ]
+  )
 
   return (
     <section className={`notes-container${collapsed ? ' collapsed' : ''}`}>
@@ -139,19 +142,19 @@ const Notes = props => {
         onClick={() => {
           setCollapsed(!collapsed)
         }}
-        className='notes-sidebar'
-        title='click to expand note viewer'>
+        className="notes-sidebar"
+        title="click to expand note viewer">
         <span>extra</span>
       </div>
 
       <div className={`notes-content${collapsed ? ' collapsed' : ''}`}>
-        <div className='notes-content-notepad'>
+        <div className="notes-content-notepad">
           <header>
             <div>notepad</div>
           </header>
           <textarea
             ref={textArea}
-            spellCheck='false'
+            spellCheck="false"
             onClick={e => e.stopPropagation()}
             onChange={e => {
               setTextHistory([...textHistory, noteText])
@@ -171,7 +174,7 @@ const Notes = props => {
           />
         </div>
 
-        <div className='notes-content-metadata'>
+        <div className="notes-content-metadata">
           <header>
             <div>custom metadata</div>
           </header>
@@ -182,16 +185,16 @@ const Notes = props => {
                 handleCustomMetadata(customMetadata)
               }}>
               <input
-                type='text'
-                placeholder='data key'
+                type="text"
+                placeholder="data key"
                 value={customMetadata.key}
                 onChange={e =>
                   setCustomMetadata({ ...customMetadata, key: e.target.value })
                 }
               />
               <input
-                type='text'
-                placeholder='data value'
+                type="text"
+                placeholder="data value"
                 value={customMetadata.value}
                 onChange={e =>
                   setCustomMetadata({
@@ -201,7 +204,7 @@ const Notes = props => {
                 }
               />
               <button
-                type='submit'
+                type="submit"
                 onClick={() => handleCustomMetadata(customMetadata)}>
                 set custom metadata
               </button>
@@ -209,20 +212,20 @@ const Notes = props => {
           </div>
 
           {customMetadataObject && (
-            <div className='custom-metadata-list'>
+            <div className="custom-metadata-list">
               <ul>
                 {Object.entries(customMetadataObject).map(([k, v], i) => {
                   return (
-                    <li key={`${k}-${i}`} className='custom-metadata-object'>
+                    <li key={`${k}-${i}`} className="custom-metadata-object">
                       <span>
-                        {k}: <span className='metadata-val'>{v}</span>
+                        {k}: <span className="metadata-val">{v}</span>
                       </span>
                       <span
                         onClick={() => {
                           const currentMetadata = customMetadataObject
                           delete currentMetadata[k]
 
-                          setCustomMetadata(currentMetadata)
+                          setCustomMetadataObject(currentMetadata)
                         }}>
                         x
                       </span>
