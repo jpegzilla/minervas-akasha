@@ -24,7 +24,7 @@ export default (minerva, search, options) => {
   // construct the search results object
   allRecords.forEach(record => {
     const { id, tags, type: recType, data: recData, name } = record;
-    const { file, metadata, notes } = recData;
+    const { file, metadata, notes, extra } = recData;
 
     // search results object
     const foundInObject = {};
@@ -79,6 +79,17 @@ export default (minerva, search, options) => {
           if (matchingMetadata) {
             foundIn += `\nfound in metadata: ${matchingMetadata}`;
             foundInObject.metadata = matchingMetadata;
+          }
+        }
+
+        if (extra) {
+          const metadataString = Object.values(extra).join(", ");
+
+          const matchingExtra = metadataString.toLowerCase().includes(query);
+
+          if (matchingExtra) {
+            foundIn += `\nfound in extra metadata: ${matchingExtra}`;
+            foundInObject.extra = matchingExtra;
           }
         }
 
