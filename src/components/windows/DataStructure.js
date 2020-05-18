@@ -717,7 +717,9 @@ const DataStructure = props => {
               placeholder='enter a name'
               ref={nameRef}
             />
-            <button onClick={addName}>set name</button>
+            <button className='button-non-mutation' onClick={addName}>
+              set name
+            </button>
           </div>
 
           <div>
@@ -729,7 +731,9 @@ const DataStructure = props => {
               placeholder='add custom tag'
               ref={tagRef}
             />
-            <button onClick={addTag}>add tag</button>
+            <button className='button-non-mutation' onClick={addTag}>
+              add tag
+            </button>
           </div>
 
           <div>
