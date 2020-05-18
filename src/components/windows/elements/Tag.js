@@ -7,7 +7,12 @@ const Tag = props => {
 
   // cut down tag names a little bit
   const truncName =
-    t.name.length > 10 ? t.name.substring(0, 6).padEnd(10, '.') : t.name
+    t.name.length > 15
+      ? t.name
+          .substring(0, 14)
+          .trim()
+          .padEnd(t.name.substring(0, 14).trim().length + 1, '…')
+      : t.name
 
   return (
     <li
