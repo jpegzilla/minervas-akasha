@@ -104,37 +104,34 @@ const Notes = props => {
 
   const { maxHistoryDepth } = minerva.settings.textEditor
 
-  useEffect(
-    () => {
-      if (textHistory.length > maxHistoryDepth) {
-        // remove the oldest element from the history
-        // if history is too large
-        textHistory.shift()
-        setTextHistory([...textHistory])
+  useEffect(() => {
+    if (textHistory.length > maxHistoryDepth) {
+      // remove the oldest element from the history
+      // if history is too large
+      textHistory.shift()
+      setTextHistory([...textHistory])
 
-        // set the position in history to the end of the history array, thus losing
-        // the old 'future' in the history if the user was undoing things
-        setHistoryIndex(textHistory.length)
-      }
+      // set the position in history to the end of the history array, thus losing
+      // the old 'future' in the history if the user was undoing things
+      setHistoryIndex(textHistory.length)
+    }
 
-      minerva.record.editInRecord(
-        id,
-        record.type,
-        'data',
-        { ...record.data, notes: noteText },
-        minerva
-      )
-    },
-    [
-      noteText,
-      minerva,
-      record.data,
-      record.type,
+    minerva.record.editInRecord(
       id,
-      maxHistoryDepth,
-      textHistory
-    ]
-  )
+      record.type,
+      'data',
+      { ...record.data, notes: noteText },
+      minerva
+    )
+  }, [
+    noteText,
+    minerva,
+    record.data,
+    record.type,
+    id,
+    maxHistoryDepth,
+    textHistory
+  ])
 
   return (
     <section className={`notes-container${collapsed ? ' collapsed' : ''}`}>
