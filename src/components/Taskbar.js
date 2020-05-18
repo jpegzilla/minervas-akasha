@@ -180,18 +180,6 @@ const Taskbar = props => {
       tooltip: 'open a command console.'
     },
     {
-      id: 'submitfeedback',
-      title: 'submit feedback',
-      onClick: () => {
-        const link = document.createElement('a')
-        link.href =
-          'https://github.com/jpegzilla/minervas-akasha/blob/master/contributing.md#submitting-feedback-and-bug-reports'
-        link.target = '_blank'
-        link.click()
-      },
-      tooltip: "submit feedback about minerva's akasha."
-    },
-    {
       id: 'exportdata',
       title: 'export user data',
       onClick: () => {
@@ -208,6 +196,18 @@ const Taskbar = props => {
         minerva.exportDataToJsonFile()
       },
       tooltip: 'export all user data for the currently logged in user.'
+    },
+    {
+      id: 'submitfeedback',
+      title: 'submit feedback',
+      onClick: () => {
+        const link = document.createElement('a')
+        link.href =
+          'https://github.com/jpegzilla/minervas-akasha/blob/master/contributing.md#submitting-feedback-and-bug-reports'
+        link.target = '_blank'
+        link.click()
+      },
+      tooltip: "submit feedback about minerva's akasha."
     },
     {
       id: 'sendreport',
