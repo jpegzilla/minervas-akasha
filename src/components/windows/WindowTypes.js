@@ -4,6 +4,7 @@ import FileDialog from './FileDialog'
 import RecordViewer from './RecordViewer'
 import ImageViewer from './ImageViewer'
 import ConfirmBox from './ConfirmBox'
+import TextEditor from './TextEditor'
 import Window from './Window'
 
 export default {
@@ -13,5 +14,6 @@ export default {
   RecordViewer: RecordViewer,
   ImageViewer: ImageViewer,
   ConfirmBox: ConfirmBox,
+  TextEditor: TextEditor,
   Window: Window
 }
