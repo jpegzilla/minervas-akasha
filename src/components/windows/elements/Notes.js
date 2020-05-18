@@ -139,19 +139,19 @@ const Notes = props => {
         onClick={() => {
           setCollapsed(!collapsed)
         }}
-        className="notes-sidebar"
-        title="click to expand note viewer">
+        className='notes-sidebar'
+        title='click to expand note viewer'>
         <span>extra</span>
       </div>
 
       <div className={`notes-content${collapsed ? ' collapsed' : ''}`}>
-        <div className="notes-content-notepad">
-          <header>
-            <div>notepad</div>
+        <div className='notes-content-notepad'>
+          <header className='header-box'>
+            <div className='header-box-sub'>notepad</div>
           </header>
           <textarea
             ref={textArea}
-            spellCheck="false"
+            spellCheck='false'
             onClick={e => e.stopPropagation()}
             onChange={e => {
               setTextHistory([...textHistory, noteText])
@@ -171,9 +171,9 @@ const Notes = props => {
           />
         </div>
 
-        <div className="notes-content-metadata">
-          <header>
-            <div>custom metadata</div>
+        <div className='notes-content-metadata'>
+          <header className='header-box'>
+            <div className='header-box-sub'>custom metadata</div>
           </header>
           <div>
             <form
@@ -182,16 +182,16 @@ const Notes = props => {
                 handleCustomMetadata(customMetadata)
               }}>
               <input
-                type="text"
-                placeholder="data key"
+                type='text'
+                placeholder='data key'
                 value={customMetadata.key}
                 onChange={e =>
                   setCustomMetadata({ ...customMetadata, key: e.target.value })
                 }
               />
               <input
-                type="text"
-                placeholder="data value"
+                type='text'
+                placeholder='data value'
                 value={customMetadata.value}
                 onChange={e =>
                   setCustomMetadata({
@@ -201,7 +201,8 @@ const Notes = props => {
                 }
               />
               <button
-                type="submit"
+                type='submit'
+                className='button-non-mutation'
                 onClick={() => handleCustomMetadata(customMetadata)}>
                 set custom metadata
               </button>
@@ -209,13 +210,13 @@ const Notes = props => {
           </div>
 
           {customMetadataObject && (
-            <div className="custom-metadata-list">
+            <div className='custom-metadata-list'>
               <ul>
                 {Object.entries(customMetadataObject).map(([k, v], i) => {
                   return (
-                    <li key={`${k}-${i}`} className="custom-metadata-object">
+                    <li key={`${k}-${i}`} className='custom-metadata-object'>
                       <span>
-                        {k}: <span className="metadata-val">{v}</span>
+                        {k}: <span className='metadata-val'>{v}</span>
                       </span>
                       <span
                         onClick={() => {
