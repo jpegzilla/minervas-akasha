@@ -56,8 +56,8 @@ const DataDisplay = props => {
   if (type !== 'shard') {
     return connections ? (
       <div className='datastructure-connection-list-container'>
-        <header>
-          <div>{`connections to this ${type}:`}</div>
+        <header className='header-box'>
+          <div className='header-box-sub'>{`connections to this ${type}:`}</div>
         </header>
         <ul className='datastructure-connection-list'>
           {connections.map(rec => {
@@ -154,8 +154,8 @@ const DataDisplay = props => {
   else {
     return (
       <Fragment>
-        <header>
-          <div>
+        <header className='header-box'>
+          <div className='header-box-sub'>
             {currentFileData
               ? currentFileData.title
               : type === 'shard' && 'no current file data'}
@@ -163,11 +163,13 @@ const DataDisplay = props => {
         </header>
         {FileDisplay && currentFileData ? (
           <div className='structure-data-meta-display'>
-            <div>
-              <picture style={{ display: showData ? 'block' : 'none' }}>
+            <div className='header-box'>
+              <div style={{ display: showData ? 'block' : 'none' }}>
                 {FileDisplay ? FileDisplay : 'cannot display file.'}
-              </picture>
-              <span onClick={() => setShowData(!showData)}>
+              </div>
+              <span
+                className='header-box-sub'
+                onClick={() => setShowData(!showData)}>
                 {showData
                   ? `click to hide ${currentFileData.type.split('/')[0]}`
                   : `click to show ${currentFileData.type.split('/')[0]}`}
@@ -179,11 +181,13 @@ const DataDisplay = props => {
         )}
         {FileDisplay && ImageDisplay ? (
           <div className='structure-data-meta-display'>
-            <div>
+            <div className='header-box'>
               <picture style={{ display: showImage ? 'block' : 'none' }}>
                 {ImageDisplay ? ImageDisplay : 'cannot display image.'}
               </picture>
-              <span onClick={() => setShowImage(!showImage)}>
+              <span
+                className='header-box-sub'
+                onClick={() => setShowImage(!showImage)}>
                 {showImage ? 'click to hide image' : 'click to show image'}
               </span>
             </div>
@@ -220,8 +224,12 @@ const DataDisplay = props => {
                       )
                     })}
                   </ul>
-                  <div onClick={() => setMetadataDisplay(false)}>
-                    <span>click to hide metadata</span>
+                  <div
+                    className='header-box'
+                    onClick={() => setMetadataDisplay(false)}>
+                    <span className='header-box-sub'>
+                      click to hide metadata
+                    </span>
                   </div>
                 </div>
               )}
@@ -230,8 +238,8 @@ const DataDisplay = props => {
             <div
               className='structure-data-meta-display'
               onClick={() => setMetadataDisplay(true)}>
-              <div>
-                <span>
+              <div className='header-box'>
+                <span className='header-box-sub'>
                   {metadata ? 'click to show metadata' : 'no file metadata'}
                 </span>
               </div>
