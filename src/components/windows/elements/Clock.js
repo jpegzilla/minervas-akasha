@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 
 import { globalContext } from './../../App'
 
-let timeFormat
+let timeFormat, updateTime
 
 export default () => {
   const { minerva } = useContext(globalContext)
@@ -31,11 +31,9 @@ export default () => {
 
   const [currentTime, setCurrentTime] = useState(time)
 
-  const updateTime = () => {
+  updateTime = setInterval(() => {
     setCurrentTime(time)
-  }
-
-  setInterval(updateTime, 1000)
+  }, 1000)
 
   useEffect(() => {
     return () => clearInterval(updateTime)
