@@ -7,6 +7,7 @@ minerva's akasha is very well commented and soon to be very well documented. I a
 please read this document thoroughly if you want to contribute.
 
 links:
+
 -   [docs](https://github.com/jpegzilla/minervas-akasha/tree/master/docs/main)
 -   [wiki](https://github.com/jpegzilla/minervas-akasha/wiki)
 -   [discord chat](https://discordapp.com/invite/Ft9rVA6)
@@ -16,11 +17,19 @@ as of version 0.1, the software hasn't actually been released, so there's not mu
 # my environment
 
 -   os: windows 10 home x86_64
-editor: [atom](https://atom.io/). with atom-beautify for code formatting
+-   editor: [atom](https://atom.io/) with [prettier](https://prettier.io/) for code formatting. my `.prettierrc`:
+
+```json
+{
+  "semi": false,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "jsxBracketSameLine": true,
+  "bracketSpacing": true
+}
+```
 
 -   browser: [chrome](https://www.google.com/chrome/) / [firefox](https://www.mozilla.org/en-US/firefox/)
-
--   terminal: [hyper](https://hyper.is/)
 
 # submitting feedback and bug reports
 
@@ -37,11 +46,12 @@ then, do this 8-step process:
 1.  fork this repository and clone the repo onto your computer
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
 3.  get latest changes:
-```
-git checkout master
-git fetch --all
-git merge upstream/master
-```
+
+
+    git checkout master
+    git fetch --all
+    git merge upstream/master
+
 4.  install all deps: `yarn install`
 5.  create a feature branch from my master branch
 6.  make the feature / fix / whatever and commit the changes to your own branch, following the style guide
@@ -58,4 +68,4 @@ also, it doesn't hurt to talk to me about things you want to add to minerva's ak
 
 please join the discord server linked at the top of this document and ask your question(s) in the `#support-request` channel. I will almost invariably respond in sub 6 hours.
 
-_\~ more contribution info coming soon\~_
+_~ more contribution info coming soon~_
