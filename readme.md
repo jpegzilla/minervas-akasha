@@ -61,6 +61,8 @@ built with react / `create-react-app`.
 
 I'm currently redoing the ui design. so, screenshots will be prepared accordingly. of course, I have retained old screenshots for archival purposes. please look at `/docs/archival` for the old screenshots.
 
+* * *
+
 the current login screen.
 
 ![an image of the login screen.](./docs/images/login-screen.png)
@@ -73,9 +75,13 @@ some shards, the application's base structure for data storage:
 | :---------------------------------------------------------------- | ---------------------------------------------------------------: |
 | ![image of a collapsed shard.](./docs/images/shard-collapsed.png) | ![image of an expanded shard.](./docs/images/shard-expanded.png) |
 
+* * *
+
 a basic idea of what the interface currently looks like, with some of the most common windows. from left to right, a data structure (with the notepad and metadata editor expanded), a record viewer, a console, and another data structure.
 
 ![an image of minerva's akasha's current interface.](./docs/images/new-interface-colors-one.png)
+
+* * *
 
 <a name="contributing"></a>
 
