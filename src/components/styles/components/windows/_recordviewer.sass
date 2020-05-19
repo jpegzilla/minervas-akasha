@@ -16,7 +16,7 @@
     height: 100%
 
     & > * > *
-      padding: vars.$halfGap
+      padding: vars.$halfgap
 
     header
       border-bottom: 1px solid var(--text-main)
@@ -33,9 +33,10 @@
 
             &.active
               border: 1px solid vars.$yellow
+              background-color: color.adjust(vars.$yellow, $alpha: -0.85)
 
           li + li
-            margin-left: vars.$halfGap
+            margin-left: vars.$halfgap
 
       div + div
         border-top: 1px solid var(--text-main)
@@ -54,7 +55,7 @@
         // the width that the records area would have with the maximum column count
         min-width: 29rem
         display: grid
-        grid-gap: vars.$halfGap
+        grid-gap: vars.$halfgap
         grid-template-columns: repeat(3, max-content)
         grid-template-rows: repeat(auto-fill, 1.5rem)
         grid-auto-flow: row dense
@@ -79,13 +80,13 @@
             flex-grow: 1
 
             header
-              padding: vars.$halfGap
+              padding: vars.$halfgap
 
             ul
               list-style-type: none
 
               li
-                padding: vars.$halfGap
+                padding: vars.$halfgap
 
                 & + li
                   border-top: 1px solid var(--text-main)

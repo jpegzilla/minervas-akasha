@@ -36,7 +36,7 @@
     max-width: $maxWidth2
 
     p
-      margin-bottom: vars.$halfGap
+      margin-bottom: vars.$halfgap
       font-weight: normal
       font-size: 1rem
       line-height: 1.42
@@ -76,7 +76,7 @@
       outline: 1px solid vars.$pink
 
   button
-    $opacity: 0.3
+    $opacity: 0.6
 
     +vars.flexcenter
 
@@ -89,7 +89,6 @@
     padding: 0.25rem 0.5rem
 
     span
-      border: 1px solid var(--bg-main)
       padding: 0.25rem 0.5rem
       display: block
       height: 100%
@@ -98,18 +97,19 @@
     &.confirm-button, &.deny-button, &.delete-button
       padding: 0
 
-    &.confirm-button span
-      background-color: vars.$success
-      color: vars.$dark
+    &.confirm-button
+      background-color: color.adjust(vars.$success, $alpha: -$opacity)
+      border: 1px solid vars.$success
 
       &:hover
-        background-color: color.adjust(vars.$success, $alpha: -$opacity)
+        background-color: color.adjust(vars.$success, $alpha: -0.75)
 
-    &.deny-button span, &.delete-button span
-      background-color: vars.$red
+    &.deny-button, &.delete-button
+      background-color: color.adjust(vars.$red, $alpha: -$opacity)
+      border: 1px solid vars.$red
 
       &:hover
-        background-color: color.adjust(vars.$red, $alpha: -$opacity)
+        background-color: color.adjust(vars.$red, $alpha: -0.75)
 
   input
     background-color: transparent
@@ -139,7 +139,7 @@
     header
       @include vars.itemheader(false)
 
-      margin-bottom: vars.$halfGap
+      margin-bottom: vars.$halfgap
       max-width: $maxWidth2
       overflow-wrap: anywhere
 
@@ -164,11 +164,9 @@
       min-width: 20.875rem
 
       ul
-        margin-bottom: vars.$halfGap
+        margin-bottom: vars.$halfgap
 
       div
-        @include vars.itemheader
-
         cursor: pointer
         margin-bottom: 0
 
@@ -180,12 +178,13 @@
   .structure-controls
     display: grid
     flex-direction: column
-    grid-gap: vars.$halfGap
+    grid-gap: vars.$halfgap
+    margin-top: vars.$halfgap
 
     div
       display: grid
       grid-template-columns: 1fr 1fr
-      grid-gap: vars.$halfGap
+      grid-gap: vars.$halfgap
 
       input, button
         height: min-content
@@ -193,16 +192,30 @@
       .delete-button
         grid-column: span 2
 
+      .button-non-mutation
+        background-color: color.adjust(vars.$nondest, $alpha: -0.75)
+        border: 1px solid vars.$nondest
+
+        &:hover
+          background-color: color.adjust(vars.$nondest, $alpha: -0.85)
+
+  .connect-button
+    background-color: color.adjust(vars.$nondest, $alpha: -0.75)
+    border: 1px solid vars.$nondest
+
+    &:hover
+      background-color: color.adjust(vars.$nondest, $alpha: -0.85)
+
   .structure-taglist
     list-style-type: none
     width: 100%
     line-height: 1rem
-    margin: vars.$halfGap 0
-    display: grid
-    grid-gap: $gap
-    grid-row-gap: $gap
-    grid-template-columns: repeat(3, minmax(min-content, auto))
-    grid-auto-flow: row
+    margin-bottom: 0.15rem
+    // display: grid
+    // grid-gap: $gap
+    // grid-row-gap: $gap
+    // grid-template-columns: repeat(3, minmax(min-content, auto))
+    // grid-auto-flow: row
 
     &:empty
       margin: 0
