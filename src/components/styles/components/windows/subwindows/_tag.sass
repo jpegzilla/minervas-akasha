@@ -3,57 +3,75 @@
 
 .structure-tag
   font-size: 1rem
-  width: 100%
-  min-width: max-content
+  width: max-content
   display: inline-flex
   align-items: center
   user-select: none
   cursor: pointer
   overflow: hidden
+  margin-right: 0.45rem
+  margin-bottom: 0.45rem
 
   &.pink
     border-left: 2px solid vars.$pink
     background-color: color.adjust(vars.$pink, $alpha: -0.5)
+
+    &:hover
+      background-color: color.adjust(vars.$pink, $alpha: -0.7)
 
   &.white
     border-left: 2px solid vars.$white
     color: vars.$white
     background-color: color.adjust(vars.$white, $alpha: -0.7)
 
+    &:hover
+      background-color: color.adjust(vars.$white, $alpha: -0.7)
+
   &.blue
     border-left: 2px solid vars.$blue
     background-color: color.adjust(vars.$blue, $alpha: -0.5)
+
+    &:hover
+      background-color: color.adjust(vars.$blue, $alpha: -0.7)
 
   &.red
     border-left: 2px solid vars.$red
     background-color: color.adjust(vars.$red, $alpha: -0.5)
 
+    &:hover
+      background-color: color.adjust(vars.$red, $alpha: -0.7)
+
   &.green
     border-left: 2px solid vars.$green
     background-color: color.adjust(vars.$green, $alpha: -0.5)
+
+    &:hover
+      background-color: color.adjust(vars.$green, $alpha: -0.7)
 
   &.purple
     border-left: 2px solid vars.$purple
     background-color: color.adjust(vars.$purple, $alpha: -0.5)
 
+    &:hover
+      background-color: color.adjust(vars.$purple, $alpha: -0.7)
+
   &.yellow
     border-left: 2px solid vars.$yellow
     background-color: color.adjust(vars.$yellow, $alpha: -0.5)
 
+    &:hover
+      background-color: color.adjust(vars.$yellow, $alpha: -0.7)
+
   span
     &:nth-child(1)
-      padding: 0.15rem 0 0.15rem 0.5rem
-      flex-grow: 1
+      padding: 0.15rem 0.5rem
 
     &:nth-child(2)
-      margin-left: 0.15rem
       padding: 0.15rem 0.35rem
+      align-self: flex-end
 
       &:hover
         background-color: vars.$pink
         color: vars.$white
 
     display: inline-block
-
-  &:hover
-    background-color: color.adjust(vars.$white, $alpha: -0.8)
