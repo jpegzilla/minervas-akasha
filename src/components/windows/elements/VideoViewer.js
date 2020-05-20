@@ -18,7 +18,9 @@ import { secondsToTime } from './../../../utils/misc'
 import worker from './utils/metadataWorker.worker'
 
 let isPlaying = false,
-  interval
+  interval,
+  timer,
+  fadeInBuffer = false
 
 const VideoViewer = props => {
   const { src, alt, id, mime, humanSize } = props
@@ -260,14 +262,28 @@ const VideoViewer = props => {
               setWaiting(true)
               clearInterval(interval)
             }}
-            onDragStart={e => {
-              e.preventDefault()
-            }}
             onKeyDown={e => {
               handleKeyDown(e)
             }}
             onEnded={() => {
               clearInterval(interval)
+            }}
+            onMouseMove={() => {
+              if (!fadeInBuffer && timer) {
+                clearTimeout(timer)
+                timer = 0
+
+                if (imageRef.current) imageRef.current.style.cursor = ''
+              } else {
+                if (imageRef.current) imageRef.current.style.cursor = 'default'
+                fadeInBuffer = false
+              }
+
+              timer = setTimeout(() => {
+                if (imageRef.current) imageRef.current.style.cursor = 'none'
+
+                fadeInBuffer = true
+              }, 2000)
             }}
             className={`${inversion ? 'inverted' : ''}`.trim()}
             src={source}

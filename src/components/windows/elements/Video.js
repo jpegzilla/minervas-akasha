@@ -8,6 +8,9 @@ import PropTypes from 'prop-types'
 
 import worker from './utils/metadataWorker.worker'
 
+let timer,
+  fadeInBuffer = false
+
 const Video = props => {
   const { src, title, humanSize, mime, setMetadata, setLoadingFileData } = props
 
@@ -137,6 +140,22 @@ const Video = props => {
       ref={videoRef}
       autoPlay={shouldAutoplay}
       onLoadedData={() => void setLoadingFileData(false)}
+      onMouseMove={() => {
+        if (!fadeInBuffer && timer) {
+          clearTimeout(timer)
+          timer = 0
+          if (videoRef.current) videoRef.current.style.cursor = ''
+        } else {
+          if (videoRef.current) videoRef.current.style.cursor = 'default'
+          fadeInBuffer = false
+        }
+
+        timer = setTimeout(() => {
+          if (videoRef.current) videoRef.current.style.cursor = 'none'
+
+          fadeInBuffer = true
+        }, 2000)
+      }}
       onError={() => {
         setLoadingFileData(false)
 
