@@ -14,7 +14,7 @@ import { globalContext } from './../App'
 import PropTypes from 'prop-types'
 
 const Console = props => {
-  const { setWindows } = props
+  const { setWindows, handleWindowCommand } = props
 
   const { minerva, audiomanager } = useContext(globalContext)
 
@@ -65,17 +65,20 @@ const Console = props => {
     // put the previous command into the history
     setHistory([...history, cmd])
 
-    const res = parseCommand(cmd, setWindows, minerva, log)
-
     setCommand('')
     setInputState('default')
+
+    // don't do anything if the user didn't enter a command
+    if (cmd === '') return
+    const res = parseCommand(cmd, setWindows, minerva, log)
 
     if (['clr', 'clear'].includes(cmd)) {
       return setLog([])
     }
 
-    // don't do anything if the user didn't enter a command
-    if (cmd === '') return
+    if (['exit', 'logout', 'close'].includes(cmd)) {
+      return handleWindowCommand(null, 'close')
+    }
 
     if (res.message) {
       if (res.action) {

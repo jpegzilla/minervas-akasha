@@ -5,5 +5,7 @@ export const commandDirectory = {
   '> add <type> [name]':
     'add a new structure of a certain type, with an optional name.\n    acceptable structure types:\r\n\tshard\t\tnode\t\tgrimoire\r\n\tathenaeum\thypostasis',
   '> find [--type <structure type>] [--mime <mime type>] [query]':
-    'find a structure\n    using a search string, optionally using a mime type and / or structure type.\n    example: find music --type shard --mime audio/wav'
+    'find a structure\n    using a search string, optionally using a mime type and / or structure type.\n    example: find music --type shard --mime audio/wav',
+  '> clear (aliases: clr)': 'clears the console window.',
+  '> exit (aliases: logout, close)': 'closes the current console session.'
 }
