@@ -215,11 +215,6 @@ const DataStructure = props => {
         if (e.file) {
           setLoadingFileData(true)
 
-          console.log(
-            `found a file for record ${structId}, attaching it.`,
-            e.file
-          )
-
           // if a structure has info attached to it (tags, etc.), then add that
           // info object into the structure's window object inside the window
           // array. data such as the database id and user id are also inserted.
