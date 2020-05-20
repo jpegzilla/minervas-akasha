@@ -10,7 +10,6 @@ import React, {
 } from 'react'
 
 import PropTypes from 'prop-types'
-// import Drag from './../subcomponents/Drag'
 
 import { globalContext } from './../App'
 import { getAverageColor } from './../../utils/misc'
