@@ -3,7 +3,7 @@
 
 $cols: 5
 
-.image-viewer-window
+.image-viewer-window, .video-viewer-window
   background-color: color.adjust(vars.$black, $alpha: -0.05)
 
   .image-viewer-container-controls
@@ -38,6 +38,14 @@ $cols: 5
     background-color: color.adjust(vars.$nondest, $alpha: -0.75)
     border: 1px solid vars.$nondest
 
+  .disabled-status
+    background-color: color.adjust(vars.$disabled, $alpha: -0.75)
+    border: 1px solid vars.$disabled
+    cursor: default
+
+    &:active, &:focus
+      outline: none
+
   .control-buttons
     padding: vars.$halfgap
     display: grid
@@ -45,10 +53,13 @@ $cols: 5
     grid-template-columns: repeat($cols, 1fr)
 
   .image-container
+    +vars.flexcenter
+
     overflow: hidden
     border-top: 1px solid var(--text-main)
 
-  img
+  img, video
+    min-width: vars.$dsmaxwidth
     max-width: 1000px
     max-height: 75vh
 
