@@ -1,5 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 
+import NotFound from './NotFound'
+
 import PropTypes from 'prop-types'
 
 const Main = props => {
@@ -111,7 +113,7 @@ const Main = props => {
                 )}
               />
 
-              {/* login component */}
+              {/* login screen */}
               <Route
                 exact
                 path='/login'
@@ -140,6 +142,11 @@ const Main = props => {
                     <Home routeProps={routeProps} setLoggedIn={setLoggedIn} />
                   )
                 }
+              />
+
+              {/* 404 screen */}
+              <Route
+                render={routeProps => <NotFound routeProps={routeProps} />}
               />
             </Switch>
 
