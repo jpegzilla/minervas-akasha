@@ -27,11 +27,10 @@ const VideoViewer = props => {
 
   const imageRef = useRef()
 
-  const altToShow =
-    alt
-      .split('\n')
-      .splice(0, alt.split('\n').length - 1)
-      .join('\n') + '\nscroll to zoom.'
+  const altToShow = alt
+    .split('\n')
+    .splice(0, alt.split('\n').length - 1)
+    .join('\n')
 
   const titleToShow = alt.split('\n')[0]
 
@@ -213,16 +212,25 @@ const VideoViewer = props => {
               : 'hide controls'}
           </span>
         </button>
-        <button className='button-non-mutation disabled-status' disabled>
+        <button
+          title='shows the load state of the video.'
+          className='button-non-mutation disabled-status'
+          disabled>
           <span>{waiting ? 'loading...' : 'ready'}</span>
         </button>
-        <button className='button-non-mutation disabled-status' disabled>
+        <button
+          title='shows whether looping is on or off.'
+          className='button-non-mutation disabled-status'
+          disabled>
           <span>
             loop: {imageRef.current && imageRef.current.loop ? ' on' : ' off'}
           </span>
         </button>
-        <button className='button-non-mutation disabled-status' disabled>
-          <span>{secondsToTime(time).substring(0, 12)}</span>
+        <button
+          title='shows the current time in the video.'
+          className='button-non-mutation disabled-status'
+          disabled>
+          <span>{secondsToTime(time).substring(0, 13)}</span>
         </button>
         <button
           className='button-non-mutation span-all'
