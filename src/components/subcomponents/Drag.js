@@ -1,16 +1,69 @@
 /* eslint-disable */
 
-import React, {
-  useState,
-  useEffect,
-  createElement,
-  cloneElement,
-  Children
-} from 'react'
+import React, { Children } from 'react'
+
+let active = false
+let currentX
+let currentY
+let initialX
+let initialY
+let xOffset = 0
+let yOffset = 0
 
 // turns a component into a draggable box
 const Drag = props => {
-  const { children } = props
+  const { children, position } = props
 
-  return
+  const dragStart = e => {
+    initialX = e.clientX - xOffset
+    initialY = e.clientY - yOffset
+
+    if (e.target === imageRef.current) {
+      active = true
+    }
+  }
+
+  const dragEnd = () => {
+    initialX = currentX
+    initialY = currentY
+
+    active = false
+  }
+
+  const drag = e => {
+    if (active) {
+      e.preventDefault()
+
+      currentX = e.clientX - initialX
+      currentY = e.clientY - initialY
+
+      xOffset = currentX
+      yOffset = currentY
+
+      setTranslation({ x: currentX, y: currentY })
+    }
+  }
+
+  if (position) {
+    currentX = 0
+    currentY = 0
+    initialX = 0
+    initialY = 0
+    xOffset = 0
+    yOffset = 0
+
+    dragEnd()
+  }
+
+  return (
+    <div
+      onMouseDown={dragStart}
+      onMouseUp={dragEnd}
+      onMouseLeave={dragEnd}
+      onMouseMove={drag}>
+      {Children.only(children)}
+    </div>
+  )
 }
+
+export default Drag
