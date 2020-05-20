@@ -1,5 +1,59 @@
 @use "../utils/vars"
+@use "sass:color"
 
-.image-viewer-window img
-  max-width: 1000px
-  max-height: 80vh
+$cols: 5
+
+.image-viewer-window
+  background-color: color.adjust(vars.$black, $alpha: -0.05)
+
+  .image-viewer-container-controls
+    padding: 0 vars.$halfgap
+
+  button
+    +vars.flexcenter
+    $opacity: 0.6
+    $font: vars.$proggy
+
+    line-height: 1rem
+    width: 100%
+    background-color: transparent
+    cursor: pointer
+    font-family: $font
+    color: var(--text-main)
+    border: 1px solid var(--text-main)
+
+    span
+      padding: 0.25rem 0.5rem
+      display: block
+      height: 100%
+      width: 100%
+
+    &:active, &:focus
+      outline: 1px solid vars.$pink
+
+    &.span-all
+      grid-column: span $cols
+
+  .button-non-mutation
+    background-color: color.adjust(vars.$nondest, $alpha: -0.75)
+    border: 1px solid vars.$nondest
+
+  .control-buttons
+    padding: vars.$halfgap
+    display: grid
+    grid-gap: vars.$halfgap
+    grid-template-columns: repeat($cols, 1fr)
+
+  .image-container
+    overflow: hidden
+    border-top: 1px solid var(--text-main)
+
+  img
+    max-width: 1000px
+    max-height: 75vh
+
+    &.inverted
+      filter: invert(1)
+
+    &.greyscale
+      filter: grayscale(1)
