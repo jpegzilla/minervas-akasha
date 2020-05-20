@@ -102,8 +102,10 @@ const Window = props => {
     // handle commands such as minimize and close.
     // event is only passed in in order to prevent bubbling and any default action.
     const handleWindowCommand = (e, command) => {
-      e.stopPropagation()
-      e.preventDefault()
+      if (e) {
+        e.stopPropagation()
+        e.preventDefault()
+      }
 
       const { state } = command
 
