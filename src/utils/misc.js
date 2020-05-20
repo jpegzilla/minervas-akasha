@@ -71,31 +71,25 @@ export const isEmpty = obj => {
  *
  * @returns {function} function that fires the callback
  */
-export const throttle = (callback, delay) => {
-  let throttleTimeout = null
-  let storedEvent = null
+export const throttle = (fn, threshold) => {
+  threshold || (threshold = 250)
 
-  const throttledEventHandler = event => {
-    storedEvent = event
+  let last, deferTimer
 
-    const shouldHandleEvent = !throttleTimeout
-
-    if (shouldHandleEvent) {
-      callback(storedEvent)
-
-      storedEvent = null
-
-      throttleTimeout = setTimeout(() => {
-        throttleTimeout = null
-
-        if (storedEvent) {
-          throttledEventHandler(storedEvent)
-        }
-      }, delay)
+  return () => {
+    let now = +new Date()
+    if (last && now < last + threshold) {
+      // hold on to it
+      clearTimeout(deferTimer)
+      deferTimer = setTimeout(function() {
+        last = now
+        fn.apply()
+      }, threshold)
+    } else {
+      last = now
+      fn.apply()
     }
   }
-
-  return throttledEventHandler
 }
 
 /**
