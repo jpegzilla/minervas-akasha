@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, { Children } from 'react'
+import React, { Children, useState } from 'react'
 
 let active = false
 let currentX
@@ -12,15 +12,15 @@ let yOffset = 0
 
 // turns a component into a draggable box
 const Drag = props => {
+  const [translation, setTranslation] = useState({ x: 0, y: 0 })
+
   const { children, position } = props
 
   const dragStart = e => {
     initialX = e.clientX - xOffset
     initialY = e.clientY - yOffset
 
-    if (e.target === imageRef.current) {
-      active = true
-    }
+    active = true
   }
 
   const dragEnd = () => {
@@ -57,6 +57,9 @@ const Drag = props => {
 
   return (
     <div
+      style={{
+        transform: `translate3d(${translation.x}px, ${translation.y}px, 0)`
+      }}
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseLeave={dragEnd}
