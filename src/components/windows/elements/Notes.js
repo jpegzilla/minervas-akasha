@@ -140,8 +140,8 @@ const Notes = props => {
           setCollapsed(!collapsed)
         }}
         className='notes-sidebar'
-        title='click to expand note viewer'>
-        <span>extra</span>
+        title='click to expand note editor and custom metadata'>
+        <span>{collapsed ? 'show extras' : 'hide extras'}</span>
       </div>
 
       <div className={`notes-content${collapsed ? ' collapsed' : ''}`}>
