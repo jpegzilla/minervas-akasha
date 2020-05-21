@@ -11,11 +11,11 @@ import React, {
 
 import PropTypes from 'prop-types'
 
-import { globalContext } from './../../App'
+import { globalContext } from './../App'
 
-import { secondsToTime } from './../../../utils/misc'
+import { secondsToTime } from './../../utils/misc'
 
-import worker from './utils/metadataWorker.worker'
+import worker from './elements/utils/metadataWorker.worker'
 
 let isPlaying = false,
   interval,
@@ -255,12 +255,12 @@ const VideoViewer = props => {
               isPlaying = true
               interval = setInterval(() => {
                 requestAnimationFrame(() => {
-                  setTime(imageRef.current.currentTime)
+                  if (imageRef.current) setTime(imageRef.current.currentTime)
                 })
               }, 100)
             }}
             onSeeked={() => {
-              setTime(imageRef.current.currentTime)
+              if (imageRef.current) setTime(imageRef.current.currentTime)
             }}
             onPause={() => {
               isPlaying = false
