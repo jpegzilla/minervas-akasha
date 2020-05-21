@@ -67,12 +67,16 @@ const ImageViewer = props => {
     initialX = currentX
     initialY = currentY
 
+    imageRef.current.style.cursor = 'grab'
+
     active = false
   }
 
   const drag = e => {
     if (active) {
       e.preventDefault()
+
+      e.target.style.cursor = 'grabbing'
 
       currentX = e.clientX - initialX
       currentY = e.clientY - initialY
