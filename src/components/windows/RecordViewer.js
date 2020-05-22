@@ -105,7 +105,7 @@ const RecordViewer = props => {
 
   // when the status bar indicates that a record has been selected, show items in the sidebar
   const [sidebar, setSidebar] = useState({
-    title: 'nothing selected',
+    title: false,
     records: []
   })
 
@@ -116,7 +116,10 @@ const RecordViewer = props => {
     if (Object.keys(item).length > 1) {
       const { connectedTo, name } = item
 
-      setSidebar({ title: name, records: Object.keys(connectedTo) })
+      setSidebar({
+        title: `(${item.type}) ${name}`,
+        records: Object.keys(connectedTo)
+      })
     }
   }, [statusBar])
 
@@ -145,7 +148,7 @@ const RecordViewer = props => {
   return (
     <div
       onClick={() => {
-        setSidebar({ title: 'nothing selected', records: {} })
+        setSidebar({ title: false, records: {} })
         setStatusBar({ message: '', item: {} })
       }}
       className='record-viewer-container'>
@@ -176,78 +179,100 @@ const RecordViewer = props => {
         </div>
         <div className='record-viewer-tabs'>
           <ul>
-            {[...Object.keys(minerva.record.records), 'all'].map((name, i) => {
-              return (
-                <li
-                  className={`recordviewer-filter${
-                    recordsToShow.length === 1 && recordsToShow.includes(name)
-                      ? ' active'
-                      : recordsToShow.length > 1 && name === 'all'
-                      ? ' active'
-                      : ''
-                  }`}
-                  key={`${name}-${i}`}
-                  onClick={() => void handleFilterRecords(name)}>
-                  {name}
-                </li>
-              )
-            })}
+            {['filter:', ...Object.keys(minerva.record.records), 'all'].map(
+              (name, i) => {
+                return (
+                  <li
+                    className={`recordviewer-filter${
+                      recordsToShow.length === 1 && recordsToShow.includes(name)
+                        ? ' active'
+                        : recordsToShow.length > 1 && name === 'all'
+                        ? ' active'
+                        : ''
+                    }`}
+                    key={`${name}-${i}`}
+                    onClick={() => void handleFilterRecords(name)}>
+                    {name}
+                  </li>
+                )
+              }
+            )}
           </ul>
         </div>
       </header>
       <section className='record-viewer-main'>
-        <section className='record-viewer-sidebar'>
-          <div className='record-viewer-sidebar-container'>
-            <div className='record-viewer-sidebar-info'>
-              <header title={sidebar.title}>
-                {sidebar.title.substring(0, 17).padEnd(20, '.')}
-              </header>
+        {sidebar.title && (
+          <section className='record-viewer-sidebar'>
+            <div className='record-viewer-sidebar-container'>
+              <div className='record-viewer-sidebar-info'>
+                <header title={sidebar.title}>
+                  {sidebar.title.length > 20
+                    ? sidebar.title.substring(0, 17).padEnd(20, '.')
+                    : sidebar.title}
+                </header>
 
-              {sidebar.records.length > 0 ? (
-                <Fragment>
-                  <ul>
-                    <li>record connections:</li>
-                    {sidebar.records.map(item => {
-                      const record = minerva.record.findRecordById(item)
+                {sidebar.records.length > 0 ? (
+                  <Fragment>
+                    <div className='record-connections-header'>
+                      record connections:
+                    </div>
+                    <ul>
+                      {sidebar.records.map(item => {
+                        const record = minerva.record.findRecordById(item)
+                        let parent = false
 
-                      const title = `name: ${record.name}\ntype: ${
-                        record.type
-                      }\ntags: ${
-                        record.tags.length === 0
-                          ? 'none'
-                          : record.tags.map(i => i.name).join(', ')
-                      }\ncreated on ${new Date(record.createdAt).toLocaleString(
-                        minerva.settings.dateFormat
-                      )}\nupdated on ${new Date(
-                        record.updatedAt
-                      ).toLocaleString(minerva.settings.dateFormat)}`
+                        if (record.accepts.includes(statusBar.item.type)) {
+                          parent = true
+                        }
 
-                      return (
-                        <li
-                          onDoubleClick={e => {
-                            e.stopPropagation()
+                        const title = `name: ${record.name}\ntype: ${
+                          record.type
+                        }\ntags: ${
+                          record.tags.length === 0
+                            ? 'none'
+                            : record.tags.map(i => i.name).join(', ')
+                        }\ncreated on ${new Date(
+                          record.createdAt
+                        ).toLocaleString(
+                          minerva.settings.dateFormat
+                        )}\nupdated on ${new Date(
+                          record.updatedAt
+                        ).toLocaleString(minerva.settings.dateFormat)}`
 
-                            handleOpenRecord(record)
-                          }}
-                          title={title}
-                          key={record.id}>
-                          {`(${record.type.substring(
-                            0,
-                            3
-                          )}) ${record.name.substring(0, 11).padEnd(14, '.')}`}
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </Fragment>
-              ) : (
-                ''
-              )}
+                        return (
+                          <li
+                            onDoubleClick={e => {
+                              e.stopPropagation()
+                              e.preventDefault()
+
+                              handleOpenRecord(record)
+                            }}
+                            onClick={e => {
+                              e.stopPropagation()
+                            }}
+                            className={parent ? 'parent-record' : ''}
+                            title={title}
+                            key={record.id}>
+                            {`(${record.type.substring(0, 5)}) ${
+                              record.name.length > 14
+                                ? record.name.substring(0, 11).padEnd(14, '.')
+                                : record.name
+                            }`}
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </Fragment>
+                ) : (
+                  ''
+                )}
+              </div>
+
+              <div className='record-viewer-sidebar-info-collapse'></div>
             </div>
+          </section>
+        )}
 
-            <div className='record-viewer-sidebar-info-collapse'>+</div>
-          </div>
-        </section>
         <section className='record-viewer-records'>
           {allRecords.some(item => recordsToShow.includes(item.type))
             ? recordData.records.map((item, i) => {
@@ -257,9 +282,11 @@ const RecordViewer = props => {
                 const nameToShow =
                   name === type
                     ? type
-                    : `(${type.substring(0, 3)}) ${name
-                        .substring(0, 9)
-                        .padEnd(12, '.')}`
+                    : `(${type.substring(0, 5)}) ${
+                        name.length > 12
+                          ? name.substring(0, 9).padEnd(12, '.')
+                          : name
+                      }`
 
                 let tagsToShow
 
@@ -323,7 +350,7 @@ const RecordViewer = props => {
                     }}
                     onDoubleClick={() => void handleOpenRecord(item)}
                     title={title}
-                    className='record-viewer-record record-box'>
+                    className={`record-viewer-record record-box color-${type}`}>
                     {nameToShow}
                   </div>
                 )
