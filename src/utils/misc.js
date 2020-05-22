@@ -57,6 +57,9 @@ export const cjkRegex = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u
  * @returns {boolean} true if object is empty, false if not
  */
 export const isEmpty = obj => {
+  if (typeof obj !== 'object')
+    throw new TypeError('isEmpty must be called with an object.')
+
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) return false
   }
@@ -100,6 +103,9 @@ export const throttle = (fn, threshold) => {
  * @returns {string} an hh:mm:ss string
  */
 export const secondsToTime = sec => {
+  if (isNaN(parseInt(sec)))
+    throw new TypeError('secondsToTime must be called with a number.')
+
   let totalSeconds = sec
 
   let hours = Math.floor(totalSeconds / 3600)
@@ -122,6 +128,9 @@ export const secondsToTime = sec => {
  * @returns {string} size with unit
  */
 export const bytesToSize = bytes => {
+  if (isNaN(parseInt(bytes)))
+    throw new TypeError('bytesToSize must be called with a number.')
+
   const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb']
 
   if (parseInt(bytes) === 0) return '0 bytes'
@@ -139,6 +148,9 @@ export const bytesToSize = bytes => {
  * @returns {ArrayBuffer} a buffer created from the string.
  */
 export const str2ab = str => {
+  if (typeof str !== 'string')
+    throw new TypeError('str2ab can only be called with a string.')
+
   const buf = new ArrayBuffer(str.length * 2) // 2 bytes for each char
   const bufView = new Uint16Array(buf)
 
@@ -156,6 +168,9 @@ export const str2ab = str => {
  * @returns {number} a random number within the provided range
  */
 export const getRandomInt = (min, max) => {
+  if (isNaN(min) || isNaN(max))
+    throw new TypeError('getRandomInt must be called with two numbers.')
+
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min //The maximum is exclusive and the minimum is inclusive
@@ -212,6 +227,9 @@ export const uuidv4 = () => {
  * @returns {boolean} true if valid, false otherwise.
  */
 export const validateUUIDv4 = id => {
+  if (typeof id !== 'string')
+    throw new TypeError('validateUUIDv4 must be called with a string.')
+
   const uuidV4Regex = /^(?:[a-zA-Z0-9]{8}-(?:[a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12})$/gi
 
   return uuidV4Regex.test(id)
@@ -227,6 +245,11 @@ export const validateUUIDv4 = id => {
  * @returns {array} sorted array
  */
 export const stringSort = (arr, asc, prop) => {
+  if (!Array.isArray(arr))
+    throw new TypeError(
+      'stringSort must be called with an array as the first argument.'
+    )
+
   if (prop)
     return arr.sort((a, b) =>
       asc ? a[prop].localeCompare(b[prop]) : b[prop].localeCompare(a[prop])
@@ -253,4 +276,15 @@ export const mobilecheck = () => {
   )
     a = !0
   return a
+}
+
+export default {
+  isEmpty,
+  secondsToTime,
+  bytesToSize,
+  str2ab,
+  getRandomInt,
+  uuidv4,
+  validateUUIDv4,
+  stringSort
 }
