@@ -1,10 +1,5 @@
 import { uuidv4 } from './../misc'
 import { Structure } from './structure'
-// import { Shard } from "./shard";
-// import { Grimoire } from "./grimoire";
-// import { Node } from "./node";
-// import { Hypostasis } from "./hypostasis";
-// import { Athenaeum } from "./athenaeum";
 import { MinervaArchive } from './../managers/Minerva'
 import { validateUUIDv4 } from './../../utils/misc'
 import DatabaseInterface from './../managers/Database'
@@ -42,6 +37,10 @@ export default class AkashicRecord {
       node: [],
       shard: []
     }
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'AkashicRecord'
   }
 
   // for keeping track of the last time the record was updated.

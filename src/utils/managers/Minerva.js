@@ -151,6 +151,10 @@ export class Minerva {
     this.indexedDBUpdated = new Date().toISOString()
   }
 
+  get [Symbol.toStringTag]() {
+    return 'Minerva'
+  }
+
   static fileHeader = 'minervas_akasha_alpha'
 
   // this is the single source of truth for the default application settings
