@@ -19,8 +19,4 @@ export class Shard extends Structure {
 
     this.connectsTo = ['node', 'grimoire', 'athenaeum']
   }
-
-  addData(data, type) {
-    this.data[type] = data
-  }
 }

@@ -28,23 +28,4 @@ export class Hypostasis extends Structure {
 
     this.reflections = {}
   }
-
-  addReflection(ath, subname) {
-    if (!ath instanceof Athenaeum)
-      throw new SyntaxError('currently, only athenea can be reflected.')
-
-    if (subname in this.reflections) {
-      // warn user that they're about to overwrite something
-    }
-
-    this.reflections[subname] = { name: `${this.name}.${subname}`, ath }
-  }
-
-  removeReflection(subname) {
-    if (subname in this.reflections) delete this.reflections[subname]
-  }
-
-  getReflection(subname) {
-    if (subname in this.reflections) return this.reflections[subname]
-  }
 }
