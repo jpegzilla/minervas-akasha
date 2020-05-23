@@ -17,7 +17,7 @@ const Tag = props => {
   return (
     <li
       title={`${t.name}\nright click to change color.`}
-      className={`structure-tag ${t.color}`}>
+      className={`structure-tag colorcode-${t.color}`}>
       <span
         onContextMenu={e => {
           e.stopPropagation()
