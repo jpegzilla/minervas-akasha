@@ -253,7 +253,7 @@ const RecordViewer = props => {
                             className={parent ? 'parent-record' : ''}
                             title={title}
                             key={record.id}>
-                            {`(${record.type.substring(0, 5)}) ${
+                            {`(${record.type.substring(0, 3)}) ${
                               record.name.length > 14
                                 ? record.name.substring(0, 11).padEnd(14, '.')
                                 : record.name
@@ -282,7 +282,7 @@ const RecordViewer = props => {
                 const nameToShow =
                   name === type
                     ? type
-                    : `(${type.substring(0, 5)}) ${
+                    : `(${type.substring(0, 3)}) ${
                         name.length > 12
                           ? name.substring(0, 9).padEnd(12, '.')
                           : name
