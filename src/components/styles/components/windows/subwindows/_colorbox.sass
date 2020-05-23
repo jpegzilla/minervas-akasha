@@ -1,13 +1,5 @@
 @use "../../utils/vars"
 
-// "colorcode-pink",
-//  "colorcode-white",
-// "colorcode-blue",
-// "colorcode-red",
-//  "colorcode-green",
-// "colorcode-purple",
-//  "colorcode-yellow"
-
 $size: 2rem
 
 .color-box
@@ -36,23 +28,6 @@ $size: 2rem
     width: 100%
     height: $size
 
-    .colorcode-pink
-      background-color: vars.$pink
-
-    .colorcode-white
-      background-color: vars.$white
-
-    .colorcode-blue
-      background-color: vars.$blue
-
-    .colorcode-red
-      background-color: vars.$red
-
-    .colorcode-green
-      background-color: vars.$green
-
-    .colorcode-purple
-      background-color: vars.$purple
-
-    .colorcode-yellow
-      background-color: vars.$yellow
+    @each $color, $class in vars.$colors
+      .#{$class}
+        background-color: #{$color}

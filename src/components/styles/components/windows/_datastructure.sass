@@ -29,7 +29,7 @@
   flex-direction: column
 
   // todo: refactor this somehow to use css vars
-  background-color: color.adjust(vars.$black, $alpha: -0.05)
+  background-color: color.adjust(vars.$darkerblue, $alpha: -0.05)
 
   .structure-header
 
@@ -52,8 +52,6 @@
       max-width: $maxWidth2
 
     .structure-left-column
-      +vars.itemlist
-
       padding: $gap
       flex-direction: column
       min-width: calc(#{$maxWidth2} + 1rem)

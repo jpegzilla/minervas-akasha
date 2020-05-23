@@ -1,23 +1,59 @@
 @use "sass:color"
+@use "sass:meta"
+
+// main generic colors
+
 $black: #111111
 $white: #fefefe
 $pink: #df0971
 $blue: #4b4dfb
 $darkblue: #1c1728
+$darkerblue: #14101d
 $green: #1cc8b9
 $purple: #9058aa
-$nondest: #68a9f5
-$disabled: #b1a588
 $yellow: #ffd600
+$mocha: #8a7752
 $red: #cf298c
-$red-2: #ff5555
+$orange: #f9b463
 $dark: #1b1820
 $editorblue: #282a36
 
+@use "sass:map"
+
+$acapulco: #81b99c
+$husk: #af9b4e
+$lavender: #f897f4
+$pewterBlue: #81a9b9
+$roseVale: #af4e51
+
+$colors: ($pink: 'colorcode-pink')
+$colors: map-merge($colors, ($white: 'colorcode-white'))
+$colors: map-merge($colors, ($acapulco: 'colorcode-acapulco'))
+$colors: map-merge($colors, ($blue: 'colorcode-blue'))
+$colors: map-merge($colors, ($mocha: 'colorcode-mocha'))
+$colors: map-merge($colors, ($green: 'colorcode-green'))
+$colors: map-merge($colors, ($purple: 'colorcode-purple'))
+$colors: map-merge($colors, ($yellow: 'colorcode-yellow'))
+$colors: map-merge($colors, ($roseVale: 'colorcode-rosevale'))
+$colors: map-merge($colors, ($pewterBlue: 'colorcode-pewterblue'))
+$colors: map-merge($colors, ($husk: 'colorcode-husk'))
+$colors: map-merge($colors, ($lavender: 'colorcode-lavender'))
+
+// status colors
+
+$nondest: #68a9f5 // non destructive actions color
+$disabled: #b1a588 // for when something is not interactive
 $success: #53b9ad
-// $fail: #d76864
 $fail: #cf298c
 $warning: #f4bb5b
+
+// datastructure colors
+
+$hypo: $yellow
+$ath: $purple
+$gri: $orange
+$node: $pink
+$shard: $nondest
 
 // fonts
 
@@ -82,8 +118,7 @@ $halfgap: 0.5rem
       padding: 0.25rem 0.5rem
 
 =itemlist($border-color: false, $clickable: false, $padding: true)
-
-  ul:not(.color-box-list):not(.structure-taglist)
+  ul
     list-style-type: none
 
     li
@@ -91,8 +126,11 @@ $halfgap: 0.5rem
       white-space: nowrap
       text-overflow: ellipsis
 
-      @if $padding
-        padding: 0.25rem 0.25rem
+      @if meta.type-of($padding) == number
+        padding: $padding
+
+      @if meta.type-of($padding) == bool
+        padding: 0.25rem
 
       @if $clickable
         cursor: pointer

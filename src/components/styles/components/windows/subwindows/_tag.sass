@@ -12,55 +12,13 @@
   margin-right: 0.45rem
   margin-bottom: 0.45rem
 
-  &.pink
-    border-left: 2px solid vars.$pink
-    background-color: color.adjust(vars.$pink, $alpha: -0.5)
+  @each $color, $class in vars.$colors
+    &.#{$class}
+      border-left: 2px solid $color
+      background-color: color.adjust($color, $alpha: -0.5)
 
-    &:hover
-      background-color: color.adjust(vars.$pink, $alpha: -0.7)
-
-  &.white
-    border-left: 2px solid vars.$white
-    color: vars.$white
-    background-color: color.adjust(vars.$white, $alpha: -0.7)
-
-    &:hover
-      background-color: color.adjust(vars.$white, $alpha: -0.7)
-
-  &.blue
-    border-left: 2px solid vars.$blue
-    background-color: color.adjust(vars.$blue, $alpha: -0.5)
-
-    &:hover
-      background-color: color.adjust(vars.$blue, $alpha: -0.7)
-
-  &.red
-    border-left: 2px solid vars.$red
-    background-color: color.adjust(vars.$red, $alpha: -0.5)
-
-    &:hover
-      background-color: color.adjust(vars.$red, $alpha: -0.7)
-
-  &.green
-    border-left: 2px solid vars.$green
-    background-color: color.adjust(vars.$green, $alpha: -0.5)
-
-    &:hover
-      background-color: color.adjust(vars.$green, $alpha: -0.7)
-
-  &.purple
-    border-left: 2px solid vars.$purple
-    background-color: color.adjust(vars.$purple, $alpha: -0.5)
-
-    &:hover
-      background-color: color.adjust(vars.$purple, $alpha: -0.7)
-
-  &.yellow
-    border-left: 2px solid vars.$yellow
-    background-color: color.adjust(vars.$yellow, $alpha: -0.5)
-
-    &:hover
-      background-color: color.adjust(vars.$yellow, $alpha: -0.7)
+      &:hover
+        background-color: color.adjust($color, $alpha: -0.7)
 
   span
     &:nth-child(1)
