@@ -45,6 +45,7 @@ const VideoViewer = props => {
   const [inversion, setInversion] = useState(false)
   const [waiting, setWaiting] = useState(false)
   const [time, setTime] = useState(0)
+  const [showExtras, setShowExtras] = useState(false)
 
   const { minerva, setStatusMessage, resetStatusText } = useContext(
     globalContext
@@ -135,9 +136,27 @@ const VideoViewer = props => {
       case 'ArrowLeft':
         imageRef.current.currentTime -= 5
         break
+      case 'r':
+        resetAll()
+        break
+      case 'i':
+        setInversion(!inversion)
+        break
+      case 'e':
+        setShowExtras(!showExtras)
+        break
       default:
         return
     }
+  }
+
+  const resetAll = () => {
+    imageRef.current.loop = false
+    imageRef.current.pause()
+    imageRef.current.currentTime = 0
+    setTime(imageRef.current.currentTime)
+
+    setInversion(false)
   }
 
   return typeof error === 'string' ? (
@@ -153,7 +172,93 @@ const VideoViewer = props => {
       <header className='image-viewer-container-controls'>
         <p>{`image viewer - ${titleToShow}, ${humanSize}, ${mime}`}</p>
       </header>
-      <div className='control-buttons'>
+
+      <div tabIndex='0' className='image-container' onKeyDown={handleKeyDown}>
+        {source ? (
+          <video
+            controls
+            ref={imageRef}
+            onPlaying={() => {
+              setWaiting(false)
+              isPlaying = true
+              interval = setInterval(() => {
+                requestAnimationFrame(() => {
+                  if (imageRef.current) setTime(imageRef.current.currentTime)
+                })
+              }, 100)
+            }}
+            onSeeked={() => {
+              if (imageRef.current) setTime(imageRef.current.currentTime)
+            }}
+            onPause={() => {
+              isPlaying = false
+              clearInterval(interval)
+            }}
+            onWaiting={() => {
+              setWaiting(true)
+              clearInterval(interval)
+            }}
+            onKeyDown={e => {
+              handleKeyDown(e)
+            }}
+            onEnded={() => {
+              clearInterval(interval)
+            }}
+            onMouseMove={() => {
+              if (!fadeInBuffer && timer) {
+                clearTimeout(timer)
+                timer = 0
+
+                if (imageRef.current) imageRef.current.style.cursor = ''
+              } else {
+                if (imageRef.current) imageRef.current.style.cursor = 'default'
+                fadeInBuffer = false
+              }
+
+              timer = setTimeout(() => {
+                if (imageRef.current) imageRef.current.style.cursor = 'none'
+
+                fadeInBuffer = true
+              }, 2000)
+            }}
+            className={`${inversion ? 'inverted' : ''}`.trim()}
+            src={source}
+            alt={altToShow}
+            title={altToShow}
+            onKeyDown={handleKeyDown}
+            preload='auto'
+            onLoadedMetadata={e => {
+              clearInterval(interval)
+              e.target.volume = minerva.settings.volume.master / 100
+            }}
+            onError={event => {
+              console.error(event.type, event.message)
+
+              setStatusMessage({
+                display: true,
+                text: `status: file failed to load: ${alt}`,
+                type: 'warning'
+              })
+
+              setTimeout(resetStatusText, 5000)
+              dispatch({
+                type: 'error',
+                payload: `image format not supported: ${mime}`
+              })
+            }}></video>
+        ) : (
+          'loading video...'
+        )}
+      </div>
+      <div className='video-control-buttons control-buttons'>
+        <button
+          title='hotkey: e'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            setShowExtras(!showExtras)
+          }}>
+          <span>{showExtras ? 'hide' : 'show'} data</span>
+        </button>
         <button
           className='button-non-mutation'
           onClick={() => setInversion(!inversion)}>
@@ -232,95 +337,22 @@ const VideoViewer = props => {
           disabled>
           <span>{secondsToTime(time).substring(0, 13)}</span>
         </button>
-        <button
-          className='button-non-mutation span-all'
-          onClick={() => {
-            imageRef.current.loop = false
-            imageRef.current.pause()
-            imageRef.current.currentTime = 0
-            setTime(imageRef.current.currentTime)
-
-            setInversion(false)
-          }}>
+        <button className='button-non-mutation span-all' onClick={resetAll}>
           <span>reset all</span>
         </button>
       </div>
-      <div tabIndex='0' className='image-container' onKeyDown={handleKeyDown}>
-        {source ? (
-          <video
-            controls
-            ref={imageRef}
-            onPlaying={() => {
-              setWaiting(false)
-              isPlaying = true
-              interval = setInterval(() => {
-                requestAnimationFrame(() => {
-                  if (imageRef.current) setTime(imageRef.current.currentTime)
-                })
-              }, 100)
-            }}
-            onSeeked={() => {
-              if (imageRef.current) setTime(imageRef.current.currentTime)
-            }}
-            onPause={() => {
-              isPlaying = false
-              clearInterval(interval)
-            }}
-            onWaiting={() => {
-              setWaiting(true)
-              clearInterval(interval)
-            }}
-            onKeyDown={e => {
-              handleKeyDown(e)
-            }}
-            onEnded={() => {
-              clearInterval(interval)
-            }}
-            onMouseMove={() => {
-              if (!fadeInBuffer && timer) {
-                clearTimeout(timer)
-                timer = 0
-
-                if (imageRef.current) imageRef.current.style.cursor = ''
-              } else {
-                if (imageRef.current) imageRef.current.style.cursor = 'default'
-                fadeInBuffer = false
-              }
-
-              timer = setTimeout(() => {
-                if (imageRef.current) imageRef.current.style.cursor = 'none'
-
-                fadeInBuffer = true
-              }, 2000)
-            }}
-            className={`${inversion ? 'inverted' : ''}`.trim()}
-            src={source}
-            alt={altToShow}
-            title={altToShow}
-            preload='auto'
-            onLoadedMetadata={e => {
-              clearInterval(interval)
-              e.target.volume = minerva.settings.volume.master / 100
-            }}
-            onError={event => {
-              console.error(event.type, event.message)
-
-              setStatusMessage({
-                display: true,
-                text: `status: file failed to load: ${alt}`,
-                type: 'warning'
-              })
-
-              setTimeout(resetStatusText, 5000)
-              dispatch({
-                type: 'error',
-                payload: `image format not supported: ${mime}`
-              })
-            }}></video>
-        ) : (
-          'loading video...'
-        )}
-      </div>
+      {source && showExtras && (
+        <div className='viewer-stat-box'>
+          <div>
+            <p>time {imageRef.current && imageRef.current.currentTime}s</p>
+            <p>vol {imageRef.current && imageRef.current.volume * 100}%</p>
+            <p>
+              loop {imageRef.current && imageRef.current.loop ? 'on' : 'off'}
+            </p>
+            <p>inverted {inversion ? 'true' : 'false'}</p>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

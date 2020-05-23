@@ -1,13 +1,26 @@
 @use "../utils/vars"
 @use "sass:color"
 
-$cols: 5
+$img-cols: 6
+$vid-cols: 6
 
 .image-viewer-window, .video-viewer-window
   background-color: color.adjust(vars.$black, $alpha: -0.05)
 
+  .viewer-stat-box
+    opacity: 0.85
+    background-color: var(--bg-main)
+    padding: vars.$halfgap
+    position: absolute
+    z-index: 2
+    top: 60%
+    left: vars.$halfgap
+
+  .image-viewer-header, .video-viewer-header
+    margin-bottom: 0
+
   .image-viewer-container-controls
-    padding: 0 vars.$halfgap
+    padding: vars.$halfgap
 
   button
     +vars.flexcenter
@@ -32,7 +45,12 @@ $cols: 5
       outline: 1px solid vars.$pink
 
     &.span-all
-      grid-column: span $cols
+      grid-column: span $vid-cols
+      background-color: color.adjust(vars.$red, $alpha: -$opacity)
+      border: 1px solid vars.$red
+
+      &:hover
+        background-color: color.adjust(vars.$red, $alpha: -0.75)
 
   .button-non-mutation
     background-color: color.adjust(vars.$nondest, $alpha: -0.75)
@@ -50,7 +68,22 @@ $cols: 5
     padding: vars.$halfgap
     display: grid
     grid-gap: vars.$halfgap
-    grid-template-columns: repeat($cols, 1fr)
+    border-top: 1px solid var(--text-main)
+
+  .video-control-buttons
+    grid-template-columns: repeat($vid-cols, 1fr)
+
+    button.span-all
+      grid-column: span $vid-cols
+
+  .image-control-buttons
+    grid-template-columns: repeat($img-cols, 1fr)
+
+    button.span-all
+      grid-column: span $img-cols
+
+  .span-v-2
+    grid-row: span 2
 
   .image-container
     +vars.flexcenter
@@ -67,5 +100,5 @@ $cols: 5
     &.inverted
       filter: invert(1)
 
-    &.greyscale
-      filter: grayscale(1)
+    &.highlight
+      border: 1px solid vars.$yellow

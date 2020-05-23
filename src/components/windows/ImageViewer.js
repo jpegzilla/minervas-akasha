@@ -49,6 +49,9 @@ const ImageViewer = props => {
   const [zoomLevel, setZoomLevel] = useState(100)
   const [backgroundColor, setBackgroundColor] = useState({ r: 0, g: 0, b: 0 })
   const [translation, setTranslation] = useState({ x: 0, y: 0 })
+  const [rotationAngle, setRotationAngle] = useState(0)
+  const [showExtras, setShowExtras] = useState(false)
+  const [showHighlight, setShowHighlight] = useState(false)
 
   const { minerva, setStatusMessage, resetStatusText } = useContext(
     globalContext
@@ -168,6 +171,8 @@ const ImageViewer = props => {
 
     const { key, ctrlKey } = e
 
+    e.stopPropagation()
+
     switch (key) {
       case 'ArrowUp':
         setTranslation({ ...translation, y: translation.y + 1 })
@@ -176,28 +181,70 @@ const ImageViewer = props => {
         setTranslation({ ...translation, y: translation.y - 1 })
         break
       case 'ArrowLeft':
+        if (ctrlKey) return setRotationAngle(rotationAngle - 1)
         setTranslation({ ...translation, x: translation.x + 1 })
         break
       case 'ArrowRight':
+        if (ctrlKey) return setRotationAngle(rotationAngle + 1)
         setTranslation({ ...translation, x: translation.x - 1 })
         break
-
+      case 'PageUp':
+        e.preventDefault()
+        setZoomLevel(zoomLevel + 1)
+        break
+      case 'PageDown':
+        e.preventDefault()
+        setZoomLevel(zoomLevel - 1)
+        break
       case '=':
         if (ctrlKey) {
           e.preventDefault()
-          setZoomLevel(zoomLevel + 1)
+          setZoomLevel(zoomLevel + 10)
         }
         break
       case '-':
         if (ctrlKey) {
           e.preventDefault()
-          setZoomLevel(zoomLevel - 1)
+          setZoomLevel(zoomLevel - 10)
         }
+        break
+      case 'r':
+        resetAll()
+        break
+      case 'i':
+        setInversion(!inversion)
+        break
+      case 'e':
+        setShowExtras(!showExtras)
+        break
+      case 'h':
+      case 'b':
+        setShowHighlight(!showHighlight)
         break
       default:
         return
     }
   }
+
+  const resetAll = () => {
+    currentX = 0
+    currentY = 0
+    initialX = 0
+    initialY = 0
+    xOffset = 0
+    yOffset = 0
+
+    dragEnd()
+    setZoomLevel(100)
+    setRotationAngle(0)
+    setInversion(false)
+    setTranslation({ x: 0, y: 0 })
+  }
+
+  useEffect(() => {
+    if (rotationAngle <= -360) setRotationAngle(0)
+    if (rotationAngle >= 360) setRotationAngle(0)
+  }, [rotationAngle])
 
   return typeof error === 'string' ? (
     <span className='image-error' onClick={e => void e.stopPropagation()}>
@@ -210,56 +257,8 @@ const ImageViewer = props => {
   ) : (
     <section className='image-viewer-container'>
       <header className='image-viewer-container-controls'>
-        <p>{`image viewer - ${titleToShow}, ${humanSize}, ${mime}`}</p>
+        <p>{`${titleToShow}, ${humanSize}, ${mime}`}</p>
       </header>
-      <div className='control-buttons'>
-        <button
-          className='button-non-mutation'
-          onClick={() => {
-            setZoomLevel(zoomLevel + 1)
-          }}>
-          <span>zoom in</span>
-        </button>
-        <button
-          className='button-non-mutation'
-          onClick={() => {
-            setZoomLevel(zoomLevel - 1)
-          }}>
-          <span>zoom out</span>
-        </button>
-        <button
-          className='button-non-mutation'
-          onMouseDown={() => setZoomLevel(100)}>
-          <span>reset zoom</span>
-        </button>
-        <button
-          className='button-non-mutation'
-          onClick={() => setInversion(!inversion)}>
-          <span>invert</span>
-        </button>
-        <button
-          className='button-non-mutation'
-          onClick={() => setTranslation({ x: 0, y: 0 })}>
-          <span>reset pan</span>
-        </button>
-        <button
-          className='button-non-mutation span-all'
-          onClick={() => {
-            currentX = 0
-            currentY = 0
-            initialX = 0
-            initialY = 0
-            xOffset = 0
-            yOffset = 0
-
-            dragEnd()
-            setZoomLevel(100)
-            setInversion(false)
-            setTranslation({ x: 0, y: 0 })
-          }}>
-          <span>reset all</span>
-        </button>
-      </div>
       <div
         tabIndex='0'
         className='image-container'
@@ -278,7 +277,8 @@ const ImageViewer = props => {
           <img
             ref={imageRef}
             style={{
-              transform: `scale(${zoomLevel / 100}) translate3d(${
+              transform: `scale(${zoomLevel /
+                100}) rotateZ(${rotationAngle}deg) translate3d(${
                 translation.x
               }px, ${translation.y}px, 0)`
             }}
@@ -293,7 +293,9 @@ const ImageViewer = props => {
             onMouseUp={dragEnd}
             onMouseLeave={dragEnd}
             onMouseMove={drag}
-            className={`${inversion ? 'inverted' : ''}`.trim()}
+            className={`${inversion ? 'inverted' : ''} ${
+              showHighlight ? 'highlight' : ''
+            }`.trim()}
             src={source}
             alt={altToShow}
             title={altToShow}
@@ -321,6 +323,99 @@ const ImageViewer = props => {
           'loading image...'
         )}
       </div>
+      <div className='image-control-buttons control-buttons'>
+        <button
+          title='hotkey: e'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            setShowExtras(!showExtras)
+          }}>
+          <span>{showExtras ? 'hide' : 'show'} data</span>
+        </button>
+        <button
+          title='hotkeys: h / b'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            setShowHighlight(!showHighlight)
+          }}>
+          <span>{showHighlight ? 'hide' : 'show'} box</span>
+        </button>
+        <button
+          title='hotkeys: ctrl + plus / page up'
+          className='button-non-mutation'
+          onClick={() => {
+            setZoomLevel(zoomLevel + 1)
+          }}>
+          <span>zoom in</span>
+        </button>
+        <button
+          title='hotkeys: ctrl + minus / page down'
+          className='button-non-mutation'
+          onClick={() => {
+            setZoomLevel(zoomLevel - 1)
+          }}>
+          <span>zoom out</span>
+        </button>
+        <button
+          title='hotkey: ctrl + left arrow key'
+          className='button-non-mutation'
+          onClick={() => {
+            if (rotationAngle < -360) setRotationAngle(0)
+            else setRotationAngle(rotationAngle - 1)
+          }}>
+          <span>rotate ccw</span>
+        </button>
+        <button
+          title='hotkey: ctrl + right arrow key'
+          className='button-non-mutation'
+          onClick={() => {
+            if (rotationAngle > 360) setRotationAngle(0)
+            else setRotationAngle(rotationAngle + 1)
+          }}>
+          <span>rotate cw</span>
+        </button>
+
+        <button
+          title='hotkey: i'
+          className='button-non-mutation'
+          onClick={() => setInversion(!inversion)}>
+          <span>invert</span>
+        </button>
+        <button
+          className='button-non-mutation'
+          onClick={() => {
+            setRotationAngle(0)
+          }}>
+          <span>reset rotation</span>
+        </button>
+        <button
+          className='button-non-mutation'
+          onMouseDown={() => setZoomLevel(100)}>
+          <span>reset zoom</span>
+        </button>
+        <button
+          className='button-non-mutation'
+          onClick={() => setTranslation({ x: 0, y: 0 })}>
+          <span>reset pan</span>
+        </button>
+        <button
+          title='hotkey: r'
+          className='button-non-mutation span-all'
+          onClick={resetAll}>
+          <span>reset all</span>
+        </button>
+      </div>
+      {source && showExtras && (
+        <div className='viewer-stat-box'>
+          <div>
+            <p>x {translation.x}px</p>
+            <p>y {translation.y}px</p>
+            <p>zoom {zoomLevel}%</p>
+            <p>inverted {inversion ? 'true' : 'false'}</p>
+            <p>rot {rotationAngle}deg</p>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
