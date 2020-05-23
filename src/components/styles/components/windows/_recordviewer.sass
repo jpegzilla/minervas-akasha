@@ -4,7 +4,7 @@
 
 
 .record-viewer-window
-  background-color: color.adjust(vars.$black, $alpha: -0.15)
+  background-color: color.adjust(vars.$darkerblue, $alpha: -0.05)
 
   .record-viewer-header
     margin-bottom: 0
@@ -29,7 +29,14 @@
           li
             cursor: pointer
             padding: 0.25rem 0.5rem
-            border: 1px solid var(--text-main)
+            border: 1px solid vars.$nondest
+            background-color: color.adjust(vars.$nondest, $alpha: -0.85)
+
+            &:first-child
+              pointer-events: none
+              cursor: default
+              border: 1px solid vars.$disabled
+              background-color: color.adjust(vars.$disabled, $alpha: -0.85)
 
             &.active
               border: 1px solid vars.$yellow
@@ -61,12 +68,28 @@
         grid-auto-flow: row dense
 
         .record-viewer-record
-          +vars.flexcenter
+          +vars.flexcenter(true)
 
           cursor: pointer
           user-select: none
           border: 1px solid var(--text-main)
           padding: 0.25rem 0.5rem
+
+          &.color-hypostasis
+            border: 1px solid vars.$hypo
+            background-color: color.adjust(vars.$hypo, $alpha: -0.85)
+          &.color-athenaeum
+            border: 1px solid vars.$ath
+            background-color: color.adjust(vars.$ath, $alpha: -0.85)
+          &.color-grimoire
+            border: 1px solid vars.$gri
+            background-color: color.adjust(vars.$gri, $alpha: -0.85)
+          &.color-node
+            border: 1px solid vars.$node
+            background-color: color.adjust(vars.$node, $alpha: -0.85)
+          &.color-shard
+            border: 1px solid vars.$shard
+            background-color: color.adjust(vars.$shard, $alpha: -0.85)
 
       .record-viewer-sidebar
         border-right: 1px solid var(--text-main)
@@ -77,31 +100,36 @@
           height: 100%
 
           .record-viewer-sidebar-info
+            +vars.itemlist(vars.$white, true, 0.35rem)
+
             flex-grow: 1
 
-            header
+            header, .record-connections-header, ul
               padding: vars.$halfgap
 
+            .record-connections-header
+              border-bottom: 1px solid var(--text-main)
+
             ul
-              list-style-type: none
+              max-height: 40vh
+              scrollbar-width: none
+              overflow: -moz-scrollbars-none
+              overflow-y: auto
+
+              &::-webkit-scrollbar
+                display: none
+                width: 0
 
               li
-                padding: vars.$halfgap
+                &.parent-record
+                  border-left: 2px solid vars.$pink
+                  background-color: color.adjust(vars.$pink, $alpha: -0.65)
 
-                & + li
-                  border-top: 1px solid var(--text-main)
-
-                &:last-child
-                  border-bottom: 1px solid var(--text-main)
+                  &:hover
+                    background-color: color.adjust(vars.$pink, $alpha: -0.8)
 
           .record-viewer-sidebar-info-collapse
-            +vars.flexcenter
-
-            user-select: none
-            padding: 0 0.5rem
-            cursor: pointer
             height: 100%
-            border-left: 1px solid var(--text-main)
 
     footer
       border-top: 1px solid var(--text-main)
