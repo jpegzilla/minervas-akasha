@@ -17,11 +17,21 @@ export default (
   // f is a file object.
   const f = droppedFiles
 
-  // currently rejects files above 50mb
+  // currently rejects files above 100mb, and warns above 50mb
   if (f.size > 5e7) {
     setStatusMessage({
       display: true,
-      text: `status: large files (size >= 50mb) currently not supported.`,
+      text: `status: files above 50mb may take some time to load, please wait...`,
+      type: 'warning'
+    })
+
+    setTimeout(resetStatusText, 6000)
+  }
+
+  if (f.size > 10e7) {
+    setStatusMessage({
+      display: true,
+      text: `status: large files (size >= 100mb) currently not supported.`,
       type: 'fail'
     })
 
