@@ -1,5 +1,4 @@
 import { Structure } from './structure'
-import { Athenaeum } from './athenaeum'
 
 // the most complex data structure, this is meant to reflect existing athenea and allow similar,
 // but not entirely identical collections of information to exist. it also allows for information
