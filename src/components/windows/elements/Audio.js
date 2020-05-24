@@ -61,6 +61,75 @@ const Audio = props => {
 
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
 
+  const handleDoubleClick = () => {
+    const workerInstance = new worker()
+
+    workerInstance.postMessage({
+      action: 'getObjectUrl',
+      src,
+      mime
+    })
+
+    workerInstance.onmessage = message => {
+      if (message.data.status && message.data.status === 'failure') {
+        return toast.add({
+          duration: 5000,
+          text: message.data,
+          type: 'fail'
+        })
+      }
+
+      if (typeof message.data === 'string') {
+        const id = uuidv4()
+
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity)
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          )
+
+          return windowToFind || false
+        }
+
+        let finalPosition = 100
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10
+        }
+
+        const newVideoViewer = {
+          title: 'audio viewer',
+          state: 'restored',
+          stringType: 'Window',
+          component: 'AudioViewer',
+          componentProps: {
+            src: message.data,
+            alt: fileInfo,
+            id,
+            mime,
+            humanSize
+          },
+          belongsTo: minerva.user.id,
+          id,
+          position: {
+            x: finalPosition,
+            y: finalPosition
+          }
+        }
+
+        minerva.addFileToRecord(id, src, { type: 'audioviewer' })
+
+        minerva.setWindows([...minerva.windows, newVideoViewer])
+
+        minerva.setApplicationWindows(minerva.windows)
+
+        // make the new window the active window
+        minerva.setActiveWindowId(id)
+      }
+    }
+  }
+
   return typeof error === 'string' ? (
     <span className='image-error' onClick={e => void e.stopPropagation()}>
       there was an issue decoding this audio. error message: {error}.{' '}
@@ -70,6 +139,7 @@ const Audio = props => {
     </span>
   ) : (
     <audio
+      onDoubleClick={handleDoubleClick}
       autoPlay={shouldAutoplay}
       onError={() => {
         setLoadingFileData(false)

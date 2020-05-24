@@ -4,6 +4,7 @@ import FileDialog from './FileDialog'
 import RecordViewer from './RecordViewer'
 import ImageViewer from './ImageViewer'
 import VideoViewer from './VideoViewer'
+import AudioViewer from './AudioViewer'
 import ConfirmBox from './ConfirmBox'
 import TextEditor from './TextEditor'
 import Window from './Window'
@@ -15,7 +16,7 @@ export default {
   RecordViewer: RecordViewer,
   ImageViewer: ImageViewer,
   VideoViewer: VideoViewer,
-  // AudioViewer: AudioViewer,
+  AudioViewer: AudioViewer,
   ConfirmBox: ConfirmBox,
   TextEditor: TextEditor,
   Window: Window
