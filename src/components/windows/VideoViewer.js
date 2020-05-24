@@ -151,12 +151,14 @@ const VideoViewer = props => {
   }
 
   const resetAll = () => {
-    imageRef.current.loop = false
-    imageRef.current.pause()
-    imageRef.current.currentTime = 0
-    setTime(imageRef.current.currentTime)
+    if (imageRef.current) {
+      imageRef.current.loop = false
+      imageRef.current.pause()
+      imageRef.current.currentTime = 0
+      setTime(imageRef.current.currentTime)
 
-    setInversion(false)
+      setInversion(false)
+    }
   }
 
   return typeof error === 'string' ? (
