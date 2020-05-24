@@ -1,5 +1,6 @@
 @use "./utils/vars"
 @use "signup"
+@use "sass:color"
 
 
 signup.$font: vars.$proggy
@@ -89,20 +90,31 @@ signup.$font: vars.$proggy
     li
       width: auto
       font-family: signup.$font
-      padding: 0.25rem 0.5rem
+      padding: 0.45rem 0.75rem
       border: 1px solid vars.$white
       border-top: none
       border-left: none
 
-.taskbar-button
-  +vars.flexcenter
+  .taskbar-button
+    +vars.flexcenter
 
-  user-select: none
-  cursor: pointer
+    user-select: none
+    cursor: pointer
 
-  &.active
-    border: 1px solid vars.$pink
+    &.minimized
+      background-color: color.adjust(vars.$white, $alpha: -0.8)
+      color: vars.$white
 
-  &:hover, &.active
-    background-color: vars.$white
-    color: vars.$black
+
+    &.active
+      border-top: 1px solid vars.$pink
+      background-color: vars.$white
+      color: vars.$black
+
+      &.minimized
+        background-color: color.adjust(vars.$orange, $alpha: -0.5)
+        color: vars.$white
+
+    &:hover
+      background-color: vars.$white
+      color: vars.$black

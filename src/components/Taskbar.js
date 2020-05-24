@@ -277,14 +277,7 @@ const Taskbar = props => {
                 {menuItems.map(i => {
                   return (
                     <li
-                      onClick={
-                        i.onClick
-                          ? () => i.onClick()
-                          : () => {
-                              console.log('clicked on', i)
-                              throw new Error('clicked on nonexistent option')
-                            }
-                      }
+                      onClick={i.onClick}
                       key={i.id}
                       title={i.tooltip || undefined}>
                       {i.title}
@@ -321,6 +314,7 @@ const Taskbar = props => {
       </div>
       <ul id='taskbar-tabs'>
         {windows.map((w, i) => {
+          console.log('window:', w)
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1
             if (w.component === 'Console') {
@@ -341,6 +335,7 @@ const Taskbar = props => {
 
             return (
               <Tab
+                state={w.state}
                 key={w.stringType + i}
                 w={w}
                 title={title}

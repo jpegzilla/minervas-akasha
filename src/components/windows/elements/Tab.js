@@ -3,25 +3,35 @@ import React, { memo, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
 const TabComponent = props => {
-  const { w, title, activeWindowId, tabCounts, handleClickItem } = props
+  const { w, title, activeWindowId, tabCounts, handleClickItem, state } = props
+
+  console.log(props)
 
   let titleToUse = title,
     typeToUse = w.componentProps.type || w.component
 
+  let itemName = title
+
   if (w.componentProps) {
     if (w.componentProps.info)
-      if (w.componentProps.info.name) titleToUse = w.componentProps.info.name
+      if (w.componentProps.info.name) {
+        titleToUse = `(${w.componentProps.type.substring(0, 3)}) ${
+          w.componentProps.info.name
+        }`
+
+        itemName = w.componentProps.info.name
+      }
   }
 
-  const titleText = `name: ${titleToUse}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase()
+  const titleText = `name: ${itemName}\ntype: ${typeToUse}\nthis is ${typeToUse} #${tabCounts}.`.toLowerCase()
 
   return useMemo(
     () => (
       <li
         title={titleText}
-        className={
+        className={`${
           w.id === activeWindowId ? 'taskbar-button active' : 'taskbar-button'
-        }
+        } ${state}`.trim()}
         onClick={e => {
           handleClickItem(e, w)
         }}>
