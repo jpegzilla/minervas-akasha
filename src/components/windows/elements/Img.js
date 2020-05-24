@@ -99,7 +99,11 @@ const Img = props => {
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
-        throw new Error(message.data)
+        return toast.add({
+          duration: 5000,
+          text: message.data,
+          type: 'fail'
+        })
       }
 
       if (typeof message.data === 'string') {
