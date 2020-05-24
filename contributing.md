@@ -45,13 +45,7 @@ then, do this 8-step process:
 
 1.  fork this repository and clone the repo onto your computer
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
-3.  get latest changes:
-
-
-    git checkout master
-    git fetch --all
-    git merge upstream/master
-
+3.  get latest changes: `git checkout master`, `git fetch --all`, `git merge upstream/master`
 4.  install all deps: `yarn install`
 5.  create a feature branch from my master branch
 6.  make the feature / fix / whatever and commit the changes to your own branch, following the style guide
