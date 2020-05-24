@@ -25,7 +25,7 @@ let isPlaying = false,
 const VideoViewer = props => {
   const { src, alt, id, mime, humanSize } = props
 
-  const imageRef = useRef()
+  const videoRef = useRef()
 
   const altToShow = alt
     .split('\n')
@@ -47,9 +47,15 @@ const VideoViewer = props => {
   const [time, setTime] = useState(0)
   const [showExtras, setShowExtras] = useState(false)
 
-  const { minerva, useToast } = useContext(globalContext)
+  const { minerva, useToast, globalVolume } = useContext(globalContext)
 
   const toast = useToast()
+
+  useEffect(() => {
+    if (videoRef.current)
+      videoRef.current.volume =
+        globalVolume.master / 100 || minerva.settings.volume.master / 100
+  }, [globalVolume, videoRef, minerva.settings.volume.master])
 
   useEffect(() => {
     if (id && found === true) {
@@ -135,10 +141,10 @@ const VideoViewer = props => {
 
     switch (key) {
       case 'ArrowRight':
-        imageRef.current.currentTime += 5
+        videoRef.current.currentTime += 5
         break
       case 'ArrowLeft':
-        imageRef.current.currentTime -= 5
+        videoRef.current.currentTime -= 5
         break
       case 'r':
         resetAll()
@@ -155,11 +161,11 @@ const VideoViewer = props => {
   }
 
   const resetAll = () => {
-    if (imageRef.current) {
-      imageRef.current.loop = false
-      imageRef.current.pause()
-      imageRef.current.currentTime = 0
-      setTime(imageRef.current.currentTime)
+    if (videoRef.current) {
+      videoRef.current.loop = false
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+      setTime(videoRef.current.currentTime)
 
       setInversion(false)
     }
@@ -183,18 +189,18 @@ const VideoViewer = props => {
         {source ? (
           <video
             controls
-            ref={imageRef}
+            ref={videoRef}
             onPlaying={() => {
               setWaiting(false)
               isPlaying = true
               interval = setInterval(() => {
                 requestAnimationFrame(() => {
-                  if (imageRef.current) setTime(imageRef.current.currentTime)
+                  if (videoRef.current) setTime(videoRef.current.currentTime)
                 })
               }, 100)
             }}
             onSeeked={() => {
-              if (imageRef.current) setTime(imageRef.current.currentTime)
+              if (videoRef.current) setTime(videoRef.current.currentTime)
             }}
             onPause={() => {
               isPlaying = false
@@ -212,14 +218,14 @@ const VideoViewer = props => {
                 clearTimeout(timer)
                 timer = 0
 
-                if (imageRef.current) imageRef.current.style.cursor = ''
+                if (videoRef.current) videoRef.current.style.cursor = ''
               } else {
-                if (imageRef.current) imageRef.current.style.cursor = 'default'
+                if (videoRef.current) videoRef.current.style.cursor = 'default'
                 fadeInBuffer = false
               }
 
               timer = setTimeout(() => {
-                if (imageRef.current) imageRef.current.style.cursor = 'none'
+                if (videoRef.current) videoRef.current.style.cursor = 'none'
 
                 fadeInBuffer = true
               }, 2000)
@@ -269,8 +275,8 @@ const VideoViewer = props => {
         <button
           className='button-non-mutation'
           onClick={() => {
-            if (imageRef.current.paused && !isPlaying) {
-              imageRef.current.play()
+            if (videoRef.current.paused && !isPlaying) {
+              videoRef.current.play()
               isPlaying = true
             }
           }}>
@@ -279,8 +285,8 @@ const VideoViewer = props => {
         <button
           className='button-non-mutation'
           onClick={() => {
-            if (!imageRef.current.paused && isPlaying) {
-              imageRef.current.pause()
+            if (!videoRef.current.paused && isPlaying) {
+              videoRef.current.pause()
             }
           }}>
           <span>pause</span>
@@ -288,32 +294,32 @@ const VideoViewer = props => {
         <button
           className='button-non-mutation'
           onClick={() => {
-            imageRef.current.currentTime -= 5
-            setTime(imageRef.current.currentTime)
+            videoRef.current.currentTime -= 5
+            setTime(videoRef.current.currentTime)
           }}>
           <span>skip -5s</span>
         </button>
         <button
           className='button-non-mutation'
           onClick={() => {
-            imageRef.current.currentTime += 5
-            setTime(imageRef.current.currentTime)
+            videoRef.current.currentTime += 5
+            setTime(videoRef.current.currentTime)
           }}>
           <span>skip +5s</span>
         </button>
         <button
           className='button-non-mutation'
-          onClick={() => (imageRef.current.loop = !imageRef.current.loop)}>
+          onClick={() => (videoRef.current.loop = !videoRef.current.loop)}>
           <span>loop</span>
         </button>
         <button
           className='button-non-mutation'
           onClick={() =>
-            (imageRef.current.controls = !imageRef.current.controls)
+            (videoRef.current.controls = !videoRef.current.controls)
           }>
           <span>
-            {imageRef.current
-              ? imageRef.current.controls
+            {videoRef.current
+              ? videoRef.current.controls
                 ? 'hide controls'
                 : 'show controls'
               : 'hide controls'}
@@ -330,7 +336,7 @@ const VideoViewer = props => {
           className='button-non-mutation disabled-status'
           disabled>
           <span>
-            loop: {imageRef.current && imageRef.current.loop ? ' on' : ' off'}
+            loop: {videoRef.current && videoRef.current.loop ? ' on' : ' off'}
           </span>
         </button>
         <button
@@ -346,10 +352,16 @@ const VideoViewer = props => {
       {source && showExtras && (
         <div className='viewer-stat-box'>
           <div>
-            <p>time {imageRef.current && imageRef.current.currentTime}s</p>
-            <p>vol {imageRef.current && imageRef.current.volume * 100}%</p>
             <p>
-              loop {imageRef.current && imageRef.current.loop ? 'on' : 'off'}
+              time {videoRef.current && videoRef.current.currentTime.toFixed(6)}
+              s
+            </p>
+            <p>
+              vol{' '}
+              {videoRef.current && (videoRef.current.volume * 100).toFixed(2)}%
+            </p>
+            <p>
+              loop {videoRef.current && videoRef.current.loop ? 'on' : 'off'}
             </p>
             <p>inverted {inversion ? 'true' : 'false'}</p>
           </div>
