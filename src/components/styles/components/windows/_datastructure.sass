@@ -131,6 +131,23 @@
 
       @include vars.itemlist(vars.$white, true)
 
+      ul
+        max-height: 40vh
+        scrollbar-width: none
+        overflow: -moz-scrollbars-none
+        overflow-y: auto
+
+        &::-webkit-scrollbar
+          display: none
+          width: 0
+
+      li.parent-record
+          border-left: 2px solid vars.$pink
+          background-color: color.adjust(vars.$pink, $alpha: -0.65)
+
+          &:hover
+            background-color: color.adjust(vars.$pink, $alpha: -0.8)
+
     div
       min-width: 100%
 
