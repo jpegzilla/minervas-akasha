@@ -82,6 +82,12 @@ const DataDisplay = props => {
 
             if (rec.type === connectsTo) return false
 
+            let parent = true
+
+            if (record.accepts.includes(rec.type)) {
+              parent = false
+            }
+
             return (
               <li
                 onDoubleClick={e => {
@@ -132,7 +138,9 @@ const DataDisplay = props => {
 
                   handleOpenRecord(rec)
                 }}
-                className='datastructure-connection'
+                className={`datastructure-connection ${
+                  parent ? 'parent-record' : ''
+                }`.trim()}
                 title={title}
                 key={id}>
                 {name}
