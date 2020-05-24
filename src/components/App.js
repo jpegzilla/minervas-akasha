@@ -23,7 +23,6 @@ import ErrorBoundary from './subcomponents/ErrorBoundary'
 // managers
 import { Minerva, MinervaArchive } from './../utils/managers/Minerva'
 import MinervaVoice from './../utils/managers/MinervaVoice'
-import Typist from './../utils/managers/Typist'
 import DatabaseInterface from '../utils/managers/Database'
 import AkashicRecord from './../utils/structures/AkashicRecord'
 import AudioManager from './../utils/audiomanager'
@@ -117,13 +116,6 @@ const App = () => {
       : { master: 100, effect: 100, voice: 100 }
   )
 
-  // status message types: success, error / fail, warning
-  const [statusMessage, setStatusMessage] = useState({
-    display: false,
-    text: '',
-    type: null
-  })
-
   // used to force connection lists to rerender
   const [renderConList, setRenderConList] = useState('')
 
@@ -189,13 +181,6 @@ const App = () => {
   //   text: null
   // });
 
-  // whenever statusmessage.text changes, type out the new messge using typist.
-  useEffect(() => {
-    new Typist(setStatusText, statusMessage.text).talkType(minerva)
-  }, [statusMessage.text])
-
-  const [statusText, setStatusText] = useState(statusMessage.text)
-
   // test for screen getting too small (< 1200px)
   const smallScreen = window.matchMedia('(max-width: 1200px)')
 
@@ -204,12 +189,6 @@ const App = () => {
   // listen for screen resize
   smallScreen.addListener(smallScreenTest)
 
-  // function to reset status text
-  const resetStatusText = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
-  }
-
   if (windowLoaded) {
     const props = {
       ErrorBoundary,
@@ -217,22 +196,17 @@ const App = () => {
       initialContext,
       Router,
       handleContextMenu,
-      statusMessage,
       loggedIn,
       firstLoad,
       minerva,
       Signup,
       Home,
-      statusText,
       contextMenu,
       ContextMenu,
       contextMenuElem,
-      setStatusMessage,
-      setStatusText,
       setLoggedIn,
       globalVolume,
       setGlobalVolume,
-      resetStatusText,
       renderConList,
       setRenderConList,
       Redirect,

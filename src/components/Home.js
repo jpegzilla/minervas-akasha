@@ -15,6 +15,7 @@ import Topbar from './Topbar'
 import { makeStruct } from '../utils/managers/StructureMap'
 import { Minerva } from '../utils/managers/Minerva'
 import dataStructureFileParser from './windows/elements/utils/dataStructureFileParser'
+import useToast from './../hooks/useToast'
 
 import exportWorker from './../utils/managers/workers/exportWorker.worker'
 
@@ -26,14 +27,9 @@ import { hasDatePassed } from './../utils/dateUtils'
 const Home = props => {
   const { routeProps } = props
 
-  const {
-    minerva,
-    setStatusText,
-    setStatusMessage,
-    loggedIn,
-    setLoggedIn,
-    resetStatusText
-  } = useContext(globalContext)
+  const { minerva, loggedIn, setLoggedIn } = useContext(globalContext)
+
+  const toast = useToast()
 
   const [activeWindow, setActiveWindow] = useState(null)
   const [activeWindowId, setActiveWindowId] = useState('default')
@@ -61,31 +57,22 @@ const Home = props => {
   }, [minerva, loggedIn, setLoggedIn])
 
   useEffect(() => {
-    const t = () => {
-      setStatusText('')
-      setStatusMessage({ display: false, text: '', type: null })
-    }
-
     if (routeProps.location.state === 'signup') {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: 'status: signup successful.',
         type: 'success'
       })
-
-      setTimeout(t, 3000)
     }
 
     if (routeProps.location.state === 'login') {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: 'login complete.',
         type: 'success'
       })
-
-      setTimeout(t, 3000)
     }
-  }, [routeProps.location.state, setStatusMessage, setStatusText])
+  }, [routeProps.location.state])
 
   // handlers for dealing with file drag + drop on desktop
   const allowDrag = e => {
@@ -127,8 +114,7 @@ const Home = props => {
 
               dataStructureFileParser(
                 droppedFiles,
-                setStatusMessage,
-                resetStatusText,
+                toast,
                 null,
                 setActiveFileData
               )
@@ -138,16 +124,10 @@ const Home = props => {
       } else {
         setDroppedFiles()
 
-        dataStructureFileParser(
-          droppedFiles,
-          setStatusMessage,
-          resetStatusText,
-          null,
-          setActiveFileData
-        )
+        dataStructureFileParser(droppedFiles, toast, null, setActiveFileData)
       }
     }
-  }, [droppedFiles, resetStatusText, setStatusMessage, minerva])
+  }, [droppedFiles, minerva])
 
   // effect that should fire whenever a file is dropped on the desktop
   useEffect(() => {

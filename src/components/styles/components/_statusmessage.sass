@@ -7,7 +7,8 @@
   z-index: 10
   width: 100vw
   display: flex
-  justify-content: center
+  align-items: center
+  flex-direction: column
   pointer-events: none
 
   & > div
@@ -15,13 +16,17 @@
     max-width: 50%
     padding: 0.5rem 1.5rem
     border-radius: 1px
-    opacity: 0
     transition: border-color 0.2s ease, opacity 0.3s ease
-    pointer-events: none
+    // pointer-events: none
     user-select: none
     background-color: vars.$black
     border-left: 2px solid vars.$white
     font-size: 1rem
+    transition: opacity 0.3s ease
+
+
+    & + div
+      margin-top: vars.$halfgap
 
     &.success, &.fail, &.warning, &.error
       opacity: 1
@@ -39,6 +44,9 @@
     &.warning
       border-color: vars.$warning
       background-color: color.adjust(vars.$warning, $alpha: -0.9)
+
+    &.fade
+      opacity: 0
 
     div
       color: currentcolor

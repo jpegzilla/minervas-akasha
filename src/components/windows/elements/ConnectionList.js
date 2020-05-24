@@ -25,19 +25,11 @@ const ConnectionListComponent = props => {
     makingConnection
   } = props
 
-  const {
-    minerva,
-    setStatusText,
-    setStatusMessage,
-    setRenderConList,
-    renderConList
-  } = useContext(globalContext)
+  const { minerva, setRenderConList, renderConList, useToast } = useContext(
+    globalContext
+  )
 
-  // function that just clears the status message
-  const t = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
-  }
+  const toast = useToast()
 
   const handleConnect = id => {
     // this item is the current structure being connected. when you click connect on a
@@ -68,14 +60,13 @@ const ConnectionListComponent = props => {
 
     const message = 'record successfully connected.'
 
-    setStatusMessage({
-      display: true,
+    toast.add({
+      duration: 3000,
       text: message,
       type: 'success'
     })
 
     clearAll()
-    timeouts.push(setTimeout(t, 3000))
 
     // rerender to connection list, forcing the newly connected-to record to update it's list
     // of connections
@@ -104,14 +95,13 @@ const ConnectionListComponent = props => {
 
     const message = 'record successfully disconnected.'
 
-    setStatusMessage({
-      display: true,
+    toast.add({
+      duration: 3000,
       text: message,
       type: 'success'
     })
 
     clearAll()
-    timeouts.push(setTimeout(t, 3000))
 
     // rerender to connection list, forcing the disconnected-from record to update it's list
     // of connections

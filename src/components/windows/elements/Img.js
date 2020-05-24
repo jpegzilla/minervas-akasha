@@ -27,10 +27,9 @@ const Img = props => {
 
   const imageRef = useRef()
 
-  const { setStatusMessage, resetStatusText, minerva } = useContext(
-    globalContext
-  )
+  const { minerva, useToast } = useContext(globalContext)
 
+  const toast = useToast()
   const [error, setError] = useState(false)
   const [imageData, setImageData] = useState()
 
@@ -175,13 +174,11 @@ const Img = props => {
       onError={() => {
         setLoadingFileData(false)
 
-        setStatusMessage({
-          display: true,
+        toast.add({
+          duration: 5000,
           text: `status: file failed to load: ${title}`,
           type: 'warning'
         })
-
-        setTimeout(resetStatusText, 5000)
 
         setMetadata(false)
         setError(`image format not supported: ${mime}`)

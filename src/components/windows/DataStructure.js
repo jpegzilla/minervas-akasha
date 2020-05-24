@@ -29,8 +29,6 @@ import PropTypes from 'prop-types'
 
 import { globalContext } from './../App'
 
-const timeouts = []
-
 const DataStructure = props => {
   const {
     type,
@@ -40,14 +38,11 @@ const DataStructure = props => {
     droppedFiles
   } = props
 
-  const {
-    minerva,
-    setStatusMessage,
-    setStatusText,
-    audiomanager,
-    resetStatusText,
-    setRenderConList
-  } = useContext(globalContext)
+  const { minerva, audiomanager, setRenderConList, useToast } = useContext(
+    globalContext
+  )
+
+  const toast = useToast()
 
   // the window that currently contains this structure
   const currentWindow = minerva.windows.find(item => {
@@ -183,8 +178,7 @@ const DataStructure = props => {
     // parse the file
     dataStructureFileParser(
       droppedFiles,
-      setStatusMessage,
-      resetStatusText,
+      toast,
       setLoadingFileData,
       setActiveFileData
     )
@@ -320,19 +314,6 @@ const DataStructure = props => {
     }
   }, [currentFileData])
 
-  // function that just clears the status message
-  const t = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
-  }
-
-  // function to clear all running timeouts belonging to this component
-  const clearAll = () => {
-    for (let i = 0; i < timeouts.length; i++) {
-      clearTimeout(timeouts[i])
-    }
-  }
-
   // when the user wants to connect a record to another one
   const [makingConnection, setMakingConnection] = useState(false)
   const [makingDisconnection, setMakingDisconnection] = useState(false)
@@ -413,16 +394,13 @@ const DataStructure = props => {
     if (!nameRef.current.value) errorMessage = 'cannot set empty name.'
 
     if (errorMessage) {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: errorMessage,
         type: 'fail'
       })
 
       audiomanager.play('e_one')
-
-      clearAll()
-      timeouts.push(setTimeout(t, 3000))
 
       return
     }
@@ -477,16 +455,13 @@ const DataStructure = props => {
     if (!newTag.name) errorMessage = 'cannot add empty tags.'
 
     if (errorMessage) {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: errorMessage,
         type: 'fail'
       })
 
       audiomanager.play('e_one')
-
-      clearAll()
-      timeouts.push(setTimeout(t, 3000))
 
       return
     }

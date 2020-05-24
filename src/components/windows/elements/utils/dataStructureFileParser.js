@@ -2,13 +2,7 @@ import { bytesToSize } from './../../../../utils/misc'
 
 // file parsing has to go on in here. this is the function in which support must
 // be added for new filetypes.
-export default (
-  droppedFiles,
-  setStatusMessage,
-  resetStatusText,
-  setLoadingFileData,
-  setActiveFileData
-) => {
+export default (droppedFiles, toast, setLoadingFileData, setActiveFileData) => {
   // handle dropped file
   if (!droppedFiles) return
 
@@ -19,23 +13,19 @@ export default (
 
   // currently rejects files above 100mb, and warns above 50mb
   if (f.size > 5e7) {
-    setStatusMessage({
-      display: true,
+    toast.add({
+      duration: 6000,
       text: `status: files above 50mb may take some time to load, please wait...`,
       type: 'warning'
     })
-
-    setTimeout(resetStatusText, 6000)
   }
 
   if (f.size > 10e7) {
-    setStatusMessage({
-      display: true,
+    toast.add({
+      duration: 6000,
       text: `status: large files (size >= 100mb) currently not supported.`,
       type: 'fail'
     })
-
-    setTimeout(resetStatusText, 6000)
 
     console.log('very large file detected. rejecting.')
 

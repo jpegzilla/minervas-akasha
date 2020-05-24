@@ -53,9 +53,9 @@ const ImageViewer = props => {
   const [showExtras, setShowExtras] = useState(false)
   const [showHighlight, setShowHighlight] = useState(false)
 
-  const { minerva, setStatusMessage, resetStatusText } = useContext(
-    globalContext
-  )
+  const { minerva, useToast } = useContext(globalContext)
+
+  const toast = useToast()
 
   const dragStart = e => {
     initialX = e.clientX - xOffset
@@ -306,13 +306,12 @@ const ImageViewer = props => {
             onError={event => {
               console.error(event.type, event.message)
 
-              setStatusMessage({
-                display: true,
+              toast.add({
+                duration: 5000,
                 text: `status: file failed to load: ${alt}`,
                 type: 'warning'
               })
 
-              setTimeout(resetStatusText, 5000)
               dispatch({
                 type: 'error',
                 payload: `image format not supported: ${mime}`

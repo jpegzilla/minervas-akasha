@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 import { uuidv4 } from './../utils/misc'
 import { makeStruct } from '../utils/managers/StructureMap'
 import { globalContext } from './App'
+import useToast from './../hooks/useToast'
 
 import Tab from './windows/elements/Tab'
 
@@ -29,14 +30,9 @@ const Taskbar = props => {
     setAddMenuOpen
   } = props
 
-  const t = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
-  }
+  const toast = useToast()
 
-  const { audiomanager, minerva, setStatusMessage, setStatusText } = useContext(
-    globalContext
-  )
+  const { audiomanager, minerva } = useContext(globalContext)
 
   const [logout, setLogout] = useState(false)
 
@@ -183,15 +179,14 @@ const Taskbar = props => {
       id: 'exportdata',
       title: 'export user data',
       onClick: () => {
-        setStatusMessage({
-          display: true,
+        toast.add({
+          duration: 10000,
           text:
             'it may take a while to export your records. please wait warmly.',
           type: 'success'
         })
 
         clearAll()
-        timeouts.push(setTimeout(t, 10000))
 
         minerva.exportDataToJsonFile()
       },

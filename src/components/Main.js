@@ -1,6 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react'
 
 import NotFound from './NotFound'
+import withToastProvider from './../providers/withToastProvider'
+import useToast from './../hooks/useToast'
 
 import PropTypes from 'prop-types'
 
@@ -11,7 +13,6 @@ const Main = props => {
     initialContext,
     Router,
     handleContextMenu,
-    statusMessage,
     loggedIn,
     firstLoad,
     minerva,
@@ -20,13 +21,10 @@ const Main = props => {
     contextMenu,
     ContextMenu,
     contextMenuElem,
-    setStatusMessage,
     statusText,
-    setStatusText,
     setLoggedIn,
     globalVolume,
     setGlobalVolume,
-    resetStatusText,
     renderConList,
     setRenderConList,
     Redirect,
@@ -45,17 +43,14 @@ const Main = props => {
       <Provider
         value={{
           ...initialContext,
-          statusMessage,
-          setStatusMessage,
           statusText,
-          setStatusText,
           loggedIn,
           setLoggedIn,
           globalVolume,
           setGlobalVolume,
-          resetStatusText,
           renderConList,
-          setRenderConList
+          setRenderConList,
+          useToast
         }}>
         <Router>
           <section
@@ -65,11 +60,6 @@ const Main = props => {
             onClick={e => {
               handleContextMenu(e, false)
             }}>
-            <section id='status-message'>
-              <div className={statusMessage.type}>
-                <div>{statusText}</div>
-              </div>
-            </section>
             {contextMenu.display && (
               <ContextMenu
                 contextMenuElem={contextMenuElem}
@@ -105,9 +95,6 @@ const Main = props => {
                   <Signup
                     routeProps={routeProps}
                     loginScreenInstead={false}
-                    statusMessage={statusMessage}
-                    setStatusMessage={setStatusMessage}
-                    setStatusText={setStatusText}
                     setLoggedIn={setLoggedIn}
                   />
                 )}
@@ -122,9 +109,6 @@ const Main = props => {
                     <Signup
                       routeProps={routeProps}
                       loginScreenInstead={true}
-                      statusMessage={statusMessage}
-                      setStatusMessage={setStatusMessage}
-                      setStatusText={setStatusText}
                       setLoggedIn={setLoggedIn}
                     />
                   )
@@ -161,7 +145,7 @@ const Main = props => {
   )
 }
 
-export default Main
+export default withToastProvider(Main)
 
 Main.propTypes = {
   ErrorBoundary: PropTypes.func,
@@ -169,7 +153,6 @@ Main.propTypes = {
   initialContext: PropTypes.object,
   Router: PropTypes.func,
   handleContextMenu: PropTypes.func,
-  statusMessage: PropTypes.object,
   loggedIn: PropTypes.bool,
   firstLoad: PropTypes.bool,
   minerva: PropTypes.object,
@@ -181,9 +164,7 @@ Main.propTypes = {
   }),
   ContextMenu: PropTypes.func,
   contextMenuElem: PropTypes.object,
-  setStatusMessage: PropTypes.func,
   statusText: PropTypes.string,
-  setStatusText: PropTypes.func,
   setLoggedIn: PropTypes.func,
   globalVolume: PropTypes.exact({
     master: PropTypes.number,
@@ -191,7 +172,6 @@ Main.propTypes = {
     voice: PropTypes.number
   }),
   setGlobalVolume: PropTypes.func,
-  resetStatusText: PropTypes.func,
   renderConList: PropTypes.oneOfType([PropTypes.string, prop => prop === null]),
   setRenderConList: PropTypes.func,
   Redirect: PropTypes.func,

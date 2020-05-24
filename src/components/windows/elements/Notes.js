@@ -11,11 +11,9 @@ let timeouts = []
 
 const Notes = props => {
   const { id } = props
-  const { minerva, audiomanager, setStatusMessage, setStatusText } = useContext(
-    globalContext
-  )
+  const { minerva, audiomanager, useToast } = useContext(globalContext)
   const runAfterUpdate = useRunAfterUpdate()
-
+  const toast = useToast()
   const record = minerva.record.findRecordById(id)
 
   const [collapsed, setCollapsed] = useState(true)
@@ -44,8 +42,8 @@ const Notes = props => {
     const existingExtra = currentRecord.data.extra || {}
 
     if (Object.keys(existingExtra).length >= 5) {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: 'metadata limit reached.',
         type: 'fail'
       })
@@ -53,14 +51,13 @@ const Notes = props => {
       audiomanager.play('e_one')
 
       clearAll()
-      timeouts.push(setTimeout(t, 3000))
 
       return
     }
 
     if (!key || !value) {
-      setStatusMessage({
-        display: true,
+      toast.add({
+        duration: 3000,
         text: errorMessage,
         type: 'fail'
       })
@@ -68,7 +65,6 @@ const Notes = props => {
       audiomanager.play('e_one')
 
       clearAll()
-      timeouts.push(setTimeout(t, 3000))
 
       return
     }
@@ -85,12 +81,6 @@ const Notes = props => {
 
     setCustomMetadataObject(newExtra)
     setCustomMetadata({ key: '', value: '' })
-  }
-
-  // function that just clears the status message
-  const t = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
   }
 
   // function to clear all running timeouts belonging to this component

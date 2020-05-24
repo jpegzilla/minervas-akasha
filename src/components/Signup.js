@@ -6,6 +6,7 @@ import { uuidv4 } from './../utils/misc'
 import Typist from './../utils/managers/Typist'
 import { globalContext } from './App'
 import bcrypt from 'bcryptjs'
+import useToast from './../hooks/useToast'
 
 // text for when the form is complete or incomplete
 const text = {
@@ -18,12 +19,8 @@ const text = {
 let timeouts = []
 
 const SignupComponent = props => {
-  const {
-    setStatusText,
-    setStatusMessage,
-    loginScreenInstead,
-    routeProps
-  } = props
+  const { loginScreenInstead, routeProps } = props
+  const toast = useToast()
 
   const { location } = routeProps
 
@@ -80,12 +77,6 @@ const SignupComponent = props => {
   const passwordInput = useRef(null)
   const usernameInput = useRef(null)
 
-  // simple function to clear the status message
-  const t = () => {
-    setStatusText('')
-    setStatusMessage({ display: false, text: '', type: null })
-  }
-
   const onSubmitForm = e => {
     e.preventDefault()
 
@@ -109,16 +100,14 @@ const SignupComponent = props => {
           console.log(u, user)
 
           if (!u) {
-            setStatusMessage({
-              display: true,
+            toast.add({
+              duration: 3000,
               text: 'user does not exist.',
               type: 'fail'
             })
 
             shakeAnim()
-
             clearAll()
-            timeouts.push(setTimeout(t, 3000))
           } else {
             bcrypt.compare(user.password, u.password, (err, res) => {
               console.log({ err, res })
@@ -143,8 +132,8 @@ const SignupComponent = props => {
 
                 setTimeout(() => setFinished(true), 500)
               } else {
-                setStatusMessage({
-                  display: true,
+                toast.add({
+                  duration: 3000,
                   text: 'incorrect credentials.',
                   type: 'fail'
                 })
@@ -152,15 +141,14 @@ const SignupComponent = props => {
                 shakeAnim()
 
                 clearAll()
-                timeouts.push(setTimeout(t, 3000))
               }
             })
           }
         })
       } else {
         // popup message
-        setStatusMessage({
-          display: true,
+        toast.add({
+          duration: 3000,
           text: 'please enter a valid username and password.',
           type: 'fail'
         })
@@ -168,7 +156,6 @@ const SignupComponent = props => {
         shakeAnim()
 
         clearAll()
-        timeouts.push(setTimeout(t, 3000))
       }
     } else {
       if (shouldSubmit) {
@@ -178,19 +165,17 @@ const SignupComponent = props => {
           if (err) {
             console.log(err)
 
-            setStatusMessage({
-              display: true,
+            return toast.add({
+              duration: 3000,
               text: err,
               type: 'fail'
             })
-
-            return setTimeout(t, 3000)
           }
 
           bcrypt.hash(passwordInput.current.value, salt, (err, hash) => {
             if (err)
-              return setStatusMessage({
-                display: true,
+              return toast.add({
+                duration: 3000,
                 text: err,
                 type: 'fail'
               })
@@ -223,8 +208,8 @@ const SignupComponent = props => {
                 }, 500)
               } else {
                 // if user exists in localstorage, warn the user to just go ahead and log in
-                setStatusMessage({
-                  display: true,
+                toast.add({
+                  duration: 6000,
                   text: `that username is taken. if you are ${newUser.name}, please log in!`,
                   type: 'warning'
                 })
@@ -232,7 +217,6 @@ const SignupComponent = props => {
                 shakeAnim('warn')
 
                 clearAll()
-                timeouts.push(setTimeout(t, 6000))
               }
             })
           })
@@ -241,14 +225,13 @@ const SignupComponent = props => {
         // this block is sort of a catch-all for any mistakes the user made in the form
         shakeAnim()
 
-        setStatusMessage({
-          display: true,
+        toast.add({
+          duration: 3000,
           text: 'error: invalid form',
           type: 'fail'
         })
 
         clearAll()
-        timeouts.push(setTimeout(t, 3000))
       }
     }
   }
@@ -267,14 +250,13 @@ const SignupComponent = props => {
         if (/\s/gi.test(value)) {
           shakeAnim('warn')
 
-          setStatusMessage({
-            display: true,
+          toast.add({
+            duration: 3000,
             text: 'warning: username cannot contain spaces',
             type: 'warning'
           })
 
           clearAll()
-          timeouts.push(setTimeout(t, 3000))
         } else if (value.length < 3) setUserValid(false)
 
         break
@@ -285,14 +267,13 @@ const SignupComponent = props => {
         if (/\s/gi.test(value)) {
           shakeAnim('warn')
 
-          setStatusMessage({
-            display: true,
+          toast.add({
+            duration: 3000,
             text: 'warning: password cannot contain spaces',
             type: 'warning'
           })
 
           clearAll()
-          timeouts.push(setTimeout(t, 3000))
         } else if (value.length < 8) setPasswordValid(false)
 
         break
@@ -301,14 +282,13 @@ const SignupComponent = props => {
         if (/\s/gi.test(value)) {
           shakeAnim('warn')
 
-          setStatusMessage({
-            display: true,
+          toast.add({
+            duration: 3000,
             text: 'warning: password cannot contain spaces',
             type: 'warning'
           })
 
           clearAll()
-          timeouts.push(setTimeout(t, 3000))
         } else if (value === confirm && confirm.length > 0 && passwordValid)
           setConfirmValid(true)
         else setConfirmValid(false)
@@ -452,8 +432,6 @@ const SignupComponent = props => {
 export default memo(SignupComponent)
 
 SignupComponent.propTypes = {
-  setStatusText: PropTypes.func,
-  setStatusMessage: PropTypes.func,
   loginScreenInstead: PropTypes.bool,
   routeProps: PropTypes.object
 }
