@@ -8,10 +8,20 @@ export default Component => {
   const WithToastProvider = props => {
     const [toasts, setToasts] = useState([])
 
-    const add = ({ text, duration, type }) => {
+    const add = ({ text, duration, type, sound }) => {
       const id = uuidv4()
 
-      setToasts([...toasts, { id, text, duration, type }])
+      setToasts([
+        ...toasts,
+        {
+          id,
+          text,
+          duration,
+          type,
+          sound,
+          audiomanager: props.initialContext.audiomanager
+        }
+      ])
     }
 
     const remove = id => setToasts(toasts.filter(t => t.id !== id))
@@ -26,6 +36,9 @@ export default Component => {
         <section id='status-message'>
           {toasts.map(t => (
             <Toast
+              id={t.id}
+              sound={t.sound}
+              audiomanager={t.audiomanager}
               type={t.type}
               key={t.id}
               text={t.text}

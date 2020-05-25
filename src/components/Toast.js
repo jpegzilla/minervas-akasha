@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Typist from './../utils/managers/Typist'
 
-export default ({ remove, duration, text, type, index }) => {
+export default ({ remove, duration, text, type, id, sound, audiomanager }) => {
   const removeRef = useRef()
   removeRef.current = remove
 
@@ -9,6 +9,16 @@ export default ({ remove, duration, text, type, index }) => {
   const [fade, setFade] = useState(false)
 
   useEffect(() => {
+    if (sound) {
+      switch (sound) {
+        case 'error':
+          audiomanager.play('e_one')
+          break
+        default:
+          break
+      }
+    }
+
     new Typist(setTypeText, text).scramble(false)
   }, [])
 
@@ -24,7 +34,7 @@ export default ({ remove, duration, text, type, index }) => {
 
   return (
     <div
-      key={`${text}-${index}`}
+      key={`${text}-${id}`}
       className={`${type} ${fade ? 'fade' : ''}`.trim()}>
       <div>{typeText}</div>
     </div>
