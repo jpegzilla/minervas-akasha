@@ -11,7 +11,7 @@ let timeouts = []
 
 const Notes = props => {
   const { id } = props
-  const { minerva, audiomanager, useToast } = useContext(globalContext)
+  const { minerva, useToast } = useContext(globalContext)
   const runAfterUpdate = useRunAfterUpdate()
   const toast = useToast()
   const record = minerva.record.findRecordById(id)
@@ -45,10 +45,9 @@ const Notes = props => {
       toast.add({
         duration: 3000,
         text: 'metadata limit reached.',
-        type: 'fail'
+        type: 'fail',
+        sound: 'error'
       })
-
-      audiomanager.play('e_one')
 
       clearAll()
 
@@ -56,13 +55,18 @@ const Notes = props => {
     }
 
     if (!key || !value) {
+      console.log({
+        duration: 3000,
+        text: errorMessage,
+        type: 'fail',
+        sound: 'error'
+      })
       toast.add({
         duration: 3000,
         text: errorMessage,
-        type: 'fail'
+        type: 'fail',
+        sound: 'error'
       })
-
-      audiomanager.play('e_one')
 
       clearAll()
 

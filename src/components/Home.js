@@ -72,7 +72,7 @@ const Home = props => {
         type: 'success'
       })
     }
-  }, [routeProps.location.state])
+  }, [routeProps.location.state, toast])
 
   // handlers for dealing with file drag + drop on desktop
   const allowDrag = e => {
@@ -127,7 +127,7 @@ const Home = props => {
         dataStructureFileParser(droppedFiles, toast, null, setActiveFileData)
       }
     }
-  }, [droppedFiles, minerva])
+  }, [droppedFiles, minerva, toast])
 
   // effect that should fire whenever a file is dropped on the desktop
   useEffect(() => {

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useEffect, useContext, useRef, memo } from 'react'
 
 import { videoTagSchema } from './utils/mediaTagSchema'

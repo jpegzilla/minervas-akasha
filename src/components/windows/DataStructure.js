@@ -38,9 +38,7 @@ const DataStructure = props => {
     droppedFiles
   } = props
 
-  const { minerva, audiomanager, setRenderConList, useToast } = useContext(
-    globalContext
-  )
+  const { minerva, setRenderConList, useToast } = useContext(globalContext)
 
   const toast = useToast()
 
@@ -397,10 +395,9 @@ const DataStructure = props => {
       toast.add({
         duration: 3000,
         text: errorMessage,
-        type: 'fail'
+        type: 'fail',
+        sound: 'error'
       })
-
-      audiomanager.play('e_one')
 
       return
     }
@@ -458,10 +455,9 @@ const DataStructure = props => {
       toast.add({
         duration: 3000,
         text: errorMessage,
-        type: 'fail'
+        type: 'fail',
+        sound: 'error'
       })
-
-      audiomanager.play('e_one')
 
       return
     }

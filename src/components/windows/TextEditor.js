@@ -1,13 +1,16 @@
-import React, { memo, useContext } from 'react'
+import React, {
+  memo
+  // useContext
+} from 'react'
 
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
-import { globalContext } from './../App'
+// import { globalContext } from './../App'
 
 const TextEditor = props => {
   console.log(props)
 
-  const { minerva } = useContext(globalContext)
+  // const { minerva } = useContext(globalContext)
 
   return <div>hello</div>
 }

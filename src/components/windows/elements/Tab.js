@@ -5,8 +5,6 @@ import PropTypes from 'prop-types'
 const TabComponent = props => {
   const { w, title, activeWindowId, tabCounts, handleClickItem, state } = props
 
-  console.log(props)
-
   let titleToUse = title,
     typeToUse = w.componentProps.type || w.component
 
@@ -38,7 +36,15 @@ const TabComponent = props => {
         <span>{`${titleToUse} (${tabCounts})`}</span>
       </li>
     ),
-    [w, activeWindowId, tabCounts, handleClickItem, titleText, titleToUse]
+    [
+      w,
+      activeWindowId,
+      tabCounts,
+      handleClickItem,
+      titleText,
+      titleToUse,
+      state
+    ]
   )
 }
 

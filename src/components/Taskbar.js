@@ -314,7 +314,6 @@ const Taskbar = props => {
       </div>
       <ul id='taskbar-tabs'>
         {windows.map((w, i) => {
-          console.log('window:', w)
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1
             if (w.component === 'Console') {
