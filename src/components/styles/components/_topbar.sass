@@ -10,6 +10,16 @@
   background-color: vars.$black
   z-index: 2
 
+  .taskbar-button
+    +vars.flexcenter
+
+    user-select: none
+    cursor: pointer
+
+    &:hover
+      background-color: vars.$white
+      color: vars.$black
+
   #settings-button, #topbar-clock
     border: 1px solid vars.$white
     border-bottom: none
