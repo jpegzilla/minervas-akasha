@@ -614,7 +614,7 @@ export class Minerva {
   }
 
   makeConfirmBox(options, data) {
-    const { confirm, deny, message } = options
+    const { confirm, deny, message, name } = options
 
     // store data in temp to be used later
     this.temp.importData = data
@@ -638,8 +638,6 @@ export class Minerva {
     const id = uuidv4()
 
     const closeImportDialog = () => {
-      console.log('denied.')
-
       delete this.temp.importData
 
       this.setWindows([
@@ -652,14 +650,15 @@ export class Minerva {
     const denyFunc = deny || closeImportDialog
 
     const confirmBoxObject = {
-      title: 'confirmbox',
+      title: 'confirm',
       state: 'restored',
       stringType: 'Window',
       component: 'ConfirmBox',
       componentProps: {
         confirm,
         deny: denyFunc,
-        message
+        message,
+        name
       },
       belongsTo: this.user.id,
       id,

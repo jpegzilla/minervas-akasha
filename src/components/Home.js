@@ -99,11 +99,10 @@ const Home = props => {
               minerva.makeConfirmBox(
                 {
                   confirm: () => {
-                    console.log('confirmed.')
                     minerva.importDataFromJsonFile(e.data)
                   },
-                  message:
-                    "this will overwrite all your data, replacing it with the data in this file. are you sure you'd like to continue? this operation cannot be reversed."
+                  name,
+                  message: 'overwritewarning'
                 },
                 e.data
               )
