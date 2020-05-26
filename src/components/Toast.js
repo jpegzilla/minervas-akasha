@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Typist from './../utils/managers/Typist'
 
-export default ({ remove, duration, text, type, id, sound, audiomanager }) => {
+const Toast = ({ remove, duration, text, type, id, sound, audiomanager }) => {
   const removeRef = useRef()
   removeRef.current = remove
 
@@ -40,3 +40,5 @@ export default ({ remove, duration, text, type, id, sound, audiomanager }) => {
     </div>
   )
 }
+
+export default Toast
