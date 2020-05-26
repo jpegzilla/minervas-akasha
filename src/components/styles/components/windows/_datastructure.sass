@@ -74,40 +74,7 @@
       outline: 1px solid vars.$pink
 
   button
-    $opacity: 0.6
-
-    +vars.flexcenter
-
-    width: 100%
-    background-color: transparent
-    cursor: pointer
-    font-family: $font
-    color: var(--text-main)
-    border: 1px solid var(--text-main)
-    padding: 0.25rem 0.5rem
-
-    span
-      padding: 0.25rem 0.5rem
-      display: block
-      height: 100%
-      width: 100%
-
-    &.confirm-button, &.deny-button, &.delete-button
-      padding: 0
-
-    &.confirm-button
-      background-color: color.adjust(vars.$success, $alpha: -$opacity)
-      border: 1px solid vars.$success
-
-      &:hover
-        background-color: color.adjust(vars.$success, $alpha: -0.75)
-
-    &.deny-button, &.delete-button
-      background-color: color.adjust(vars.$red, $alpha: -$opacity)
-      border: 1px solid vars.$red
-
-      &:hover
-        background-color: color.adjust(vars.$red, $alpha: -0.75)
+    +vars.stdbutton
 
   input
     background-color: transparent
@@ -200,9 +167,6 @@
       display: grid
       grid-template-columns: 1fr 1fr
       grid-gap: vars.$halfgap
-
-      input, button
-        height: min-content
 
       .delete-button
         grid-column: span 2
