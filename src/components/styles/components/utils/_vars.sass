@@ -158,6 +158,42 @@ $halfgap: 0.5rem
   @if $left
     justify-content: flex-start
 
+=stdbutton
+  $opacity: 0.6
+
+  +flexcenter
+
+  background-color: transparent
+  cursor: pointer
+  color: var(--text-main)
+  border: 1px solid var(--text-main)
+  padding: 0.25rem 0.5rem
+  line-height: 1rem
+  font-family: $proggy
+
+  span
+    display: block
+    height: 100%
+    width: 100%
+
+  &.confirm-button
+    background-color: color.adjust($success, $alpha: -$opacity)
+    border: 1px solid $success
+
+    &:hover
+      background-color: color.adjust($success, $alpha: -0.75)
+
+  &.deny-button, &.delete-button
+    background-color: color.adjust($red, $alpha: -$opacity)
+    border: 1px solid $red
+
+    &:hover
+      background-color: color.adjust($red, $alpha: -0.75)
+
+  &:active, &:focus
+    outline: 1px solid $pink
+
+
 =spinning-squares($count: 4)
   .spinning-squares
     +flexcenter
