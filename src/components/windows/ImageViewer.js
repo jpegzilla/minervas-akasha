@@ -273,9 +273,16 @@ const ImageViewer = props => {
         onWheel={({ nativeEvent }) => {
           const { deltaY } = nativeEvent
 
-          requestAnimationFrame(() => {
+          // these clauses are here because for some fucking reason, deltaY
+          // (scroll distance) comes out to like, THREE on firefox and
+          // ONE HUNDRED on chrome. why?
+
+          if (deltaY < 100)
+            // figure out whether to make the number negative or positive and then
+            // stick on a five
+            setZoomLevel(zoomLevel + -parseInt(`${deltaY < 0 ? '-' : ''}${5}`))
+          else if (deltaY >= 100)
             setZoomLevel(zoomLevel + -parseInt(`${(deltaY / 100) * 5}`))
-          })
         }}>
         {source ? (
           <img
@@ -416,6 +423,12 @@ const ImageViewer = props => {
             <p>zoom {zoomLevel}%</p>
             <p>inverted {inversion ? 'true' : 'false'}</p>
             <p>rot {rotationAngle}deg</p>
+            <p>
+              height {imageRef.current ? imageRef.current.naturalHeight : '0'}px
+            </p>
+            <p>
+              width {imageRef.current ? imageRef.current.naturalWidth : '0'}px
+            </p>
           </div>
         </div>
       )}
