@@ -301,6 +301,7 @@ const DataStructure = props => {
             title={title}
             humanSize={humanSize}
             mime={mime}
+            setLoadingFileData={setLoadingFileData}
             setMetadata={setMetadata}
           />
         )
