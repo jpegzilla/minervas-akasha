@@ -2,9 +2,9 @@
 @use "sass:color"
 
 $img-cols: 6
-$vid-cols: 6
+$vid-cols: 7
 
-.image-viewer-window, .video-viewer-window
+.image-viewer-window, .video-viewer-window, .text-viewer-window
   background-color: color.adjust(vars.$black, $alpha: -0.05)
 
   .viewer-stat-box
@@ -13,13 +13,13 @@ $vid-cols: 6
     padding: vars.$halfgap
     position: absolute
     z-index: 2
-    top: 60%
+    top: 10%
     left: vars.$halfgap
 
-  .image-viewer-header, .video-viewer-header
+  .image-viewer-header, .video-viewer-header, .text-viewer-header
     margin-bottom: 0
 
-  .image-viewer-container-controls
+  .image-viewer-container-controls, .text-viewer-header
     padding: vars.$halfgap
 
   button
@@ -92,13 +92,26 @@ $vid-cols: 6
     overflow: hidden
     border-top: 1px solid var(--text-main)
 
-  img, video
+  img, video, pre
     max-width: 1000px
     max-height: 65vh
-    cursor: grab
 
     &.inverted
       filter: invert(1)
 
     &.highlight
       border: 1px solid vars.$yellow
+
+  img
+    cursor: grab
+
+  .text-viewer-container > div
+    border-top: 1px solid var(--text-main)
+
+  .text-viewer-text
+    +vars.custom-scrollbar
+
+    padding: 1rem 1.5rem
+    line-height: 1.42
+    letter-spacing: 0.0625em
+    font-family: vars.$msgothic

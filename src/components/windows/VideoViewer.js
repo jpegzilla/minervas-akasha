@@ -137,14 +137,37 @@ const VideoViewer = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20image%20decoding%20issue%20with%20an%20${mime}%20encoded%20image`
 
   const handleKeyDown = e => {
+    e.stopPropagation()
+
     const { key } = e
 
-    switch (key) {
-      case 'ArrowRight':
-        videoRef.current.currentTime += 5
+    // the skip times are off by two seconds becuse the
+    // default action of the video element on arrow key
+    // presses is to skip 2 seconds. it seems impossible
+    // to prevent this action.
+
+    switch (key.toLowerCase()) {
+      case 'arrowright': // skip forward five seconds
+        videoRef.current.currentTime += 3
         break
-      case 'ArrowLeft':
-        videoRef.current.currentTime -= 5
+      case 'arrowleft': // skip backward five seconds
+        videoRef.current.currentTime -= 3
+        break
+      case 'l': // skip forward ten seconds
+        videoRef.current.currentTime += 10
+        break
+      case 'j': // skip backward ten seconds
+        videoRef.current.currentTime -= 10
+        break
+      case 'm':
+        if (videoRef.current) videoRef.current.muted = !videoRef.current.muted
+        break
+      case 'p':
+      case 'k': // yes I like youtube's video player ok
+        if (videoRef.current)
+          videoRef.current.paused
+            ? videoRef.current.play()
+            : videoRef.current.pause()
         break
       case 'r':
         resetAll()
@@ -153,6 +176,8 @@ const VideoViewer = props => {
         setInversion(!inversion)
         break
       case 'e':
+      case 'd':
+      case 's': // all these just show the extra data, like youtube's 'stats for nerds'
         setShowExtras(!showExtras)
         break
       default:
@@ -165,6 +190,7 @@ const VideoViewer = props => {
       videoRef.current.loop = false
       videoRef.current.pause()
       videoRef.current.currentTime = 0
+      videoRef.current.muted = false
       setTime(videoRef.current.currentTime)
 
       setInversion(false)
@@ -260,12 +286,24 @@ const VideoViewer = props => {
       </div>
       <div className='video-control-buttons control-buttons'>
         <button
-          title='hotkey: e'
+          title='hotkeys: e / s / d'
           className='button-non-mutation span-v-2'
           onClick={() => {
             setShowExtras(!showExtras)
           }}>
           <span>{showExtras ? 'hide' : 'show'} data</span>
+        </button>
+        <button
+          title='hotkey: m'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            if (videoRef.current)
+              videoRef.current.muted = !videoRef.current.muted
+          }}>
+          <span>
+            {videoRef.current && videoRef.current.muted ? 'unmute' : 'mute'}{' '}
+            video
+          </span>
         </button>
         <button
           className='button-non-mutation'
@@ -357,6 +395,22 @@ const VideoViewer = props => {
               s
             </p>
             <p>
+              duration{' '}
+              {videoRef.current
+                ? secondsToTime(Math.floor(videoRef.current.duration))
+                : '0'}
+            </p>
+            <p>
+              remaining{' '}
+              {videoRef.current
+                ? secondsToTime(
+                    Math.floor(
+                      videoRef.current.duration - videoRef.current.currentTime
+                    )
+                  )
+                : '0'}
+            </p>
+            <p>
               vol{' '}
               {videoRef.current && (videoRef.current.volume * 100).toFixed(2)}%
             </p>
@@ -364,6 +418,13 @@ const VideoViewer = props => {
               loop {videoRef.current && videoRef.current.loop ? 'on' : 'off'}
             </p>
             <p>inverted {inversion ? 'true' : 'false'}</p>
+            <p>
+              height {videoRef.current ? videoRef.current.videoHeight : '0'}px
+            </p>
+            <p>
+              width {videoRef.current ? videoRef.current.videoWidth : '0'}px
+            </p>
+            <p>muted {videoRef.current && videoRef.current.muted.toString()}</p>
           </div>
         </div>
       )}
