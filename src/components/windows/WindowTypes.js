@@ -7,6 +7,7 @@ import VideoViewer from './VideoViewer'
 import AudioViewer from './AudioViewer'
 import ConfirmBox from './ConfirmBox'
 import TextEditor from './TextEditor'
+import TextViewer from './TextViewer'
 import Window from './Window'
 
 export default {
@@ -18,6 +19,7 @@ export default {
   VideoViewer: VideoViewer,
   AudioViewer: AudioViewer,
   ConfirmBox: ConfirmBox,
+  TextViewer: TextViewer,
   TextEditor: TextEditor,
   Window: Window
 }
