@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useEffect, useContext, useRef, memo } from 'react'
 import MediaTagReader from './utils/MediaTagReader'
 import PropTypes from 'prop-types'
@@ -5,6 +7,7 @@ import PropTypes from 'prop-types'
 import worker from './utils/metadataWorker.worker'
 
 import { globalContext } from './../../App'
+import { uuidv4 } from './../../../utils/misc'
 
 const Audio = props => {
   const { src, title, humanSize, mime, setMetadata, setLoadingFileData } = props
@@ -62,6 +65,7 @@ const Audio = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
 
   const handleDoubleClick = () => {
+    console.log('double clicked')
     const workerInstance = new worker()
 
     workerInstance.postMessage({
@@ -138,43 +142,43 @@ const Audio = props => {
       </a>
     </span>
   ) : (
-    <audio
-      onDoubleClick={handleDoubleClick}
-      autoPlay={shouldAutoplay}
-      onError={() => {
-        setLoadingFileData(false)
+    <div onDoubleClick={handleDoubleClick}>
+      <audio
+        autoPlay={shouldAutoplay}
+        onError={() => {
+          setLoadingFileData(false)
 
-        toast.add({
-          duration: 5000,
-          text: `status: file failed to load: ${title}`,
-          type: 'warning'
-        })
+          toast.add({
+            duration: 5000,
+            text: `status: file failed to load: ${title}`,
+            type: 'warning'
+          })
 
-        setMetadata(false)
-        setError(`audio format not supported: ${mime}`)
-      }}
-      onLoadStart={() => {
-        setLoadingFileData(false)
-        setError(false)
-      }}
-      ref={audioRef}
-      onLoadedMetadata={e => {
-        e.target.volume = minerva.settings.volume.master / 100
-        // hand off metadata reading to a worker here
-        const metaDataReader = new MediaTagReader(data)
+          setMetadata(false)
+          setError(`audio format not supported: ${mime}`)
+        }}
+        onLoadStart={() => {
+          setLoadingFileData(false)
+          setError(false)
+        }}
+        ref={audioRef}
+        onLoadedMetadata={e => {
+          e.target.volume = minerva.settings.volume.master / 100
+          // hand off metadata reading to a worker here
+          const metaDataReader = new MediaTagReader(data)
 
-        metaDataReader.getFullAudioInfo(mime).then(res => {
-          if (res.status === 'success') {
-            setMetadata(res.metadata)
-          } else setMetadata(res.metadata)
-        })
-      }}
-      onClick={e => void e.stopPropagation()}
-      controls
-      src={audioData}
-      title={fileInfo}>
-      audio element encountered an error.
-    </audio>
+          metaDataReader.getFullAudioInfo(mime).then(res => {
+            if (res.status === 'success') {
+              setMetadata(res.metadata)
+            } else setMetadata(res.metadata)
+          })
+        }}
+        controls
+        src={audioData}
+        title={fileInfo}>
+        audio element encountered an error.
+      </audio>
+    </div>
   )
 }
 

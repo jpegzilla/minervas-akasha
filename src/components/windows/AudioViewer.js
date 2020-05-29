@@ -7,6 +7,8 @@ import React, {
   useState
 } from 'react'
 
+import PropTypes from 'prop-types'
+
 import { globalContext } from './../App'
 
 import { secondsToTime } from './../../utils/misc'
@@ -17,6 +19,7 @@ let isPlaying = false,
 
 const AudioViewer = props => {
   const { src, alt, id, mime, humanSize } = props
+  const { minerva } = useContext(globalContext)
 
   const audioRef = useRef()
 
@@ -27,7 +30,7 @@ const AudioViewer = props => {
 
   const titleToShow = alt.split('\n')[0]
 
-  const [state, dispatch] = useReducer(videoViewerReducer, {
+  const [state, dispatch] = useReducer(audioViewerReducer, {
     source: null,
     error: false,
     found: false
@@ -144,6 +147,8 @@ const AudioViewer = props => {
     }
   }
 
+  const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
+
   return typeof error === 'string' ? (
     <span className='image-error' onClick={e => void e.stopPropagation()}>
       there was an issue decoding this image. error message: {error}.{' '}
@@ -155,7 +160,7 @@ const AudioViewer = props => {
   ) : (
     <section className='audio-viewer-container'>
       <header className='audio-viewer-container-controls'>
-        <p>{`audio vizualizer - ${titleToShow}, ${humanSize}, ${mime}`}</p>
+        <span>{`audio vizualizer - ${titleToShow}, ${humanSize}, ${mime}`}</span>
       </header>
 
       <div>
@@ -163,7 +168,6 @@ const AudioViewer = props => {
         <div>
           <audio
             src={source}
-            onWaiting={() => setWaiting(true)}
             ref={audioRef}
             alt={altToShow}
             title={altToShow}
@@ -268,15 +272,15 @@ const AudioViewer = props => {
         <div className='viewer-stat-box'>
           <div>
             <p>
-              time {videoRef.current && videoRef.current.currentTime.toFixed(6)}
+              time {audioRef.current && audioRef.current.currentTime.toFixed(6)}
               s
             </p>
             <p>
               vol{' '}
-              {videoRef.current && (videoRef.current.volume * 100).toFixed(2)}%
+              {audioRef.current && (audioRef.current.volume * 100).toFixed(2)}%
             </p>
             <p>
-              loop {videoRef.current && videoRef.current.loop ? 'on' : 'off'}
+              loop {audioRef.current && audioRef.current.loop ? 'on' : 'off'}
             </p>
           </div>
         </div>
@@ -287,7 +291,7 @@ const AudioViewer = props => {
 
 export default memo(AudioViewer)
 
-const videoViewerReducer = (state, action) => {
+const audioViewerReducer = (state, action) => {
   const { type, payload } = action
 
   switch (type) {
