@@ -3,8 +3,6 @@ import React from 'react'
 export default props => {
   const { text, humanSize, mime, title, alt } = props
 
-  console.log(props)
-
   const altToShow = alt
     .split('\n')
     .splice(0, alt.split('\n').length - 1)
