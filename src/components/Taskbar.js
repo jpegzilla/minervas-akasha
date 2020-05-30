@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, memo } from 'react'
+import React, { useState, useEffect, useContext, memo, useRef } from 'react'
 import { Redirect } from 'react-router-dom'
 import { uuidv4 } from './../utils/misc'
 import { makeStruct } from '../utils/managers/StructureMap'
@@ -27,11 +27,12 @@ const Taskbar = props => {
     menuOpen,
     setMenuOpen,
     addMenuOpen,
-    setAddMenuOpen
+    setAddMenuOpen,
   } = props
 
   const toast = useToast()
 
+  const taskbarRef = useRef()
   const { audiomanager, minerva } = useContext(globalContext)
 
   const [logout, setLogout] = useState(false)
@@ -60,7 +61,7 @@ const Taskbar = props => {
       ...windows.map(w => {
         if (w.id === item.id) return { ...w, state: newState }
         else return w
-      })
+      }),
     ])
 
     setActiveWindowId(item.id)
@@ -79,7 +80,7 @@ const Taskbar = props => {
   }
 
   const [
-    menuItems
+    menuItems,
     // setMenuItems
   ] = useState([
     {
@@ -92,7 +93,7 @@ const Taskbar = props => {
 
         setLogout(true)
       },
-      tooltip: 'end your current session and return to the login screen.'
+      tooltip: 'end your current session and return to the login screen.',
     },
     {
       id: 'openrecord',
@@ -124,14 +125,14 @@ const Taskbar = props => {
           componentProps: {},
           position: {
             x: finalPosition,
-            y: finalPosition
-          }
+            y: finalPosition,
+          },
         }
 
         minerva.setWindows([...minerva.windows, newRecordViewer])
 
         setWindows([...minerva.windows])
-      }
+      },
     },
     {
       id: 'openconsole',
@@ -159,21 +160,21 @@ const Taskbar = props => {
           stringType: 'Window',
           component: 'Console',
           componentProps: {
-            setWindows
+            setWindows,
           },
           belongsTo: minerva.user.id,
           id: uuidv4(),
           position: {
             x: finalPosition,
-            y: finalPosition
-          }
+            y: finalPosition,
+          },
         }
 
         minerva.setWindows([...minerva.windows, newConsole])
 
         setWindows([...minerva.windows])
       },
-      tooltip: 'open a command console.'
+      tooltip: 'open a command console.',
     },
     {
       id: 'exportdata',
@@ -183,14 +184,14 @@ const Taskbar = props => {
           duration: 10000,
           text:
             'it may take a while to export your records. please wait warmly.',
-          type: 'success'
+          type: 'success',
         })
 
         clearAll()
 
         minerva.exportDataToJsonFile()
       },
-      tooltip: 'export all user data for the currently logged in user.'
+      tooltip: 'export all user data for the currently logged in user.',
     },
     {
       id: 'submitfeedback',
@@ -202,7 +203,7 @@ const Taskbar = props => {
         link.target = '_blank'
         link.click()
       },
-      tooltip: "submit feedback about minerva's akasha."
+      tooltip: "submit feedback about minerva's akasha.",
     },
     {
       id: 'sendreport',
@@ -214,8 +215,8 @@ const Taskbar = props => {
         link.target = '_blank'
         link.click()
       },
-      tooltip: "submit a bug report about minerva's akasha."
-    }
+      tooltip: "submit a bug report about minerva's akasha.",
+    },
   ])
 
   const addMenuItems = [
@@ -223,7 +224,7 @@ const Taskbar = props => {
     '+ node',
     '+ grimoire',
     '+ athenaeum',
-    '+ hypostasis'
+    '+ hypostasis',
   ].map(title => {
     return {
       id: title.split('+ ')[1],
@@ -231,7 +232,7 @@ const Taskbar = props => {
       onClick: () => {
         const type = title.split('+ ')[1]
         addStructure(type)
-      }
+      },
     }
   })
 
@@ -245,8 +246,8 @@ const Taskbar = props => {
         to={{
           pathname: '/login',
           state: {
-            playaudio: false
-          }
+            playaudio: false,
+          },
         }}
       />
     )
@@ -368,5 +369,5 @@ Taskbar.propTypes = {
   setActiveWindow: PropTypes.func,
   taskBarMenuRef: PropTypes.object,
   menuOpen: PropTypes.bool,
-  setMenuOpen: PropTypes.func
+  setMenuOpen: PropTypes.func,
 }
