@@ -33,7 +33,11 @@ const TabComponent = props => {
         onClick={e => {
           handleClickItem(e, w)
         }}>
-        <span>{`${titleToUse} (${tabCounts})`}</span>
+        <span>{`${
+          titleToUse.length > 15
+            ? titleToUse.substring(0, 12).trim().padEnd(15, '...')
+            : titleToUse
+        } (${tabCounts})`}</span>
       </li>
     ),
     [
@@ -43,7 +47,7 @@ const TabComponent = props => {
       handleClickItem,
       titleText,
       titleToUse,
-      state
+      state,
     ]
   )
 }
@@ -55,5 +59,5 @@ TabComponent.propTypes = {
   title: PropTypes.string,
   activeWindowId: PropTypes.string,
   tabCounts: PropTypes.number,
-  handleClickItem: PropTypes.func
+  handleClickItem: PropTypes.func,
 }
