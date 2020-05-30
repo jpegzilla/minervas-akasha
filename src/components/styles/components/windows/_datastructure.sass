@@ -99,14 +99,9 @@
       @include vars.itemlist(vars.$white, true)
 
       ul
-        max-height: 40vh
-        scrollbar-width: none
-        overflow: -moz-scrollbars-none
-        overflow-y: auto
+        +vars.no-scrollbar
 
-        &::-webkit-scrollbar
-          display: none
-          width: 0
+        max-height: 40vh
 
       li.parent-record
           border-left: 2px solid vars.$pink
@@ -210,8 +205,6 @@
     grid-template-columns: repeat(1000000, auto)
     grid-auto-flow: row
     overflow-x: scroll
-
-    // scrollbar-width: none
     position: relative
 
     &::after, &::before

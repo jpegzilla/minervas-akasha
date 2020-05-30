@@ -55,6 +55,8 @@
       flex-direction: column
 
       textarea
+        +vars.no-scrollbar
+
         display: block
         flex-grow: 1
         min-width: calc(100% - 1px)
@@ -64,15 +66,11 @@
         // background-color: var(--bg-main)
         background-color: vars.$editorblue
         color: var(--text-main)
-        scrollbar-width: none
         border-top: 1px solid var(--text-main)
         border-bottom: 1px solid var(--text-main)
 
         &:active, &:focus
           outline: 1px solid vars.$pink
-
-        &::-webkit-scrollbar
-          display: none
 
     .notes-content-metadata
       margin-top: vars.$halfgap

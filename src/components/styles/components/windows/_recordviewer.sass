@@ -111,14 +111,9 @@
               border-bottom: 1px solid var(--text-main)
 
             ul
-              max-height: 40vh
-              scrollbar-width: none
-              overflow: -moz-scrollbars-none
-              overflow-y: auto
+              +vars.no-scrollbar
 
-              &::-webkit-scrollbar
-                display: none
-                width: 0
+              max-height: 40vh
 
               li
                 &.parent-record
