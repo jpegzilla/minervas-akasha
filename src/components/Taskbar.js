@@ -254,8 +254,33 @@ const Taskbar = props => {
 
   const tabCounts = {}
 
+  const handleScrollInTaskbar = e => {
+    // if the user knows how to scroll horizontally, don't interrupt them
+    if (e.shiftKey) return
+
+    // if there is no overflow, do nothing
+    if (taskbarRef.current.clientWidth - taskbarRef.current.scrollWidth === 0)
+      return
+
+    const { nativeEvent } = e
+    const { deltaY } = nativeEvent
+    let scrollDelta = 0
+
+    if (Math.abs(deltaY) < 100)
+      // figure out whether to make the number negative or positive and then
+      // stick on a five
+      scrollDelta = -parseInt(`${deltaY < 0 ? '-' : ''}${100}`)
+    else if (Math.abs(deltaY) >= 100)
+      scrollDelta = -parseInt(`${(deltaY / 100) * 25}`)
+
+    taskbarRef.current.scrollLeft += scrollDelta
+  }
+
   return (
-    <section id='application-taskbar'>
+    <section
+      id='application-taskbar'
+      ref={taskbarRef}
+      onWheel={handleScrollInTaskbar}>
       <div
         onClick={e => {
           e.stopPropagation()

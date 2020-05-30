@@ -6,6 +6,8 @@
 signup.$font: vars.$proggy
 
 #application-taskbar
+  +vars.no-scrollbar
+
   box-sizing: default
   width: 100%
   height: auto
@@ -13,6 +15,7 @@ signup.$font: vars.$proggy
   border-top: 1px solid vars.$white
   background-color: vars.$black
   z-index: 2
+  overflow-x: auto
 
   #add-item
     border: 1px solid vars.$white
@@ -88,18 +91,22 @@ signup.$font: vars.$proggy
     display: flex
 
     li
+      +vars.flexcenter
+
       width: auto
       font-family: signup.$font
-      padding: 0.45rem 0.75rem
+      padding: 0.35rem 0.75rem
       border: 1px solid vars.$white
       border-top: none
       border-left: none
+      min-width: max-content
 
   .taskbar-button
     +vars.flexcenter
 
     user-select: none
     cursor: pointer
+    min-width: max-content
 
     &.minimized
       background-color: color.adjust(vars.$white, $alpha: -0.8)

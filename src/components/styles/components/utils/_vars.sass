@@ -194,6 +194,15 @@ $halfgap: 0.5rem
   &:active, &:focus
     outline: 1px solid $pink
 
+=no-scrollbar
+  scrollbar-width: none
+  overflow: -moz-scrollbars-none
+  overflow-y: auto
+
+  &::-webkit-scrollbar
+    display: none
+    width: 0
+
 =custom-scrollbar
   overflow-y: auto
 
