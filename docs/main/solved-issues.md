@@ -75,10 +75,10 @@ how are those items returning?
 -   _logged on 2020.03.23_
 -   _marked as solved on 2020.05.30_
 
--   dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
+dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
 
--   the ui is subject to frame drops when rapidly moving a window, despite using `requestAnimationFrame()` in conjunction with `transform3d()`, throttling the mouse move event, and `will-change` (the effect of which is most likely negligible).
+the ui is subject to frame drops when rapidly moving a window, despite using `requestAnimationFrame()` in conjunction with `transform3d()`, throttling the mouse move event, and `will-change` (the effect of which is most likely negligible).
 
--   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
+most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
 **SOLVED:** solved by using better window movement code. currently using a library called react-draggable.
