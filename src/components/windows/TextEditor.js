@@ -1,5 +1,5 @@
 import React, {
-  memo
+  memo,
   // useContext
 } from 'react'
 
@@ -7,7 +7,7 @@ import React, {
 
 // import { globalContext } from './../App'
 
-const TextEditor = props => {
+const TextEditor = (props) => {
   console.log(props)
 
   // const { minerva } = useContext(globalContext)

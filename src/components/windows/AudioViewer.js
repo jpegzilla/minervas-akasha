@@ -4,7 +4,7 @@ import React, {
   useReducer,
   useRef,
   memo,
-  useState
+  useState,
 } from 'react'
 
 import PropTypes from 'prop-types'
@@ -33,7 +33,7 @@ const AudioViewer = props => {
   const [state, dispatch] = useReducer(audioViewerReducer, {
     source: null,
     error: false,
-    found: false
+    found: false,
   })
 
   const { source, error, found } = state
@@ -63,8 +63,8 @@ const AudioViewer = props => {
             ...w,
             componentProps: {
               ...w.componentProps,
-              src: false
-            }
+              src: false,
+            },
           }
         } else return w
       })
@@ -87,7 +87,7 @@ const AudioViewer = props => {
       workerInstance.postMessage({
         action: 'getObjectUrl',
         src: res.file,
-        mime
+        mime,
       })
 
       workerInstance.onmessage = message => {
@@ -95,7 +95,7 @@ const AudioViewer = props => {
           toast.add({
             duration: 3000,
             text: message.data,
-            type: 'fail'
+            type: 'fail',
           })
         }
 
@@ -205,14 +205,14 @@ const AudioViewer = props => {
               toast.add({
                 duration: 5000,
                 text: `status: file failed to load: ${alt}`,
-                type: 'warning'
+                type: 'warning',
               })
 
               clearInterval(interval)
 
               dispatch({
                 type: 'error',
-                payload: `image format not supported: ${mime}`
+                payload: `image format not supported: ${mime}`,
               })
             }}></audio>
         </div>
@@ -309,5 +309,5 @@ AudioViewer.propTypes = {
   alt: PropTypes.string,
   id: PropTypes.string,
   mime: PropTypes.string,
-  humanSize: PropTypes.string
+  humanSize: PropTypes.string,
 }

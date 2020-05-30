@@ -6,7 +6,7 @@ import React, {
   useContext,
   useRef,
   memo,
-  useState
+  useState,
 } from 'react'
 
 import PropTypes from 'prop-types'
@@ -40,7 +40,7 @@ const ImageViewer = props => {
   const [state, dispatch] = useReducer(imageViewerReducer, {
     source: null,
     error: false,
-    found: false
+    found: false,
   })
 
   const { source, error, found } = state
@@ -102,8 +102,8 @@ const ImageViewer = props => {
             ...w,
             componentProps: {
               ...w.componentProps,
-              src: false
-            }
+              src: false,
+            },
           }
         } else return w
       })
@@ -126,7 +126,7 @@ const ImageViewer = props => {
       workerInstance.postMessage({
         action: 'getObjectUrl',
         src: res.file,
-        mime
+        mime,
       })
 
       workerInstance.onmessage = message => {
@@ -134,7 +134,7 @@ const ImageViewer = props => {
           return toast.add({
             duration: 5000,
             text: message.data,
-            type: 'fail'
+            type: 'fail',
           })
         }
 
@@ -267,7 +267,7 @@ const ImageViewer = props => {
         tabIndex='0'
         className='image-container'
         style={{
-          backgroundColor: `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, 0.5)`
+          backgroundColor: `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, 0.5)`,
         }}
         onKeyDown={handleKeyDown}
         onWheel={({ nativeEvent }) => {
@@ -277,21 +277,22 @@ const ImageViewer = props => {
           // (scroll distance) comes out to like, THREE on firefox and
           // ONE HUNDRED on chrome. why?
 
-          if (deltaY < 100)
+          if (Math.abs(deltaY) < 100)
             // figure out whether to make the number negative or positive and then
             // stick on a five
             setZoomLevel(zoomLevel + -parseInt(`${deltaY < 0 ? '-' : ''}${5}`))
-          else if (deltaY >= 100)
+          else if (Math.abs(deltaY) >= 100)
             setZoomLevel(zoomLevel + -parseInt(`${(deltaY / 100) * 5}`))
         }}>
         {source ? (
           <img
             ref={imageRef}
             style={{
-              transform: `scale(${zoomLevel /
-                100}) rotateZ(${rotationAngle}deg) translate3d(${
-                translation.x
-              }px, ${translation.y}px, 0)`
+              transform: `scale(${
+                zoomLevel / 100
+              }) rotateZ(${rotationAngle}deg) translate3d(${translation.x}px, ${
+                translation.y
+              }px, 0)`,
             }}
             onDragStart={e => {
               e.preventDefault()
@@ -320,12 +321,12 @@ const ImageViewer = props => {
               toast.add({
                 duration: 5000,
                 text: `status: file failed to load: ${alt}`,
-                type: 'warning'
+                type: 'warning',
               })
 
               dispatch({
                 type: 'error',
-                payload: `image format not supported: ${mime}`
+                payload: `image format not supported: ${mime}`,
               })
             }}
           />
@@ -456,5 +457,5 @@ ImageViewer.propTypes = {
   alt: PropTypes.string,
   id: PropTypes.string,
   mime: PropTypes.string,
-  humanSize: PropTypes.string
+  humanSize: PropTypes.string,
 }
