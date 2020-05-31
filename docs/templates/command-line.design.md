@@ -6,7 +6,7 @@
     -   `/src/components/windows/Console.js`
     -   `/src/utils/commands/**/**`
 
-**_the command line is a work in progress._**
+**_the command line is a work in progress, and so is this document._**
 
 ## summary
 

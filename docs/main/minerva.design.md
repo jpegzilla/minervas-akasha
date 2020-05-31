@@ -6,13 +6,13 @@
 
 ## summary
 
-`Minerva` is a class designed for managing everything that goes on within the application &mdash; logging users in and out, managing records, and controlling the general state of the application.
+`Minerva` is a class designed for managing everything that goes on within the application — logging users in and out, managing records, and controlling the general state of the application.
 
-*this is an ongoing design document, because `Minerva` is yet in an incomplete state.*
+_this is an ongoing design document, because `Minerva` is yet in an incomplete state._
 
 ## motivation
 
-`Minerva` is a critical piece of infrastructure that allows the application to communicate with other interfaces &mdash; such as the remote database, the indexedDB database, and localStorage.
+`Minerva` is a critical piece of infrastructure that allows the application to communicate with other interfaces — such as the remote database, the indexedDB database, and localStorage.
 
 the main reason for its creation is to abstract away database and storage communication.
 
@@ -35,6 +35,12 @@ another one of `Minerva`'s primary functions is retrieving file data from the in
 `Minerva` also deals with controlling the records in the application. these are documented in `datastructure.design.md`. when a create, update, or delete operation must be performed on any record, `Minerva`'s methods `addToRecord`, `editInRecord`, and `removeFromRecord` are used. to read a record, `Minerva` accesses its `record` property.
 
 to do similar operations involving uploaded files, `Minerva` uses `addFileToRecord`, `updateFileInRecord`, `removeFileInRecord`, and `findFileInRecord`. these all interact with indexedDB to store and retrieve the files in question.
+
+### user data export / import
+
+`Minerva` can also manage user data import and export. if a user chooses, they can ask minerva to create a file containing all of their record data to be imported into another instance of minerva's akasha. this is done by clicking 'export user data' in the taskbar menu.
+
+for a user to import their exported data, they simply need to drag the file into the screen. if they are logged in already, they will be prompted to confirm the overwriting of their data. if not, the import will take place immediately.
 
 ### remote database management
 
