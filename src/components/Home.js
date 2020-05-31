@@ -99,7 +99,28 @@ const Home = props => {
               minerva.makeConfirmBox(
                 {
                   confirm: () => {
-                    minerva.importDataFromJsonFile(e.data)
+                    toast.add({
+                      duration: 6000,
+                      text: 'importing data from json file...',
+                      type: 'warning',
+                    })
+
+                    minerva
+                      .importDataFromJsonFile(e.data)
+                      .then(() => {
+                        toast.add({
+                          duration: 3000,
+                          text: 'data successfully imported.',
+                          type: 'success',
+                        })
+                      })
+                      .catch(err => {
+                        toast.add({
+                          duration: 6000,
+                          text: `${err.message}. please report this to jpegzilla.`, // should be a domexception
+                          type: 'fail',
+                        })
+                      })
                   },
                   name,
                   message: 'overwritewarning',
