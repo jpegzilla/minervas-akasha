@@ -95,7 +95,6 @@ if you want to contribute to minerva's akasha, read `contributing.md`, and do th
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
 3.  get latest changes:
 
-
     git checkout master
     git fetch --all
     git merge upstream/master
@@ -113,12 +112,6 @@ _~ more contribution info coming soon~_
 <a name="issues"></a>
 
 ## current issues that I don't know how to fix:
-
--   dragging a window with the mouse results in the window being slightly offset from the correct position (under the mouse). this causes visual dissonance.
-
--   the ui is subject to frame drops when rapidly moving a window, despite using `requestAnimationFrame()` in conjunction with `transform3d()`, throttling the mouse move event, and `will-change` (the effect of which is most likely negligible).
-
--   most of the time, the ui seems to run around 24fps. the goal is to achieve a smooth 60fps. there may still be too much work going on in the main thread. I'm still not sure of all the things to offload into a worker and what not to offload.
 
 -   on chrome, .ogg files containing only audio are recognized as such. on firefox, .ogg files seem to be automatically given a video mime. I have no idea why this happens or how to fix it, but it is a fairly serious issue. if I know this happens on firefox with .ogg files, what other filetypes have similar problems? what other browsers? I have no clue but the implications of this issue are fairly alarming.
 
