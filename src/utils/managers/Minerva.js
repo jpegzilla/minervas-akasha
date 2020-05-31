@@ -88,7 +88,7 @@ export class Minerva {
       // create object store with keypath of id. keypath will cause
       // the object store to use that key as a unique index.
       const objectStore = db.createObjectStore('minerva_files', {
-        keyPath: 'id'
+        keyPath: 'id',
       })
 
       // names can contain duplicates, but can be used to search the database
@@ -163,21 +163,21 @@ export class Minerva {
       volume: {
         master: 100, // volume for media (videos / audio)
         effect: 50, // volume for sound effects like the typing sound, startup sound
-        voice: 70 // volume for minerva's voice (not yet implemented)
+        voice: 70, // volume for minerva's voice (not yet implemented)
       },
       timeFormat: '24hr', // 12hr sets 12 hour mode, 24hr is 24 hour mode (wow!)
       autoplayMedia: false, // dictates whether audio and video elements will autoplay.
       connections: true, // dictates whether users can see content from other users.
       filters: {
         crt: true, // an animated filter overlay emulating an old crt screen.
-        noise: true // a light noise texture underneath the crt filter.
+        noise: true, // a light noise texture underneath the crt filter.
       }, // enables / disables graphical filters.
       syscol: { bg: 'black', fg: 'white', hl: 'pink' }, // system colors
       machine: 'MNRV', // name of "machine"
       dateFormat: 'ja-JP', // for formatting dates / times
       textEditor: {
-        maxHistoryDepth: 200 // for the text editor's undo / redo functionality
-      }
+        maxHistoryDepth: 200, // for the text editor's undo / redo functionality
+      },
     }
   }
 
@@ -493,7 +493,7 @@ export class Minerva {
                 new Error({
                   message:
                     'malformed indexedDB object encountered. you should literally never ever see this error.',
-                  items: res
+                  items: res,
                 })
               )
           })
@@ -507,14 +507,14 @@ export class Minerva {
               minerva_file_header: Minerva.fileHeader,
               minerva_store: mStore,
               [`${this.user.name}${this.user.id}`]: userStore,
-              minerva_db: e.data.minerva_db
+              minerva_db: e.data.minerva_db,
             }
 
             const finalStringifyWorker = new exportWorker()
 
             finalStringifyWorker.postMessage({
               data: exportObject,
-              action: 'stringifyandblob'
+              action: 'stringifyandblob',
             })
 
             finalStringifyWorker.addEventListener('message', e => {
@@ -548,68 +548,73 @@ export class Minerva {
    * @returns {type} Description
    */
   importDataFromJsonFile(data) {
-    if (data.minerva_file_header !== 'minervas_akasha_alpha') return false
+    return new Promise((resolve, reject) => {
+      if (data.minerva_file_header !== 'minervas_akasha_alpha') reject()
 
-    console.log('importing data from json file', data)
+      console.log('importing data from json file', data)
 
-    const { user, settings, usageData, records, windows } = data.minerva_store
+      const { user, settings, usageData, records, windows } = data.minerva_store
 
-    const db = data.minerva_db
+      const db = data.minerva_db
 
-    const worker = new exportWorker()
+      const worker = new exportWorker()
 
-    worker.postMessage({ action: 'jsonParse', data: db })
+      worker.postMessage({ action: 'jsonParse', data: db })
 
-    worker.addEventListener('message', e => {
-      if (e.data) {
-        Object.entries(e.data).forEach(([, v]) => {
-          const transaction = this.indexedDB.transaction(
-            ['minerva_files'],
-            'readwrite'
-          )
+      worker.addEventListener('message', e => {
+        if (e.data) {
+          Object.entries(e.data).forEach(([, v]) => {
+            const transaction = this.indexedDB.transaction(
+              ['minerva_files'],
+              'readwrite'
+            )
 
-          const record = v
+            const record = v
 
-          const objectStore = transaction.objectStore('minerva_files')
+            const objectStore = transaction.objectStore('minerva_files')
 
-          const req = objectStore.put({
-            ...record
-          })
+            const req = objectStore.put({
+              ...record,
+            })
 
-          req.onerror = err => {
-            console.error(err)
-          }
-
-          req.onsuccess = () => {
-            this.updateIndexedDBUpdatedTimestamp()
-
-            const newUser = {
-              dateCreated: user.dateCreated,
-              password: data[`${user.name}${user.id}`].password,
-              id: user.id,
-              name: user.name
+            req.onerror = err => {
+              console.error(err)
+              reject(err)
             }
 
-            this.set(`${newUser.name}`, newUser)
+            req.onsuccess = () => {
+              this.updateIndexedDBUpdatedTimestamp()
 
-            console.log(records)
+              const newUser = {
+                dateCreated: user.dateCreated,
+                password: data[`${user.name}${user.id}`].password,
+                id: user.id,
+                name: user.name,
+              }
 
-            this.user = user
-            this.settings = settings
-            this.usageData = usageData
-            this.record.boundTo = records.boundTo
-            this.record.dateCreated = records.dateCreated
-            this.record.id = records.id
-            this.record.name = records.name
-            this.record.database = records.database
-            this.record.records = records.records
-            this.windows = windows
+              this.set(`${newUser.name}`, newUser)
 
-            this.save()
-            this.setApplicationWindows(this.windows)
-          }
-        })
-      }
+              console.log(records)
+
+              this.user = user
+              this.settings = settings
+              this.usageData = usageData
+              this.record.boundTo = records.boundTo
+              this.record.dateCreated = records.dateCreated
+              this.record.id = records.id
+              this.record.name = records.name
+              this.record.database = records.database
+              this.record.records = records.records
+              this.windows = windows
+
+              this.save()
+              this.setApplicationWindows(this.windows)
+
+              resolve()
+            }
+          })
+        } else resolve()
+      })
     })
   }
 
@@ -641,7 +646,7 @@ export class Minerva {
       delete this.temp.importData
 
       this.setWindows([
-        ...this.windows.filter(w => (w.id === id ? false : true))
+        ...this.windows.filter(w => (w.id === id ? false : true)),
       ])
 
       this.setApplicationWindows(this.windows)
@@ -658,14 +663,14 @@ export class Minerva {
         confirm,
         deny: denyFunc,
         message,
-        name
+        name,
       },
       belongsTo: this.user.id,
       id,
       position: {
         x: finalPosition,
-        y: finalPosition
-      }
+        y: finalPosition,
+      },
     }
 
     this.setWindows([...this.windows, confirmBoxObject])
@@ -720,7 +725,7 @@ export class Minerva {
     this.set(
       `user:${user.id}:token`,
       {
-        expires: naturalDate('1 month from now')
+        expires: naturalDate('1 month from now'),
       },
       'user'
     )
@@ -855,7 +860,7 @@ export class Minerva {
                 if (!res)
                   reject({
                     status: 'failure',
-                    message: 'setting value failed'
+                    message: 'setting value failed',
                   })
                 else resolve(res)
               })
@@ -889,7 +894,7 @@ export class Minerva {
         // to lag when compressing / decompressing a large file
         workerInstance.postMessage({
           action: 'compress',
-          toCompress: base64String
+          toCompress: base64String,
         })
 
         workerInstance.onmessage = message => {
@@ -918,7 +923,7 @@ export class Minerva {
         // to finish decompressing the file
         workerInstance.postMessage({
           action: 'decompress',
-          toDecompress: data
+          toDecompress: data,
         })
 
         workerInstance.onmessage = message => {
@@ -976,7 +981,7 @@ export class Minerva {
               file: { ...file, data: res },
               type,
               fileType: 'audio',
-              compressed: 'lzutf8'
+              compressed: 'lzutf8',
             })
 
             req.onsuccess = () => {
@@ -996,7 +1001,7 @@ export class Minerva {
         id,
         userId: this.user.id,
         file,
-        type
+        type,
       })
 
       req.onsuccess = () => {
@@ -1108,7 +1113,7 @@ export class Minerva {
             this.lzDecompress(event.target.result.file.data).then(res => {
               const fileInformation = {
                 ...event.target.result,
-                file: { ...event.target.result.file, data: res }
+                file: { ...event.target.result.file, data: res },
               }
 
               resolve(fileInformation)
@@ -1138,28 +1143,28 @@ export class Minerva {
         settings: MinervaArchive.get('minerva_store')
           ? {
               ...MinervaArchive.get('minerva_store').settings,
-              [this.user.id]: this.settings
+              [this.user.id]: this.settings,
             }
           : { [this.user.id]: this.settings },
         usageData: MinervaArchive.get('minerva_store')
           ? {
               ...MinervaArchive.get('minerva_store').usageData,
-              [this.user.id]: this.usageData
+              [this.user.id]: this.usageData,
             }
           : { [this.user.id]: this.usageData },
         records: MinervaArchive.get('minerva_store')
           ? {
               ...MinervaArchive.get('minerva_store').records,
-              [this.user.id]: this.record
+              [this.user.id]: this.record,
             }
           : { [this.user.id]: this.record },
         // windows: this.windows
         windows: MinervaArchive.get('minerva_store')
           ? {
               ...MinervaArchive.get('minerva_store').windows,
-              [this.user.id]: this.windows
+              [this.user.id]: this.windows,
             }
-          : { [this.user.id]: this.windows }
+          : { [this.user.id]: this.windows },
       }
 
       MinervaArchive.set('minerva_store', store)
@@ -1169,7 +1174,7 @@ export class Minerva {
         settings: { [this.user.id]: this.settings },
         usageData: { [this.user.id]: this.usageData },
         records: { [this.user.id]: this.record },
-        windows: { [this.user.id]: this.windows }
+        windows: { [this.user.id]: this.windows },
       }
 
       MinervaArchive.set('minerva_store', store)
@@ -1186,22 +1191,17 @@ export class Minerva {
    * @param {any}    value the value of the data type to be updated
    */
   updateUsageData(type, value) {
-    const today = `${new Date()
-      .getDate()
-      .toString()
-      .padStart(2, '0')}-${new Date().getMonth() +
-      1}-${new Date().getFullYear()}`
+    const today = `${new Date().getDate().toString().padStart(2, '0')}-${
+      new Date().getMonth() + 1
+    }-${new Date().getFullYear()}`
 
     const timeOfUpdate = `${new Date()
       .getHours()
       .toString()
-      .padStart(2, '0')}:${new Date()
-      .getMinutes()
-      .toString()
-      .padStart(2, '0')}`
+      .padStart(2, '0')}:${new Date().getMinutes().toString().padStart(2, '0')}`
 
     const baseData = {
-      time: timeOfUpdate
+      time: timeOfUpdate,
     }
 
     const commitUpdate = (key, updateObject) => {
@@ -1212,8 +1212,8 @@ export class Minerva {
           ...this.usageData,
           [today]: {
             ...this.usageData[today],
-            [key]: [updateObject]
-          }
+            [key]: [updateObject],
+          },
         }
       } else {
         // console.log(
@@ -1224,8 +1224,8 @@ export class Minerva {
           ...this.usageData,
           [today]: {
             ...this.usageData[today],
-            [key]: [...this.usageData[today][key], updateObject]
-          }
+            [key]: [...this.usageData[today][key], updateObject],
+          },
         }
       }
 
@@ -1239,7 +1239,7 @@ export class Minerva {
 
         const uptimeUpdate = {
           ...baseData,
-          uptime: value
+          uptime: value,
         }
 
         commitUpdate('uptime', uptimeUpdate)
@@ -1251,7 +1251,7 @@ export class Minerva {
 
         const structureUpdate = {
           ...baseData,
-          structureCount: value
+          structureCount: value,
         }
 
         commitUpdate('structures', structureUpdate)
@@ -1263,7 +1263,7 @@ export class Minerva {
 
         const dataUpdate = {
           ...baseData,
-          dataUpdateCount: value
+          dataUpdateCount: value,
         }
 
         commitUpdate('data', dataUpdate)

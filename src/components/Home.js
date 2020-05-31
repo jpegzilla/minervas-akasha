@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useRef,
   memo,
-  useMemo
+  useMemo,
 } from 'react'
 
 import { uuidv4, isEmpty } from './../utils/misc'
@@ -61,7 +61,7 @@ const Home = props => {
       toast.add({
         duration: 3000,
         text: 'status: signup successful.',
-        type: 'success'
+        type: 'success',
       })
     }
 
@@ -69,7 +69,7 @@ const Home = props => {
       toast.add({
         duration: 3000,
         text: 'login complete.',
-        type: 'success'
+        type: 'success',
       })
     }
   }, [routeProps.location.state, toast])
@@ -102,7 +102,7 @@ const Home = props => {
                     minerva.importDataFromJsonFile(e.data)
                   },
                   name,
-                  message: 'overwritewarning'
+                  message: 'overwritewarning',
                 },
                 e.data
               )
@@ -242,7 +242,7 @@ const Home = props => {
               )
                 item.position = {
                   x: 100,
-                  y: 100
+                  y: 100,
                 }
               // this needs to exist so that the correct component is rendered.
               // this object must contain every type of component that the home
@@ -317,12 +317,12 @@ const Home = props => {
     activeWindowId,
     componentCounts,
     activeWindow,
-    minerva
+    minerva,
   ])
 }
 
 export default memo(Home)
 
 Home.propTypes = {
-  routeProps: PropTypes.object
+  routeProps: PropTypes.object,
 }

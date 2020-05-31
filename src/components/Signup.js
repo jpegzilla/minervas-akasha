@@ -11,7 +11,7 @@ import useToast from './../hooks/useToast'
 // text for when the form is complete or incomplete
 const text = {
   pre: 'incomplete...',
-  post: 'enter'
+  post: 'enter',
 }
 
 // container for all timeouts. this way, if all timeouts need to be cleared,
@@ -93,7 +93,7 @@ const SignupComponent = props => {
         // login user
         const user = {
           name: usernameInput.current.value,
-          password: passwordInput.current.value
+          password: passwordInput.current.value,
         }
 
         minerva.search(user).then(u => {
@@ -103,7 +103,7 @@ const SignupComponent = props => {
             toast.add({
               duration: 3000,
               text: 'user does not exist.',
-              type: 'fail'
+              type: 'fail',
             })
 
             shakeAnim()
@@ -125,7 +125,7 @@ const SignupComponent = props => {
                 // signed-in user
                 MinervaArchive.set('minervas_akasha', {
                   user: minerva.user,
-                  id: minerva.userId
+                  id: minerva.userId,
                 })
 
                 setFadeOut(true)
@@ -135,7 +135,7 @@ const SignupComponent = props => {
                 toast.add({
                   duration: 3000,
                   text: 'incorrect credentials.',
-                  type: 'fail'
+                  type: 'fail',
                 })
 
                 shakeAnim()
@@ -150,7 +150,7 @@ const SignupComponent = props => {
         toast.add({
           duration: 3000,
           text: 'please enter a valid username and password.',
-          type: 'fail'
+          type: 'fail',
         })
 
         shakeAnim()
@@ -168,7 +168,7 @@ const SignupComponent = props => {
             return toast.add({
               duration: 3000,
               text: err,
-              type: 'fail'
+              type: 'fail',
             })
           }
 
@@ -177,7 +177,7 @@ const SignupComponent = props => {
               return toast.add({
                 duration: 3000,
                 text: err,
-                type: 'fail'
+                type: 'fail',
               })
 
             // this object is only created once, on initial signup. it is important that
@@ -186,7 +186,7 @@ const SignupComponent = props => {
               dateCreated: new Date().toISOString(),
               password: hash,
               id: uuidv4(),
-              name: usernameInput.current.value
+              name: usernameInput.current.value,
             }
 
             // minerva search in order to make sure the user actually exists
@@ -211,7 +211,7 @@ const SignupComponent = props => {
                 toast.add({
                   duration: 6000,
                   text: `that username is taken. if you are ${newUser.name}, please log in!`,
-                  type: 'warning'
+                  type: 'warning',
                 })
 
                 shakeAnim('warn')
@@ -228,7 +228,7 @@ const SignupComponent = props => {
         toast.add({
           duration: 3000,
           text: 'error: invalid form',
-          type: 'fail'
+          type: 'fail',
         })
 
         clearAll()
@@ -253,7 +253,7 @@ const SignupComponent = props => {
           toast.add({
             duration: 3000,
             text: 'warning: username cannot contain spaces',
-            type: 'warning'
+            type: 'warning',
           })
 
           clearAll()
@@ -270,7 +270,7 @@ const SignupComponent = props => {
           toast.add({
             duration: 3000,
             text: 'warning: password cannot contain spaces',
-            type: 'warning'
+            type: 'warning',
           })
 
           clearAll()
@@ -285,7 +285,7 @@ const SignupComponent = props => {
           toast.add({
             duration: 3000,
             text: 'warning: password cannot contain spaces',
-            type: 'warning'
+            type: 'warning',
           })
 
           clearAll()
@@ -433,5 +433,5 @@ export default memo(SignupComponent)
 
 SignupComponent.propTypes = {
   loginScreenInstead: PropTypes.bool,
-  routeProps: PropTypes.object
+  routeProps: PropTypes.object,
 }
