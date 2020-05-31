@@ -608,7 +608,11 @@ export class Minerva {
               this.windows = windows
 
               this.save()
-              this.setApplicationWindows(this.windows)
+
+              // there is a case where this would be called before it exists,
+              // such as when importing a user file from the login screen
+              if (this.setApplicationWindows)
+                this.setApplicationWindows(this.windows)
 
               resolve()
             }

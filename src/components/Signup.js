@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useContext, memo } from 'react'
 import { Redirect, Link } from 'react-router-dom'
-import { MinervaArchive } from './../utils/managers/Minerva'
+import { Minerva, MinervaArchive } from './../utils/managers/Minerva'
 import PropTypes from 'prop-types'
 import { uuidv4 } from './../utils/misc'
 import Typist from './../utils/managers/Typist'
 import { globalContext } from './App'
 import bcrypt from 'bcryptjs'
 import useToast from './../hooks/useToast'
+import exportWorker from './../utils/managers/workers/exportWorker.worker'
 
 // text for when the form is complete or incomplete
 const text = {
@@ -23,7 +24,7 @@ const SignupComponent = props => {
   const toast = useToast()
 
   const { location } = routeProps
-
+  const [droppedFiles, setDroppedFiles] = useState()
   const clearAll = () => timeouts.forEach(t => clearTimeout(t))
 
   const [finished, setFinished] = useState(false)
@@ -236,6 +237,65 @@ const SignupComponent = props => {
     }
   }
 
+  useEffect(() => {
+    if (droppedFiles) {
+      // detect if file is a minerva's akasha save file
+      console.log(droppedFiles)
+      const { name, type } = droppedFiles
+      if (name.startsWith('minerva_sd_') || type === 'application/json') {
+        const worker = new exportWorker()
+
+        worker.postMessage({ data: droppedFiles, action: 'parse' })
+
+        worker.addEventListener('message', e => {
+          console.log(e)
+          if (e.data) {
+            if (e.data.minerva_file_header === Minerva.fileHeader) {
+              setDroppedFiles()
+
+              toast.add({
+                duration: 6000,
+                text: 'importing data from json file...',
+                type: 'warning',
+              })
+
+              minerva
+                .importDataFromJsonFile(e.data)
+                .then(() => {
+                  toast.add({
+                    duration: 3000,
+                    text: 'data successfully imported.',
+                    type: 'success',
+                  })
+                })
+                .catch(err => {
+                  toast.add({
+                    duration: 6000,
+                    text: `${err.message}. please report this to jpegzilla.`, // should be a domexception
+                    type: 'fail',
+                  })
+                })
+
+              return
+            }
+          }
+        })
+      }
+    }
+  }, [droppedFiles, minerva, toast])
+
+  const handleDrop = e => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDroppedFiles(e.dataTransfer.files[0])
+  }
+
+  // necessary to prevent the browser from trying to load the file
+  const handleDragOver = e => {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+
   // function that fires on input. validates all fields and plays
   // warnings if input is invalid in some way.
   const manageInput = e => {
@@ -315,7 +375,11 @@ const SignupComponent = props => {
   }
 
   return (
-    <section className={fadeOut ? 'fadeout' : ''} id='login-signup'>
+    <section
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      className={fadeOut ? 'fadeout' : ''}
+      id='login-signup'>
       <section className='spinning-squares'>
         <div />
         <div />
