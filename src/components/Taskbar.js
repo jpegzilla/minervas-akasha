@@ -277,10 +277,7 @@ const Taskbar = props => {
   }
 
   return (
-    <section
-      id='application-taskbar'
-      ref={taskbarRef}
-      onWheel={handleScrollInTaskbar}>
+    <section id='application-taskbar'>
       <div
         onClick={e => {
           e.stopPropagation()
@@ -338,7 +335,7 @@ const Taskbar = props => {
           </ul>
         </div>
       </div>
-      <ul id='taskbar-tabs'>
+      <ul id='taskbar-tabs' ref={taskbarRef} onWheel={handleScrollInTaskbar}>
         {windows.map((w, i) => {
           if (w.belongsTo === minerva.user.id) {
             tabCounts[w.stringType] = tabCounts[w.stringType] + 1 || 1

@@ -6,8 +6,6 @@
 signup.$font: vars.$proggy
 
 #application-taskbar
-  +vars.no-scrollbar
-
   box-sizing: default
   width: 100%
   height: auto
@@ -15,7 +13,6 @@ signup.$font: vars.$proggy
   border-top: 1px solid vars.$white
   background-color: vars.$black
   z-index: 2
-  overflow-x: auto
 
   #add-item
     border: 1px solid vars.$white
@@ -86,9 +83,12 @@ signup.$font: vars.$proggy
         border-bottom: none
 
   #taskbar-tabs
+    +vars.no-scrollbar
+
     flex-grow: 1
     list-style-type: none
     display: flex
+    overflow-x: auto
 
     li
       +vars.flexcenter
