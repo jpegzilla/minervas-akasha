@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react'
 
 import { fontCodes, lineHeights } from '../../utils/structures/utils/textcodes'
 import { globalContext } from './../App'
+import { selectAllInElement } from './../../utils/misc'
 
 export default props => {
   const { text, humanSize, mime, title, alt } = props
@@ -32,13 +33,13 @@ export default props => {
 
   const handleKeyDown = e => {
     e.stopPropagation()
+
     const { key, ctrlKey } = e.nativeEvent
-    if (key === 'a') e.preventDefault()
 
-    console.log(e.nativeEvent)
-
+    // override default 'select all' action
     if (key === 'a' && ctrlKey) {
-      console.log('selecting all')
+      e.preventDefault()
+      selectAllInElement(textArea.current)
     }
   }
 

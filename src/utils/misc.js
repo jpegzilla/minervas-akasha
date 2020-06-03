@@ -1,5 +1,12 @@
 /* eslint no-useless-escape: 0 */
 
+export const selectAllInElement = element => {
+  const range = document.createRange()
+  range.selectNode(element)
+  window.getSelection().removeAllRanges()
+  window.getSelection().addRange(range)
+}
+
 export const getAverageColor = imgEl => {
   let blockSize = 5, // only visit every 5 pixels
     defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
