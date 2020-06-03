@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useMemo } from 'react'
 
 import { uuidv4 } from './../utils/misc'
@@ -19,8 +21,8 @@ export default Component => {
           duration,
           type,
           sound,
-          audiomanager: props.initialContext.audiomanager
-        }
+          audiomanager: props.initialContext.audiomanager,
+        },
       ])
     }
 

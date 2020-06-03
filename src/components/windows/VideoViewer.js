@@ -1,4 +1,4 @@
-/* eslint react-hooks/exhaustive-deps: off */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, {
   useReducer,
