@@ -60,7 +60,9 @@ $shard: $nondest
 $pixel: "pixel-font", monospace
 $msgothic: "ms pgothic", $pixel, serif
 $proggy: "liga-proggy-font", monospace
-$main: "IBM Plex Serif", serif
+$main: "ibm plex", sans-serif
+$crimson: "crimson", serif
+$kaisho: "kaisho", "ms pgothic", serif
 
 // $plex: "IBM Plex Mono", monospace
 // $ibarra: "Ibarra Real Nova", serif
@@ -72,6 +74,24 @@ $dsdoublewidth: 700px
 $halfgap: 0.5rem
 
 // mixins
+=use-font
+  font-family: unset
+
+  &.font-kaisho
+    font-family: $kaisho
+
+  &.font-proggy
+    font-family: $proggy
+
+  &.font-ibm
+    font-family: $main
+
+  &.font-crimson
+    font-family: $crimson
+
+  &.font-pixel
+    font-family: $pixel
+
 =theme($theme: "dark")
   --text-highlight: #{$pink}
 
