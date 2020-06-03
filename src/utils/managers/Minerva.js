@@ -100,8 +100,9 @@ export class Minerva {
 
     this.windows = []
 
-    // contains files from the text editor
     this.textFiles = []
+
+    this.projects = []
 
     // if there's already settings in storage, combine them with the default settings
     // just to add resilience in case more settings are added in the future - this
@@ -118,13 +119,25 @@ export class Minerva {
           : []
         : []
 
+      // // contains files from the text editor
+      // this.textFiles = MinervaArchive.get('minerva_store')
+      //   ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
+      //     ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
+      //     : []
+      //   : []
+      //
+      // // contains projects from the project management system
+      // this.projects = MinervaArchive.get('minerva_store')
+      //   ? MinervaArchive.get('minerva_store').projects[this.user.id]
+      //     ? MinervaArchive.get('minerva_store').projects[this.user.id]
+      //     : []
+      //   : []
+
       this.usageData = MinervaArchive.get('minerva_store')
         ? MinervaArchive.get('minerva_store').usageData[this.user.id]
           ? MinervaArchive.get('minerva_store').usageData[this.user.id]
           : {}
         : {}
-
-      // this.usageData = {};
 
       const defaultSettings = Minerva.defaultSettings
 
@@ -178,6 +191,50 @@ export class Minerva {
       textEditor: {
         maxHistoryDepth: 200, // for the text editor's undo / redo functionality
       },
+      completedTutorial: false,
+      viewerFontOptions: {
+        font: null,
+        fontSize: null,
+        lineHeight: null,
+        letterSpacing: null,
+      },
+      editorFontOptions: {
+        font: null,
+        fontSize: null,
+        lineHeight: null,
+        letterSpacing: null,
+      },
+    }
+  }
+
+  /**
+   * setPreferredFont - sets the user's preferred font for text viewers
+   *
+   * @param {object} options font options object including preferred font,
+   * preferred font size, and preferred line height.
+   *
+   */
+  setViewerFontOptions(options) {
+    this.settings.viewerFontOptions = options
+    this.save()
+  }
+
+  /**
+   * setPreferredFont - sets the user's preferred font for text viewers
+   *
+   * @param {object} options font options object including preferred font,
+   * preferred font size, and preferred line height.
+   *
+   */
+  setEditorFontOptions(options) {
+    this.settings.editorFontOptions = options
+    this.save()
+  }
+
+  get fontOptions() {
+    return {
+      viewer: this.settings.viewerFontOptions,
+      editor: this.settings.editorFontOptions,
     }
   }
 
@@ -609,8 +666,8 @@ export class Minerva {
 
               this.save()
 
-              // there is a case where this would be called before it exists,
-              // such as when importing a user file from the login screen
+              // there is a case where setApplicationWindows would be called before
+              // it exists, such as when importing a user file from the login screen
               if (this.setApplicationWindows)
                 this.setApplicationWindows(this.windows)
 

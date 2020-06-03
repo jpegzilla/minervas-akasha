@@ -11,7 +11,8 @@ const Paragraph = props => {
     humanSize,
     mime,
     setMetadata,
-    setLoadingFileData
+    setLoadingFileData,
+    name,
   } = props
 
   const { minerva } = useContext(globalContext)
@@ -25,11 +26,11 @@ const Paragraph = props => {
       type: mime,
       'character count': fullText.length,
       'word count': fullText.split(/\b/gi).length,
-      'line count': fullText.split(/\n/gi).length
+      'line count': fullText.split(/\n/gi).length,
     })
 
     setLoadingFileData(false)
-  }, [humanSize, mime, setMetadata, title, fullText])
+  }, [humanSize, mime, setMetadata, title, fullText, setLoadingFileData])
 
   const handleDoubleClick = () => {
     const id = uuidv4()
@@ -60,14 +61,14 @@ const Paragraph = props => {
         title,
         humanSize,
         mime,
-        alt: fileInfo
+        alt: fileInfo,
       },
       belongsTo: minerva.user.id,
       id,
       position: {
         x: finalPosition,
-        y: finalPosition
-      }
+        y: finalPosition,
+      },
     }
 
     minerva.addFileToRecord(id, fullText, { type: 'textviewer' })

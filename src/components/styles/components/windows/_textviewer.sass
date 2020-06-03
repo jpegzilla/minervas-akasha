@@ -1,0 +1,99 @@
+@use "../utils/vars"
+@use "sass:color"
+
+.text-viewer-window
+  .text-viewer-main
+    display: flex
+    justify-content: space-between
+    background-color: color.adjust(vars.$acapulco, $alpha: -0.75)
+
+  pre
+    max-width: 1000px
+    max-height: 65vh
+
+    &.inverted
+      filter: invert(1)
+
+    &.highlight
+      border: 1px solid vars.$yellow
+
+  img
+    cursor: grab
+
+  $font-size: 1.15rem
+
+  .text-viewer-container > div
+    +vars.custom-select($font-size)
+
+    border-top: 1px solid var(--text-main)
+
+  .text-viewer-main
+    max-width: 68.055rem
+
+    pre
+      max-width: 51.2775rem
+
+    input
+      +vars.input(block, vars.$proggy, vars.$halfgap, vars.$halfgap, $font-size)
+
+    button
+      +vars.stdbutton
+
+  .text-viewer-font-selector
+    width: 100%
+
+  .text-viewer-text
+    +vars.custom-scrollbar
+    +vars.use-font
+
+    border-right: 1px solid var(--text-main)
+    padding: 1rem 1.5rem
+    line-height: 1.42
+    max-width: 54.055rem
+    letter-spacing: 0.0625em
+    font-size: 1em
+    min-width: max-content
+    background-color: vars.$black
+
+    &.double
+      line-height: 2
+
+    &.one-half
+      line-height: 0.5
+
+    &.one-point-five
+      line-height: 1.5
+
+    &.natural
+      line-height: 1.42
+
+  .text-viewer-main
+    display: flex
+    justify-content: space-between
+    background-color: color.adjust(vars.$acapulco, $alpha: -0.75)
+
+    .text-viewer-sidebar
+      +vars.std-fieldset
+
+      display: flex
+      background-color: vars.$black
+      flex-grow: 1
+      max-width: max-content
+
+      .sidebar-settings
+        padding: vars.$halfgap
+        border-left: 1px solid var(--text-main)
+
+      .sidebar-hide
+        +vars.flexcenter
+
+        cursor: pointer
+        user-select: none
+        color: var(--bg-main)
+        background-color: var(--text-main)
+        border: 1px solid var(--bg-main)
+        width: 1.3125rem
+
+        span
+          writing-mode: vertical-lr
+          height: max-content

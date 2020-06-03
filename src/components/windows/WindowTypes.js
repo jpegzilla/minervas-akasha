@@ -9,6 +9,7 @@ import ConfirmBox from './ConfirmBox'
 import TextEditor from './TextEditor'
 import TextViewer from './TextViewer'
 import Window from './Window'
+import Deck from './Deck'
 
 export default {
   Console: Console,
@@ -21,5 +22,6 @@ export default {
   ConfirmBox: ConfirmBox,
   TextViewer: TextViewer,
   TextEditor: TextEditor,
-  Window: Window
+  Window: Window,
+  Deck: Deck,
 }
