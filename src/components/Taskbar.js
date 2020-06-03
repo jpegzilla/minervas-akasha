@@ -96,6 +96,46 @@ const Taskbar = props => {
       tooltip: 'end your current session and return to the login screen.',
     },
     {
+      id: 'opendeck',
+      title: 'open project manager',
+      onClick: () => {
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity)
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          )
+
+          return windowToFind || false
+        }
+
+        let finalPosition = 100
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10
+        }
+
+        const newRecordViewer = {
+          title: 'project deck',
+          state: 'restored',
+          stringType: 'Window',
+          belongsTo: minerva.user.id,
+          id: uuidv4(),
+          component: 'Deck',
+          componentProps: {},
+          position: {
+            x: finalPosition,
+            y: finalPosition,
+          },
+        }
+
+        minerva.setWindows([...minerva.windows, newRecordViewer])
+
+        setWindows([...minerva.windows])
+      },
+    },
+
+    {
       id: 'openrecord',
       title: 'open record viewer',
       onClick: () => {
