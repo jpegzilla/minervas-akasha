@@ -5,9 +5,9 @@
 -   source locations:
     -   `/src/utils/managers/Minerva.js`
     -   `/src/utils/structures/AkashicReocrd.js`
-    -   `/src/components/DataStructure.js`
-    -   `/src/components/windows/StructureData.js`
-    -   `/src/components/windows/ConnectionList.js`
+    -   `/src/components/windows/DataStructure.js`
+    -   `/src/components/windows/DataDisplay.js`
+    -   `/src/components/windows/elements/ConnectionList.js`
 
 ## summary
 
