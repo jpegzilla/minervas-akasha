@@ -679,6 +679,14 @@ export class Minerva {
     })
   }
 
+  /**
+   * makeConfirmBox - created a confirmation dialog window.
+   *
+   * @param {object} options object containing options such as actions to take upon
+   * confirmation, denial, a message to display and any data to be loaded into temp storage
+   * (the confirmation box's primary purpose is to import old data).
+   * @param {any}    data    data to load into minerva's temp storage
+   */
   makeConfirmBox(options, data) {
     const { confirm, deny, message, name } = options
 
