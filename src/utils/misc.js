@@ -91,7 +91,7 @@ export const throttle = (fn, threshold) => {
     if (last && now < last + threshold) {
       // hold on to it
       clearTimeout(deferTimer)
-      deferTimer = setTimeout(function() {
+      deferTimer = setTimeout(() => {
         last = now
         fn.apply()
       }, threshold)
@@ -293,5 +293,5 @@ export default {
   getRandomInt,
   uuidv4,
   validateUUIDv4,
-  stringSort
+  stringSort,
 }
