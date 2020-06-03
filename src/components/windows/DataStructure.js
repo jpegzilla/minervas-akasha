@@ -6,7 +6,7 @@ import React, {
   useState,
   useContext,
   Fragment,
-  memo
+  memo,
 } from 'react'
 
 import Img from './elements/Img'
@@ -21,7 +21,7 @@ import ConnectionList from './elements/ConnectionList'
 
 import { uuidv4 } from './../../utils/misc'
 import StructureMap, {
-  StructureDescriptions
+  StructureDescriptions,
 } from './../../utils/managers/StructureMap'
 
 import ColorCodes from '../../utils/structures/utils/colorcodes'
@@ -35,7 +35,7 @@ const DataStructure = props => {
     structId,
     handleWindowCommand,
     setWindows,
-    droppedFiles
+    droppedFiles,
   } = props
 
   const { minerva, setRenderConList, useToast } = useContext(globalContext)
@@ -102,8 +102,8 @@ const DataStructure = props => {
               ...item.componentProps,
               MetadataDisplay,
               ImageDisplay: showImage,
-              showData
-            }
+              showData,
+            },
           }
         }
       }
@@ -138,7 +138,7 @@ const DataStructure = props => {
       colorCode: new Struct().colorCode,
       accepts: new Struct().accepts,
       connectsTo: new Struct().connectsTo,
-      belongsTo: minerva.user.id
+      belongsTo: minerva.user.id,
     })
 
     minerva.addToRecord(structId, structToAdd)
@@ -226,10 +226,10 @@ const DataStructure = props => {
                         data: {
                           ...item.componentProps.info.data,
                           dbId: e.id,
-                          dbUserId: e.userId
-                        }
-                      }
-                    }
+                          dbUserId: e.userId,
+                        },
+                      },
+                    },
                   }
                 }
 
@@ -397,7 +397,7 @@ const DataStructure = props => {
         duration: 3000,
         text: errorMessage,
         type: 'fail',
-        sound: 'error'
+        sound: 'error',
       })
 
       return
@@ -457,7 +457,7 @@ const DataStructure = props => {
         duration: 3000,
         text: errorMessage,
         type: 'fail',
-        sound: 'error'
+        sound: 'error',
       })
 
       return
@@ -465,7 +465,7 @@ const DataStructure = props => {
 
     setInfo({
       ...info,
-      tags: info.tags ? [...info.tags, newTag] : [newTag]
+      tags: info.tags ? [...info.tags, newTag] : [newTag],
     })
 
     tagRef.current.value = ''
@@ -500,9 +500,9 @@ const DataStructure = props => {
                   ...item.componentProps,
                   info: {
                     ...info,
-                    tags: [...info.tags]
-                  }
-                }
+                    tags: [...info.tags],
+                  },
+                },
               }
             }
           return item
@@ -525,7 +525,7 @@ const DataStructure = props => {
           if (item.componentProps.structId === structId) {
             return {
               ...item,
-              componentProps: { ...item.componentProps, info }
+              componentProps: { ...item.componentProps, info },
             }
           }
 
@@ -549,7 +549,7 @@ const DataStructure = props => {
           data: metadata.pictureData,
           title: metadata.picture.description,
           humanSize: metadata.pictureSize,
-          mime: metadata.picture.format
+          mime: metadata.picture.format,
         }
 
         const component = (
@@ -575,7 +575,7 @@ const DataStructure = props => {
           minerva.editInRecord(structId, type, 'data', {
             ...item.data,
             file: { title, humanSize, mime, ext },
-            metadata: xdata
+            metadata: xdata,
           })
         })
 
@@ -587,7 +587,7 @@ const DataStructure = props => {
           minerva.editInRecord(structId, type, 'data', {
             ...item.data,
             file: { title, humanSize, mime, ext },
-            metadata
+            metadata,
           })
         })
       }
@@ -762,5 +762,5 @@ const DataStructure = props => {
 export default memo(DataStructure)
 
 DataStructure.propTypes = {
-  type: PropTypes.string
+  type: PropTypes.string,
 }
