@@ -11,7 +11,7 @@ const ConfirmBox = props => {
 
   useEffect(() => {
     audiomanager.play('s_two')
-  }, [])
+  })
 
   // the idea is that the confirmbox just is removed from the windows array
   // either on reloading, or being confirmed / denied. storing the component
@@ -52,5 +52,5 @@ export default memo(ConfirmBox)
 ConfirmBox.propTypes = {
   confirm: PropTypes.func,
   deny: PropTypes.func,
-  message: PropTypes.string
+  message: PropTypes.string,
 }
