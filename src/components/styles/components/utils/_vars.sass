@@ -92,6 +92,62 @@ $halfgap: 0.5rem
   &.font-pixel
     font-family: $pixel
 
+=std-fieldset
+  fieldset
+    padding: 0.5rem 0.5rem
+    width: 100%
+
+    & + fieldset
+      margin-top: 1rem
+
+  legend
+    padding: 0.25rem 0.5rem
+    border: 1px solid var(--text-main)
+
+=custom-select($font-size: 1.15rem)
+  .select-wrapper
+    position: relative
+
+    select
+      font-family: $proggy
+      cursor: pointer
+      padding: $halfgap
+      font-size: $font-size
+      outline: 0
+      border: 1px solid var(--text-main)
+      background: var(--bg-main)
+      color: var(--text-main)
+      appearance: none
+      -webkit-appearance: none
+      -moz-appearance: none
+
+      &:focus
+        outline: 1px solid $pink
+
+      &:disabled
+        opacity: 0.5
+        pointer-events: none
+
+  .select-wrapper::before
+    $size: 0.15rem
+
+    content: ''
+    position: absolute
+    top: 0.55rem
+    right: 1rem
+    width: $size
+    height: $size
+    border: solid $white
+    border-width: 0 1px 1px 0
+    display: inline-block
+    padding: 3px
+    transform: rotate(45deg)
+    -webkit-transform: rotate(45deg)
+
+  .select-wrapper
+    &:disabled::before
+      border-top-color: $disabled
+
 =theme($theme: "dark")
   --text-highlight: #{$pink}
 
@@ -106,14 +162,14 @@ $halfgap: 0.5rem
     --text-main: #{$white}
     --hl-main: #{$white}
 
-=input($display: block, $font: $proggy)
+=input($display: block, $font: $proggy, $paddingTop: 0.75rem, $paddingLeft: 1.25rem, $font-size: 1rem)
   transition: border-color 0.5s ease
   background-color: transparent
   border: 1px solid $white
   color: $white
   font-family: $font
-  padding: 0.75rem 1.25rem
-  font-size: 1rem
+  padding: $paddingTop $paddingTop
+  font-size: $font-size
   border-radius: 1px
 
   &::placeholder
