@@ -211,7 +211,7 @@ const VideoViewer = props => {
         <p>{`image viewer - ${titleToShow}, ${humanSize}, ${mime}`}</p>
       </header>
 
-      <div tabIndex='0' className='image-container' onKeyDown={handleKeyDown}>
+      <div tabIndex='-1' className='image-container' onKeyDown={handleKeyDown}>
         {source ? (
           <video
             controls

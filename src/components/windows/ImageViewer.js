@@ -264,7 +264,7 @@ const ImageViewer = props => {
         <p>{`${titleToShow}, ${humanSize}, ${mime}`}</p>
       </header>
       <div
-        tabIndex='0'
+        tabIndex='-1'
         className='image-container'
         style={{
           backgroundColor: `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, 0.5)`,
