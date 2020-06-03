@@ -13,10 +13,17 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <h1>
-          there's an error here! =>{' '}
-          {JSON.stringify(this.state.info.componentStack, null, 5)}
-        </h1>
+        <>
+          <h1>error:</h1>
+
+          <h2>message: {this.state.message}</h2>
+
+          <div>
+            {this.state.info.componentStack.split('in ').map(item => (
+              <p>{item}</p>
+            ))}
+          </div>
+        </>
       )
     }
     return this.props.children
