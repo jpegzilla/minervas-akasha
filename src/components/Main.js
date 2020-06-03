@@ -29,7 +29,7 @@ const Main = props => {
     setRenderConList,
     Redirect,
     Switch,
-    Route
+    Route,
   } = props
 
   const [filterRefresh, setFilterRefresh] = useState({})
@@ -50,7 +50,7 @@ const Main = props => {
           setGlobalVolume,
           renderConList,
           setRenderConList,
-          useToast
+          useToast,
         }}>
         <Router>
           <section
@@ -160,7 +160,7 @@ Main.propTypes = {
   Home: PropTypes.object,
   contextMenu: PropTypes.exact({
     position: PropTypes.exact({ x: PropTypes.number, y: PropTypes.number }),
-    display: PropTypes.bool
+    display: PropTypes.bool,
   }),
   ContextMenu: PropTypes.func,
   contextMenuElem: PropTypes.object,
@@ -169,12 +169,12 @@ Main.propTypes = {
   globalVolume: PropTypes.exact({
     master: PropTypes.number,
     effect: PropTypes.number,
-    voice: PropTypes.number
+    voice: PropTypes.number,
   }),
   setGlobalVolume: PropTypes.func,
   renderConList: PropTypes.oneOfType([PropTypes.string, prop => prop === null]),
   setRenderConList: PropTypes.func,
   Redirect: PropTypes.func,
   Switch: PropTypes.func,
-  Route: PropTypes.func
+  Route: PropTypes.func,
 }
