@@ -15,6 +15,24 @@
 
   will-change: contents
 
+
+  &.filedrop
+    &.drop-active::before
+      display: flex
+      justify-content: center
+      align-items: center
+      content: "drop to add file"
+      height: 100%
+      width: 100%
+      pointer-events: none
+      font-family: vars.$proggy
+      font-size: 1.5rem
+      z-index: 2
+      color: var(--text-main)
+      background-color: var(--bg-main)
+      position: absolute
+      opacity: 0.8
+
   .datastructure-header
     margin-bottom: 0
 
@@ -185,11 +203,6 @@
     width: 100%
     line-height: 1rem
     margin-bottom: 0.15rem
-    // display: grid
-    // grid-gap: $gap
-    // grid-row-gap: $gap
-    // grid-template-columns: repeat(3, minmax(min-content, auto))
-    // grid-auto-flow: row
 
     &:empty
       margin: 0
@@ -209,28 +222,20 @@
 
     &::after, &::before
       color: transparent
-
-    &::after
-      // unicode non-breaking space content
+      pointer-events: none
       content: "."
       font-size: 1rem
       width: 2rem
       z-index: 2
       position: fixed
+
+    &::after
       right: calc(1.3125rem + 1px)
-      pointer-events: none
       background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
       padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
 
     &::before
-      // unicode non-breaking space content
-      content: "."
-      font-size: 1rem
-      width: 2rem
-      z-index: 2
-      position: fixed
       left: 0
-      pointer-events: none
       background-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
       padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
 
