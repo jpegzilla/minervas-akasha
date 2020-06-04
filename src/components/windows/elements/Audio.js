@@ -28,7 +28,7 @@ const Audio = props => {
     globalVolume.master,
     minerva.settings.volume.master,
     minerva.settings.volume,
-    minerva.settings
+    minerva.settings,
   ])
 
   const [error, setError] = useState(false)
@@ -44,7 +44,7 @@ const Audio = props => {
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
-      mime
+      mime,
     })
 
     workerInstance.onmessage = message => {
@@ -52,7 +52,7 @@ const Audio = props => {
         return toast.add({
           duration: 5000,
           text: message.data,
-          type: 'fail'
+          type: 'fail',
         })
       }
 
@@ -71,7 +71,7 @@ const Audio = props => {
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
-      mime
+      mime,
     })
 
     workerInstance.onmessage = message => {
@@ -79,7 +79,7 @@ const Audio = props => {
         return toast.add({
           duration: 5000,
           text: message.data,
-          type: 'fail'
+          type: 'fail',
         })
       }
 
@@ -112,14 +112,14 @@ const Audio = props => {
             alt: fileInfo,
             id,
             mime,
-            humanSize
+            humanSize,
           },
           belongsTo: minerva.user.id,
           id,
           position: {
             x: finalPosition,
-            y: finalPosition
-          }
+            y: finalPosition,
+          },
         }
 
         minerva.addFileToRecord(id, src, { type: 'audioviewer' })
@@ -151,7 +151,7 @@ const Audio = props => {
           toast.add({
             duration: 5000,
             text: `status: file failed to load: ${title}`,
-            type: 'warning'
+            type: 'warning',
           })
 
           setMetadata(false)
@@ -190,5 +190,5 @@ Audio.propTypes = {
   humanSize: PropTypes.string,
   mime: PropTypes.string,
   setMetadata: PropTypes.func,
-  setLoadingFileData: PropTypes.func
+  setLoadingFileData: PropTypes.func,
 }
