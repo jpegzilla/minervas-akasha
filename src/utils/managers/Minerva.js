@@ -104,6 +104,8 @@ export class Minerva {
 
     this.projects = []
 
+    this.showCommandPalette = false
+
     // if there's already settings in storage, combine them with the default settings
     // just to add resilience in case more settings are added in the future - this
     // will allow us to avoid errors if there is an extra setting that wasn't previously
