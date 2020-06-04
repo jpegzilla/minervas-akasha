@@ -10,13 +10,17 @@
  * @returns {object} object containing an array of matching records and the amount of records
  * that were found.
  */
-export default (minerva, search, options) => {
+export default (
+  minerva,
+  search,
+  options = { usingMimeOption: false, usingTypeOption: false }
+) => {
   const { usingMimeOption, usingTypeOption } = options
   const { query, type } = search
 
   const foundRecords = {
     count: 0,
-    records: []
+    records: [],
   }
 
   const allRecords = Object.values(minerva.record.records).flat(Infinity)
