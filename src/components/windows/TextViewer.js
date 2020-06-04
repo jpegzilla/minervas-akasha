@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
 
+import PropTypes from 'prop-types'
+
 import { fontCodes, lineHeights } from '../../utils/structures/utils/textcodes'
 import { globalContext } from './../App'
 import { selectAllInElement } from './../../utils/misc'
 
-export default props => {
+const TextViewer = props => {
   const { text, humanSize, mime, title, alt } = props
   const textArea = useRef()
 
@@ -154,3 +156,13 @@ export default props => {
     </section>
   )
 }
+
+TextViewer.propTypes = {
+  text: PropTypes.string,
+  humanSize: PropTypes.string,
+  mime: PropTypes.string,
+  title: PropTypes.string,
+  alt: PropTypes.string,
+}
+
+export default TextViewer

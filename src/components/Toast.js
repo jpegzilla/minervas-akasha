@@ -3,7 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Typist from './../utils/managers/Typist'
 
-const Toast = ({ remove, duration, text, type, id, sound, audiomanager }) => {
+import PropTypes from 'prop-types'
+
+const Toast = props => {
+  const { remove, duration, text, type, id, sound, audiomanager } = props
+
   const removeRef = useRef()
   removeRef.current = remove
 
@@ -41,6 +45,16 @@ const Toast = ({ remove, duration, text, type, id, sound, audiomanager }) => {
       <div>{typeText}</div>
     </div>
   )
+}
+
+Toast.propTypes = {
+  remove: PropTypes.func,
+  duration: PropTypes.number,
+  text: PropTypes.string,
+  type: PropTypes.string,
+  id: PropTypes.string,
+  sound: PropTypes.object,
+  audiomanager: PropTypes.object,
 }
 
 export default Toast

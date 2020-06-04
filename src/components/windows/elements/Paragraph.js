@@ -1,5 +1,7 @@
 import React, { useEffect, useContext } from 'react'
 
+import PropTypes from 'prop-types'
+
 import { uuidv4 } from './../../../utils/misc'
 import { globalContext } from './../../App'
 
@@ -96,6 +98,16 @@ const Paragraph = props => {
       <pre>{showText}</pre>
     </section>
   )
+}
+
+Paragraph.propTypes = {
+  fullText: PropTypes.string,
+  showText: PropTypes.bool,
+  title: PropTypes.string,
+  humanSize: PropTypes.string,
+  mime: PropTypes.string,
+  setMetadata: PropTypes.func,
+  setLoadingFileData: PropTypes.func,
 }
 
 export default Paragraph

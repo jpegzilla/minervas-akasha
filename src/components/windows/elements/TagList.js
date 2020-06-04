@@ -1,5 +1,7 @@
 import React, { useRef } from 'react'
 
+import PropTypes from 'prop-types'
+
 import Tag from './Tag'
 
 let isDown = false
@@ -83,6 +85,12 @@ const TagList = props => {
         : false}
     </ul>
   )
+}
+
+TagList.propTypes = {
+  tags: PropTypes.array,
+  removeTag: PropTypes.func,
+  editTag: PropTypes.func,
 }
 
 export default TagList
