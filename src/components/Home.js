@@ -12,7 +12,9 @@ import { uuidv4, isEmpty } from './../utils/misc'
 import PropTypes from 'prop-types'
 import Taskbar from './Taskbar'
 import Topbar from './Topbar'
+import CommandPalette from './CommandPalette'
 import { makeStruct } from '../utils/managers/StructureMap'
+import paletteSearch from '../utils/commands/paletteSearch'
 import { Minerva } from '../utils/managers/Minerva'
 import dataStructureFileParser from './windows/elements/utils/dataStructureFileParser'
 import useToast from './../hooks/useToast'
@@ -34,11 +36,14 @@ const Home = props => {
   const [activeWindow, setActiveWindow] = useState(null)
   const [activeWindowId, setActiveWindowId] = useState('default')
   const [activeFileData, setActiveFileData] = useState()
+  const [searchResults, setSearchResults] = useState([])
+
   minerva.setActiveWindowId = setActiveWindowId
 
-  // windows have two states: minimized and restored
   const [windows, setWindows] = useState(minerva.windows)
+  const [showCommandPalette, setShowCommandPalette] = useState(false)
   minerva.setApplicationWindows = setWindows
+  minerva.setShowCommandPalette = setShowCommandPalette
 
   // handle drag / drop events
   const [droppable, setDroppable] = useState(false)
@@ -193,8 +198,14 @@ const Home = props => {
   useEffect(() => minerva.setWindows(windows), [windows, minerva])
 
   const taskBarMenuRef = useRef(null)
+  const paletteInput = useRef(null)
   const settingsMenuRef = useRef(null)
 
+  useEffect(() => {
+    if (paletteInput && showCommandPalette) paletteInput.current.focus()
+    if (!showCommandPalette) setSearchResults([])
+    minerva.showCommandPalette = showCommandPalette
+  }, [showCommandPalette])
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
 
@@ -226,108 +237,123 @@ const Home = props => {
       showDropZone()
     }
 
+    const handleChange = e => {
+      const results = paletteSearch(minerva, e.target.value)
+
+      setSearchResults(results)
+    }
+
     return (
-      <section
-        id='window-system'
-        onClick={e => {
-          if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
-            // e.stopPropagation();
-            // e.preventDefault();
-            setMenuOpen(false)
-            setAddMenuOpen(false)
-            setSettingsOpen(false)
-          }
-        }}>
-        <Topbar
-          settingsOpen={settingsOpen}
-          setSettingsOpen={setSettingsOpen}
-          settingsMenuRef={settingsMenuRef}
-        />
+      <>
+        {showCommandPalette && (
+          <CommandPalette
+            handleChange={handleChange}
+            searchResults={searchResults}
+            paletteInput={paletteInput}
+          />
+        )}
         <section
-          onMouseDown={e => void e.stopPropagation()}
-          className={droppable ? 'filedrop active' : 'filedrop'}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDragEnter={allowDrag}
-          id='main-container'>
-          {windows.map(item => {
-            if (item.belongsTo === minerva.user.id) {
-              // if item is offscreen, reset.
-              // this should maybe change to use the iselementinviewport utility.
-              if (
-                item.position.x < 0 ||
-                item.position.y < 0 ||
-                item.position.x > window.innerWidth - 50 ||
-                item.position.y > window.innerHeight - 50
-              )
-                item.position = {
-                  x: 100,
-                  y: 100,
-                }
-              // this needs to exist so that the correct component is rendered.
-              // this object must contain every type of component that the home
-              // screen needs to render, becuase it uses a dynamic component
-              // jsx name or whatever it's called. lol
-              const typeMap = WindowTypes
-              const Component = typeMap[item.stringType]
-              // flag for active class
-              let isActive = ''
-              if (item.id === activeWindowId) isActive = 'active'
-              // used to determine how to count elements being rendered.
-              // counts based on type of component.
-              componentCounts[
-                !isEmpty(item.componentProps)
-                  ? item.componentProps.type
-                  : item.title || item.component
-              ] =
+          id='window-system'
+          onClick={e => {
+            if (e.target !== taskBarMenuRef && e.target !== settingsMenuRef) {
+              // e.stopPropagation();
+              // e.preventDefault();
+              setMenuOpen(false)
+              setAddMenuOpen(false)
+              setSettingsOpen(false)
+            }
+          }}>
+          <Topbar
+            settingsOpen={settingsOpen}
+            setSettingsOpen={setSettingsOpen}
+            settingsMenuRef={settingsMenuRef}
+          />
+          <section
+            onMouseDown={e => void e.stopPropagation()}
+            className={droppable ? 'filedrop active' : 'filedrop'}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDragEnter={allowDrag}
+            id='main-container'>
+            {windows.map(item => {
+              if (item.belongsTo === minerva.user.id) {
+                // if item is offscreen, reset.
+                // this should maybe change to use the iselementinviewport utility.
+                if (
+                  item.position.x < 0 ||
+                  item.position.y < 0 ||
+                  item.position.x > window.innerWidth - 50 ||
+                  item.position.y > window.innerHeight - 50
+                )
+                  item.position = {
+                    x: 100,
+                    y: 100,
+                  }
+                // this needs to exist so that the correct component is rendered.
+                // this object must contain every type of component that the home
+                // screen needs to render, becuase it uses a dynamic component
+                // jsx name or whatever it's called. lol
+                const typeMap = WindowTypes
+                const Component = typeMap[item.stringType]
+                // flag for active class
+                let isActive = ''
+                if (item.id === activeWindowId) isActive = 'active'
+                // used to determine how to count elements being rendered.
+                // counts based on type of component.
                 componentCounts[
                   !isEmpty(item.componentProps)
                     ? item.componentProps.type
                     : item.title || item.component
-                ] + 1 || 1
+                ] =
+                  componentCounts[
+                    !isEmpty(item.componentProps)
+                      ? item.componentProps.type
+                      : item.title || item.component
+                  ] + 1 || 1
 
-              const key = `${item.title}-window-${item.id}`
-              return (
-                <Component
-                  item={item}
-                  num={
-                    componentCounts[
-                      !isEmpty(item.componentProps)
-                        ? item.componentProps.type
-                        : item.title || item.component
-                    ]
-                  }
-                  records={minerva.record.records}
-                  component={item.component}
-                  componentProps={item.componentProps}
-                  setWindows={setWindows}
-                  windows={windows}
-                  className={isActive}
-                  key={key}
-                  setActiveWindowId={setActiveWindowId}
-                  activeWindowId={activeWindowId}
-                  setActiveWindow={setActiveWindow}
-                />
-              )
-            }
-            return false
-          })}
+                const key = `${item.title}-window-${item.id}`
+                return (
+                  <Component
+                    item={item}
+                    num={
+                      componentCounts[
+                        !isEmpty(item.componentProps)
+                          ? item.componentProps.type
+                          : item.title || item.component
+                      ]
+                    }
+                    records={minerva.record.records}
+                    component={item.component}
+                    componentProps={item.componentProps}
+                    setWindows={setWindows}
+                    windows={windows}
+                    className={isActive}
+                    key={key}
+                    setActiveWindowId={setActiveWindowId}
+                    activeWindowId={activeWindowId}
+                    setActiveWindow={setActiveWindow}
+                  />
+                )
+              }
+              return false
+            })}
+          </section>
+          <Taskbar
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            taskBarMenuRef={taskBarMenuRef}
+            activeWindow={activeWindow}
+            setActiveWindow={setActiveWindow}
+            activeWindowId={activeWindowId}
+            setActiveWindowId={setActiveWindowId}
+            windows={windows}
+            setWindows={setWindows}
+            addMenuOpen={addMenuOpen}
+            setAddMenuOpen={setAddMenuOpen}
+          />
         </section>
-        <Taskbar
-          menuOpen={menuOpen}
-          setMenuOpen={setMenuOpen}
-          taskBarMenuRef={taskBarMenuRef}
-          activeWindow={activeWindow}
-          setActiveWindow={setActiveWindow}
-          activeWindowId={activeWindowId}
-          setActiveWindowId={setActiveWindowId}
-          windows={windows}
-          setWindows={setWindows}
-          addMenuOpen={addMenuOpen}
-          setAddMenuOpen={setAddMenuOpen}
-        />
-      </section>
+      </>
     )
   }, [
     menuOpen,

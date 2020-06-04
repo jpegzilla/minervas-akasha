@@ -7,7 +7,7 @@ const m = new audiomanager()
 // load key sound into audio manager for typing sound
 m.load([{ file: keySound, name: 'key' }])
 
-export default () => {
+export default minerva => {
   const testHotkey = new cheatcode('a, s, d', () => {
     console.log('hotkey working!')
   })
@@ -19,16 +19,22 @@ export default () => {
     const key = e.key.toLowerCase()
     const {
       ctrlKey,
-      shiftKey
+      shiftKey,
       // altKey,
       //metaKey
     } = e
 
     switch (key) {
       case 'c':
+      case 'p':
         if (ctrlKey && shiftKey) {
           e.preventDefault()
-          console.log('command palette opened')
+          if (minerva.setShowCommandPalette) {
+            console.log('command palette opened')
+            minerva.showCommandPalette = !minerva.showCommandPalette
+            minerva.setShowCommandPalette(minerva.showCommandPalette)
+            console.log(minerva.showCommandPalette)
+          }
         }
 
         return
