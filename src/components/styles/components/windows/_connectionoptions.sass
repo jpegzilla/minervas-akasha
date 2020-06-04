@@ -1,10 +1,15 @@
+@use "sass:color"
 @use "../utils/vars"
 
 .connection-options-list
-  @include vars.itemlist(vars.$white, true)
-
+  +vars.itemlist(vars.$white, true)
   margin-top: vars.$halfgap
-  max-width: 350px
+
+  ul
+    +vars.custom-scrollbar
+
+    max-width: 350px
+    max-height: 200px
 
   p
     margin-bottom: vars.$halfgap

@@ -22,7 +22,7 @@ const DataDisplay = props => {
     structId,
     disconnectionOptions,
     connectionOptions,
-    setWindows
+    setWindows,
   } = props
 
   const { minerva, renderConList } = useContext(globalContext)
@@ -48,7 +48,7 @@ const DataDisplay = props => {
     disconnectionOptions,
     structId,
     connectionOptions,
-    minerva.record.records
+    minerva.record.records,
   ])
 
   // if this is not a structure that needs to contain data / files, then return an interface
@@ -59,95 +59,102 @@ const DataDisplay = props => {
         <header className='header-box'>
           <div className='header-box-sub'>{`connections to this ${type}:`}</div>
         </header>
-        <ul className='datastructure-connection-list'>
-          {connections.map(rec => {
-            const { id, tags, name, createdAt, updatedAt, type } = rec
+        {showData && (
+          <ul className='datastructure-connection-list'>
+            {connections.map(rec => {
+              const { id, tags, name, createdAt, updatedAt, type } = rec
 
-            const created = new Date(createdAt).toLocaleDateString(
-              minerva.settings.dateFormat
-            )
+              const created = new Date(createdAt).toLocaleDateString(
+                minerva.settings.dateFormat
+              )
 
-            const updated = new Date(updatedAt).toLocaleDateString(
-              minerva.settings.dateFormat
-            )
+              const updated = new Date(updatedAt).toLocaleDateString(
+                minerva.settings.dateFormat
+              )
 
-            const tagString = tags.map(t => t.name).join(', ')
+              const tagString = tags.map(t => t.name).join(', ')
 
-            // title just to help identify what's in the stored structure
-            const title = `name: ${name}\ntype: ${type}\ncreated on ${created}\nupdated on ${updated}\ntags: ${tagString}`
+              // title just to help identify what's in the stored structure
+              const title = `name: ${name}\ntype: ${type}\ncreated on ${created}\nupdated on ${updated}\ntags: ${tagString}`
 
-            // this is to determine what should be displayed in the connection list
-            const record = minerva.record.findRecordById(structId)
-            const connectsTo = record.connectsTo
+              // this is to determine what should be displayed in the connection list
+              const record = minerva.record.findRecordById(structId)
+              const connectsTo = record.connectsTo
 
-            if (rec.type === connectsTo) return false
+              if (rec.type === connectsTo) return false
 
-            let parent = true
+              let parent = true
 
-            if (record.accepts.includes(rec.type)) {
-              parent = false
-            }
+              if (record.accepts.includes(rec.type)) {
+                parent = false
+              }
 
-            return (
-              <li
-                onDoubleClick={e => {
-                  // open the clicked-on record
-                  e.stopPropagation()
+              return (
+                <li
+                  onDoubleClick={e => {
+                    // open the clicked-on record
+                    e.stopPropagation()
 
-                  const handleOpenRecord = item => {
-                    // make sure the window isn't already open
-                    const foundItem = minerva.windows.find(
-                      i =>
-                        i.component === 'DataStructure' &&
-                        i.componentProps.structId === item.id
-                    )
+                    const handleOpenRecord = item => {
+                      // make sure the window isn't already open
+                      const foundItem = minerva.windows.find(
+                        i =>
+                          i.component === 'DataStructure' &&
+                          i.componentProps.structId === item.id
+                      )
 
-                    if (foundItem) {
-                      if (foundItem.state !== 'minimized') return
-                      else {
-                        minerva.setWindows(
-                          minerva.windows.map(window => {
-                            return window.id === foundItem.id
-                              ? { ...window, state: 'restored' }
-                              : window
-                          })
-                        )
+                      if (foundItem) {
+                        if (foundItem.state !== 'minimized') return
+                        else {
+                          minerva.setWindows(
+                            minerva.windows.map(window => {
+                              return window.id === foundItem.id
+                                ? { ...window, state: 'restored' }
+                                : window
+                            })
+                          )
 
-                        setWindows([...minerva.windows])
+                          setWindows([...minerva.windows])
 
-                        minerva.setActiveWindowId(foundItem.id)
+                          minerva.setActiveWindowId(foundItem.id)
+                        }
+
+                        return
                       }
 
-                      return
+                      const itemToOpen = minerva.record.records[item.type].find(
+                        i => i.id === item.id
+                      )
+
+                      const { id, type } = itemToOpen
+
+                      const struct = makeStruct(type, id, minerva, uuidv4)
+
+                      minerva.setWindows([...minerva.windows, struct])
+
+                      setWindows([...minerva.windows])
+
+                      minerva.setActiveWindowId(id)
                     }
 
-                    const itemToOpen = minerva.record.records[item.type].find(
-                      i => i.id === item.id
-                    )
-
-                    const { id, type } = itemToOpen
-
-                    const struct = makeStruct(type, id, minerva, uuidv4)
-
-                    minerva.setWindows([...minerva.windows, struct])
-
-                    setWindows([...minerva.windows])
-
-                    minerva.setActiveWindowId(id)
-                  }
-
-                  handleOpenRecord(rec)
-                }}
-                className={`datastructure-connection ${
-                  parent ? 'parent-record' : ''
-                }`.trim()}
-                title={title}
-                key={id}>
-                {name}
-              </li>
-            )
-          })}
-        </ul>
+                    handleOpenRecord(rec)
+                  }}
+                  className={`datastructure-connection ${
+                    parent ? 'parent-record' : ''
+                  }`.trim()}
+                  title={title}
+                  key={id}>
+                  {name}
+                </li>
+              )
+            })}
+          </ul>
+        )}
+        <div onClick={() => setShowData(!showData)} className='header-box'>
+          <div className='header-box-sub'>
+            click to {showData ? 'hide' : 'show'} records
+          </div>
+        </div>
       </div>
     ) : (
       'no records'
@@ -276,12 +283,12 @@ DataDisplay.propTypes = {
   disconnectionOptions: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.object,
-    PropTypes.bool
+    PropTypes.bool,
   ]),
   connectionOptions: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.object,
-    PropTypes.bool
+    PropTypes.bool,
   ]),
-  setWindows: PropTypes.func
+  setWindows: PropTypes.func,
 }

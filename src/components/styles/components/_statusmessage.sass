@@ -23,7 +23,7 @@
     border-left: 2px solid vars.$white
     font-size: 1rem
     transition: opacity 0.3s ease
-
+    position: relative
 
     & + div
       margin-top: vars.$halfgap
@@ -31,6 +31,7 @@
     &.success, &.fail, &.warning, &.error
       opacity: 1
       transition: border-color 0.3s ease, opacity 0.3s ease 0.3s
+      backdrop-filter: saturate(180%) blur(5rem)
       color: vars.$white
 
     &.success

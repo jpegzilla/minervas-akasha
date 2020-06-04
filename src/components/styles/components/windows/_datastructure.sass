@@ -116,10 +116,27 @@
 
       @include vars.itemlist(vars.$white, true)
 
+      li
+        user-select: none
+
       ul
         +vars.no-scrollbar
 
         max-height: 40vh
+        position: relative
+        margin-bottom: vars.$halfgap
+
+        &::after
+          content: ''
+          display: block
+          position: sticky
+          width: 100%
+          bottom: 0
+          right: 0
+          background-image: linear-gradient(to bottom, color.adjust(vars.$darkerblue, $alpha: -1), color.adjust(vars.$darkerblue, $alpha: -0.05))
+          height: 2rem
+          pointer-events: none
+          z-index: 2
 
       li.parent-record
           border-left: 2px solid vars.$pink
@@ -202,41 +219,45 @@
     list-style-type: none
     width: 100%
     line-height: 1rem
-    margin-bottom: 0.15rem
+    margin-bottom: vars.$halfgap
+    position: relative
+
+    li + li
+      margin-left: $gap
 
     &:empty
       margin: 0
 
   .structure-taglist-long
     list-style-type: none
-    width: 100%
+    width: auto
     line-height: 1rem
-    margin: 1rem 0
-    display: grid
     grid-gap: $gap
-    grid-row-gap: $gap
-    grid-template-columns: repeat(1000000, auto)
+    margin-bottom: vars.$halfgap
+    display: grid
+    grid-template-columns: repeat(1000000, max-content)
     grid-auto-flow: row
     overflow-x: scroll
     position: relative
+    overflow-y: hidden
 
     &::after, &::before
       color: transparent
       pointer-events: none
       content: "."
       font-size: 1rem
-      width: 2rem
+      width: 1rem
       z-index: 2
       position: fixed
 
     &::after
       right: calc(1.3125rem + 1px)
-      background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
+      background-image: linear-gradient(to right, color.adjust(vars.$darkerblue, $alpha: -1), color.adjust(vars.$darkerblue, $alpha: -0.05))
       padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
 
     &::before
       left: 0
-      background-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))
+      background-image: linear-gradient(to left, color.adjust(vars.$darkerblue, $alpha: -1), color.adjust(vars.$darkerblue, $alpha: -0.05))
       padding: calc(0.15rem + 1px) 0.35rem calc(0.15rem + 1px) 0.35rem
 
     &::-webkit-scrollbar

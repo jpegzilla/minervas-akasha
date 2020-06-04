@@ -12,7 +12,7 @@ import React, {
 import Img from './elements/Img'
 import Audio from './elements/Audio'
 import Paragraph from './elements/Paragraph'
-import Tag from './elements/Tag'
+import TagList from './elements/TagList'
 import Video from './elements/Video'
 import Notes from './elements/Notes'
 import DataDisplay from './elements/DataDisplay'
@@ -616,21 +616,8 @@ const DataStructure = props => {
               </span>
             </span>
           </p>
-          <ul className='structure-taglist'>
-            {info.tags
-              ? info.tags.map((t, i) => {
-                  return (
-                    <Tag
-                      t={t}
-                      i={i}
-                      key={`${t.name}-${i}`}
-                      removeTag={removeTag}
-                      editTag={editTag}
-                    />
-                  )
-                })
-              : false}
-          </ul>
+
+          <TagList removeTag={removeTag} editTag={editTag} tags={info.tags} />
 
           {loadingFileData ? <div>loading file data...</div> : false}
 
