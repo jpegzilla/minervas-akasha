@@ -22,7 +22,7 @@ const ConnectionListComponent = props => {
     connectsTo,
     setDisconnectionOptions,
     setConnectionOptions,
-    makingConnection
+    makingConnection,
   } = props
 
   const { minerva, setRenderConList, renderConList, useToast } = useContext(
@@ -63,7 +63,7 @@ const ConnectionListComponent = props => {
     toast.add({
       duration: 3000,
       text: message,
-      type: 'success'
+      type: 'success',
     })
 
     clearAll()
@@ -98,7 +98,7 @@ const ConnectionListComponent = props => {
     toast.add({
       duration: 3000,
       text: message,
-      type: 'success'
+      type: 'success',
     })
 
     clearAll()
@@ -142,7 +142,7 @@ const ConnectionListComponent = props => {
     minerva.record,
     setConnectionOptions,
     setDisconnectionOptions,
-    structId
+    structId,
   ])
 
   return (
@@ -150,7 +150,7 @@ const ConnectionListComponent = props => {
       {makingConnection ? (
         connectionOptions && connectionOptions.length !== 0 ? (
           <Fragment>
-            <p>potential connection list:</p>
+            <p>can be connected to:</p>
             <ul>
               {connectionOptions.map(el => {
                 const record = el
@@ -173,8 +173,9 @@ const ConnectionListComponent = props => {
                     onClick={() => void handleConnect(el.id)}
                     key={el.id}>
                     {`(${record.type.substring(0, 3)}) ${record.name
-                      .substring(0, 22)
-                      .padEnd(30, '.')}`}
+                      .substring(0, 20)
+                      .trim()
+                      .padEnd(25, '.')}`}
                     {record.id.substring(0, 8)}
                   </li>
                 )
@@ -253,5 +254,5 @@ ConnectionListComponent.propTypes = {
   connectsTo: PropTypes.array,
   setDisconnectionOptions: PropTypes.func,
   setConnectionOptions: PropTypes.func,
-  makingConnection: PropTypes.bool
+  makingConnection: PropTypes.bool,
 }
