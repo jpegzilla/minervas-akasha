@@ -22,7 +22,7 @@ const Img = props => {
     mime,
     setMetadata,
     onLoad,
-    setLoadingFileData
+    setLoadingFileData,
   } = props
 
   const imageRef = useRef()
@@ -33,8 +33,9 @@ const Img = props => {
   const [error, setError] = useState(false)
   const [imageData, setImageData] = useState()
 
-  const fileInfo = `title: ${title ||
-    'no title provided'}\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`
+  const fileInfo = `title: ${
+    title || 'no title provided'
+  }\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`
 
   useEffect(() => {
     setError(false)
@@ -76,7 +77,7 @@ const Img = props => {
       ) {
         res = Object.assign(res, {
           height: naturalHeight,
-          width: naturalWidth
+          width: naturalWidth,
         })
       }
 
@@ -91,10 +92,16 @@ const Img = props => {
   const handleDoubleClick = () => {
     const workerInstance = new worker()
 
+    toast.add({
+      duration: 3000,
+      text: 'opening in viewer...',
+      type: 'success',
+    })
+
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
-      mime
+      mime,
     })
 
     workerInstance.onmessage = message => {
@@ -102,7 +109,7 @@ const Img = props => {
         return toast.add({
           duration: 5000,
           text: message.data,
-          type: 'fail'
+          type: 'fail',
         })
       }
 
@@ -135,14 +142,14 @@ const Img = props => {
             alt: fileInfo,
             id,
             mime,
-            humanSize
+            humanSize,
           },
           belongsTo: minerva.user.id,
           id,
           position: {
             x: finalPosition,
-            y: finalPosition
-          }
+            y: finalPosition,
+          },
         }
 
         minerva.addFileToRecord(id, src, { type: 'imageviewer' })
@@ -181,7 +188,7 @@ const Img = props => {
         toast.add({
           duration: 5000,
           text: `status: file failed to load: ${title}`,
-          type: 'warning'
+          type: 'warning',
         })
 
         setMetadata(false)
@@ -203,5 +210,5 @@ Img.propTypes = {
   mime: PropTypes.string,
   setMetadata: PropTypes.func,
   setLoadingFileData: PropTypes.func,
-  onLoad: PropTypes.func
+  onLoad: PropTypes.func,
 }

@@ -12,10 +12,11 @@ const Paragraph = props => {
     mime,
     setMetadata,
     setLoadingFileData,
-    name,
   } = props
 
-  const { minerva } = useContext(globalContext)
+  const { minerva, useToast } = useContext(globalContext)
+
+  const toast = useToast()
 
   const fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`
 
@@ -34,6 +35,12 @@ const Paragraph = props => {
 
   const handleDoubleClick = () => {
     const id = uuidv4()
+
+    toast.add({
+      duration: 3000,
+      text: 'opening in viewer...',
+      type: 'success',
+    })
 
     const findWindowAtPosition = xy => {
       const allWindows = Object.values(minerva.windows).flat(Infinity)
