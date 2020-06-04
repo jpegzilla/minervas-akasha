@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from 'react-router-dom'
 
 // components
@@ -63,7 +63,7 @@ const initialContext = {
   db,
   AkashicRecord,
   audiomanager: new AudioManager(),
-  minervaVoice
+  minervaVoice,
 }
 
 const { Provider } = globalContext
@@ -92,7 +92,7 @@ const App = () => {
       minerva.set(
         `user:${minerva.user.id}:token`,
         {
-          expires: naturalDate('1 month from now')
+          expires: naturalDate('1 month from now'),
         },
         'user'
       )
@@ -124,7 +124,7 @@ const App = () => {
 
   const [contextMenu, setContextMenu] = useState({
     position: { x: 0, y: 0 },
-    display: false
+    display: false,
   })
 
   /**
@@ -138,7 +138,7 @@ const App = () => {
 
     setContextMenu({
       position: { x: e.clientX, y: e.clientY },
-      display: showMenu
+      display: showMenu,
     })
   }
 
@@ -159,7 +159,7 @@ const App = () => {
 
   // set up hotkey listeners on initial load, as well as type out the status text
   useEffect(() => {
-    setupHotkeys()
+    setupHotkeys(minerva)
   }, [])
 
   // log user in or out
@@ -211,7 +211,7 @@ const App = () => {
       setRenderConList,
       Redirect,
       Switch,
-      Route
+      Route,
     }
     return <Main {...props} />
   }
