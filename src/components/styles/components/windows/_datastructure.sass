@@ -47,7 +47,8 @@
   flex-direction: column
 
   // todo: refactor this somehow to use css vars
-  background-color: color.adjust(vars.$darkerblue, $alpha: -0.05)
+  background-color: color.adjust(vars.$darkerblue, $alpha: -0.1)
+  backdrop-filter: saturate(180%) blur(1rem)
 
   .structure-header
 

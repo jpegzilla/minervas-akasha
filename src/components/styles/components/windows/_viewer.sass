@@ -5,7 +5,8 @@ $img-cols: 6
 $vid-cols: 7
 
 .image-viewer-window, .video-viewer-window, .text-viewer-window
-  background-color: color.adjust(vars.$black, $alpha: -0.05)
+  background-color: color.adjust(vars.$black, $alpha: -0.1)
+  backdrop-filter: saturate(180%) blur(1rem)
 
   .viewer-stat-box
     opacity: 0.85

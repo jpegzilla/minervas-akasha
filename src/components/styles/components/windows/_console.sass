@@ -15,7 +15,8 @@ $consolebackground: vars.$darkblue
   font-family: signup.$font
   border: 1px solid contextmenu.$color
   border-radius: 2px
-  background-color: color.adjust($consolebackground, $alpha: -0.025)
+  background-color: color.adjust($consolebackground, $alpha: -0.1)
+  backdrop-filter: saturate(180%) blur(1rem)
 
   .console-header
     margin-bottom: 0
