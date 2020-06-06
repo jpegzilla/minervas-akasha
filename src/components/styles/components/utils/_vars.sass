@@ -325,3 +325,11 @@ $halfgap: 0.5rem
 
           @if $i % 2 == 0
             animation: spinfade #{400 + $i * 2}s linear #{$i * 1.45}s infinite reverse, colortunnel 10s ease #{$i / 6}s infinite forwards
+
+=fadein($opacity: 1)
+  @keyframes fadein
+    from
+      opacity: 0
+
+    to
+      opacity: $opacity
