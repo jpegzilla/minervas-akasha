@@ -2,14 +2,126 @@
 @use "./utils/vars"
 
 #command-palette
-  +vars.flexcenter
+  $font: vars.$kaisho
+  $border-color: vars.$white
 
+  +vars.itemlist($border-color, true, 0)
+
+  div
+    width: 40vw
+
+  display: flex
+  justify-content: center
   height: 100vh
   width: 100vw
-  z-index: 99
-  background-color: vars.$dark
-  opacity: 0.85
+  z-index: 5
   position: absolute
   top: 0
   left: 0
-  font-family: vars.$kaisho
+
+  &::after
+    +vars.fadein(0.85)
+
+    content: ''
+    backdrop-filter: saturate(180%) blur(1rem)
+    position: absolute
+    animation: fadein 0.15s ease forwards
+    top: 0
+    left: 0
+    opacity: 0.85
+    background-color: vars.$dark
+    height: 100vh
+    width: 100vw
+    z-index: -1
+
+  .input-box
+    display: flex
+    margin-top: 5rem
+    margin-bottom: vars.$halfgap
+    font-family: $font
+
+    span, input
+      padding: 1rem
+      font-size: 3rem
+
+    span
+      opacity: 0.5
+
+
+    input
+      background: transparent
+      border: none
+      border-left: 2px solid vars.$white
+      border-bottom: 1px solid vars.$white
+      caret-color: vars.$white
+      color: vars.$white
+      font-family: $font
+      width: 100%
+
+      &::placeholder
+        font-family: $font
+        color: color.adjust(vars.$white, $alpha: -0.7)
+
+  ul
+    +vars.no-scrollbar
+
+    max-height: 60vh
+    font-family: $font
+    position: relative
+
+    &::after
+      display: block
+      content: ""
+      color: transparent
+      width: 100%
+      height: 5rem
+      background-image: linear-gradient(to bottom, transparent, vars.$dark)
+      bottom: -1px
+      left: 0
+      position: sticky
+      z-index: 2
+
+  li
+    font-size: 1.5rem
+    display: flex
+
+    span
+      padding: 0.7rem
+
+    &:nth-child(even)
+      background: color.adjust(grey, $alpha: -0.85)
+
+    &.higlighted
+      border-left: 2px solid vars.$pink
+
+    .shard, .title-color
+      color: vars.$shard
+
+    .node
+      color: vars.$node
+
+    .grimoire
+      color: vars.$gri
+
+    .hypostasis
+      color: vars.$hypo
+
+    .athenaeum
+      color: vars.$ath
+
+    .identifier
+      color: vars.$yellow
+
+    span + span
+      padding-left: 0
+
+    .close-button
+      display: inline-block
+      background-color: color.adjust(vars.$pink, $alpha: -0.5)
+      height: 100%
+
+      &:hover
+        background-color: vars.$pink
+
+    b
+      flex-grow: 1

@@ -14,7 +14,6 @@ import Taskbar from './Taskbar'
 import Topbar from './Topbar'
 import CommandPalette from './CommandPalette'
 import { makeStruct } from '../utils/managers/StructureMap'
-import paletteSearch from '../utils/commands/paletteSearch'
 import { Minerva } from '../utils/managers/Minerva'
 import dataStructureFileParser from './windows/elements/utils/dataStructureFileParser'
 import useToast from './../hooks/useToast'
@@ -36,7 +35,6 @@ const Home = props => {
   const [activeWindow, setActiveWindow] = useState(null)
   const [activeWindowId, setActiveWindowId] = useState('default')
   const [activeFileData, setActiveFileData] = useState()
-  const [searchResults, setSearchResults] = useState([])
 
   minerva.setActiveWindowId = setActiveWindowId
 
@@ -201,11 +199,6 @@ const Home = props => {
   const paletteInput = useRef(null)
   const settingsMenuRef = useRef(null)
 
-  useEffect(() => {
-    if (paletteInput && showCommandPalette) paletteInput.current.focus()
-    if (!showCommandPalette) setSearchResults([])
-    minerva.showCommandPalette = showCommandPalette
-  }, [showCommandPalette])
   // function that determines the amount to move windows based on mouse position and offset.
   // currently, the mouse offset is a little broken.
 
@@ -237,19 +230,14 @@ const Home = props => {
       showDropZone()
     }
 
-    const handleChange = e => {
-      const results = paletteSearch(minerva, e.target.value)
-
-      setSearchResults(results)
-    }
-
     return (
       <>
         {showCommandPalette && (
           <CommandPalette
-            handleChange={handleChange}
-            searchResults={searchResults}
             paletteInput={paletteInput}
+            setShowCommandPalette={setShowCommandPalette}
+            showCommandPalette={showCommandPalette}
+            setWindows={setWindows}
           />
         )}
         <section
@@ -365,6 +353,7 @@ const Home = props => {
     componentCounts,
     activeWindow,
     minerva,
+    showCommandPalette,
   ])
 }
 

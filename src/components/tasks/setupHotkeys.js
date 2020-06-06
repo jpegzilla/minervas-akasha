@@ -30,10 +30,8 @@ export default minerva => {
         if (ctrlKey && shiftKey) {
           e.preventDefault()
           if (minerva.setShowCommandPalette) {
-            console.log('command palette opened')
             minerva.showCommandPalette = !minerva.showCommandPalette
             minerva.setShowCommandPalette(minerva.showCommandPalette)
-            console.log(minerva.showCommandPalette)
           }
         }
 
