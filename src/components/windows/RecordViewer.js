@@ -4,7 +4,7 @@ import React, {
   useContext,
   memo,
   Fragment,
-  useRef
+  useRef,
 } from 'react'
 
 import PropTypes from 'prop-types'
@@ -28,7 +28,7 @@ const RecordViewer = props => {
 
   const [recordData, setRecordData] = useState({
     records: [],
-    length: 0
+    length: 0,
   })
 
   const allRecords = Object.values(minerva.record.records).flat(Infinity)
@@ -46,13 +46,13 @@ const RecordViewer = props => {
       { query, type, mime },
       {
         usingMimeOption,
-        usingTypeOption: false
+        usingTypeOption: false,
       }
     )
 
     setRecordData({
       records: matches.records,
-      length: matches.count
+      length: matches.count,
     })
   }
 
@@ -105,8 +105,8 @@ const RecordViewer = props => {
 
   // when the status bar indicates that a record has been selected, show items in the sidebar
   const [sidebar, setSidebar] = useState({
-    title: false,
-    records: []
+    title: 'nothing selected',
+    records: [],
   })
 
   // show the connected records in the sidebar
@@ -118,7 +118,7 @@ const RecordViewer = props => {
 
       setSidebar({
         title: `(${item.type}) ${name}`,
-        records: Object.keys(connectedTo)
+        records: Object.keys(connectedTo),
       })
     }
   }, [statusBar])
@@ -135,7 +135,7 @@ const RecordViewer = props => {
 
     setRecordData({
       records: extant,
-      length: counter
+      length: counter,
     })
   }, [records])
 
@@ -148,7 +148,7 @@ const RecordViewer = props => {
   return (
     <div
       onClick={() => {
-        setSidebar({ title: false, records: {} })
+        setSidebar({ title: 'nothing selected', records: {} })
         setStatusBar({ message: '', item: {} })
       }}
       className='record-viewer-container'>
@@ -201,77 +201,74 @@ const RecordViewer = props => {
         </div>
       </header>
       <section className='record-viewer-main'>
-        {sidebar.title && (
-          <section className='record-viewer-sidebar'>
-            <div className='record-viewer-sidebar-container'>
-              <div className='record-viewer-sidebar-info'>
-                <header title={sidebar.title}>
-                  {sidebar.title.length > 20
+        <section className='record-viewer-sidebar'>
+          <div className='record-viewer-sidebar-container'>
+            <div className='record-viewer-sidebar-info'>
+              <header title={sidebar.title}>
+                {sidebar.title &&
+                  (sidebar.title.length > 20
                     ? sidebar.title.substring(0, 17).padEnd(20, '.')
-                    : sidebar.title}
-                </header>
+                    : sidebar.title)}
+              </header>
 
-                {sidebar.records.length > 0 ? (
-                  <Fragment>
-                    <div className='record-connections-header'>
-                      record connections:
-                    </div>
-                    <ul>
-                      {sidebar.records.map(item => {
-                        const record = minerva.record.findRecordById(item)
-                        let parent = false
-
-                        if (record.accepts.includes(statusBar.item.type)) {
-                          parent = true
-                        }
-
-                        const title = `name: ${record.name}\ntype: ${
-                          record.type
-                        }\ntags: ${
-                          record.tags.length === 0
-                            ? 'none'
-                            : record.tags.map(i => i.name).join(', ')
-                        }\ncreated on ${new Date(
-                          record.createdAt
-                        ).toLocaleString(
-                          minerva.settings.dateFormat
-                        )}\nupdated on ${new Date(
-                          record.updatedAt
-                        ).toLocaleString(minerva.settings.dateFormat)}`
-
-                        return (
-                          <li
-                            onDoubleClick={e => {
-                              e.stopPropagation()
-                              e.preventDefault()
-
-                              handleOpenRecord(record)
-                            }}
-                            onClick={e => {
-                              e.stopPropagation()
-                            }}
-                            className={parent ? 'parent-record' : ''}
-                            title={title}
-                            key={record.id}>
-                            {`(${record.type.substring(0, 3)}) ${
-                              record.name.length > 14
-                                ? record.name.substring(0, 11).padEnd(14, '.')
-                                : record.name
-                            }`}
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </Fragment>
-                ) : (
-                  ''
-                )}
+              <div className='record-connections-header'>
+                record connections:
               </div>
+              {sidebar.records.length > 0 ? (
+                <Fragment>
+                  <ul>
+                    {sidebar.records.map(item => {
+                      const record = minerva.record.findRecordById(item)
+                      let parent = false
 
-              <div className='record-viewer-sidebar-info-collapse'></div>
+                      if (record.accepts.includes(statusBar.item.type)) {
+                        parent = true
+                      }
+
+                      const title = `name: ${record.name}\ntype: ${
+                        record.type
+                      }\ntags: ${
+                        record.tags.length === 0
+                          ? 'none'
+                          : record.tags.map(i => i.name).join(', ')
+                      }\ncreated on ${new Date(record.createdAt).toLocaleString(
+                        minerva.settings.dateFormat
+                      )}\nupdated on ${new Date(
+                        record.updatedAt
+                      ).toLocaleString(minerva.settings.dateFormat)}`
+
+                      return (
+                        <li
+                          onDoubleClick={e => {
+                            e.stopPropagation()
+                            e.preventDefault()
+
+                            handleOpenRecord(record)
+                          }}
+                          onClick={e => {
+                            e.stopPropagation()
+                          }}
+                          className={parent ? 'parent-record' : ''}
+                          title={title}
+                          key={record.id}>
+                          {`(${record.type.substring(0, 3)}) ${
+                            record.name.length > 14
+                              ? record.name.substring(0, 11).padEnd(14, '.')
+                              : record.name
+                          }`}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </Fragment>
+              ) : (
+                ''
+              )}
             </div>
-          </section>
-        )}
+
+            <div className='record-viewer-sidebar-info-collapse'></div>
+          </div>
+        </section>
 
         <section className='record-viewer-records'>
           {allRecords.some(item => recordsToShow.includes(item.type))
@@ -312,7 +309,7 @@ const RecordViewer = props => {
                       title,
                       humanSize,
                       mime,
-                      ext
+                      ext,
                     }
                   }
                 }
@@ -321,7 +318,7 @@ const RecordViewer = props => {
                   message = {
                     title: `(${type}) ${item.name} - ${connectionCount} ${
                       connectionCount === 1 ? 'record' : 'records'
-                    }`
+                    }`,
                   }
                 }
 
@@ -345,7 +342,7 @@ const RecordViewer = props => {
 
                       return void setStatusBar({
                         message: `information: ${m}`,
-                        item
+                        item,
                       })
                     }}
                     onDoubleClick={() => void handleOpenRecord(item)}
@@ -372,5 +369,5 @@ const RecordViewer = props => {
 export default memo(RecordViewer)
 
 RecordViewer.propTypes = {
-  setWindows: PropTypes.func
+  setWindows: PropTypes.func,
 }
