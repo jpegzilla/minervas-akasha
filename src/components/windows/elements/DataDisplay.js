@@ -150,11 +150,13 @@ const DataDisplay = props => {
             })}
           </ul>
         )}
-        <div onClick={() => setShowData(!showData)} className='header-box'>
-          <div className='header-box-sub'>
-            click to {showData ? 'hide' : 'show'} records
+        {connections.length > 0 && (
+          <div onClick={() => setShowData(!showData)} className='header-box'>
+            <div className='header-box-sub'>
+              click to {showData ? 'hide' : 'show'} records
+            </div>
           </div>
-        </div>
+        )}
       </div>
     ) : (
       'no records'
