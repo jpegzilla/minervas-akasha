@@ -4,7 +4,7 @@
 $img-cols: 6
 $vid-cols: 7
 
-.image-viewer-window, .video-viewer-window, .text-viewer-window
+.image-viewer-window, .video-viewer-window, .text-viewer-window, .audio-viewer-window
   background-color: color.adjust(vars.$black, $alpha: -0.1)
   backdrop-filter: saturate(180%) blur(1rem)
 
@@ -17,11 +17,12 @@ $vid-cols: 7
     top: 20%
     left: vars.$halfgap
 
-  .image-viewer-header, .video-viewer-header, .text-viewer-header
+  .image-viewer-header, .video-viewer-header, .text-viewer-header, .audio-viewer-header
     margin-bottom: 0
 
-  .image-viewer-container-controls, .text-viewer-header
+  .image-viewer-container-controls, .text-viewer-header, .audio-viewer-container-controls
     padding: vars.$halfgap
+    max-width: 700px
 
   button
     +vars.flexcenter
@@ -72,6 +73,7 @@ $vid-cols: 7
     grid-gap: vars.$halfgap
     border-top: 1px solid var(--text-main)
 
+  .audio-control-buttons,
   .video-control-buttons
     grid-template-columns: repeat($vid-cols, 1fr)
 
@@ -102,6 +104,9 @@ $vid-cols: 7
 
     &.highlight
       border: 1px solid vars.$yellow
+
+  audio
+    width: 100%
 
   img
     cursor: grab

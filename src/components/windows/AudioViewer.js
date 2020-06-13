@@ -15,13 +15,20 @@ import { secondsToTime } from './../../utils/misc'
 import worker from './elements/utils/metadataWorker.worker'
 
 let isPlaying = false,
-  interval
+  interval,
+  hasConnected = false
+
+const audioCtx = new AudioContext()
+const analyser = audioCtx.createAnalyser()
+const freqanalyser = audioCtx.createAnalyser()
 
 const AudioViewer = props => {
   const { src, alt, id, mime, humanSize } = props
   const { minerva } = useContext(globalContext)
 
   const audioRef = useRef()
+  const canvasRef = useRef()
+  const canvasFreqRef = useRef()
 
   const altToShow = alt
     .split('\n')
@@ -41,10 +48,39 @@ const AudioViewer = props => {
   const [waiting, setWaiting] = useState(false)
   const [time, setTime] = useState(0)
   const [showExtras, setShowExtras] = useState(false)
+  const [oscData, setOscData] = useState()
+  const [freqData, setFreqData] = useState()
+  const [canvas, setCanvas] = useState()
+  const [canvasFreq, setCanvasFreq] = useState()
 
   const { globalVolume, useToast } = useContext(globalContext)
 
   const toast = useToast()
+
+  useEffect(() => {
+    if (audioRef.current && !hasConnected) {
+      const audioSource = audioCtx.createMediaElementSource(audioRef.current)
+
+      // if the audioref exists, the canvas one does too
+      setCanvas(canvasRef.current)
+      setCanvasFreq(canvasFreqRef.current)
+
+      audioSource.connect(analyser)
+      analyser.connect(freqanalyser)
+      freqanalyser.connect(audioCtx.destination)
+
+      hasConnected = true
+
+      setOscData(new Uint8Array(analyser.frequencyBinCount))
+      setFreqData(new Uint8Array(freqanalyser.frequencyBinCount))
+    }
+  }, [audioRef])
+
+  useEffect(() => {
+    return () => {
+      hasConnected = false
+    }
+  })
 
   useEffect(() => {
     if (audioRef.current)
@@ -77,6 +113,101 @@ const AudioViewer = props => {
       getWithId(id)
     }
   }, [found, id])
+
+  const renderFrame = () => {
+    analyser.getByteFrequencyData(
+      oscData || new Uint8Array(analyser.frequencyBinCount)
+    )
+    analyser.fftSize = 16384
+
+    const bufferLen = analyser.frequencyBinCount
+    const dataArray = new Uint8Array(bufferLen)
+
+    const canvasCtx = canvas.getContext('2d')
+
+    const width = canvas.width
+    const height = canvas.height
+
+    canvasCtx.clearRect(0, 0, width, height)
+
+    const draw = () => {
+      if (!isPlaying) return
+
+      requestAnimationFrame(draw)
+
+      analyser.getByteTimeDomainData(dataArray)
+
+      canvasCtx.clearRect(0, 0, width, height)
+      canvasCtx.fillStyle = 'rgba(0, 0, 0, 0)'
+      canvasCtx.fillRect(0, 0, width, height)
+      canvasCtx.lineWidth = 2
+      canvasCtx.strokeStyle = 'rgb(254, 254, 254)'
+      canvasCtx.beginPath()
+
+      const sliceWidth = 1
+      let x = 0
+
+      for (let i = 0; i < bufferLen; i++) {
+        const v = dataArray[i] / 128
+        const y = (v * height) / 2
+
+        if (i === 0) canvasCtx.moveTo(x, y)
+        else canvasCtx.lineTo(x, y)
+
+        x += sliceWidth
+      }
+
+      canvasCtx.lineTo(width, height / 2)
+      canvasCtx.stroke()
+    }
+
+    draw()
+  }
+
+  const renderFreqFrame = () => {
+    freqanalyser.getByteFrequencyData(
+      freqData || new Uint8Array(freqanalyser.frequencyBinCount)
+    )
+    freqanalyser.fftSize = 2048
+
+    const bufferLen = freqanalyser.frequencyBinCount
+    const dataArray = new Uint8Array(bufferLen)
+
+    const canvasFreqCtx = canvasFreq.getContext('2d')
+
+    const width = canvasFreq.width
+    const height = canvasFreq.height
+
+    canvasFreqCtx.clearRect(0, 0, width, height)
+
+    const draw = () => {
+      if (!isPlaying) return
+
+      requestAnimationFrame(draw)
+
+      freqanalyser.getByteFrequencyData(dataArray)
+
+      canvasFreqCtx.clearRect(0, 0, width, height)
+      canvasFreqCtx.fillStyle = 'rgba(0, 0, 0, 0)'
+      canvasFreqCtx.fillRect(0, 0, width, height)
+
+      const barWidth = 1
+      let barHeight
+      let x = 0
+
+      // for (let i = 0; i < bufferLen; i++) {
+      for (let i = 0; i < freqanalyser.fftSize; i++) {
+        barHeight = (dataArray[i] / 2) * 0.75
+
+        canvasFreqCtx.fillStyle = 'rgb(254, 254, 254)'
+        canvasFreqCtx.fillRect(x, height - barHeight, barWidth, barHeight)
+
+        x += barWidth + 2
+      }
+    }
+
+    draw()
+  }
 
   const getWithId = id => {
     // find the file using the data structure's id,
@@ -116,7 +247,7 @@ const AudioViewer = props => {
         .then(res => res.blob())
         .then(res => {
           if (res) {
-            dispatch({ type: 'source', payload: src })
+            if (src) dispatch({ type: 'source', payload: src })
             dispatch({ type: 'found', payload: true })
           }
         })
@@ -129,17 +260,57 @@ const AudioViewer = props => {
     } else getWithId(id)
   }, [id, src])
 
+  const resetAll = () => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = 1
+      audioRef.current.currentTime = 0
+      audioRef.current.loop = false
+      audioRef.current.pause()
+      isPlaying = false
+      setWaiting(false)
+    }
+  }
+
   const handleKeyDown = e => {
+    e.stopPropagation()
+
     const { key } = e
 
-    switch (key) {
-      case 'ArrowRight':
-        audioRef.current.currentTime += 5
+    switch (key.toLowerCase()) {
+      case 'arrowright': // skip forward three seconds
+        audioRef.current.currentTime += 3
         break
-      case 'ArrowLeft':
-        audioRef.current.currentTime -= 5
+      case 'arrowleft': // skip backward three seconds
+        audioRef.current.currentTime -= 3
+        break
+      case 'arrowup':
+        audioRef.current.volume += 0.05
+        break
+      case 'arrowdown':
+        audioRef.current.volume -= 0.05
+        break
+      case 'l': // skip forward ten seconds
+        audioRef.current.currentTime += 10
+        break
+      case 'j': // skip backward ten seconds
+        audioRef.current.currentTime -= 10
+        break
+      case 'm':
+        if (audioRef.current) audioRef.current.muted = !audioRef.current.muted
+        break
+      case 'p':
+      case 'k': // yes I like youtube's video player ok
+        if (audioRef.current)
+          audioRef.current.paused
+            ? audioRef.current.play()
+            : audioRef.current.pause()
+        break
+      case 'r':
+        resetAll()
         break
       case 'e':
+      case 'd':
+      case 's': // all these just show the extra data, like youtube's 'stats for nerds'
         setShowExtras(!showExtras)
         break
       default:
@@ -158,28 +329,45 @@ const AudioViewer = props => {
       p.s. you should never see this error. oops.
     </span>
   ) : (
-    <section className='audio-viewer-container'>
+    <section
+      tabIndex='-1'
+      className='audio-viewer-container'
+      onKeyDown={handleKeyDown}>
       <header className='audio-viewer-container-controls'>
         <span>{`audio vizualizer - ${titleToShow}, ${humanSize}, ${mime}`}</span>
       </header>
 
-      <div>
-        <div>vizualizer here</div>
+      <div className='audio-viewer-vizualizer-container'>
+        <div className='audio-viewer-vizualizer'>
+          <div className='canvas-container'>
+            <canvas className='oscilloscope' ref={canvasRef}></canvas>
+          </div>
+          <div className='canvas-container'>
+            <canvas className='frequency' ref={canvasFreqRef}></canvas>
+          </div>
+        </div>
         <div>
           <audio
             src={source}
             ref={audioRef}
             alt={altToShow}
             title={altToShow}
-            onKeyDown={handleKeyDown}
+            controls
             onPlaying={() => {
               setWaiting(false)
               isPlaying = true
               interval = setInterval(() => {
                 requestAnimationFrame(() => {
-                  if (audioRef.current) setTime(audioRef.current.currentTime)
+                  if (audioRef.current) {
+                    setTime(audioRef.current.currentTime)
+                  }
                 })
               }, 100)
+            }}
+            onPlay={() => {
+              isPlaying = true
+              renderFrame()
+              renderFreqFrame()
             }}
             onSeeked={() => {
               if (audioRef.current) setTime(audioRef.current.currentTime)
@@ -219,6 +407,26 @@ const AudioViewer = props => {
       </div>
       <div className='audio-control-buttons control-buttons'>
         <button
+          title='hotkey: e'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            setShowExtras(!showExtras)
+          }}>
+          <span>{showExtras ? 'hide' : 'show'} data</span>
+        </button>
+        <button
+          title='hotkey: m'
+          className='button-non-mutation span-v-2'
+          onClick={() => {
+            if (audioRef.current)
+              audioRef.current.muted = !audioRef.current.muted
+          }}>
+          <span>
+            {audioRef.current && audioRef.current.muted ? 'unmute' : 'mute'}{' '}
+            audio
+          </span>
+        </button>
+        <button
           className='button-non-mutation'
           onClick={() => {
             if (audioRef.current.paused && !isPlaying) {
@@ -241,11 +449,33 @@ const AudioViewer = props => {
         <button
           className='button-non-mutation'
           onClick={() => {
+            audioRef.current.playbackRate -= 0.05
+          }}>
+          <span>rate -</span>
+        </button>
+        <button
+          className='button-non-mutation'
+          onClick={() => {
+            audioRef.current.playbackRate += 0.05
+          }}>
+          <span>rate +</span>
+        </button>
+
+        <button
+          className='button-non-mutation'
+          onClick={() => (audioRef.current.loop = !audioRef.current.loop)}>
+          <span>loop</span>
+        </button>
+
+        <button
+          className='button-non-mutation'
+          onClick={() => {
             audioRef.current.currentTime -= 5
             setTime(audioRef.current.currentTime)
           }}>
           <span>skip -5s</span>
         </button>
+
         <button
           className='button-non-mutation'
           onClick={() => {
@@ -255,17 +485,27 @@ const AudioViewer = props => {
           <span>skip +5s</span>
         </button>
         <button
-          className='button-non-mutation'
-          onClick={() => (audioRef.current.loop = !audioRef.current.loop)}>
-          <span>loop</span>
+          title='shows the load state of the audio file.'
+          className='button-non-mutation disabled-status'
+          disabled>
+          <span>{waiting ? 'loading...' : 'ready'}</span>
         </button>
         <button
-          title='hotkey: e'
-          className='button-non-mutation span-v-2'
-          onClick={() => {
-            setShowExtras(!showExtras)
-          }}>
-          <span>{showExtras ? 'hide' : 'show'} data</span>
+          title='shows whether looping is on or off.'
+          className='button-non-mutation disabled-status'
+          disabled>
+          <span>
+            loop: {audioRef.current && audioRef.current.loop ? ' on' : ' off'}
+          </span>
+        </button>
+        <button
+          title='shows the current time in the audio file.'
+          className='button-non-mutation disabled-status'
+          disabled>
+          <span>{secondsToTime(time).substring(0, 13)}</span>
+        </button>
+        <button className='button-non-mutation span-all' onClick={resetAll}>
+          <span>reset all</span>
         </button>
       </div>
       {source && showExtras && (
@@ -282,6 +522,29 @@ const AudioViewer = props => {
             <p>
               loop {audioRef.current && audioRef.current.loop ? 'on' : 'off'}
             </p>
+            <p>
+              playback rate{' '}
+              {audioRef.current && audioRef.current.playbackRate.toFixed(2)}
+            </p>
+            <p>
+              time remaining{' '}
+              {audioRef.current &&
+              !isNaN(audioRef.current.duration) &&
+              !isNaN(audioRef.current.currentTime)
+                ? secondsToTime(
+                    Math.floor(
+                      audioRef.current.duration - audioRef.current.currentTime
+                    )
+                  )
+                : '0'}
+            </p>
+            <p>
+              full duration{' '}
+              {audioRef.current && !isNaN(audioRef.current.duration)
+                ? secondsToTime(audioRef.current.duration)
+                : '0'}
+            </p>
+            <p>waiting? {waiting.toString()}</p>
           </div>
         </div>
       )}

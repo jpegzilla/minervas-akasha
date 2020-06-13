@@ -65,8 +65,13 @@ const Audio = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
 
   const handleDoubleClick = () => {
-    console.log('double clicked')
     const workerInstance = new worker()
+
+    toast.add({
+      duration: 3000,
+      text: 'opening in viewer...',
+      type: 'success',
+    })
 
     workerInstance.postMessage({
       action: 'getObjectUrl',
@@ -142,7 +147,12 @@ const Audio = props => {
       </a>
     </span>
   ) : (
-    <div onDoubleClick={handleDoubleClick}>
+    <>
+      <div className='header-box' onDoubleClick={handleDoubleClick}>
+        <div className='header-box-sub'>
+          double click to open in audio viewer
+        </div>
+      </div>
       <audio
         autoPlay={shouldAutoplay}
         onError={() => {
@@ -178,7 +188,7 @@ const Audio = props => {
         title={fileInfo}>
         audio element encountered an error.
       </audio>
-    </div>
+    </>
   )
 }
 

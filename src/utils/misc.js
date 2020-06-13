@@ -122,7 +122,7 @@ export const secondsToTime = sec => {
 
   minutes = String(minutes).padStart(2, '0')
   hours = String(hours).padStart(2, '0')
-  seconds = String(seconds).padStart(2, '0')
+  seconds = String(seconds.toFixed(0)).padStart(2, '0')
 
   return `${hours}:${minutes}:${seconds}`
 }
