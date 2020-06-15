@@ -20,7 +20,8 @@ let isPlaying = false,
 
 const audioCtx = new AudioContext()
 const analyser = audioCtx.createAnalyser()
-const freqanalyser = audioCtx.createAnalyser()
+const freqAnalyser = audioCtx.createAnalyser()
+const specAnalyser = audioCtx.createAnalyser()
 
 const AudioViewer = props => {
   const { src, alt, id, mime, humanSize } = props
@@ -29,6 +30,7 @@ const AudioViewer = props => {
   const audioRef = useRef()
   const canvasRef = useRef()
   const canvasFreqRef = useRef()
+  const canvasSpecRef = useRef()
 
   const altToShow = alt
     .split('\n')
@@ -50,8 +52,10 @@ const AudioViewer = props => {
   const [showExtras, setShowExtras] = useState(false)
   const [oscData, setOscData] = useState()
   const [freqData, setFreqData] = useState()
+  const [specData, setSpecData] = useState()
   const [canvas, setCanvas] = useState()
   const [canvasFreq, setCanvasFreq] = useState()
+  const [canvasSpec, setCanvasSpec] = useState()
 
   const { globalVolume, useToast } = useContext(globalContext)
 
@@ -64,15 +68,18 @@ const AudioViewer = props => {
       // if the audioref exists, the canvas one does too
       setCanvas(canvasRef.current)
       setCanvasFreq(canvasFreqRef.current)
+      setCanvasSpec(canvasSpecRef.current)
 
       audioSource.connect(analyser)
-      analyser.connect(freqanalyser)
-      freqanalyser.connect(audioCtx.destination)
+      analyser.connect(freqAnalyser)
+      freqAnalyser.connect(specAnalyser)
+      specAnalyser.connect(audioCtx.destination)
 
       hasConnected = true
 
       setOscData(new Uint8Array(analyser.frequencyBinCount))
-      setFreqData(new Uint8Array(freqanalyser.frequencyBinCount))
+      setFreqData(new Uint8Array(freqAnalyser.frequencyBinCount))
+      setSpecData(new Uint8Array(freqAnalyser.frequencyBinCount))
     }
   }, [audioRef])
 
@@ -165,12 +172,12 @@ const AudioViewer = props => {
   }
 
   const renderFreqFrame = () => {
-    freqanalyser.getByteFrequencyData(
-      freqData || new Uint8Array(freqanalyser.frequencyBinCount)
+    freqAnalyser.getByteFrequencyData(
+      freqData || new Uint8Array(freqAnalyser.frequencyBinCount)
     )
-    freqanalyser.fftSize = 2048
+    freqAnalyser.fftSize = 2048
 
-    const bufferLen = freqanalyser.frequencyBinCount
+    const bufferLen = freqAnalyser.frequencyBinCount
     const dataArray = new Uint8Array(bufferLen)
 
     const canvasFreqCtx = canvasFreq.getContext('2d')
@@ -185,24 +192,78 @@ const AudioViewer = props => {
 
       requestAnimationFrame(draw)
 
-      freqanalyser.getByteFrequencyData(dataArray)
+      freqAnalyser.getByteFrequencyData(dataArray)
 
       canvasFreqCtx.clearRect(0, 0, width, height)
       canvasFreqCtx.fillStyle = 'rgba(0, 0, 0, 0)'
       canvasFreqCtx.fillRect(0, 0, width, height)
 
-      const barWidth = 1
+      const barWidth = 3
       let barHeight
       let x = 0
 
       // for (let i = 0; i < bufferLen; i++) {
-      for (let i = 0; i < freqanalyser.fftSize; i++) {
-        barHeight = (dataArray[i] / 2) * 0.75
+      for (let i = 0; i < freqAnalyser.fftSize / barWidth; i++) {
+        barHeight = dataArray[i] * 0.5
 
-        canvasFreqCtx.fillStyle = 'rgb(254, 254, 254)'
+        // canvasFreqCtx.fillStyle = 'rgb(254, 254, 254)'
+
+        canvasFreqCtx.fillStyle = `rgb(${barHeight + 100}, ${
+          barHeight + 100
+        }, ${barHeight + 100})`
         canvasFreqCtx.fillRect(x, height - barHeight, barWidth, barHeight)
 
         x += barWidth + 2
+      }
+    }
+
+    draw()
+  }
+
+  const renderSpecFrame = () => {
+    const ctx = canvasSpec.getContext('2d')
+
+    const height = canvasSpec.height
+    const width = canvasSpec.width
+
+    specAnalyser.fftSize = 4096
+
+    const dataArray = new Uint8Array(specAnalyser.frequencyBinCount)
+
+    const len = dataArray.length
+    const h = (height / len) * 1.5
+    const x = width
+
+    ctx.fillStyle = 'hsla(280, 100%, 10%, 0)'
+    ctx.fillRect(0, 0, width, height)
+
+    specAnalyser.getByteFrequencyData(dataArray)
+
+    const draw = () => {
+      if (!isPlaying) return
+
+      requestAnimationFrame(draw)
+
+      let imgData = ctx.getImageData(1, 0, width - 1, height)
+
+      ctx.fillRect(0, 0, width, height)
+      ctx.putImageData(imgData, 0, 0)
+
+      specAnalyser.getByteFrequencyData(dataArray)
+
+      for (let i = 0; i < len; i++) {
+        let rat = dataArray[i] / 255
+        let hue = Math.round(rat * 120 + (280 % 360))
+        let sat = '100%'
+        let lit = 10 + 70 * rat + '%'
+
+        ctx.beginPath()
+
+        ctx.strokeStyle = `hsl(${hue}, ${sat}, ${lit})`
+
+        ctx.moveTo(x, height - i * (h * 4))
+        ctx.lineTo(x, height - i * (h * 4.6))
+        ctx.stroke()
       }
     }
 
@@ -266,6 +327,21 @@ const AudioViewer = props => {
       audioRef.current.currentTime = 0
       audioRef.current.loop = false
       audioRef.current.pause()
+
+      const ctx1 = canvas.getContext('2d')
+      const ctx2 = canvasSpec.getContext('2d')
+      const ctx3 = canvasFreq.getContext('2d')
+      const width1 = canvas.width
+      const height1 = canvas.height
+      const width2 = canvasSpec.width
+      const height2 = canvasSpec.height
+      const width3 = canvasFreq.width
+      const height3 = canvasFreq.height
+
+      ctx1.clearRect(0, 0, width1, height1)
+      ctx2.clearRect(0, 0, width2, height2)
+      ctx3.clearRect(0, 0, width3, height3)
+
       isPlaying = false
       setWaiting(false)
     }
@@ -339,11 +415,58 @@ const AudioViewer = props => {
 
       <div className='audio-viewer-vizualizer-container'>
         <div className='audio-viewer-vizualizer'>
-          <div className='canvas-container'>
-            <canvas className='oscilloscope' ref={canvasRef}></canvas>
+          <div className='canvas-with-graph'>
+            <div className='graphs-container'>
+              <div className='align-start'>L</div>
+              <div>M</div>
+              <div className='align-end'>R</div>
+            </div>
+
+            <div className='canvas-container'>
+              <canvas className='oscilloscope' ref={canvasRef}></canvas>
+            </div>
+
+            <div className='graphs-container'>
+              <div className='align-start'>-</div>
+              <div>-</div>
+              <div className='align-end'>-</div>
+            </div>
           </div>
-          <div className='canvas-container'>
-            <canvas className='frequency' ref={canvasFreqRef}></canvas>
+
+          <div className='canvas-with-graph'>
+            <div className='graphs-container'>
+              <div className='align-start'>1</div>
+              <div>½</div>
+              <div className='align-end'>0</div>
+            </div>
+
+            <div className='canvas-container'>
+              <canvas className='frequency' ref={canvasFreqRef}></canvas>
+            </div>
+
+            <div className='graphs-container'>
+              <div className='align-start'>-</div>
+              <div>-</div>
+              <div className='align-end'>-</div>
+            </div>
+          </div>
+
+          <div className='canvas-with-graph span-v-2'>
+            <div className='graphs-container'>
+              <div className='align-start'>-</div>
+              <div>-</div>
+              <div className='align-end'>-</div>
+            </div>
+
+            <div className='canvas-container'>
+              <canvas className='frequency' ref={canvasSpecRef}></canvas>
+            </div>
+
+            <div className='graphs-container'>
+              <div className='align-start'>-</div>
+              <div>-</div>
+              <div className='align-end'>-</div>
+            </div>
           </div>
         </div>
         <div>
@@ -368,6 +491,7 @@ const AudioViewer = props => {
               isPlaying = true
               renderFrame()
               renderFreqFrame()
+              renderSpecFrame()
             }}
             onSeeked={() => {
               if (audioRef.current) setTime(audioRef.current.currentTime)
