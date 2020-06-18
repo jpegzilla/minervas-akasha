@@ -121,19 +121,19 @@ export class Minerva {
           : []
         : []
 
-      // // contains files from the text editor
-      // this.textFiles = MinervaArchive.get('minerva_store')
-      //   ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
-      //     ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
-      //     : []
-      //   : []
-      //
-      // // contains projects from the project management system
-      // this.projects = MinervaArchive.get('minerva_store')
-      //   ? MinervaArchive.get('minerva_store').projects[this.user.id]
-      //     ? MinervaArchive.get('minerva_store').projects[this.user.id]
-      //     : []
-      //   : []
+      // contains files from the text editor
+      this.textFiles = MinervaArchive.get('minerva_store')
+        ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
+          ? MinervaArchive.get('minerva_store').textFiles[this.user.id]
+          : []
+        : []
+
+      // contains projects from the project management system
+      this.projects = MinervaArchive.get('minerva_store')
+        ? MinervaArchive.get('minerva_store').projects[this.user.id]
+          ? MinervaArchive.get('minerva_store').projects[this.user.id]
+          : []
+        : []
 
       this.usageData = MinervaArchive.get('minerva_store')
         ? MinervaArchive.get('minerva_store').usageData[this.user.id]
@@ -1236,6 +1236,18 @@ export class Minerva {
               [this.user.id]: this.windows,
             }
           : { [this.user.id]: this.windows },
+        textFiles: MinervaArchive.get('minerva_store')
+          ? {
+              ...MinervaArchive.get('minerva_store').textFiles,
+              [this.user.id]: this.textFiles,
+            }
+          : { [this.user.id]: this.textFiles },
+        projects: MinervaArchive.get('minerva_store')
+          ? {
+              ...MinervaArchive.get('minerva_store').projects,
+              [this.user.id]: this.projects,
+            }
+          : { [this.user.id]: this.projects },
       }
 
       MinervaArchive.set('minerva_store', store)
@@ -1246,6 +1258,8 @@ export class Minerva {
         usageData: { [this.user.id]: this.usageData },
         records: { [this.user.id]: this.record },
         windows: { [this.user.id]: this.windows },
+        textFiles: { [this.user.id]: this.textFiles },
+        projects: { [this.user.id]: this.projects },
       }
 
       MinervaArchive.set('minerva_store', store)
