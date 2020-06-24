@@ -95,6 +95,7 @@ if you want to contribute to minerva's akasha, read `contributing.md`, and do th
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
 3.  get latest changes:
 
+
     git checkout master
     git fetch --all
     git merge upstream/master
@@ -107,7 +108,7 @@ if you want to contribute to minerva's akasha, read `contributing.md`, and do th
 
 also, it doesn't hurt to talk to me about things you want to add to minerva's akasha. I can easily be contacted on discord at `jpegzilla#6969` or on twitter `@jpegzilla`, or email me.
 
-_~ more contribution info coming soon~_
+_~ more contribution info coming soon ~_
 
 <a name="issues"></a>
 
