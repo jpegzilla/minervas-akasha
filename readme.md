@@ -95,10 +95,11 @@ if you want to contribute to minerva's akasha, read `contributing.md`, and do th
 2.  add this repo as an upstream to that repo: `https://github.com/jpegzilla/minervas-akasha.git`
 3.  get latest changes:
 
-
-    git checkout master
-    git fetch --all
-    git merge upstream/master
+```sh
+git checkout master
+git fetch --all
+git merge upstream/master
+```
 
 4.  install all deps: `yarn install`
 5.  create a feature branch from my master branch
