@@ -302,6 +302,24 @@ $halfgap: 0.5rem
   &::-webkit-scrollbar-corner, &::-webkit-resizer
     display: none
 
+=textarea
+  +no-scrollbar
+
+  display: block
+  flex-grow: 1
+  min-width: calc(100% - 1px)
+  border: none
+  resize: none
+  padding: $halfgap 0.25rem
+  // background-color: var(--bg-main)
+  background-color: $editorblue
+  color: var(--text-main)
+  border-top: 1px solid var(--text-main)
+  border-bottom: 1px solid var(--text-main)
+
+  &:active, &:focus
+    outline: 1px solid $pink
+
 =spinning-squares($count: 4)
   .spinning-squares
     +flexcenter
