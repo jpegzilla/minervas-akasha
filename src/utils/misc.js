@@ -1,5 +1,10 @@
 /* eslint no-useless-escape: 0 */
 
+/**
+ * selectAllInElement - selects all text in an element
+ *
+ * @param {HTMLElement} element element to select text within
+ */
 export const selectAllInElement = element => {
   const range = document.createRange()
   range.selectNode(element)
@@ -7,6 +12,15 @@ export const selectAllInElement = element => {
   window.getSelection().addRange(range)
 }
 
+/**
+ * getAverageColor - calculates the average color of the image provided.
+ *
+ * @param {HTMLElement} imgEl an html <img> element containing the image
+ * that you want to get the average color of.
+ *
+ * @returns {object} object containing r, g, and b values for the
+ * calculated average color
+ */
 export const getAverageColor = imgEl => {
   let blockSize = 5, // only visit every 5 pixels
     defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
@@ -54,6 +68,8 @@ export const getAverageColor = imgEl => {
   return rgb
 }
 
+// a regular expression that matches all chinese, japanese, and korean
+// characters defined in unicode
 export const cjkRegex = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/gim
 
 /**
@@ -283,15 +299,4 @@ export const mobilecheck = () => {
   )
     a = !0
   return a
-}
-
-export default {
-  isEmpty,
-  secondsToTime,
-  bytesToSize,
-  str2ab,
-  getRandomInt,
-  uuidv4,
-  validateUUIDv4,
-  stringSort,
 }
