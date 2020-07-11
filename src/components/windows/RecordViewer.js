@@ -281,7 +281,7 @@ const RecordViewer = props => {
                     ? type
                     : `(${type.substring(0, 3)}) ${
                         name.length > 12
-                          ? name.substring(0, 9).padEnd(12, '.')
+                          ? name.substring(0, 9).trim().padEnd(12, '.')
                           : name
                       }`
 
