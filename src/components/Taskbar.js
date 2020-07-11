@@ -84,18 +84,6 @@ const Taskbar = props => {
     // setMenuItems
   ] = useState([
     {
-      id: 'logout',
-      title: 'log out',
-      onClick: () => {
-        audiomanager.play('c_one')
-
-        minerva.logout(minerva.user)
-
-        setLogout(true)
-      },
-      tooltip: 'end your current session and return to the login screen.',
-    },
-    {
       id: 'opendeck',
       title: 'open project manager',
       onClick: () => {
@@ -115,21 +103,65 @@ const Taskbar = props => {
           finalPosition += 10
         }
 
-        const newRecordViewer = {
+        const newProjectDeck = {
           title: 'project deck',
           state: 'restored',
           stringType: 'Window',
           belongsTo: minerva.user.id,
           id: uuidv4(),
           component: 'Deck',
-          componentProps: {},
+          componentProps: {
+            projects: minerva.projects,
+          },
           position: {
             x: finalPosition,
             y: finalPosition,
           },
         }
 
-        minerva.setWindows([...minerva.windows, newRecordViewer])
+        minerva.setWindows([...minerva.windows, newProjectDeck])
+
+        setWindows([...minerva.windows])
+      },
+    },
+
+    {
+      id: 'openeditor',
+      title: 'open text editor',
+      onClick: () => {
+        const findWindowAtPosition = xy => {
+          const allWindows = Object.values(minerva.windows).flat(Infinity)
+
+          const windowToFind = allWindows.find(
+            item => item.position.x === xy && item.position.y === xy
+          )
+
+          return windowToFind || false
+        }
+
+        let finalPosition = 100
+
+        while (findWindowAtPosition(finalPosition)) {
+          finalPosition += 10
+        }
+
+        const newTextEditor = {
+          title: 'text editor',
+          state: 'restored',
+          stringType: 'Window',
+          belongsTo: minerva.user.id,
+          id: uuidv4(),
+          component: 'TextEditor',
+          componentProps: {
+            files: minerva.textFiles,
+          },
+          position: {
+            x: finalPosition,
+            y: finalPosition,
+          },
+        }
+
+        minerva.setWindows([...minerva.windows, newTextEditor])
 
         setWindows([...minerva.windows])
       },
@@ -256,6 +288,18 @@ const Taskbar = props => {
         link.click()
       },
       tooltip: "submit a bug report about minerva's akasha.",
+    },
+    {
+      id: 'logout',
+      title: 'log out',
+      onClick: () => {
+        audiomanager.play('c_one')
+
+        minerva.logout(minerva.user)
+
+        setLogout(true)
+      },
+      tooltip: 'end your current session and return to the login screen.',
     },
   ])
 
