@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, {
   useEffect,
   useContext,
@@ -79,7 +81,7 @@ const AudioViewer = props => {
 
       setOscData(new Uint8Array(analyser.frequencyBinCount))
       setFreqData(new Uint8Array(freqAnalyser.frequencyBinCount))
-      setSpecData(new Uint8Array(freqAnalyser.frequencyBinCount))
+      setSpecData(new Uint8Array(specAnalyser.frequencyBinCount))
     }
   }, [audioRef])
 
@@ -125,6 +127,7 @@ const AudioViewer = props => {
     analyser.getByteFrequencyData(
       oscData || new Uint8Array(analyser.frequencyBinCount)
     )
+
     analyser.fftSize = 16384
 
     const bufferLen = analyser.frequencyBinCount
@@ -175,6 +178,7 @@ const AudioViewer = props => {
     freqAnalyser.getByteFrequencyData(
       freqData || new Uint8Array(freqAnalyser.frequencyBinCount)
     )
+
     freqAnalyser.fftSize = 2048
 
     const bufferLen = freqAnalyser.frequencyBinCount
@@ -221,12 +225,16 @@ const AudioViewer = props => {
   }
 
   const renderSpecFrame = () => {
+    freqAnalyser.getByteFrequencyData(
+      specData || new Uint8Array(specAnalyser.frequencyBinCount)
+    )
+
+    specAnalyser.fftSize = 4096
+
     const ctx = canvasSpec.getContext('2d')
 
     const height = canvasSpec.height
     const width = canvasSpec.width
-
-    specAnalyser.fftSize = 4096
 
     const dataArray = new Uint8Array(specAnalyser.frequencyBinCount)
 
