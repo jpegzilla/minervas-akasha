@@ -193,7 +193,7 @@ export class Minerva {
       textEditor: {
         maxHistoryDepth: 200, // for the text editor's undo / redo functionality
       },
-      completedTutorial: false,
+      completedTutorial: false, // to determine whether to show the tutorial messages or not
       viewerFontOptions: {
         font: null,
         fontSize: null,
@@ -510,6 +510,8 @@ export class Minerva {
     mStore.records = mStore.records[this.user.id]
     mStore.settings = mStore.settings[this.user.id]
     mStore.usageData = mStore.usageData[this.user.id]
+    mStore.projects = mStore.projects[this.user.id]
+    mStore.textFiles = mStore.textFiles[this.user.id]
 
     console.log(mStore)
 
@@ -612,7 +614,15 @@ export class Minerva {
 
       console.log('importing data from json file', data)
 
-      const { user, settings, usageData, records, windows } = data.minerva_store
+      const {
+        user,
+        settings,
+        usageData,
+        records,
+        windows,
+        projects,
+        textFiles,
+      } = data.minerva_store
 
       const db = data.minerva_db
 
@@ -657,6 +667,8 @@ export class Minerva {
 
               this.user = user
               this.settings = settings
+              this.projects = projects
+              this.textFiles = textFiles
               this.usageData = usageData
               this.record.boundTo = records.boundTo
               this.record.dateCreated = records.dateCreated
@@ -1267,6 +1279,14 @@ export class Minerva {
 
     return this
   }
+
+  updateProjectData(projects) {
+    this.projects = projects
+
+    this.save()
+  }
+
+  updateTextFileData() {}
 
   /**
    * updateUsageData - update usage data for certain types of things, such as structure
