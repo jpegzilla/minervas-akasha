@@ -1,0 +1,105 @@
+@use "sass:color"
+@use "../utils/vars"
+@use "subwindows/card"
+
+$opacity: 0.6
+$font: vars.$proggy
+
+.project-deck-window
+  background-color: color.adjust(vars.$editorblue, $alpha: -0.5)
+  backdrop-filter: saturate(180%) blur(1rem)
+
+  .project-deck-header
+    margin-bottom: 0
+
+  .deck-viewer-window
+    width: 100%
+    padding: vars.$halfgap
+
+    & > header
+      width: 100%
+
+  button
+    +vars.flexcenter
+
+    line-height: 1rem
+    width: 100%
+    cursor: pointer
+    font-family: $font
+    color: var(--text-main)
+    border: 1px solid var(--text-main)
+    background-color: color.adjust(vars.$nondest, $alpha: -$opacity)
+    border: 1px solid vars.$nondest
+
+    &:hover
+      background-color: color.adjust(vars.$nondest, $alpha: -0.75)
+
+    span
+      +vars.flexcenter
+
+      padding: 0.2rem 0.5rem
+      height: 100%
+      width: 100%
+
+    &:active, &:focus
+      outline: 1px solid vars.$pink
+
+    &.add
+      background-color: color.adjust(vars.$green, $alpha: -$opacity)
+      border: 1px solid vars.$green
+
+      &:hover
+        background-color: color.adjust(vars.$green, $alpha: -0.75)
+
+    &.remove
+      background-color: color.adjust(vars.$red, $alpha: -$opacity)
+      border: 1px solid vars.$red
+
+      &:hover
+        background-color: color.adjust(vars.$red, $alpha: -0.75)
+
+  .deck-viewer-content
+    display: grid
+    margin-top: vars.$halfgap
+    grid-template-columns: repeat(3, 1fr)
+    grid-auto-flow: dense
+    grid-gap: vars.$halfgap
+
+    .deck-card-column
+      padding: vars.$halfgap
+      border: 1px solid var(--text-main)
+      background-color: vars.$black
+      position: relative
+
+      &.column-dragged-over
+        border: 1px solid vars.$pink
+
+      & > header
+        margin-bottom: vars.$halfgap
+        display: grid
+        // I get so fucking horny every time I get to use
+        // grid template areas. you would not believe
+        grid-template-areas: "a a a a" "b b c c"
+        // but fucking sass doesn't let me write it multiline
+        grid-gap: vars.$halfgap
+
+        input
+          +vars.input
+
+        span
+          grid-area: a
+          width: 100%
+
+          input
+            padding: 0.25rem
+            width: 100%
+
+        button
+          span
+            padding: 0.15rem 0.5rem
+
+          &:nth-of-type(1)
+            grid-area: b
+
+          &:nth-of-type(2)
+            grid-area: c

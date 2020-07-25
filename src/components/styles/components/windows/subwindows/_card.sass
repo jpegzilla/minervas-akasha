@@ -1,0 +1,62 @@
+@use "sass:color"
+@use "../../utils/vars"
+
+$opacity: 0.6
+
+.deck-card
+  width: 15rem
+  max-width: 20rem
+  border: 1px solid var(--text-main)
+  padding: vars.$halfgap
+  border: 1px solid vars.$red
+  background-color: vars.$editorblue
+
+  header
+    display: flex
+
+    button
+      width: min-content
+      background-color: color.adjust(vars.$red, $alpha: -$opacity)
+      border: 1px solid vars.$red
+
+      &:hover
+        background-color: color.adjust(vars.$red, $alpha: -0.75)
+
+    & > span
+      padding: 0.25rem 0 0.25rem vars.$halfgap
+      border: 1px solid transparent
+      background-color: color.adjust(vars.$red, $alpha: -0.75)
+
+      &.nopadding
+        padding: 0
+
+        input
+          padding: 0.25rem 0 0.25rem vars.$halfgap
+          width: auto
+
+  & > * + *
+    margin-top: vars.$halfgap
+
+  & + .deck-card
+    margin-top: vars.$halfgap
+
+  input
+    +vars.input
+
+  span
+    width: 100%
+
+    input
+      padding: 0.25rem
+      width: 100%
+
+  textarea
+    +vars.textarea
+
+    border: 1px solid var(--text-main)
+    margin-top: vars.$halfgap
+    padding: vars.$halfgap
+    min-height: max-content
+    min-width: 100%
+    resize: vertical
+    min-height: 5rem
