@@ -102,7 +102,7 @@ const Paragraph = props => {
 
 Paragraph.propTypes = {
   fullText: PropTypes.string,
-  showText: PropTypes.bool,
+  showText: PropTypes.any,
   title: PropTypes.string,
   humanSize: PropTypes.string,
   mime: PropTypes.string,
