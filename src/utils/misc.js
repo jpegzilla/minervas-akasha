@@ -1,6 +1,27 @@
 /* eslint no-useless-escape: 0 */
 
 /**
+ * isInShadow - check if element is currently in shadow root
+ *
+ * @param {object} node an html node to check
+ *
+ * @returns {boolean} true if in shadow root, false if not
+ */
+export const isInShadow = node => {
+  let parent = node && node.parentNode
+
+  while (parent) {
+    if (parent.toString() === '[object ShadowRoot]') {
+      return true
+    }
+
+    parent = parent.parentNode
+  }
+
+  return false
+}
+
+/**
  * selectAllInElement - selects all text in an element
  *
  * @param {HTMLElement} element element to select text within
