@@ -24,22 +24,32 @@ from smallest to largest, the structures are:
 
 4.  **athenaeum:** used as a large collection of grimoires. useful for storing an entire research project and keeping it separate from other projects.
 
-5.  **hypostasis:** used to reflect athenaea. if you want to start a similar collection of data to one you already have, then you can 'reflect' it using a hypostate. this way, you now have a place to store two similar, but different complex collections of data.
+5.  **hypostasis:** used to reflect athenaea. if you want to start a similar collection of data to one you already have, then you can 'reflect' it using a hypostate. this way, you now have a place to store two similar, but different complex collections of data
 
-includes data reflection (the ability to separate but connect collections of data that branch off of one parent), note taking utility, data tagging, automatic metadata retrieval, cross-user connection, and more...all contained within a pleasant and intuitive user interface.
+    _development of this feature is on hold indefinitely because I don't think it's actually that useful. looking into re-purposing / removing._
 
-_if you want to see more detailed information, dig into `./docs/main` and read the design docs._
+includes text-editing, project management a la trello, note taking utility, data tagging, automatic metadata retrieval, audio analysis tool, cross-user connection, and more...all contained within a (maybe?) pleasant and intuitive user interface.
+
+_if you want to see more detailed information, dig into `./docs/main` and read the design docs. I don't know how to write a proper design doc but they might still be interesting_
 
 <a name="#running"></a>
 
 ## running:
 
-built with react / `create-react-app`.
+### download
+
+_coming soon_
+
+### web app
+
+_coming soon_
+
+### development
+
+built with react / `create-react-app`. requires sass
 
 1.  clone this repo.
-2.  compile `/src/main.sass`
-3.  in your clone, run `yarn install` and `yarn start`
-4.  there you go!
+2.  in your clone, run `yarn install`, `yarn run swm` and `yarn start`
 
 <a name="features"></a>
 
@@ -50,8 +60,6 @@ built with react / `create-react-app`.
 -   data can be structured in as simple or complex a system as you'd like.
 
 -   deep interconnection, tagging system, search system, and cross-instance multi-user connections allow for powerful cross-referencing of complex data
-
--   hypostasis structure allows for reflection of data collections into similar, but different structures so old data can be modified and rearranged without tampering with the original data
 
 -   minerva system tracks and takes care of all the heavy lifting of data organization.
 
