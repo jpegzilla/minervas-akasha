@@ -11,3 +11,5 @@ export const fontCodes = {
 }
 
 export const lineHeights = ['natural', 'one-point-five', 'one-half', 'double']
+
+export const themes = ['blackwhite', 'sealegs']
