@@ -199,18 +199,20 @@ export class Minerva {
         fontSize: null,
         lineHeight: null,
         letterSpacing: null,
+        theme: null,
       },
       editorFontOptions: {
         font: null,
         fontSize: null,
         lineHeight: null,
         letterSpacing: null,
+        theme: null,
       },
     }
   }
 
   /**
-   * setPreferredFont - sets the user's preferred font for text viewers
+   * setViewerFontOptions - sets the preferrred viewer font options
    *
    * @param {object} options font options object including preferred font,
    * preferred font size, and preferred line height.
@@ -222,7 +224,7 @@ export class Minerva {
   }
 
   /**
-   * setPreferredFont - sets the user's preferred font for text viewers
+   * setEditorFontOptions - sets the preferred editor font options
    *
    * @param {object} options font options object including preferred font,
    * preferred font size, and preferred line height.
@@ -233,6 +235,11 @@ export class Minerva {
     this.save()
   }
 
+  /**
+   * fontOptions - get font options for editors and viewers.
+   *
+   * @returns {object} an object containing all font options
+   */
   get fontOptions() {
     return {
       viewer: this.settings.viewerFontOptions,
