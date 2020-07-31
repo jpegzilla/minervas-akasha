@@ -150,7 +150,7 @@ const Audio = props => {
     <>
       <div className='header-box' onDoubleClick={handleDoubleClick}>
         <div className='header-box-sub'>
-          double click to open in audio viewer
+          double click this bar to open in audio viewer
         </div>
       </div>
       <audio
