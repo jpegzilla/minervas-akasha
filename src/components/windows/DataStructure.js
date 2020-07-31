@@ -610,7 +610,7 @@ const DataStructure = props => {
                 : info.name}{' '}
               -{' '}
               <span
-                className='structure-type'
+                className={`structure-type type-${type}`}
                 title={StructureDescriptions[type]}>
                 {type}
               </span>

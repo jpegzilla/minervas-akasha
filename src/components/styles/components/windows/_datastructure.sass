@@ -80,11 +80,32 @@
       border-left: 1px solid var(--text-main)
 
   .structure-type
-    border-left: 2px solid vars.$pink
+    $bordersize: 2px
+
+    border-left: $bordersize solid vars.$pink
     padding: 0.15rem 0.25rem
-    // border-radius: 4px
     background-color: color.adjust(vars.$white, $alpha: -0.85)
     color: var(--text-main)
+
+    &.type-shard
+      border-left: $bordersize solid vars.$shard
+      background-color: color.adjust(vars.$shard, $alpha: -0.85)
+
+    &.type-node
+      border-left: $bordersize solid vars.$node
+      background-color: color.adjust(vars.$node, $alpha: -0.85)
+
+    &.type-grimoire
+      border-left: $bordersize solid vars.$gri
+      background-color: color.adjust(vars.$gri, $alpha: -0.85)
+
+    &.type-athenaeum
+      border-left: $bordersize solid vars.$ath
+      background-color: color.adjust(vars.$ath, $alpha: -0.85)
+
+    &.type-hypostasis
+      border-left: $bordersize solid vars.$hypo
+      background-color: color.adjust(vars.$hypo, $alpha: -0.85)
 
   button, input
     line-height: 1rem
