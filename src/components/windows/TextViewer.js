@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect, useContext } from 'react'
 
 import PropTypes from 'prop-types'
 
-import { fontCodes, lineHeights } from '../../utils/structures/utils/textcodes'
+import {
+  fontCodes,
+  lineHeights,
+  themes,
+} from '../../utils/structures/utils/textcodes'
 import { globalContext } from './../App'
 import { selectAllInElement } from './../../utils/misc'
 
@@ -30,6 +34,9 @@ const TextViewer = props => {
   const [letterSpacing, setLetterSpacing] = useState(
     minerva.fontOptions.viewer.letterSpacing || 0.0625
   )
+  const [selectedTextTheme, setSelectedTextTheme] = useState(
+    minerva.fontOptions.viewer.theme || 'blackwhite'
+  )
 
   const [collapsed, setCollapsed] = useState(false)
 
@@ -50,9 +57,17 @@ const TextViewer = props => {
       font: selectedFont,
       fontSize: fontSize,
       lineHeight: selectedLineHeight,
+      theme: selectedTextTheme,
       letterSpacing: letterSpacing,
     })
-  }, [selectedFont, fontSize, selectedLineHeight, letterSpacing, minerva])
+  }, [
+    selectedFont,
+    fontSize,
+    selectedTextTheme,
+    selectedLineHeight,
+    letterSpacing,
+    minerva,
+  ])
 
   return (
     <section className='text-viewer-container'>
@@ -68,7 +83,7 @@ const TextViewer = props => {
           tabIndex='-1'
           onKeyDown={handleKeyDown}
           ref={textArea}
-          className={`text-viewer-text ${selectedFont} ${selectedLineHeight}`}>
+          className={`text-viewer-text ${selectedFont} ${selectedTextTheme} ${selectedLineHeight}`}>
           {text}
         </pre>
         <div className='text-viewer-sidebar'>
@@ -106,6 +121,24 @@ const TextViewer = props => {
                   onChange={e => setSelectedLineHeight(e.target.value)}
                   className='text-viewer-font-selector'>
                   {lineHeights.map(item => {
+                    return (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>text theme</legend>
+              <div className='select-wrapper'>
+                <select
+                  value={selectedTextTheme}
+                  onChange={e => setSelectedTextTheme(e.target.value)}
+                  className='text-viewer-font-selector'>
+                  {themes.map(item => {
                     return (
                       <option key={item} value={item}>
                         {item}

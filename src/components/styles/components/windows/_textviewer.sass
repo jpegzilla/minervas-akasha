@@ -27,10 +27,12 @@
     border-top: 1px solid var(--text-main)
 
   .text-viewer-main
-    max-width: 68.055rem
+    // max-width: 68.055rem
+    max-width: auto
 
     pre
-      max-width: 51.2775rem
+      // max-width: 51.2775rem
+      max-width: auto
 
     input
       +vars.input(block, vars.$proggy, vars.$halfgap, vars.$halfgap, $font-size)
@@ -53,6 +55,14 @@
     font-size: 1em
     min-width: max-content
     background-color: vars.$black
+
+    &.blackwhite
+      background-color: vars.$black
+      color: vars.$white
+
+    &.sealegs
+      background-color: vars.$darkerblue
+      color: vars.$green
 
     &.double
       line-height: 2
