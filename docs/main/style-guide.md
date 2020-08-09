@@ -76,4 +76,4 @@ I use the `prettier` atom extension. my `.prettierrc`:
 
 no need to use a lot of comments in sass or scss code unless you do some obscure trick or something. it's also helpful to add comments to new variables / variable groups, mixins, and animations. other than that, sass is not required to be heavily commented.
 
-**formatting:** ever since sass's new module system introduced new syntax (and I migrated all my sass to the new system), every popular sass beautifier has been broken for me. so, I manually format all sass code.
+**formatting:** ever since sass's new module system introduced new syntax (and I migrated all my sass to the new system), every popular sass beautifier has been broken for me. so, I manually format all sass code. if I ever find a formatter that works with the indented syntax, I guess I'll use that.
