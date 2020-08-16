@@ -229,6 +229,10 @@ export const getRandomInt = (min, max) => {
  * @returns {number} a random number within the provided range
  */
 export const getRandomFloat = (min, max) => {
+  if (isNaN(min) || isNaN(max)) {
+    throw new TypeError('getRandomFloat must be called with two numbers.')
+  }
+
   return Math.random() * (max - min) + min
 }
 
@@ -240,6 +244,12 @@ export const getRandomFloat = (min, max) => {
  * @returns {boolean} true if element is in view, false if not
  */
 export const isElementInViewport = el => {
+  if (!(el instanceof HTMLElement)) {
+    throw new TypeError(
+      'isElementInViewport must be called with an HTMLElement.'
+    )
+  }
+
   const rect = el.getBoundingClientRect()
   return (
     rect.top >= 0 &&
