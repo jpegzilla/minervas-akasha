@@ -3,7 +3,7 @@
 import React, { memo, useState, useEffect, useRef, useContext } from 'react'
 
 import Card from './Card'
-import { uuidv4, isInShadow } from './../../../utils/misc'
+import { uuidv4 } from './../../../utils/misc'
 import { globalContext } from './../../App'
 
 const CardCol = props => {
@@ -138,7 +138,7 @@ const CardCol = props => {
         })
         .filter(Boolean)[0]
 
-      const newColumns = columns.map((col, idx) => {
+      const newColumns = columns.map(col => {
         if (originOfCard === droppedOnColAt) return col
 
         if (col.cards.some(card => card.id === cardToInsert.id)) {
@@ -153,6 +153,8 @@ const CardCol = props => {
         return col
       })
 
+      // must turn these off so that the desktop can listen for
+      // drag + drop events again.
       setIsDraggingColumn(false)
       setIsDraggingCard(false)
 
@@ -189,6 +191,7 @@ const CardCol = props => {
   }
 
   const handleColumnDragEnter = e => {
+    // ignore inappropriate events
     if (!isDraggingColumn && !isDraggingCard) return
     if (currentlyDraggingId === id) return
 
@@ -199,6 +202,8 @@ const CardCol = props => {
     if (!isDraggingColumn && !isDraggingCard) return
     if (currentlyDraggingId === id) return
     if (!e.target.classList.contains('deck-card-column')) return
+
+    // not sure if this is overkill still but keeping bc scared 2 remove
     if (
       e.nativeEvent.path[0].id === id &&
       !e.nativeEvent.fromElement.matches('.deck-card-column *')
