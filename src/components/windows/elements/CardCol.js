@@ -1,7 +1,10 @@
-import React, { memo, useState, useEffect, useRef } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import React, { memo, useState, useEffect, useRef, useContext } from 'react'
 
 import Card from './Card'
-import { uuidv4 } from './../../../utils/misc'
+import { uuidv4, isInShadow } from './../../../utils/misc'
+import { globalContext } from './../../App'
 
 const CardCol = props => {
   const {
@@ -12,8 +15,17 @@ const CardCol = props => {
     title,
     columns,
     setColumns,
-    removeColumn,
+    removeColumn
   } = props
+
+  // useful for determining if the user is currently dragging a column, which can affect
+  // other components. that's why this is semi-global
+  const {
+    setIsDraggingColumn,
+    isDraggingColumn,
+    setIsDraggingCard,
+    isDraggingCard
+  } = useContext(globalContext)
 
   const [titleValue, setTitleValue] = useState(title)
   const [editing, setEditing] = useState(false)
@@ -46,8 +58,8 @@ const CardCol = props => {
             id: uuidv4(),
             type: 'card',
             title: 'untitled card',
-            content: 'empty',
-          },
+            content: 'empty'
+          }
         ]
 
         return { ...col, cards }
@@ -59,50 +71,107 @@ const CardCol = props => {
     setColumns(newColumns)
   }
 
-  const [dragging, setDragging] = useState(false)
-
   const handleColumnDragStart = e => {
-    if (currentlyDraggingId === id) return
+    // console.log({ isDraggingColumn, target: e.nativeEvent.target })
+    if (isDraggingColumn) return
+    if (e.nativeEvent.target.matches('.deck-card')) return
 
-    const { target } = e
+    setIsDraggingColumn(true)
 
-    target.style.opacity = 0.5
+    // datatransfer so that for example the main desktop does not react
+    // to a column being dropped on it, but other columns will know
+    // how to react based on the item-type and item-id
+    e.nativeEvent.dataTransfer.setData('item-type', 'column')
+    e.nativeEvent.dataTransfer.setData('item-id', e.target.id)
+    e.target.style.opacity = 0.5
 
-    setCurrentlyDraggingId(target.id)
-    setDragging(true)
-    setInCandidateTarget(false)
+    setCurrentlyDraggingId(e.target.id)
   }
 
   const handleColumnDragEnd = e => {
-    const { target } = e
-
-    target.style.opacity = ''
+    e.target.style.opacity = ''
 
     Array.from(
       document.querySelectorAll('.column-dragged-over')
     ).forEach(elem => elem.classList.remove('column-dragged-over'))
 
-    setDragging(false)
-    setInCandidateTarget(false)
+    setIsDraggingColumn(false)
   }
 
   const handleColumnDrop = e => {
-    if (!inCandidateTarget) return
-    if (currentlyDraggingId === id) return
-    if (dragging) return
+    // check to see if this was a card / column being dropped.
+    const type = e.nativeEvent.dataTransfer.getData('item-type')
+    const itemId = e.nativeEvent.dataTransfer.getData('item-id')
+    // if type and itemId are falsy, it is because the drop was
+    // not triggered by a card / column. stop immediately
+    if (!type || !itemId) {
+      e.stopPropagation()
+      e.preventDefault()
+      return
+    }
+
+    // if this event was triggered by dropping a card
+    if (type === 'card') {
+      // this will return if you dropped on a column, but
+      // the event hits a card first instead.
+      const catchCardDrop = e.nativeEvent.path.some(el => {
+        if (el instanceof HTMLDocument) return false
+        if (!(el instanceof Element)) return false
+        if (el.matches('.deck-card')) return true
+        return false
+      })
+
+      if (catchCardDrop) return
+
+      const droppedOnColAt = columns.findIndex(col => col.id === id)
+      const originOfCard = columns.findIndex(col =>
+        col.cards.some(c => c.id === itemId)
+      )
+
+      // just logic to insert the card in the column from here
+      // it's a little fucked up because I kept changing it
+      // and then not refactoring it after changing something
+      const cardToInsert = columns
+        .map(item => {
+          const found = item.cards.find(card => card.id === itemId)
+          return found ? found : false
+        })
+        .filter(Boolean)[0]
+
+      const newColumns = columns.map((col, idx) => {
+        if (originOfCard === droppedOnColAt) return col
+
+        if (col.cards.some(card => card.id === cardToInsert.id)) {
+          const newCards = col.cards.filter(card => card.id !== cardToInsert.id)
+
+          return { ...col, cards: newCards }
+        }
+
+        if (col.id === id)
+          return { ...col, cards: [...col.cards, cardToInsert] }
+
+        return col
+      })
+
+      setIsDraggingColumn(false)
+      setIsDraggingCard(false)
+
+      setColumns(newColumns)
+
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
 
     const indexOfDragged = columns.findIndex(
       item => item.id === currentlyDraggingId
     )
     const indexOfTarget = columns.findIndex(item => item.id === id)
 
-    console.log(`swap element ${indexOfTarget} with ${indexOfDragged}`)
-
+    // make sure no columns still have the appearance of being dragged over
     Array.from(
       document.querySelectorAll('.column-dragged-over')
     ).forEach(elem => elem.classList.remove('column-dragged-over'))
-
-    console.log(columns)
 
     const newColumns = columns.map((item, idx) => {
       if (idx === indexOfTarget) {
@@ -114,23 +183,20 @@ const CardCol = props => {
       return item
     })
 
+    setIsDraggingColumn(false)
+    setIsDraggingCard(false)
     setColumns(newColumns)
-    setInCandidateTarget(false)
   }
 
-  const [inCandidateTarget, setInCandidateTarget] = useState(false)
-
   const handleColumnDragEnter = e => {
-    if (inCandidateTarget) return
+    if (!isDraggingColumn && !isDraggingCard) return
     if (currentlyDraggingId === id) return
-    if (!e.target.classList.contains('deck-card-column')) return
 
     e.target.classList.add('column-dragged-over')
-
-    setInCandidateTarget(true)
   }
 
   const handleColumnDragLeave = e => {
+    if (!isDraggingColumn && !isDraggingCard) return
     if (currentlyDraggingId === id) return
     if (!e.target.classList.contains('deck-card-column')) return
     if (
@@ -138,8 +204,6 @@ const CardCol = props => {
       !e.nativeEvent.fromElement.matches('.deck-card-column *')
     ) {
       e.target.classList.remove('column-dragged-over')
-
-      setInCandidateTarget(false)
     }
   }
 
@@ -186,7 +250,6 @@ const CardCol = props => {
       </header>
       <ul>
         {cards.map(item => {
-          // console.log(item)
           return (
             <Card
               key={item.id}
