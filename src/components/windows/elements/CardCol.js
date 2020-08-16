@@ -132,10 +132,7 @@ const CardCol = props => {
       // it's a little fucked up because I kept changing it
       // and then not refactoring it after changing something
       const cardToInsert = columns
-        .map(item => {
-          const found = item.cards.find(card => card.id === itemId)
-          return found ? found : false
-        })
+        .map(col => col.cards.find(c => c.id === itemId) || false)
         .filter(Boolean)[0]
 
       const newColumns = columns.map(col => {
