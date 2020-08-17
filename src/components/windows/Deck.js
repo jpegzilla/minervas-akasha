@@ -29,7 +29,7 @@ const Deck = () => {
   )
 
   useEffect(() => {
-    console.log(columns)
+    // console.log(columns)
     minerva.updateProjectData(columns)
   }, [columns, minerva])
 
