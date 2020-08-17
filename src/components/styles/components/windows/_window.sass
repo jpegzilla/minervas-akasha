@@ -29,6 +29,7 @@
     align-items: flex-start
     flex-direction: column
     flex-grow: 1
+    border-top: 1px solid vars.$white
 
   &.window-minimized
     display: none
@@ -48,8 +49,9 @@
 
   & > header
     padding: 0.25rem 0.5rem
-    border-bottom: 1px solid vars.$white
-    background-color: inputs.$background
+    border: 1px solid vars.$black
+    background-color: vars.$black
+    // color: vars.$black
     margin-bottom: 1rem
     user-select: none
     display: flex
@@ -73,8 +75,8 @@
         padding: 0 0.5rem
 
       div:hover
-        background: vars.$white
-        color: vars.$black
+        background: vars.$black
+        color: vars.$white
 
       div + div
         margin-left: 0.5rem
