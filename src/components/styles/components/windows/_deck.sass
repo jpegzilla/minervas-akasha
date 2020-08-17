@@ -59,11 +59,15 @@ $font: vars.$proggy
         background-color: color.adjust(vars.$red, $alpha: -0.75)
 
   .deck-viewer-content
+    +vars.custom-scrollbar
+
     display: grid
     margin-top: vars.$halfgap
     grid-template-columns: repeat(3, 1fr)
     grid-auto-flow: dense
     grid-gap: vars.$halfgap
+    max-height: 70vh
+    overflow-y: scroll
 
     .deck-card-column
       padding: vars.$halfgap
