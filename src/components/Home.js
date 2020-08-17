@@ -93,7 +93,6 @@ const Home = props => {
   useEffect(() => {
     if (droppedFiles) {
       // detect if file is a minerva's akasha save file
-      console.log(droppedFiles)
       const { name, type } = droppedFiles
       if (name.startsWith('minerva_sd_') || type === 'application/json') {
         const worker = new exportWorker()
@@ -135,7 +134,7 @@ const Home = props => {
                   name,
                   message: 'overwritewarning',
                 },
-                e.data
+                e.data,
               )
 
               return
@@ -146,7 +145,7 @@ const Home = props => {
                 droppedFiles,
                 toast,
                 null,
-                setActiveFileData
+                setActiveFileData,
               )
             }
           }
@@ -223,9 +222,10 @@ const Home = props => {
     const handleDrop = e => {
       const dropType = e.nativeEvent.dataTransfer.getData('item-type')
 
+      e.stopPropagation()
+      e.preventDefault()
+
       if (['card, column'].includes(dropType)) {
-        e.stopPropagation()
-        e.preventDefault()
         return
       }
 
