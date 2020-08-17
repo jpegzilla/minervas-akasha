@@ -27,6 +27,10 @@ const Main = props => {
     setGlobalVolume,
     renderConList,
     setRenderConList,
+    setIsDraggingColumn,
+    isDraggingColumn,
+    setIsDraggingCard,
+    isDraggingCard,
     Redirect,
     Switch,
     Route,
@@ -50,6 +54,10 @@ const Main = props => {
           setGlobalVolume,
           renderConList,
           setRenderConList,
+          setIsDraggingColumn,
+          isDraggingColumn,
+          setIsDraggingCard,
+          isDraggingCard,
           useToast,
         }}>
         <Router>

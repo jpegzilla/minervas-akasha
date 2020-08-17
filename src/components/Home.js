@@ -16,6 +16,7 @@ import CommandPalette from './CommandPalette'
 import { makeStruct } from '../utils/managers/StructureMap'
 import { Minerva } from '../utils/managers/Minerva'
 import dataStructureFileParser from './windows/elements/utils/dataStructureFileParser'
+
 import useToast from './../hooks/useToast'
 
 import exportWorker from './../utils/managers/workers/exportWorker.worker'
@@ -28,7 +29,13 @@ import { hasDatePassed } from './../utils/dateUtils'
 const Home = props => {
   const { routeProps } = props
 
-  const { minerva, loggedIn, setLoggedIn } = useContext(globalContext)
+  const {
+    minerva,
+    loggedIn,
+    setLoggedIn,
+    isDraggingCard,
+    isDraggingColumn,
+  } = useContext(globalContext)
 
   const toast = useToast()
 
@@ -214,8 +221,14 @@ const Home = props => {
 
   return useMemo(() => {
     const handleDrop = e => {
-      e.stopPropagation()
-      e.preventDefault()
+      const dropType = e.nativeEvent.dataTransfer.getData('item-type')
+
+      if (['card, column'].includes(dropType)) {
+        e.stopPropagation()
+        e.preventDefault()
+        return
+      }
+
       setDroppedFiles(e.dataTransfer.files[0])
       hideDropZone()
     }
@@ -225,6 +238,13 @@ const Home = props => {
     }
 
     const handleDragOver = e => {
+      if (isDraggingColumn || isDraggingCard) {
+        e.stopPropagation()
+        e.preventDefault()
+        return
+      }
+      // console.log(e.nativeEvent)
+
       e.stopPropagation()
       e.preventDefault()
       showDropZone()
@@ -261,6 +281,7 @@ const Home = props => {
             className={droppable ? 'filedrop active' : 'filedrop'}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
+            onDragEnd={handleDragLeave}
             onDragLeave={handleDragLeave}
             onDragEnter={allowDrag}
             id='main-container'>
@@ -344,6 +365,8 @@ const Home = props => {
       </>
     )
   }, [
+    isDraggingCard,
+    isDraggingColumn,
     menuOpen,
     settingsOpen,
     addMenuOpen,

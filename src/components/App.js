@@ -70,6 +70,8 @@ const { Provider } = globalContext
 
 const App = () => {
   const [windowLoaded, setWindowLoaded] = useState(false)
+  const [isDraggingCard, setIsDraggingCard] = useState(false)
+  const [isDraggingColumn, setIsDraggingColumn] = useState(false)
 
   // if minervas_akasha is in localstorage (a key which indicates the last logged-in user)
   // then this is not the user's first login. maybe change this to check ids in order to
@@ -209,6 +211,10 @@ const App = () => {
       setGlobalVolume,
       renderConList,
       setRenderConList,
+      setIsDraggingColumn,
+      isDraggingColumn,
+      setIsDraggingCard,
+      isDraggingCard,
       Redirect,
       Switch,
       Route,
