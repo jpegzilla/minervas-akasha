@@ -36,7 +36,7 @@ export class Minerva {
       throw new TypeError('database must be an instance of DatabaseInterface.')
     if (options.user && !validateUUIDv4(options.user.id))
       throw new Error(
-        `user was created with an invalid user id: ${options.user.id}`
+        `user was created with an invalid user id: ${options.user.id}`,
       )
 
     this.user = { ...options.user, password: '' } || null
@@ -54,7 +54,7 @@ export class Minerva {
       ? AkashicRecord.retrieveAkashicRecord(
           this.user.id,
           this.user.name,
-          database
+          database,
         ) || {}
       : {}
 
@@ -195,6 +195,7 @@ export class Minerva {
       },
       completedTutorial: false, // to determine whether to show the tutorial messages or not
       viewerFontOptions: {
+        // various options for text viewer styles
         font: null,
         fontSize: null,
         lineHeight: null,
@@ -202,12 +203,14 @@ export class Minerva {
         theme: null,
       },
       editorFontOptions: {
+        // various options for text editor styles
         font: null,
         fontSize: null,
         lineHeight: null,
         letterSpacing: null,
         theme: null,
       },
+      autoTag: true, // automatically suggests tags for media based on metadata
     }
   }
 
@@ -285,7 +288,7 @@ export class Minerva {
 
     this.updateUsageData(
       'structures',
-      Object.values(this.record.records).flat(Infinity).length
+      Object.values(this.record.records).flat(Infinity).length,
     )
 
     return this.record
@@ -310,7 +313,7 @@ export class Minerva {
 
     this.updateUsageData(
       'structures',
-      Object.values(this.record.records).flat(Infinity).length
+      Object.values(this.record.records).flat(Infinity).length,
     )
 
     return this.record
@@ -351,7 +354,7 @@ export class Minerva {
     // if the current record is an athenaeum, a few extra steps must be handled here.
     if (destType === 'hypostasis') {
       console.log(
-        'the destination is a hypostasis! make sure that the connection is handled correctly.'
+        'the destination is a hypostasis! make sure that the connection is handled correctly.',
       )
 
       console.log({ item, destination })
@@ -381,7 +384,7 @@ export class Minerva {
 
     this.updateUsageData(
       'structures',
-      Object.values(this.record.records).flat(Infinity).length
+      Object.values(this.record.records).flat(Infinity).length,
     )
 
     this.updateRecordUpdatedTimeStamp()
@@ -405,7 +408,7 @@ export class Minerva {
 
     this.updateUsageData(
       'structures',
-      Object.values(this.record.records).flat(Infinity).length
+      Object.values(this.record.records).flat(Infinity).length,
     )
 
     return this.record
@@ -456,7 +459,7 @@ export class Minerva {
 
     this.updateUsageData(
       'structures',
-      Object.values(this.record.records).flat(Infinity).length
+      Object.values(this.record.records).flat(Infinity).length,
     )
 
     return this.record
@@ -512,7 +515,7 @@ export class Minerva {
 
     // only get data belonging to the current user
     mStore.windows = mStore.windows[this.user.id].filter(
-      item => item.belongsTo === this.user.id
+      item => item.belongsTo === this.user.id,
     )
     mStore.records = mStore.records[this.user.id]
     mStore.settings = mStore.settings[this.user.id]
@@ -562,7 +565,7 @@ export class Minerva {
                   message:
                     'malformed indexedDB object encountered. you should literally never ever see this error.',
                   items: res,
-                })
+                }),
               )
           })
 
@@ -642,7 +645,7 @@ export class Minerva {
           Object.entries(e.data).forEach(([, v]) => {
             const transaction = this.indexedDB.transaction(
               ['minerva_files'],
-              'readwrite'
+              'readwrite',
             )
 
             const record = v
@@ -718,7 +721,7 @@ export class Minerva {
       const allWindows = Object.values(this.windows).flat(Infinity)
 
       const windowToFind = allWindows.find(
-        item => item.position.x === xy && item.position.y === xy
+        item => item.position.x === xy && item.position.y === xy,
       )
 
       return windowToFind || false
@@ -817,7 +820,7 @@ export class Minerva {
       {
         expires: naturalDate('1 month from now'),
       },
-      'user'
+      'user',
     )
 
     // if it's a new user, make them a brand new record.
@@ -828,7 +831,7 @@ export class Minerva {
         uuidv4(),
         user.name,
         user.records,
-        this.database
+        this.database,
       )
     } else {
       // if not a new user, get their record information
@@ -836,7 +839,7 @@ export class Minerva {
       this.record = AkashicRecord.retrieveAkashicRecord(
         user.id,
         user.name,
-        database
+        database,
       )
     }
 
@@ -1043,7 +1046,7 @@ export class Minerva {
     // take this.records and store them in the database
     const transaction = this.indexedDB.transaction(
       ['minerva_files'],
-      'readwrite'
+      'readwrite',
     )
 
     const { type } = structure
@@ -1058,7 +1061,7 @@ export class Minerva {
             // take this.records and store them in the database
             const transaction = this.indexedDB.transaction(
               ['minerva_files'],
-              'readwrite'
+              'readwrite',
             )
 
             const { type } = structure
@@ -1406,7 +1409,7 @@ export class Minerva {
   static setSession(key, value) {
     if (!key || !value)
       throw new Error(
-        'Minerva.setSession must be called with a key and a value.'
+        'Minerva.setSession must be called with a key and a value.',
       )
 
     Minerva._session.setItem(key, JSON.stringify(value))
@@ -1580,7 +1583,7 @@ export class MinervaArchive {
     try {
       if (key === undefined || item === undefined)
         throw new Error(
-          'MinervaArchive.set must be called with both a key and a value.'
+          'MinervaArchive.set must be called with both a key and a value.',
         )
 
       Minerva._store.setItem(key, JSON.stringify(item))
@@ -1589,7 +1592,7 @@ export class MinervaArchive {
     } catch (err) {
       console.error(err)
       throw new Error(
-        `an error occurred while trying to update localStorage: ${err}`
+        `an error occurred while trying to update localStorage: ${err}`,
       )
     }
   }
