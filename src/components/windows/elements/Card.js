@@ -119,11 +119,11 @@ const Card = props => {
       .filter(Boolean)[0]
 
     const colOfDropped = columns.findIndex(col =>
-      col.cards.some(c => c.id === itemId)
+      col.cards.some(c => c.id === itemId),
     )
 
     const colOfThis = columns.findIndex(col =>
-      col.cards.some(c => c.id === thisCardId)
+      col.cards.some(c => c.id === thisCardId),
     )
 
     // switch the card with the id (itemId) in the column (colOfDropped)
@@ -171,7 +171,7 @@ const Card = props => {
 
     e.target.classList.remove('card-dragged-over')
 
-    // setCurrentlyDraggingId()
+    setCurrentlyDraggingId()
   }
 
   const handleCardDragEnter = e => {
