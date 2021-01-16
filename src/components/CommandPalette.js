@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 
 import PropTypes from 'prop-types'
 
@@ -9,6 +9,34 @@ import { globalContext } from './App'
 import { uuidv4 } from './../utils/misc'
 import { makeStruct } from '../utils/managers/StructureMap'
 import useToast from './../hooks/useToast'
+
+const handleChange = (e, prefixSuggestion, minerva, setSearchResults) => {
+  let results
+
+  switch (prefixSuggestion) {
+    case 'records:': // search only records
+      results = paletteSearch(minerva, e.target.value)
+      break
+
+    case 'type:': // search records using a type
+      results = paletteSearch(minerva, '', e.target.value)
+      break
+
+    case 'mime:': // search records using a mime type
+      results = paletteSearch(minerva, '', 'any', e.target.value)
+      break
+
+    case 'windows:':
+      results = windowSearch(minerva, e.target.value)
+      break
+
+    default:
+      results = paletteSearch(minerva, e.target.value)
+      break
+  }
+
+  setSearchResults(results)
+}
 
 const CommandPalette = props => {
   const {
@@ -39,35 +67,7 @@ const CommandPalette = props => {
 
       setSearchResults(results)
     }
-  }, [showCommandPalette])
-
-  const handleChange = e => {
-    let results
-
-    switch (prefixSuggestion) {
-      case 'records:': // search only records
-        results = paletteSearch(minerva, e.target.value)
-        break
-
-      case 'type:': // search records using a type
-        results = paletteSearch(minerva, '', e.target.value)
-        break
-
-      case 'mime:': // search records using a mime type
-        results = paletteSearch(minerva, '', 'any', e.target.value)
-        break
-
-      case 'windows:':
-        results = windowSearch(minerva, e.target.value)
-        break
-
-      default:
-        results = paletteSearch(minerva, e.target.value)
-        break
-    }
-
-    setSearchResults(results)
-  }
+  }, [minerva, showCommandPalette])
 
   const handleKeyDown = e => {
     const { key } = e
@@ -93,13 +93,18 @@ const CommandPalette = props => {
   }
 
   useEffect(() => {
-    handleChange({ target: { value: '' } })
-  }, [prefixSuggestion])
+    handleChange(
+      { target: { value: '' } },
+      prefixSuggestion,
+      minerva,
+      setSearchResults,
+    )
+  }, [prefixSuggestion, minerva])
 
   const preHandleInput = e => {
     const { value } = e.target
 
-    handleChange(e)
+    handleChange(e, prefixSuggestion, minerva, setSearchResults)
 
     // check for prefix inputs
     Commands.prefixes.forEach(prefix => {
@@ -116,7 +121,8 @@ const CommandPalette = props => {
     // make sure the window isn't already open
     const foundItem = minerva.windows.find(
       i =>
-        i.component === 'DataStructure' && i.componentProps.structId === item.id
+        i.component === 'DataStructure' &&
+        i.componentProps.structId === item.id,
     )
 
     if (foundItem) {
@@ -127,7 +133,7 @@ const CommandPalette = props => {
             return window.id === foundItem.id
               ? { ...window, state: 'restored' }
               : window
-          })
+          }),
         )
 
         setWindows([...minerva.windows])
@@ -145,7 +151,7 @@ const CommandPalette = props => {
     })
 
     const itemToOpen = minerva.record.records[item.type].find(
-      i => i.id === item.id
+      i => i.id === item.id,
     )
 
     const { id, type } = itemToOpen
@@ -175,7 +181,7 @@ const CommandPalette = props => {
             return window.id === foundItem.id
               ? { ...window, state: 'restored' }
               : window
-          })
+          }),
         )
 
         setWindows([...minerva.windows])
@@ -251,7 +257,7 @@ const CommandPalette = props => {
                         .padEnd(
                           item.componentProps.info.name.substring(0, 31).trim()
                             .length + 3,
-                          '...'
+                          '...',
                         )
                     : item.componentProps.info.name
 
@@ -262,7 +268,7 @@ const CommandPalette = props => {
                 <li key={item.id} onClick={() => handleOpenWindow(item)}>
                   <span className='identifier'>{`(${item.id.substring(
                     0,
-                    8
+                    8,
                   )})`}</span>
                   <span>{title.split('-')[0]}</span>
                   {title.split('-').length > 1 && (
@@ -284,7 +290,7 @@ const CommandPalette = props => {
 
             // if item is a record object
             if (item.type) {
-              const { name, type } = item
+              const { name, type, id } = item
 
               const truncName =
                 name.length > 40
@@ -295,7 +301,7 @@ const CommandPalette = props => {
                   : name
 
               return (
-                <li onClick={() => handleDoubleClick(item)} key={name}>
+                <li onClick={() => handleDoubleClick(item)} key={id}>
                   <span className={type}>{`(${type})`}</span>
                   <span>{truncName}</span>
                 </li>

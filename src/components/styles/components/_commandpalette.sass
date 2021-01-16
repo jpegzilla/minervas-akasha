@@ -7,6 +7,8 @@
 
   +vars.itemlist($border-color, true, 0)
 
+  backdrop-filter: saturate(180%) blur(0.25rem)
+
   div
     width: 40vw
 
@@ -23,7 +25,7 @@
     +vars.fadein(0.85)
 
     content: ''
-    backdrop-filter: saturate(180%) blur(1rem)
+
     position: absolute
     animation: fadein 0.15s ease forwards
     top: 0
@@ -47,7 +49,6 @@
     span
       opacity: 0.5
 
-
     input
       background: transparent
       border: none
@@ -63,23 +64,11 @@
         color: color.adjust(vars.$white, $alpha: -0.7)
 
   ul
-    +vars.no-scrollbar
+    +vars.custom-scrollbar
 
     max-height: 60vh
     font-family: $font
     position: relative
-
-    &::after
-      display: block
-      content: ""
-      color: transparent
-      width: 100%
-      height: 5rem
-      background-image: linear-gradient(to bottom, transparent, vars.$dark)
-      bottom: -1px
-      left: 0
-      position: sticky
-      z-index: 2
 
   li
     font-size: 1.5rem
