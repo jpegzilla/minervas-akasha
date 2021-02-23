@@ -30,10 +30,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# lockfiles
-**/*.lock
-*-lock.json
-
 # compiled css
 *.css
 *.css.map
