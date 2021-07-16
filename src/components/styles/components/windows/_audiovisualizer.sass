@@ -5,32 +5,30 @@
   background-color: color.adjust(vars.$green, $alpha: -0.8)
   display: grid
   grid-template-columns: repeat(2, 30rem)
-  grid-template-rows: repeat(2, 12rem)
+  grid-template-rows: repeat(2, 10rem)
   grid-gap: vars.$halfgap
   padding: vars.$halfgap
   border-top: 1px solid var(--text-main)
   border-bottom: 1px solid var(--text-main)
 
-  .canvas-container
-    height: 100%
-    display: grid
-    grid-template-rows: 1fr
-
   .canvas-with-graph
-    display: grid
-    grid-template-rows: 1fr
-    grid-template-columns: min-content 1fr min-content
-    grid-gap: vars.$halfgap
+    display: flex
+    gap: vars.$halfgap
 
     &.span-v-2
       grid-row: 1 / span 2
       grid-column: 2 / span 1
 
-    canvas
+    .canvas-container
       height: 100%
-      width: 100%
-      border: 1px solid var(--text-main)
-      background-color: color.adjust(vars.$pink, $alpha: -0.72)
+      display: flex
+      flex-grow: 1
+
+      canvas
+        height: 100%
+        width: 100%
+        border: 1px solid var(--text-main)
+        background-color: color.adjust(vars.$pink, $alpha: -0.72)
 
   .graphs-container
     display: grid
