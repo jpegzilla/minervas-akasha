@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef, memo } from 'react'
 import MediaTagReader from './utils/MediaTagReader'
 
-import worker from './utils/metadataWorker.worker'
+import mdWorker from './utils/metadata.worker'
 
 import { uuidv4 } from './../../../utils/misc'
 
@@ -33,9 +33,8 @@ const Img = props => {
   const [error, setError] = useState(false)
   const [imageData, setImageData] = useState()
 
-  const fileInfo = `title: ${
-    title || 'no title provided'
-  }\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`
+  const fileInfo = `title: ${title ||
+    'no title provided'}\nsize: ${humanSize}\ntype: ${mime}\ndouble click to open in viewer.`
 
   useEffect(() => {
     setError(false)
@@ -89,26 +88,21 @@ const Img = props => {
 
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20image%20decoding%20issue%20with%20an%20${mime}%20encoded%20image`
 
-  const handleDoubleClick = () => {
-    const workerInstance = new worker()
-
-    toast.add({
-      duration: 3000,
-      text: 'opening in viewer...',
-      type: 'success',
-    })
+  const makeImageViewerWithWorker = () => {
+    const workerInstance = new mdWorker()
 
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
       mime,
+      in: 'Img.js makeImageViewerWithWorker (double click trigger)',
     })
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
         return toast.add({
           duration: 5000,
-          text: message.data,
+          text: message.data.text,
           type: 'fail',
         })
       }
@@ -120,7 +114,7 @@ const Img = props => {
           const allWindows = Object.values(minerva.windows).flat(Infinity)
 
           const windowToFind = allWindows.find(
-            item => item.position.x === xy && item.position.y === xy
+            item => item.position.x === xy && item.position.y === xy,
           )
 
           return windowToFind || false
@@ -162,6 +156,16 @@ const Img = props => {
         minerva.setActiveWindowId(id)
       }
     }
+  }
+
+  const handleDoubleClick = () => {
+    toast.add({
+      duration: 3000,
+      text: 'opening in viewer...',
+      type: 'success',
+    })
+
+    makeImageViewerWithWorker()
   }
 
   return typeof error === 'string' ? (

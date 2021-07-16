@@ -2,7 +2,8 @@
 
 import { b64toBlob } from './mediaUtils'
 
-self.addEventListener('message', async message => {
+self.onmessage = message => {
+  console.log('MESSAGE TO METADATA WORKER', message, self)
   const { action, src, mime } = message.data
 
   let response
@@ -13,8 +14,11 @@ self.addEventListener('message', async message => {
 
       break
     default:
-      throw new Error('unknown action passed to metadataWorker.')
+      response = {
+        status: 'failure',
+        text: `unknown action passed to metadata worker (${action}). you should never see this! please report this to jpegzilla so she can try to fix it.`,
+      }
   }
 
   if (response) self.postMessage(response)
-})
+}

@@ -3,10 +3,8 @@ import DatabaseInterface from './Database'
 import { uuidv4, validateUUIDv4 } from './../misc'
 import { naturalDate } from './../dateUtils'
 
-import worker from './workers/compressionWorker.worker'
-import exportWorker from './workers/exportWorker.worker'
-
-const workerInstance = worker()
+import compWorker from './workers/compression.worker'
+import exportWorker from './workers/export.worker'
 
 // class for managing everything that goes on in the app, specifically users logging
 // in / out and managing state of the data structures in the akashic record.
@@ -982,20 +980,19 @@ export class Minerva {
    */
   lzCompress(base64String) {
     return new Promise((resolve, reject) => {
-      try {
-        // this part takes a long time and is causing the ui
-        // to lag when compressing / decompressing a large file
-        workerInstance.postMessage({
-          action: 'compress',
-          toCompress: base64String,
-        })
+      const workerInstance = new compWorker()
+      // this part takes a long time and is causing the ui
+      // to lag when compressing / decompressing a large file
+      workerInstance.postMessage({
+        action: 'compress',
+        toCompress: base64String,
+      })
 
-        workerInstance.onmessage = message => {
-          resolve(message.data)
-        }
-      } catch (err) {
-        console.warn(err)
-        reject(err)
+      workerInstance.onmessage = message => {
+        if (message.data.status && message.data.status === 'failure') {
+          console.warn(message.data.text)
+          reject(message.data.text)
+        } else resolve(message.data)
       }
     })
   }
@@ -1009,22 +1006,25 @@ export class Minerva {
    */
   lzDecompress(data) {
     return new Promise((resolve, reject) => {
-      try {
-        // this is the main part that causes the most lag.
-        // passing in a large amount of data to this function seems to
-        // block the main thread while waiting for the worker
-        // to finish decompressing the file
-        workerInstance.postMessage({
-          action: 'decompress',
-          toDecompress: data,
-        })
+      const workerInstance = new compWorker()
+      // this is the main part that causes the most lag.
+      // passing in a large amount of data to this function seems to
+      // block the main thread while waiting for the worker
+      // to finish decompressing the file
+      workerInstance.postMessage({
+        action: 'decompress',
+        toDecompress: data,
+      })
 
-        workerInstance.onmessage = message => {
-          resolve(message.data)
-        }
-      } catch (err) {
-        console.warn(err)
-        reject(err)
+      workerInstance.onmessage = message => {
+        resolve(message.data)
+      }
+
+      workerInstance.onmessage = message => {
+        if (message.data.status && message.data.status === 'failure') {
+          console.warn(message.data.text)
+          reject(message.data.text)
+        } else resolve(message.data)
       }
     })
   }
@@ -1306,14 +1306,19 @@ export class Minerva {
    * @param {any}    value the value of the data type to be updated
    */
   updateUsageData(type, value) {
-    const today = `${new Date().getDate().toString().padStart(2, '0')}-${
-      new Date().getMonth() + 1
-    }-${new Date().getFullYear()}`
+    const today = `${new Date()
+      .getDate()
+      .toString()
+      .padStart(2, '0')}-${new Date().getMonth() +
+      1}-${new Date().getFullYear()}`
 
     const timeOfUpdate = `${new Date()
       .getHours()
       .toString()
-      .padStart(2, '0')}:${new Date().getMinutes().toString().padStart(2, '0')}`
+      .padStart(2, '0')}:${new Date()
+      .getMinutes()
+      .toString()
+      .padStart(2, '0')}`
 
     const baseData = {
       time: timeOfUpdate,

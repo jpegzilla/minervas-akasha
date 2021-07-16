@@ -14,7 +14,7 @@ import PropTypes from 'prop-types'
 import { globalContext } from './../App'
 import { getAverageColor } from './../../utils/misc'
 
-import worker from './elements/utils/metadataWorker.worker'
+import mdWorker from './elements/utils/metadata.worker'
 
 let active = false
 let currentX
@@ -117,31 +117,35 @@ const ImageViewer = props => {
     }
   }, [found, id])
 
+  const getObjectUrlFromWorker = ({ file }) => {
+    const workerInstance = new mdWorker()
+
+    workerInstance.postMessage({
+      action: 'getObjectUrl',
+      src: file,
+      mime,
+    })
+
+    workerInstance.onmessage = message => {
+      if (message.data.status && message.data.status === 'failure') {
+        return toast.add({
+          duration: 5000,
+          text: message.data.text,
+          type: 'fail',
+        })
+      }
+
+      if (typeof message.data === 'string') {
+        dispatch({ type: 'source', payload: message.data })
+      }
+    }
+  }
+
   const getWithId = id => {
     // find the file using the data structure's id,
     // and use the retrieved data to construct an object url.
     minerva.findFileInRecord(id).then(res => {
-      const workerInstance = new worker()
-
-      workerInstance.postMessage({
-        action: 'getObjectUrl',
-        src: res.file,
-        mime,
-      })
-
-      workerInstance.onmessage = message => {
-        if (message.data.status && message.data.status === 'failure') {
-          return toast.add({
-            duration: 5000,
-            text: message.data,
-            type: 'fail',
-          })
-        }
-
-        if (typeof message.data === 'string') {
-          dispatch({ type: 'source', payload: message.data })
-        }
-      }
+      getObjectUrlFromWorker(res)
     })
   }
 
@@ -288,11 +292,10 @@ const ImageViewer = props => {
           <img
             ref={imageRef}
             style={{
-              transform: `scale(${
-                zoomLevel / 100
-              }) rotateZ(${rotationAngle}deg) translate3d(${translation.x}px, ${
-                translation.y
-              }px, 0)`,
+              transform: `scale(${zoomLevel /
+                100}) rotateZ(${rotationAngle}deg) translate3d(${
+                translation.x
+              }px, ${translation.y}px, 0)`,
             }}
             onDragStart={e => {
               e.preventDefault()

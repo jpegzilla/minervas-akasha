@@ -19,7 +19,7 @@ import dataStructureFileParser from './windows/elements/utils/dataStructureFileP
 
 import useToast from './../hooks/useToast'
 
-import exportWorker from './../utils/managers/workers/exportWorker.worker'
+import exportWorker from './../utils/managers/workers/export.worker'
 
 import WindowTypes from './windows/WindowTypes'
 

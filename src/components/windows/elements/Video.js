@@ -8,7 +8,7 @@ import { uuidv4 } from './../../../utils/misc'
 
 import PropTypes from 'prop-types'
 
-import worker from './utils/metadataWorker.worker'
+import mdWorker from './utils/metadata.worker'
 
 let timer,
   fadeInBuffer = false
@@ -34,7 +34,7 @@ const Video = props => {
 
     // creating a worker instance that will be used to turn the raw video base64
     // into an object url that will serve as the video source
-    const workerInstance = new worker()
+    const workerInstance = new mdWorker()
 
     workerInstance.postMessage({
       action: 'getObjectUrl',
@@ -64,7 +64,7 @@ const Video = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20video%20decoding%20issue%20with%20an%20${mime}%20encoded%20video`
 
   const handleDoubleClick = () => {
-    const workerInstance = new worker()
+    const workerInstance = new mdWorker()
 
     toast.add({
       duration: 3000,
@@ -94,7 +94,7 @@ const Video = props => {
           const allWindows = Object.values(minerva.windows).flat(Infinity)
 
           const windowToFind = allWindows.find(
-            item => item.position.x === xy && item.position.y === xy
+            item => item.position.x === xy && item.position.y === xy,
           )
 
           return windowToFind || false

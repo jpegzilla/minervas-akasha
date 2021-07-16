@@ -1,14 +1,15 @@
 /* eslint no-restricted-globals: off */
 
-self.addEventListener('message', e => {
-  const { data, action } = e.data
+self.onmessage = message => {
+  console.log('MESSAGE TO EXPORT WORKER', message, self)
+  const { data, action } = message.data
 
   switch (action) {
     case 'stringify':
       const dbString = JSON.stringify(data)
 
       const exportObject = {
-        minerva_db: dbString
+        minerva_db: dbString,
       }
 
       self.postMessage(exportObject)
@@ -42,11 +43,13 @@ self.addEventListener('message', e => {
       parser.readAsText(data)
 
       break
-
     case 'jsonParse':
       self.postMessage(JSON.parse(data))
       break
     default:
-      throw new Error('unknown action passed to exportWorker.')
+      self.postMessage({
+        status: 'failure',
+        text: `unknown action passed to export worker (${action}). you should never see this! please report this to jpegzilla so she can try to fix it.`,
+      })
   }
-})
+}

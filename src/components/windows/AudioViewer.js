@@ -14,7 +14,7 @@ import PropTypes from 'prop-types'
 import { globalContext } from './../App'
 
 import { secondsToTime } from './../../utils/misc'
-import worker from './elements/utils/metadataWorker.worker'
+import mdWorker from './elements/utils/metadata.worker'
 
 let isPlaying = false,
   interval,
@@ -125,7 +125,7 @@ const AudioViewer = props => {
 
   const renderFrame = () => {
     analyser.getByteFrequencyData(
-      oscData || new Uint8Array(analyser.frequencyBinCount)
+      oscData || new Uint8Array(analyser.frequencyBinCount),
     )
 
     analyser.fftSize = 16384
@@ -176,7 +176,7 @@ const AudioViewer = props => {
 
   const renderFreqFrame = () => {
     freqAnalyser.getByteFrequencyData(
-      freqData || new Uint8Array(freqAnalyser.frequencyBinCount)
+      freqData || new Uint8Array(freqAnalyser.frequencyBinCount),
     )
 
     freqAnalyser.fftSize = 2048
@@ -212,9 +212,8 @@ const AudioViewer = props => {
 
         // canvasFreqCtx.fillStyle = 'rgb(254, 254, 254)'
 
-        canvasFreqCtx.fillStyle = `rgb(${barHeight + 100}, ${
-          barHeight + 100
-        }, ${barHeight + 100})`
+        canvasFreqCtx.fillStyle = `rgb(${barHeight + 100}, ${barHeight +
+          100}, ${barHeight + 100})`
         canvasFreqCtx.fillRect(x, height - barHeight, barWidth, barHeight)
 
         x += barWidth + 2
@@ -226,7 +225,7 @@ const AudioViewer = props => {
 
   const renderSpecFrame = () => {
     freqAnalyser.getByteFrequencyData(
-      specData || new Uint8Array(specAnalyser.frequencyBinCount)
+      specData || new Uint8Array(specAnalyser.frequencyBinCount),
     )
 
     specAnalyser.fftSize = 4096
@@ -282,7 +281,7 @@ const AudioViewer = props => {
     // find the file using the data structure's id,
     // and use the retrieved data to construct an object url.
     minerva.findFileInRecord(id).then(res => {
-      const workerInstance = new worker()
+      const workerInstance = new mdWorker()
 
       workerInstance.postMessage({
         action: 'getObjectUrl',
@@ -294,7 +293,7 @@ const AudioViewer = props => {
         if (message.data.status && message.data.status === 'failure') {
           toast.add({
             duration: 3000,
-            text: message.data,
+            text: message.data.text,
             type: 'fail',
           })
         }
@@ -665,8 +664,8 @@ const AudioViewer = props => {
               !isNaN(audioRef.current.currentTime)
                 ? secondsToTime(
                     Math.floor(
-                      audioRef.current.duration - audioRef.current.currentTime
-                    )
+                      audioRef.current.duration - audioRef.current.currentTime,
+                    ),
                   )
                 : '0'}
             </p>

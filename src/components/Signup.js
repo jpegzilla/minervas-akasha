@@ -7,7 +7,7 @@ import Typist from './../utils/managers/Typist'
 import { globalContext } from './App'
 import bcrypt from 'bcryptjs'
 import useToast from './../hooks/useToast'
-import exportWorker from './../utils/managers/workers/exportWorker.worker'
+import exportWorker from './../utils/managers/workers/export.worker'
 
 // text for when the form is complete or incomplete
 const text = {
@@ -357,7 +357,7 @@ const SignupComponent = props => {
 
       default:
         throw new Error(
-          "this error should only show if there were another input on the form that wasn't a username or password input. how did you even get this to happen...?"
+          "this error should only show if there were another input on the form that wasn't a username or password input. how did you even get this to happen...?",
         )
     }
   }

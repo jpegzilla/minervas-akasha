@@ -15,7 +15,7 @@ import { globalContext } from './../App'
 
 import { secondsToTime } from './../../utils/misc'
 
-import worker from './elements/utils/metadataWorker.worker'
+import mdWorker from './elements/utils/metadata.worker'
 
 let isPlaying = false,
   interval,
@@ -87,7 +87,7 @@ const VideoViewer = props => {
     // find the file using the data structure's id,
     // and use the retrieved data to construct an object url.
     minerva.findFileInRecord(id).then(res => {
-      const workerInstance = new worker()
+      const workerInstance = new mdWorker()
 
       workerInstance.postMessage({
         action: 'getObjectUrl',
@@ -405,8 +405,8 @@ const VideoViewer = props => {
               {videoRef.current
                 ? secondsToTime(
                     Math.floor(
-                      videoRef.current.duration - videoRef.current.currentTime
-                    )
+                      videoRef.current.duration - videoRef.current.currentTime,
+                    ),
                   )
                 : '0'}
             </p>

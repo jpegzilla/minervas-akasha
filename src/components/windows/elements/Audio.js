@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext, useRef, memo } from 'react'
 import MediaTagReader from './utils/MediaTagReader'
 import PropTypes from 'prop-types'
 
-import worker from './utils/metadataWorker.worker'
+import mdWorker from './utils/metadata.worker'
 
 import { globalContext } from './../../App'
 import { uuidv4 } from './../../../utils/misc'
@@ -36,28 +36,34 @@ const Audio = props => {
 
   let fileInfo = `title: ${title}\nsize: ${humanSize}\ntype: ${mime}`
 
-  useEffect(() => {
-    setError(false)
+  const communicateWithWorker = () => {
+    const workerInstance = new mdWorker()
 
-    const workerInstance = new worker()
+    console.log(workerInstance)
 
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
       mime,
+      in: 'Audio.js useEffect (mime, src, fileInfo trigger)',
     })
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
         return toast.add({
-          duration: 5000,
-          text: message.data,
+          duration: 15000,
+          text: message.data.text,
           type: 'fail',
         })
       }
 
       if (typeof message.data === 'string') setAudioData(message.data)
     }
+  }
+
+  useEffect(() => {
+    setError(false)
+    communicateWithWorker()
   }, [mime, src, fileInfo])
 
   const data = src
@@ -65,7 +71,7 @@ const Audio = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
 
   const handleDoubleClick = () => {
-    const workerInstance = new worker()
+    const workerInstance = new mdWorker()
 
     toast.add({
       duration: 3000,
@@ -83,7 +89,7 @@ const Audio = props => {
       if (message.data.status && message.data.status === 'failure') {
         return toast.add({
           duration: 5000,
-          text: message.data,
+          text: message.data.text,
           type: 'fail',
         })
       }
@@ -95,7 +101,7 @@ const Audio = props => {
           const allWindows = Object.values(minerva.windows).flat(Infinity)
 
           const windowToFind = allWindows.find(
-            item => item.position.x === xy && item.position.y === xy
+            item => item.position.x === xy && item.position.y === xy,
           )
 
           return windowToFind || false
@@ -173,6 +179,7 @@ const Audio = props => {
         }}
         ref={audioRef}
         onLoadedMetadata={e => {
+          console.log('audio metadata loaded:', e)
           e.target.volume = minerva.settings.volume.master / 100
           // hand off metadata reading to a worker here
           const metaDataReader = new MediaTagReader(data)
