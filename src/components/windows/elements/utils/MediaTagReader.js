@@ -77,7 +77,7 @@ export default class MediaTagReader {
               },
               onError: err => {
                 console.log(err)
-              }
+              },
             })
           } else {
             // use this mainly for ogg / flac support
@@ -119,7 +119,8 @@ export default class MediaTagReader {
 
             // make sure everything is in correct case
             for (const [k, v] of Object.entries(this.exifdata)) {
-              tags[k.toString().toLowerCase()] = v.toString().toLowerCase()
+              if (k && v)
+                tags[k.toString().toLowerCase()] = v.toString().toLowerCase()
             }
 
             imageTagSchema(tags).then(res => {
