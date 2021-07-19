@@ -634,11 +634,11 @@ export class Minerva {
 
       const db = data.minerva_db
 
-      const worker = new exportWorker()
+      const exportWorker = new exportWorker()
 
-      worker.postMessage({ action: 'jsonParse', data: db })
+      exportWorker.postMessage({ action: 'jsonParse', data: db })
 
-      worker.addEventListener('message', e => {
+      exportWorker.addEventListener('message', e => {
         if (e.data) {
           Object.entries(e.data).forEach(([, v]) => {
             const transaction = this.indexedDB.transaction(
@@ -696,7 +696,10 @@ export class Minerva {
               resolve()
             }
           })
-        } else resolve()
+        } else {
+          exportWorker.terminate()
+          resolve()
+        }
       })
     })
   }

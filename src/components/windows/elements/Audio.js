@@ -39,8 +39,6 @@ const Audio = props => {
   const communicateWithWorker = () => {
     const workerInstance = new mdWorker()
 
-    console.log(workerInstance)
-
     workerInstance.postMessage({
       action: 'getObjectUrl',
       src,
@@ -50,6 +48,7 @@ const Audio = props => {
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
+        workerInstance.terminate()
         return toast.add({
           duration: 15000,
           text: message.data.text,
@@ -71,6 +70,7 @@ const Audio = props => {
   const reportUrl = `https://github.com/jpegzilla/minervas-akasha/issues/new?assignees=jpegzilla&labels=bug&template=bug-report.md&title=%5Bbug%5D%20audio%20decoding%20issue%20with%20an%20${mime}%20encoded%20audio%20file`
 
   const handleDoubleClick = () => {
+    // instantiate a worker to send data to for making an objecturl from an audio file.
     const workerInstance = new mdWorker()
 
     toast.add({
@@ -94,6 +94,7 @@ const Audio = props => {
         })
       }
 
+      // retrieve and use the metadata in creating an AudioViewer.
       if (typeof message.data === 'string') {
         const id = uuidv4()
 
@@ -113,7 +114,7 @@ const Audio = props => {
           finalPosition += 10
         }
 
-        const newVideoViewer = {
+        const newAudioViewer = {
           title: 'audio viewer',
           state: 'restored',
           stringType: 'Window',
@@ -135,7 +136,7 @@ const Audio = props => {
 
         minerva.addFileToRecord(id, src, { type: 'audioviewer' })
 
-        minerva.setWindows([...minerva.windows, newVideoViewer])
+        minerva.setWindows([...minerva.windows, newAudioViewer])
 
         minerva.setApplicationWindows(minerva.windows)
 

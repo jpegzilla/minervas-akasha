@@ -44,6 +44,8 @@ const Video = props => {
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
+        // terminates the worker if something went wrong
+        workerInstance.terminate()
         return toast.add({
           duration: 5000,
           text: message.data,
@@ -80,6 +82,7 @@ const Video = props => {
 
     workerInstance.onmessage = message => {
       if (message.data.status && message.data.status === 'failure') {
+        workerInstance.terminate()
         return toast.add({
           duration: 5000,
           text: message.data,

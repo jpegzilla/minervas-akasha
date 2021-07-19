@@ -278,7 +278,7 @@ const SignupComponent = props => {
 
               return
             }
-          }
+          } else worker.terminate()
         })
       }
     }

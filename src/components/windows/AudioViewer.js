@@ -280,29 +280,39 @@ const AudioViewer = props => {
   const getWithId = id => {
     // find the file using the data structure's id,
     // and use the retrieved data to construct an object url.
-    minerva.findFileInRecord(id).then(res => {
-      const workerInstance = new mdWorker()
+    minerva
+      .findFileInRecord(id)
+      .then(res => {
+        const workerInstance = new mdWorker()
 
-      workerInstance.postMessage({
-        action: 'getObjectUrl',
-        src: res.file,
-        mime,
+        workerInstance.postMessage({
+          action: 'getObjectUrl',
+          src: res.file,
+          mime,
+        })
+
+        workerInstance.onmessage = message => {
+          if (message.data.status && message.data.status === 'failure') {
+            workerInstance.terminate()
+            toast.add({
+              duration: 3000,
+              text: message.data.text,
+              type: 'fail',
+            })
+          }
+
+          if (typeof message.data === 'string') {
+            dispatch({ type: 'source', payload: message.data })
+          }
+        }
       })
-
-      workerInstance.onmessage = message => {
-        if (message.data.status && message.data.status === 'failure') {
-          toast.add({
-            duration: 3000,
-            text: message.data.text,
-            type: 'fail',
-          })
-        }
-
-        if (typeof message.data === 'string') {
-          dispatch({ type: 'source', payload: message.data })
-        }
-      }
-    })
+      .catch(err => {
+        toast.add({
+          duration: 3000,
+          text: `audioviewer - minerva was unable to find a file with id ${id}. you should never see this! please report to jpegzilla so she can try to fix it. include this -> ${err}`,
+          type: 'fail',
+        })
+      })
   }
 
   // this function will run only when the image is first being loaded.
