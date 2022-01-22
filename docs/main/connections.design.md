@@ -4,7 +4,7 @@
 -   start date: 2020.04.02
 -   source locations:
     -   `/src/utils/managers/Minerva.js`
-    -   `/src/utils/structures/AkashicReocrd.js`
+    -   `/src/utils/structures/AkashicRecord.js`
     -   `/src/components/windows/DataStructure.js`
     -   `/src/components/windows/DataDisplay.js`
     -   `/src/components/windows/elements/ConnectionList.js`
