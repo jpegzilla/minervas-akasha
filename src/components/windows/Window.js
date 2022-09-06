@@ -5,8 +5,9 @@ import PropTypes from 'prop-types'
 import { globalContext } from './../App'
 
 import WindowTypes from './WindowTypes'
+import Drag from './../subcomponents/Drag'
 
-const Window = props => {
+const Window = (props) => {
   const {
     windows,
     setActiveWindowId,
@@ -16,7 +17,7 @@ const Window = props => {
     num,
     records,
     component,
-    componentProps
+    componentProps,
   } = props
 
   const { minerva } = useContext(globalContext)
@@ -35,20 +36,20 @@ const Window = props => {
   const [droppedFiles, setDroppedFiles] = useState()
 
   // handle drag / drop events
-  const allowDrag = e => {
+  const allowDrag = (e) => {
     e.dataTransfer.dropEffect = 'copy'
     e.preventDefault()
   }
 
   const handleDragLeave = () => void setDroppable(false)
 
-  const handleDragOver = e => {
+  const handleDragOver = (e) => {
     e.stopPropagation()
     e.preventDefault()
     setDroppable(true)
   }
 
-  const handleDrop = e => {
+  const handleDrop = (e) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -74,15 +75,15 @@ const Window = props => {
   return useMemo(() => {
     // this is the function that updates the windows' positions in minerva
     const setPosition = (windowId, newPosition) => {
-      if ([newPosition.x, newPosition.y].some(e => Number.isNaN(e))) {
+      if ([newPosition.x, newPosition.y].some((e) => Number.isNaN(e))) {
         throw new TypeError('invalid parameters to setPosition')
       }
 
-      const newWindows = windows.map(item => {
+      const newWindows = windows.map((item) => {
         return item.id === windowId
           ? {
               ...item,
-              position: newPosition
+              position: newPosition,
             }
           : item
       })
@@ -111,15 +112,15 @@ const Window = props => {
         switch (state) {
           case 'minimized':
             setWindows([
-              ...windows.map(w => {
+              ...windows.map((w) => {
                 // set state to minimized, or return the existing window object
                 return w.id === id
                   ? {
                       ...w,
-                      state
+                      state,
                     }
                   : w
-              })
+              }),
             ])
             return
           default:
@@ -129,7 +130,7 @@ const Window = props => {
         switch (command) {
           case 'close':
             minerva.setWindows([
-              ...minerva.windows.filter(w => (w.id === id ? false : true))
+              ...minerva.windows.filter((w) => (w.id === id ? false : true)),
             ])
 
             // if there's an id present, then remove the file from the record, because a component
@@ -153,11 +154,11 @@ const Window = props => {
     }
 
     return (
-      <Draggable
-        handle={'.drag-handle'}
-        onStop={handleStop}
-        onStart={() => void setActiveWindowId(id)}
-        defaultPosition={{ x, y }}>
+      <Drag
+        position={position}
+        reportPosition={(pos) => {
+          setPosition(id, pos)
+        }}>
         <div
           onDragOver={canDropFiles ? handleDragOver : undefined}
           onDragLeave={canDropFiles ? handleDragLeave : undefined}
@@ -178,13 +179,14 @@ const Window = props => {
             /*onMouseDown={e => void handleMouseDown(e, true, id, title)}*/
             /*onMouseUp={e => void handleMouseDown(e, false, id, title)}*/
           >
-            <span className='window-title-text'>{`${componentProps.type ||
-              t} (${num})${windowStructid ? ` ${windowStructid}` : ''}`}</span>
+            <span className='window-title-text'>{`${
+              componentProps.type || t
+            } (${num})${windowStructid ? ` ${windowStructid}` : ''}`}</span>
             <b />
             <span className='window-controls'>
               <div
                 className='window-controls-min window-controls-button'
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
                   handleWindowCommand(e, { state: 'minimized' })
@@ -193,7 +195,7 @@ const Window = props => {
               </div>
               <div
                 className='window-controls-close window-controls-button'
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
                   handleWindowCommand(e, 'close')
@@ -215,7 +217,7 @@ const Window = props => {
             }
           </section>
         </div>
-      </Draggable>
+      </Drag>
     )
   }, [
     droppable,
@@ -234,7 +236,7 @@ const Window = props => {
     t,
     title,
     x,
-    y
+    y,
   ])
 }
 
@@ -270,13 +272,13 @@ Window.propTypes = {
         metadata: PropTypes.object,
         dbId: PropTypes.string,
         dbUserId: PropTypes.string,
-        extra: PropTypes.object
+        extra: PropTypes.object,
       }),
       name: PropTypes.string,
-      tags: PropTypes.arrayOf(PropTypes.object)
+      tags: PropTypes.arrayOf(PropTypes.object),
     }),
     droppedFiles: PropTypes.object,
     MetadataDisplay: PropTypes.any,
-    ImageDisplay: PropTypes.any
-  })
+    ImageDisplay: PropTypes.any,
+  }),
 }

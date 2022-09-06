@@ -1,64 +1,63 @@
 /* eslint-disable */
 
-import React, { Children, useState } from 'react'
-
-let active = false
-let currentX
-let currentY
-let initialX
-let initialY
-let xOffset = 0
-let yOffset = 0
+import React, { Children, useState, useEffect } from 'react'
 
 // turns a component into a draggable box
-const Drag = props => {
-  const [translation, setTranslation] = useState({ x: 0, y: 0 })
+const Drag = (props) => {
+  const { children, position, reportPosition } = props
 
-  const { children, position } = props
+  const [active, setActive] = useState(false)
+  const [offset, setOffset] = useState(position)
+  const [currentCoords, setCurrentCoords] = useState(position)
+  const [initialCoords, setInitialCoords] = useState(position)
+  const [translation, setTranslation] = useState(position)
 
-  const dragStart = e => {
-    initialX = e.clientX - xOffset
-    initialY = e.clientY - yOffset
+  useEffect(() => {
+    if (!active) {
+      reportPosition(initialCoords)
+    }
+  }, [active, initialCoords])
 
-    active = true
+  const dragStart = (e) => {
+    setInitialCoords({
+      x: e.clientX - offset.x,
+      y: e.clientY - offset.y,
+    })
+
+    setActive(true)
   }
 
   const dragEnd = () => {
-    initialX = currentX
-    initialY = currentY
+    setInitialCoords({
+      x: currentCoords.x,
+      y: currentCoords.y,
+    })
 
-    active = false
+    setActive(false)
   }
 
-  const drag = e => {
+  const drag = (e) => {
     if (active) {
       e.preventDefault()
 
-      currentX = e.clientX - initialX
-      currentY = e.clientY - initialY
+      setCurrentCoords({
+        x: e.clientX - initialCoords.x,
+        y: e.clientY - initialCoords.y,
+      })
 
-      xOffset = currentX
-      yOffset = currentY
+      setOffset({
+        x: currentCoords.x,
+        y: currentCoords.y,
+      })
 
-      setTranslation({ x: currentX, y: currentY })
+      setTranslation({ x: currentCoords.x, y: currentCoords.y })
     }
-  }
-
-  if (position) {
-    currentX = 0
-    currentY = 0
-    initialX = 0
-    initialY = 0
-    xOffset = 0
-    yOffset = 0
-
-    dragEnd()
   }
 
   return (
     <div
       style={{
-        transform: `translate3d(${translation.x}px, ${translation.y}px, 0)`
+        transform: `translate3d(${translation.x}px, ${translation.y}px, 0)`,
       }}
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
