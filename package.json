@@ -8,7 +8,7 @@
     "bcryptjs": "^2.4.3",
     "eslint": "^6.6.0",
     "exif-js": "^2.3.0",
-    "jsmediatags": "^3.9.3",
+    "jsmediatags": "3.9.3",
     "music-metadata-browser": "^2.0.5",
     "node-sass": "^4.14.0",
     "prop-types": "^15.7.2",
@@ -37,9 +37,15 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%", "not dead", "not op_mini all"
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
     ],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
